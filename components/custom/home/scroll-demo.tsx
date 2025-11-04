@@ -85,7 +85,7 @@ export default function ScrollDemo() {
       {/* Individual Scroll Animations Example */}
       <div className="mt-20 space-y-8">
         <ScrollAnimation direction="left" delay={0.2}>
-          <div className="flex items-center justify-center p-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+          <div className="flex items-center justify-center p-12 bg-linear-to-r from-blue-50 to-purple-50 rounded-lg">
             <h3 className="text-3xl font-bold text-center">
               This animates from the left with delay
             </h3>
@@ -93,7 +93,7 @@ export default function ScrollDemo() {
         </ScrollAnimation>
 
         <ScrollAnimation direction="right" delay={0.1}>
-          <div className="flex items-center justify-center p-12 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+          <div className="flex items-center justify-center p-12 bg-linear-to-r from-green-50 to-blue-50 rounded-lg">
             <h3 className="text-3xl font-bold text-center">
               This animates from the right with delay
             </h3>
@@ -101,7 +101,7 @@ export default function ScrollDemo() {
         </ScrollAnimation>
 
         <ScrollAnimation direction="up" delay={0.3}>
-          <div className="flex items-center justify-center p-12 bg-gradient-to-r from-yellow-50 to-red-50 rounded-lg">
+          <div className="flex items-center justify-center p-12 bg-linear-to-r from-yellow-50 to-red-50 rounded-lg">
             <h3 className="text-3xl font-bold text-center">
               This animates from bottom with longer delay
             </h3>
