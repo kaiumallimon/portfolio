@@ -27,7 +27,6 @@ import {
   hoverLift,
   ANIMATION_DELAY,
 } from "@/lib/animations";
-import { SocialLink } from "../common/social-link";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -196,3 +195,25 @@ export default function Hero() {
 }
 
 
+function SocialLink({
+  href,
+  icon,
+}: {
+  href: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <motion.div
+      whileHover={hoverLift}
+      whileTap={{ scale: 0.9 }}
+    >
+      <Link
+        href={href}
+        target="_blank"
+        className="block p-2 border border-gray-300 rounded-full hover:bg-black hover:text-white transition-all duration-300 text-gray-700 text-lg"
+      >
+        {icon}
+      </Link>
+    </motion.div>
+  );
+}
