@@ -22,7 +22,7 @@ const inter = Inter({
 
 export default function Hero() {
   return (
-    <section className="relative z-10 px-6 flex flex-col items-center max-w-7xl mx-auto pt-[120px] md:pt-[160px]">
+    <section className="relative z-10 px-6 flex flex-col items-center max-w-7xl mx-auto pt-[120px] md:pt-40">
       {/* Greeting */}
       <motion.p
         initial={{ opacity: 0, y: 20 }}
@@ -61,7 +61,7 @@ export default function Hero() {
         className="mt-14 flex flex-col md:flex-row items-start justify-between gap-10 w-full"
       >
         {/* Left Column: Text + Button + Social */}
-        <div className="flex flex-col justify-between max-w-2xl h-full text-center md:text-left">
+        <div className="flex flex-col justify-between max-w-2xl h-[380px] text-center md:text-left">
           {/* Top Section: Text and Button */}
           <div>
             <p className="text-sm md:text-base text-gray-700 leading-relaxed">
@@ -85,7 +85,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Bottom Section: Social Links */}
+          {/* Bottom Section: Social Links - Aligned with image bottom */}
           <div className="mt-12 md:mt-0">
             <p className="text-sm text-gray-600 mb-3 font-medium">
               You can also find me
@@ -106,7 +106,7 @@ export default function Hero() {
             alt="Developer"
             width={380}
             height={380}
-            className="hidden md:block rounded-lg shadow-lg object-cover"
+            className="hidden md:block object-cover"
             priority
           />
         </div>
