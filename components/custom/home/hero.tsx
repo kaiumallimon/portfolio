@@ -61,7 +61,7 @@ export default function Hero() {
         className="mt-14 flex flex-col md:flex-row items-start justify-between gap-10 w-full"
       >
         {/* Left Column: Text + Button + Social */}
-        <div className="flex flex-col justify-between max-w-2xl h-[380px] text-center md:text-left">
+        <div className="flex flex-col justify-between max-w-2xl md:h-[380px] text-center md:text-left">
           {/* Top Section: Text and Button */}
           <div>
             <p className="text-sm md:text-base text-gray-700 leading-relaxed">
@@ -73,11 +73,11 @@ export default function Hero() {
               experiences across every platform.
             </p>
 
-            <div className="mt-10">
+            <div className="mt-8 md:mt-10">
               <Button
                 variant="default"
                 size="lg"
-                className="rounded-none px-10 py-3 bg-black text-white hover:bg-white hover:text-black border border-black transition-all duration-300"
+                className="rounded-none px-8 md:px-10 py-3 bg-black text-white hover:bg-white hover:text-black border border-black transition-all duration-300"
               >
                 Contact Now
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -85,12 +85,24 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Bottom Section: Social Links - Aligned with image bottom */}
-          <div className="mt-12 md:mt-0">
+          {/* Mobile Image - Show after button on mobile */}
+          <div className="md:hidden mt-10 w-full flex justify-center">
+            <Image
+              src="/profile-picture.png"
+              alt="Developer"
+              width={380}
+              height={380}
+              className="w-64 h-64 rounded-lg shadow-lg object-cover"
+              priority
+            />
+          </div>
+
+          {/* Bottom Section: Social Links - Aligned with image bottom on desktop */}
+          <div className="mt-10 md:mt-0">
             <p className="text-sm text-gray-600 mb-3 font-medium">
               You can also find me
             </p>
-            <div className="flex space-x-5">
+            <div className="flex justify-center md:justify-start space-x-4 md:space-x-5">
               <SocialLink href="https://facebook.com/" icon={<FaFacebookF />} />
               <SocialLink href="https://instagram.com/" icon={<FaInstagram />} />
               <SocialLink href="https://github.com/" icon={<FaGithub />} />
@@ -99,14 +111,14 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right Column: Image */}
-        <div className="shrink-0">
+        {/* Right Column: Image - Desktop only */}
+        <div className="shrink-0 hidden md:flex justify-start">
           <Image
             src="/profile-picture.png"
             alt="Developer"
             width={380}
             height={380}
-            className="hidden md:block object-cover"
+            className="w-[380px] h-[380px] rounded-lg shadow-lg object-cover"
             priority
           />
         </div>
