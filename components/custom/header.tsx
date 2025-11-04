@@ -73,7 +73,7 @@ export default function HeaderComponent() {
             {/* Mobile Hamburger */}
             <motion.button
               onClick={toggleMenu}
-              className="md:hidden p-2 rounded-md border border-gray-300 bg-white/40 backdrop-blur-sm hover:bg-gray-100 transition-all duration-200"
+              className="md:hidden p-2 border border-gray-300 bg-white/40 backdrop-blur-sm hover:bg-gray-100 transition-all duration-200"
               whileTap={{ scale: 0.9 }}
             >
               <Menu className="w-6 h-6 text-gray-800" />
