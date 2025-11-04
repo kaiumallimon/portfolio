@@ -7,6 +7,16 @@ import { Geist_Mono, Silkscreen } from "next/font/google";
 import { Button } from "../../ui/button";
 import Link from "next/link";
 
+// Animation imports
+import {
+  fadeInDown,
+  fadeInLeft,
+  fadeInRight,
+  staggerContainer,
+  hoverLift,
+  ANIMATION_DELAY,
+} from "@/lib/animations";
+
 const silkscreen = Silkscreen({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -32,43 +42,76 @@ export default function HeaderComponent() {
   return (
     <>
       {/* HEADER BAR */}
-      <div className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/85 backdrop-blur-md border-b border-gray-200">
+      <motion.div 
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/85 backdrop-blur-md border-b border-gray-200"
+        variants={fadeInDown}
+        initial="hidden"
+        animate="visible"
+        custom={ANIMATION_DELAY.none}
+      >
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <motion.div 
+            className="flex items-center justify-between"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
             {/* Logo */}
-            <a
+            <motion.a
               href="/"
               className={`${silkscreen.className} font-bold text-2xl md:text-3xl`}
+              variants={fadeInLeft}
+              custom={ANIMATION_DELAY.short}
+              whileHover={hoverLift}
             >
               KAL
-            </a>
+            </motion.a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:block bg-transparent py-4">
+            <motion.nav 
+              className="hidden md:block bg-transparent py-4"
+              variants={fadeInDown}
+              custom={ANIMATION_DELAY.medium}
+            >
               <ul className="flex items-center space-x-8 text-sm md:text-base font-medium text-gray-800">
-                {navItems.map((item) => (
-                  <li key={item.name}>
-                    <a
+                {navItems.map((item, index) => (
+                  <motion.li 
+                    key={item.name}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: ANIMATION_DELAY.medium + (index * 0.1), duration: 0.5 }}
+                  >
+                    <motion.a
                       href={item.href}
                       className="relative group transition-colors duration-300"
+                      whileHover={hoverLift}
                     >
                       {item.name}
                       <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                  </li>
+                    </motion.a>
+                  </motion.li>
                 ))}
               </ul>
-            </nav>
+            </motion.nav>
 
             {/* Desktop CTA */}
-            <div className="hidden md:block">
-              <Button
-                variant="outline"
-                className="rounded-none px-4 hover:bg-black hover:text-white transition-colors duration-300"
+            <motion.div 
+              className="hidden md:block"
+              variants={fadeInRight}
+              custom={ANIMATION_DELAY.long}
+            >
+              <motion.div
+                whileHover={hoverLift}
+                whileTap={{ scale: 0.95 }}
               >
-                Contact Me <ArrowRight />
-              </Button>
-            </div>
+                <Button
+                  variant="outline"
+                  className="rounded-none px-4 hover:bg-black hover:text-white transition-colors duration-300"
+                >
+                  Contact Me <ArrowRight />
+                </Button>
+              </motion.div>
+            </motion.div>
 
             {/* Mobile Hamburger */}
             <motion.button
@@ -78,9 +121,9 @@ export default function HeaderComponent() {
             >
               <Menu className="w-6 h-6 text-gray-800" />
             </motion.button>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* MOBILE MENU BACKDROP */}
       <AnimatePresence>

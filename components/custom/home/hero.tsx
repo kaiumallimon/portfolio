@@ -15,6 +15,19 @@ import {
   FaLinkedinIn,
 } from "react-icons/fa6";
 
+// Animation imports
+import {
+  fadeInUp,
+  fadeInDown,
+  fadeInLeft,
+  fadeInRight,
+  scaleIn,
+  staggerContainer,
+  hoverScale,
+  hoverLift,
+  ANIMATION_DELAY,
+} from "@/lib/animations";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -22,12 +35,33 @@ const inter = Inter({
 
 export default function Hero() {
   return (
-    <section className="relative z-10 px-6 flex flex-col items-center max-w-7xl mx-auto pt-[120px] md:pt-40">
+    <motion.section 
+      className="relative z-10 px-6 flex flex-col items-center max-w-7xl mx-auto pt-[120px] md:pt-40 pb-10"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+    >
+
+      {/* Mobile Image */}
+      <motion.div 
+        className="md:hidden mb-10 w-full flex justify-center"
+        variants={scaleIn}
+        custom={ANIMATION_DELAY.none}
+      >
+        <Image
+          src="/profile-picture.png"
+          alt="Developer"
+          width={380}
+          height={380}
+          className="w-64 h-64 object-cover"
+          priority
+        />
+      </motion.div>
+
       {/* Greeting */}
       <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        variants={fadeInDown}
+        custom={ANIMATION_DELAY.short}
         className={`${inter.className} text-lg md:text-2xl font-semibold text-gray-800 text-center mb-4`}
       >
         Hello, I'm <span className="text-black">Kaium Al Limon</span>
@@ -35,99 +69,132 @@ export default function Hero() {
 
       {/* Headline */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.1 }}
+        variants={staggerContainer}
         className="flex flex-col items-center leading-[1.05] -space-y-1"
       >
-        <h1
+        <motion.h1
+          variants={fadeInUp}
+          custom={ANIMATION_DELAY.medium}
           className={`${inter.className} text-4xl md:text-[90px] lg:text-[120px] font-extrabold text-center tracking-tight text-gray-900`}
         >
           FLUTTER & NEXT.JS
-        </h1>
+        </motion.h1>
 
-        <h1
+        <motion.h1
+          variants={fadeInUp}
+          custom={ANIMATION_DELAY.long}
           className={`${inter.className} text-4xl md:text-[90px] lg:text-[120px] font-extrabold text-center tracking-tight text-gray-900`}
         >
           DEVELOPER
-        </h1>
+        </motion.h1>
       </motion.div>
 
       {/* Description + Image Row */}
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="mt-14 flex flex-col md:flex-row items-start justify-between gap-10 w-full"
+        variants={staggerContainer}
+        className="mt-8 md:mt-14 flex flex-col md:flex-row items-start justify-between gap-10 w-full"
       >
         {/* Left Column: Text + Button + Social */}
-        <div className="flex flex-col justify-between max-w-2xl md:h-[380px] text-center md:text-left">
+        <motion.div 
+          variants={fadeInLeft}
+          custom={ANIMATION_DELAY.veryLong}
+          className="flex flex-col justify-between max-w-2xl md:h-[380px] text-center md:text-left"
+        >
           {/* Top Section: Text and Button */}
           <div>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              I’m a cross-platform mobile and web developer focused on building
+            <motion.p 
+              variants={fadeInUp}
+              custom={ANIMATION_DELAY.veryLong + 0.1}
+              className="text-sm md:text-base text-gray-700 leading-relaxed"
+            >
+              I'm a cross-platform mobile and web developer focused on building
               elegant, high-performance applications. Using{" "}
               <span className="font-semibold text-black">Flutter</span> for
               mobile and <span className="font-semibold text-black">Next.js</span>{" "}
               for web, I craft fast, scalable solutions with exceptional user
               experiences across every platform.
-            </p>
+            </motion.p>
 
-            <div className="mt-8 md:mt-10">
-              <Button
-                variant="default"
-                size="lg"
-                className="rounded-none px-8 md:px-10 py-3 bg-black text-white hover:bg-white hover:text-black border border-black transition-all duration-300"
+            <motion.div 
+              variants={fadeInUp}
+              custom={ANIMATION_DELAY.veryLong + 0.2}
+              className="mt-8 md:mt-10"
+            >
+              <motion.div
+                whileHover={hoverLift}
+                whileTap={{ scale: 0.95 }}
               >
-                Contact Now
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="rounded-none px-8 md:px-10 py-3 bg-black text-white hover:bg-white hover:text-black border border-black transition-all duration-300"
+                >
+                  Contact Now
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </motion.div>
+            </motion.div>
           </div>
 
-          {/* Mobile Image - Show after button on mobile */}
-          <div className="md:hidden mt-10 w-full flex justify-center">
+
+          {/* Bottom Section: Social Links - Aligned with image bottom on desktop */}
+          <motion.div 
+            variants={fadeInUp}
+            custom={ANIMATION_DELAY.veryLong + 0.3}
+            className="mt-10 md:mt-0"
+          >
+            <motion.p 
+              variants={fadeInUp}
+              custom={ANIMATION_DELAY.veryLong + 0.35}
+              className="text-sm text-gray-600 mb-3 font-medium"
+            >
+              You can also find me on -
+            </motion.p>
+            <motion.div 
+              variants={staggerContainer}
+              className="flex justify-center md:justify-start space-x-4 md:space-x-5"
+            >
+              <motion.div variants={scaleIn} custom={ANIMATION_DELAY.veryLong + 0.4}>
+                <SocialLink href="https://facebook.com/" icon={<FaFacebookF />} />
+              </motion.div>
+              <motion.div variants={scaleIn} custom={ANIMATION_DELAY.veryLong + 0.45}>
+                <SocialLink href="https://instagram.com/" icon={<FaInstagram />} />
+              </motion.div>
+              <motion.div variants={scaleIn} custom={ANIMATION_DELAY.veryLong + 0.5}>
+                <SocialLink href="https://github.com/" icon={<FaGithub />} />
+              </motion.div>
+              <motion.div variants={scaleIn} custom={ANIMATION_DELAY.veryLong + 0.55}>
+                <SocialLink href="https://linkedin.com/" icon={<FaLinkedinIn />} />
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+
+        {/* Right Column: Image - Desktop only */}
+        <motion.div 
+          variants={fadeInRight}
+          custom={ANIMATION_DELAY.veryLong}
+          className="shrink-0 hidden md:flex justify-start"
+        >
+          <motion.div
+            whileHover={hoverScale}
+          >
             <Image
               src="/profile-picture.png"
               alt="Developer"
               width={380}
               height={380}
-              className="w-64 h-64 rounded-lg shadow-lg object-cover"
+              className="w-[380px] h-[380px] object-cover"
               priority
             />
-          </div>
-
-          {/* Bottom Section: Social Links - Aligned with image bottom on desktop */}
-          <div className="mt-10 md:mt-0">
-            <p className="text-sm text-gray-600 mb-3 font-medium">
-              You can also find me
-            </p>
-            <div className="flex justify-center md:justify-start space-x-4 md:space-x-5">
-              <SocialLink href="https://facebook.com/" icon={<FaFacebookF />} />
-              <SocialLink href="https://instagram.com/" icon={<FaInstagram />} />
-              <SocialLink href="https://github.com/" icon={<FaGithub />} />
-              <SocialLink href="https://linkedin.com/" icon={<FaLinkedinIn />} />
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Image - Desktop only */}
-        <div className="shrink-0 hidden md:flex justify-start">
-          <Image
-            src="/profile-picture.png"
-            alt="Developer"
-            width={380}
-            height={380}
-            className="w-[380px] h-[380px] rounded-lg shadow-lg object-cover"
-            priority
-          />
-        </div>
+          </motion.div>
+        </motion.div>
       </motion.div>
-    </section>
+    </motion.section>
   );
 }
 
-// Reusable Social Link Component
+// Reusable Social Link Component with animations
 function SocialLink({
   href,
   icon,
@@ -136,12 +203,17 @@ function SocialLink({
   icon: React.ReactNode;
 }) {
   return (
-    <Link
-      href={href}
-      target="_blank"
-      className="p-2 border border-gray-300 rounded-full hover:bg-black hover:text-white transition-all duration-300 text-gray-700 text-lg"
+    <motion.div
+      whileHover={hoverLift}
+      whileTap={{ scale: 0.9 }}
     >
-      {icon}
-    </Link>
+      <Link
+        href={href}
+        target="_blank"
+        className="block p-2 border border-gray-300 rounded-full hover:bg-black hover:text-white transition-all duration-300 text-gray-700 text-lg"
+      >
+        {icon}
+      </Link>
+    </motion.div>
   );
 }
