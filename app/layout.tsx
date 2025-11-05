@@ -25,7 +25,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.className} antialiased`}
       >
-        <HeaderComponent/>{children}
+        <HeaderComponent />
+        {children}
       </body>
     </html>
   );

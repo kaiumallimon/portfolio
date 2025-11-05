@@ -36,7 +36,7 @@ const inter = Inter({
 export default function Hero() {
   return (
     <motion.section 
-      className="relative z-10 px-6 flex flex-col items-center max-w-7xl mx-auto pt-[120px] md:pt-40 pb-10"
+      className="relative z-10 px-6 flex flex-col items-center max-w-6xl mx-auto pt-[120px] md:pt-40 pb-10"
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
@@ -62,9 +62,9 @@ export default function Hero() {
       <motion.p
         variants={fadeInDown}
         custom={ANIMATION_DELAY.short}
-        className={`${inter.className} text-lg md:text-2xl font-semibold text-gray-800 text-center mb-4`}
+        className={`text-base md:text-xl font-semibold text-gray-600 text-center mb-8`}
       >
-        Hello, I'm <span className="text-black">Kaium Al Limon</span>
+        Hello, I'm <span className="">Kaium Al Limon 👋</span>
       </motion.p>
 
       {/* Headline */}
@@ -75,7 +75,7 @@ export default function Hero() {
         <motion.h1
           variants={fadeInUp}
           custom={ANIMATION_DELAY.medium}
-          className={`${inter.className} text-4xl md:text-[90px] lg:text-[120px] font-extrabold text-center tracking-tight text-gray-900`}
+          className={`${inter.className} text-4xl md:text-[80px] lg:text-[100px] font-extrabold text-center tracking-tight text-gray-900`}
         >
           FLUTTER & NEXT.JS
         </motion.h1>
@@ -83,7 +83,7 @@ export default function Hero() {
         <motion.h1
           variants={fadeInUp}
           custom={ANIMATION_DELAY.long}
-          className={`${inter.className} text-4xl md:text-[90px] lg:text-[120px] font-extrabold text-center tracking-tight text-gray-900`}
+          className={`${inter.className} text-4xl md:text-[80px] lg:text-[100px] font-extrabold text-center tracking-tight text-gray-900`}
         >
           DEVELOPER
         </motion.h1>
@@ -105,7 +105,7 @@ export default function Hero() {
             <motion.p 
               variants={fadeInUp}
               custom={ANIMATION_DELAY.veryLong + 0.1}
-              className="text-sm md:text-base text-gray-700 leading-relaxed"
+              className="text-sm md:text-base text-gray-700 leading-6"
             >
               I'm a cross-platform mobile and web developer focused on building
               elegant, high-performance applications. Using{" "}

@@ -1,13 +1,17 @@
 import HeaderComponent from "@/components/custom/common/header";
+import GithubContributionsGraphComponent from "@/components/custom/home/github-contributions-graph";
+
+
 import Hero from "@/components/custom/home/hero";
-import ScrollDemo from "@/components/custom/home/scroll-demo";
-import Image from "next/image";
+import SkillsTree from "@/components/custom/home/skills";
+
 
 export default function Home() {
   return (
     <div className="min-h-screen w-full bg-white">
-      <Hero/>
-      <ScrollDemo/>
+      <Hero />
+      <SkillsTree />
+      <GithubContributionsGraphComponent />
     </div>
   );
 }

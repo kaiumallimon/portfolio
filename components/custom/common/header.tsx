@@ -24,9 +24,22 @@ const silkscreen = Silkscreen({
 
 export default function HeaderComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleScroll = () => {
+    if (window.scrollY > 10) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  }
 
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", isMenuOpen);
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [isMenuOpen]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -43,13 +56,13 @@ export default function HeaderComponent() {
     <>
       {/* HEADER BAR */}
       <motion.div 
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/85 backdrop-blur-md border-b border-gray-200"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/85 backdrop-blur-md ${isScrolled ? 'border-b border-gray-200':''}`}
         variants={fadeInDown}
         initial="hidden"
         animate="visible"
         custom={ANIMATION_DELAY.none}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <motion.div 
             className="flex items-center justify-between"
             variants={staggerContainer}
