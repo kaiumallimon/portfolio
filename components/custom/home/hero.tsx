@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -129,8 +129,8 @@ export default function Hero() {
                   size="lg"
                   className="rounded-none px-8 md:px-10 py-3 bg-black text-white hover:bg-white hover:text-black border border-black transition-all duration-300"
                 >
-                  Contact Now
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <Download className="w-4 h-4 ml-2" />
+                  Download CV
                 </Button>
               </motion.div>
             </motion.div>
@@ -155,16 +155,16 @@ export default function Hero() {
               className="flex justify-center md:justify-start space-x-4 md:space-x-5"
             >
               <motion.div variants={scaleIn} custom={ANIMATION_DELAY.veryLong + 0.4}>
-                <SocialLink href="https://facebook.com/" icon={<FaFacebookF />} />
+                <SocialLink href="https://facebook.com/kaiumallimon" icon={<FaFacebookF />} />
               </motion.div>
               <motion.div variants={scaleIn} custom={ANIMATION_DELAY.veryLong + 0.45}>
-                <SocialLink href="https://instagram.com/" icon={<FaInstagram />} />
+                <SocialLink href="https://instagram.com/kaiumallimon" icon={<FaInstagram />} />
               </motion.div>
               <motion.div variants={scaleIn} custom={ANIMATION_DELAY.veryLong + 0.5}>
-                <SocialLink href="https://github.com/" icon={<FaGithub />} />
+                <SocialLink href="https://github.com/kaiumallimon" icon={<FaGithub />} />
               </motion.div>
               <motion.div variants={scaleIn} custom={ANIMATION_DELAY.veryLong + 0.55}>
-                <SocialLink href="https://linkedin.com/" icon={<FaLinkedinIn />} />
+                <SocialLink href="https://linkedin.com/in/kaiumallimon" icon={<FaLinkedinIn />} />
               </motion.div>
             </motion.div>
           </motion.div>

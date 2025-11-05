@@ -41,9 +41,9 @@ export default function GithubContributionsGraphComponent() {
         custom={ANIMATION_DELAY.medium}
         className={`max-w-2xl text-center text-sm text-gray-600 mb-10 ${jb_mono.className}`}
       >
-        {"{"}Contributions over the past year
+        {"{"} Contributions over the past year 
         
-        {"}"}
+        {" }"}
       </motion.p>
 
 

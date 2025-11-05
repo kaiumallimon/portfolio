@@ -119,7 +119,8 @@ export default function HeaderComponent() {
               >
                 <Button
                   variant="outline"
-                  className="rounded-none px-4 hover:bg-black hover:text-white transition-colors duration-300"
+                  className="bg-transparent rounded-none px-4 hover:bg-black hover:text-white transition-colors 
+                  duration-300"
                 >
                   Contact Me <ArrowRight />
                 </Button>
