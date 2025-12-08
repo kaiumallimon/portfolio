@@ -9,18 +9,18 @@ export default function Home() {
   // Removed GSAP reveal animations per request
 
   return (
-    <section ref={rootRef} className="relative w-full">
+    <section ref={rootRef} className="relative w-full flex min-h-full items-center">
       {/* Hero container */}
-      <div className="mx-auto max-w-6xl px-6 pt-12 pb-16">
+      <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
         {/* Avatar + Name */}
         <div className="flex flex-col items-center">
-          <div className="relative">
+          <div className="relative group">
             <Image
               src="/bordered.png"
               alt="Kaium Al Limon"
               width={110}
               height={110}
-              className="rounded-full border-2 border-white/25 shadow-lg"
+              className="rounded-full border-2 border-white/25 shadow-lg transition-transform duration-300 ease-out group-hover:scale-105"
             />
           </div>
 
