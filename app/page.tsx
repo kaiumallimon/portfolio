@@ -2,9 +2,12 @@
 import Image from "next/image";
 import SlideTextButton from "@/components/kokonutui/slide-text-button";
 import { useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   // Removed GSAP reveal animations per request
 
@@ -24,7 +27,7 @@ export default function Home() {
             />
           </div>
 
-          <h1 className="text-center mt-4 text-xl md:text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-center mt-4 text-lg md:text-xl font-medium tracking-tight text-white">
             Kaium Al Limon
           </h1>
           <p className="text-center mt-1 text-sm md:text-base text-muted-foreground">
@@ -33,8 +36,8 @@ export default function Home() {
         </div>
 
         {/* Headline */}
-        <div className="mt-10 md:mt-12">
-          <h2 className="mx-auto max-w-5xl text-center text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight text-white">
+        <div className="mt-8 md:mt-10">
+          <h2 className="mx-auto max-w-4xl text-center text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight text-white">
             Crafting seamless, user‑focused experiences across mobile and web
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-center text-sm md:text-base text-muted-foreground">
@@ -43,13 +46,9 @@ export default function Home() {
         </div>
 
         {/* CTA button */}
-        <div className="mt-8 flex items-center justify-center">
-          <SlideTextButton
-            text="Get in touch"
-            hoverText="Contact now"
-            href="/contact"
-            className="md:min-w-56 rounded-md"
-          />
+        <div className="mt-8 flex space-x-4 items-center justify-center">
+          <Button onClick={() => router.push("/contact")}>Get in touch</Button>
+          <Button variant="outline" onClick={() => router.push("/projects")}>View Projects</Button>
         </div>
       </div>
 

@@ -1,28 +1,17 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Inter, JetBrains_Mono, Ubuntu, Ubuntu_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Sora } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/components/custom/nav";
-import BeamsBackground from "@/components/kokonutui/beams-background";
 import Footer from "@/components/custom/footer";
 import RouteSplash from "@/components/custom/route-splash";
 import RouteGate from "@/components/custom/route-gate";
 import SmoothScroll from "@/components/custom/smooth-scroll";
 import Silk from "@/components/Silk";
 
-const ubuntuSans = Ubuntu({
-  variable: "--font-ubuntu",
-  weight: ["400", "500", "700"],
-  subsets: ["latin"],
-});
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = Geist_Mono({
-  variable: "--font-ubuntu-mono",
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
 });
 
@@ -58,7 +47,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark h-full overflow-hidden">
-      <body className={`${jetbrainsMono.className} p-4 border h-full overflow-hidden`}>
+      <body className={`${sora.className} p-4 border h-full overflow-hidden`}>
 
         {/* main container */}
         <div className="relative w-full h-full overflow-hidden border rounded-md flex flex-col">
