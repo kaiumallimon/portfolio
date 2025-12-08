@@ -35,7 +35,7 @@ export default function RouteSplash({ durationMs = 700 }: RouteSplashProps) {
           {/* Solid cover that grows from top-left (open effect) */}
           <motion.div
             initial={{ clipPath: "circle(0% at 0 0)" }}
-            animate={{ clipPath: "circle(130% at 0 0)" }}
+              animate={{ clipPath: "circle(150vmax at 0 0)" }}
             exit={{ clipPath: "circle(130% at 0 0)" }}
             transition={{ duration: durationMs / 1000, ease: "easeInOut" }}
             className="absolute inset-0 bg-foreground"
@@ -43,6 +43,7 @@ export default function RouteSplash({ durationMs = 700 }: RouteSplashProps) {
 
           {/* Thin accent outline for added visibility */}
           {/* No borders or outlines during splash */}
+            {/* No borders or outlines during splash; ensure full reach to bottom-right */}
         </motion.div>
       )}
     </AnimatePresence>
