@@ -1,0 +1,104 @@
+"use client";
+
+import { MenuIcon, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+
+export default function Navbar() {
+    const pathname = usePathname();
+    const [open, setOpen] = useState(false);
+
+    const navs = [
+        { name: "about_me", href: "/about-me" },
+        { name: "projects", href: "/projects" },
+        { name: "articles", href: "/articles" },
+        { name: "contact", href: "/contact" },
+    ];
+
+    const mobileNavs = [
+        { name: "home", href: "/" },
+        ...navs,
+    ];
+
+    function isActive(path: string) {
+        return pathname === path;
+    }
+
+    useEffect(() => {
+        document.body.style.overflow = open ? "hidden" : "auto";
+    }, [open]);
+
+    return (
+        <>
+            {/* Top Navbar */}
+            <nav className="z-20 flex border-b justify-between md:justify-start backdrop-blur-lg bg-white/8">
+                <Link
+                    href="/"
+                    className="text-accent-foreground md:border-r px-4 md:px-18 py-3 hover:bg-white hover:text-black transition-colors duration-300 "
+                >
+                    Kaium Al Limon
+                </Link>
+
+                {/* Desktop Nav */}
+                <div className="hidden md:flex flex-row">
+                    {navs.map((nav) => (
+                        <Link
+                            key={nav.name}
+                            href={nav.href}
+                            className={`text-muted-foreground border-r px-6 py-3 hover:bg-white/15 transition-colors duration-300 ${isActive(nav.href) ? "border-b-2 border-b-white" : ""
+                                }`}
+                        >
+                            {nav.name}
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Mobile Hamburger */}
+                <button
+                    onClick={() => setOpen(true)}
+                    className="flex border-l md:hidden items-center hover:bg-white/15"
+                >
+                    <MenuIcon className="w-5 h-5 m-3 text-muted-foreground" />
+                </button>
+            </nav>
+
+            {/* Mobile Drawer Backdrop */}
+            {open && (
+                <div
+                    onClick={() => setOpen(false)}
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-80 md:hidden"
+                />
+            )}
+
+            {/* Mobile Drawer */}
+            <div
+                className={`fixed top-0 left-0 h-full w-64 bg-white/10 backdrop-blur-xl border-r z-90 transform md:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"
+                    }`}
+            >
+                {/* Header */}
+                <div className="flex justify-between items-center px-4 py-4 border-b">
+                    <span className="text-lg font-semibold">Menu</span>
+                    <button onClick={() => setOpen(false)}>
+                        <X className="w-5 h-5 text-muted-foreground" />
+                    </button>
+                </div>
+
+                {/* Nav Items */}
+                <div className="flex flex-col">
+                    {mobileNavs.map((nav) => (
+                        <Link
+                            key={nav.name}
+                            href={nav.href}
+                            onClick={() => setOpen(false)}
+                            className={`px-6 py-4 border-b text-muted-foreground hover:bg-white/15 ${isActive(nav.href) ? "border-b-2 border-b-white bg-white/15" : ""
+                                }`}
+                        >
+                            {nav.name}
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </>
+    );
+}

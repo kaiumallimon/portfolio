@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Ubuntu, Ubuntu_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+import Navbar from "@/components/custom/nav";
+import BeamsBackground from "@/components/kokonutui/beams-background";
+import Footer from "@/components/custom/footer";
+
+const ubuntuSans = Ubuntu({
+  variable: "--font-ubuntu",
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const ubuntuMono = Ubuntu_Mono({
+  variable: "--font-ubuntu-mono",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -19,16 +25,51 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+
+  const navs = [
+    {
+      name: "about_me",
+      href: "/about-me",
+    },
+    {
+      name: "projects",
+      href: "/projects",
+    },
+    {
+      name: "articles",
+      href: "/articles",
+    },
+    {
+      name: "contact",
+      href: "/contact",
+    },
+  ]
+
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html lang="en" className="dark h-full overflow-hidden">
+      <body className={`${ubuntuMono.className} p-4 border border-muted h-full overflow-hidden`}>
+
+        {/* main container */}
+        <div className="relative w-full h-full overflow-hidden border rounded-md flex flex-col">
+
+          {/* background layer */}
+          <BeamsBackground className="pointer-events-none absolute inset-0 -z-10" />
+
+          {/* Navbar */}
+          <Navbar />
+
+          <main className="flex-1 overflow-auto scrollbar-custom">
+            {children}
+          </main>
+
+          <Footer/>
+
+        </div>
       </body>
     </html>
   );
+
 }
