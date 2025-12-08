@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/custom/nav";
 import BeamsBackground from "@/components/kokonutui/beams-background";
 import Footer from "@/components/custom/footer";
+import RouteSplash from "@/components/custom/route-splash";
 
 const ubuntuSans = Ubuntu({
   variable: "--font-ubuntu",
@@ -61,7 +62,9 @@ export default function RootLayout({
           {/* Navbar */}
           <Navbar />
 
-          <main className="flex-1 overflow-auto scrollbar-custom">
+          <main className="relative flex-1 overflow-auto scrollbar-custom">
+            {/* Route transition splash (scoped to main content) */}
+            <RouteSplash />
             {children}
           </main>
 
