@@ -4,6 +4,7 @@ import { MenuIcon, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { FaFacebook, FaLinkedin, FaInstagram, FaGithub } from "react-icons/fa";
 
 export default function Navbar() {
     const pathname = usePathname();
@@ -15,6 +16,30 @@ export default function Navbar() {
         { name: "articles", href: "/articles" },
         { name: "contact", href: "/contact" },
     ];
+
+    const socialLinks = [
+        {
+            name: "Facebook",
+            href: "https://facebook.com/kaiumallimon",
+            icon: <FaFacebook className="inline-block mr-2" />
+        },
+        {
+            name: "LinkedIn",
+            href: "https://linkedin.com/in/kaiumallimon",
+            icon: <FaLinkedin className="inline-block mr-2" />
+        },
+        {
+            name: "Instagram",
+            href: "https://instagram.com/kaiumallimon",
+            icon: <FaInstagram className="inline-block mr-2" />
+        },
+        {
+            name: "GitHub",
+            href: "https://github.com/kaiumallimon",
+            icon: <FaGithub className="inline-block mr-2" />
+        }
+    ];
+
 
     const mobileNavs = [
         { name: "home", href: "/" },
@@ -32,7 +57,7 @@ export default function Navbar() {
     return (
         <>
             {/* Top Navbar */}
-            <nav className="z-20 flex border-b justify-between md:justify-start backdrop-blur-lg bg-white/8">
+            <nav className="z-20 flex border-b justify-between md:justify-start backdrop-blur-sm bg-white/8">
                 <Link
                     href="/"
                     className="text-accent-foreground md:border-r px-4 md:px-18 py-3 hover:bg-white hover:text-black transition-colors duration-300 "
@@ -59,7 +84,7 @@ export default function Navbar() {
                     onClick={() => setOpen(true)}
                     className="flex border-l md:hidden items-center hover:bg-white/15"
                 >
-                    <MenuIcon className="w-5 h-5 m-3 text-muted-foreground" />
+                    <MenuIcon className="w-6 h-6 m-3 text-muted-foreground" />
                 </button>
             </nav>
 
@@ -73,7 +98,7 @@ export default function Navbar() {
 
             {/* Mobile Drawer */}
             <div
-                className={`fixed top-0 left-0 h-full w-64 bg-white/10 backdrop-blur-xl border-r z-90 transform md:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"
+                className={`fixed top-0 left-0 h-full w-64 bg-white/10 backdrop-blur-sm border-r z-90 transform md:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"
                     }`}
             >
                 {/* Header */}
@@ -85,19 +110,38 @@ export default function Navbar() {
                 </div>
 
                 {/* Nav Items */}
-                <div className="flex flex-col">
-                    {mobileNavs.map((nav) => (
-                        <Link
-                            key={nav.name}
-                            href={nav.href}
-                            onClick={() => setOpen(false)}
-                            className={`px-6 py-4 border-b text-muted-foreground hover:bg-white/15 ${isActive(nav.href) ? "border-b-2 border-b-white bg-white/15" : ""
-                                }`}
-                        >
-                            {nav.name}
-                        </Link>
-                    ))}
+                <div className="flex flex-col justify-between h-full">
+                    {/* Navigation items */}
+                    <div className="flex flex-col">
+                        {mobileNavs.map((nav) => (
+                            <Link
+                                key={nav.name}
+                                href={nav.href}
+                                onClick={() => setOpen(false)}
+                                className={`px-6 py-4 border-b text-muted-foreground hover:bg-white/15 ${isActive(nav.href) ? "border-b-2 border-b-white bg-white/15" : ""
+                                    }`}
+                            >
+                                {nav.name}
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Social icons at bottom */}
+                    <div className="flex justify-center gap-4 px-6 py-4 border-t">
+                        {socialLinks.map((social) => (
+                            <a
+                                key={social.name}
+                                href={social.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-muted-foreground hover:text-white"
+                            >
+                                {social.icon}
+                            </a>
+                        ))}
+                    </div>
                 </div>
+
             </div>
         </>
     );
