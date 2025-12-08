@@ -71,7 +71,7 @@ export default function Navbar() {
                         <Link
                             key={nav.name}
                             href={nav.href}
-                            className={`text-muted-foreground border-r px-6 py-3 hover:bg-white/15 transition-colors duration-300 ${isActive(nav.href) ? "border-b-2 border-b-white" : ""
+                            className={`text-muted-foreground border-r px-6 py-3 hover:bg-white hover:text-black transition-colors duration-300 ${isActive(nav.href) ? "border-b-2 border-b-white bg-white/10" : ""
                                 }`}
                         >
                             {nav.name}

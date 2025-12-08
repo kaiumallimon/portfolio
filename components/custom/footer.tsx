@@ -44,7 +44,7 @@ export default function Footer() {
             href={nav.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-muted-foreground hover:text-white transition-colors duration-300"
+            className="text-sm flex items-center gap-2 text-muted-foreground hover:text-white transition-colors duration-300"
           >
             {nav.icon}
             <span>{nav.name}</span>
@@ -54,7 +54,7 @@ export default function Footer() {
 
       {/* Real-time date & time */}
       <div className="flex items-center gap-2">
-        <p className="text-muted-foreground">{currentTime}</p>
+        <p className="text-sm text-muted-foreground">{currentTime}</p>
       </div>
 
     </footer>

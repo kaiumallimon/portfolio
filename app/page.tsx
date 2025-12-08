@@ -48,7 +48,7 @@ export default function Home() {
             text="Get in touch"
             hoverText="Contact now"
             href="/contact"
-            className="md:min-w-56"
+            className="md:min-w-56 rounded-md"
           />
         </div>
       </div>
