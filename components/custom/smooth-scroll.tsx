@@ -10,8 +10,8 @@ type SmoothScrollProps = {
 };
 
 /**
- * Intercepts wheel events and animates container scrollTop
- * to create a delayed/inertial scroll feeling.
+ * Smooth vertical scrolling wrapper
+ * Horizontal scroll inside children works normally
  */
 export default function SmoothScroll({ children, easeDuration = 0.6 }: SmoothScrollProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -27,23 +27,16 @@ export default function SmoothScroll({ children, easeDuration = 0.6 }: SmoothScr
     const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(max, val));
 
     const onWheel = (e: WheelEvent) => {
-      // Only act when the event originates within the container
-      // and the container is scrollable.
       const maxScroll = el.scrollHeight - el.clientHeight;
-      if (maxScroll <= 0) return; // nothing to scroll
+      if (maxScroll <= 0) return;
 
-      // Prevent default jumpy scrolling
-      e.preventDefault();
-
-      // Calculate new target position and clamp
-      targetRef.current = clamp(targetRef.current + e.deltaY, 0, maxScroll);
-
-      // Animate towards target scrollTop
-      gsap.to(el, {
-        scrollTop: targetRef.current,
-        duration: easeDuration,
-        ease: "power2.out",
-      });
+      // Only intercept vertical scroll (deltaY larger than deltaX)
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        targetRef.current = clamp(targetRef.current + e.deltaY, 0, maxScroll);
+        gsap.to(el, { scrollTop: targetRef.current, duration: easeDuration, ease: "power2.out" });
+      }
+      // else horizontal scroll is untouched
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -87,12 +80,19 @@ export default function SmoothScroll({ children, easeDuration = 0.6 }: SmoothScr
     const onTouchMove = (e: TouchEvent) => {
       const maxScroll = el.scrollHeight - el.clientHeight;
       if (maxScroll <= 0 || startYRef.current === null) return;
+
       const currentY = e.touches[0].clientY;
-      const deltaY = startYRef.current - currentY; // swipe up -> positive delta
+      const deltaY = startYRef.current - currentY;
+
+      // Only intercept vertical swipe (larger than horizontal movement)
+      const deltaX = e.touches[0].clientX - (e.touches[0].clientX ?? 0);
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        e.preventDefault();
+        targetRef.current = clamp(targetRef.current + deltaY, 0, maxScroll);
+        gsap.to(el, { scrollTop: targetRef.current, duration: easeDuration, ease: "power2.out" });
+      }
+
       startYRef.current = currentY;
-      e.preventDefault();
-      targetRef.current = clamp(targetRef.current + deltaY, 0, maxScroll);
-      gsap.to(el, { scrollTop: targetRef.current, duration: easeDuration, ease: "power2.out" });
     };
 
     // Use passive: false to allow preventDefault
