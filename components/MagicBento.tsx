@@ -375,13 +375,35 @@ const MagicBento: React.FC<BentoProps> = ({
     if (length <= 1) return;
     window.clearInterval(hoverTimers.current[idx] ?? undefined);
     hoverTimers.current[idx] = window.setInterval(() => {
-      setActiveImageIndexes(prev => {
-        const next = [...prev];
-        const len = length;
-        next[idx] = len ? ((prev[idx] ?? 0) + 1) % len : 0;
-        return next;
-      });
-    }, 1400);
+      const imgEl = document.querySelector(`[data-card-idx="${idx}"] .mb-visual-img`);
+      if (imgEl) {
+        gsap.to(imgEl, {
+          x: -100,
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.in',
+          onComplete: () => {
+            setActiveImageIndexes(prev => {
+              const next = [...prev];
+              const len = length;
+              next[idx] = len ? ((prev[idx] ?? 0) + 1) % len : 0;
+              return next;
+            });
+            gsap.fromTo(imgEl, 
+              { x: 100, opacity: 0 },
+              { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }
+            );
+          }
+        });
+      } else {
+        setActiveImageIndexes(prev => {
+          const next = [...prev];
+          const len = length;
+          next[idx] = len ? ((prev[idx] ?? 0) + 1) % len : 0;
+          return next;
+        });
+      }
+    }, 2500);
   }, []);
 
   const stopImageCycle = useCallback((idx: number) => {
@@ -436,9 +458,11 @@ const MagicBento: React.FC<BentoProps> = ({
 
         .mb-card-row { display:flex; flex-direction:column; gap:14px; height:100%; }
         @media(min-width:768px){ .mb-card-row { flex-direction:row; align-items:stretch; } .mb-card-row--reverse { flex-direction: row-reverse; } }
+        .mb-card-row--reverse .mb-content { align-items: flex-start; }
+        .mb-card-row:not(.mb-card-row--reverse) .mb-content { align-items: flex-end; }
 
-        .mb-visual { position:relative; flex:0 0 48%; min-height:260px; border-radius:12px; overflow:hidden; z-index:2; background:#0e0e10; }
-        @media(max-width:767px){ .mb-visual { flex:1; min-height:200px; } }
+        .mb-visual { position:relative; flex:0 0 48%; min-height:350px; border-radius:12px; overflow:hidden; z-index:2; background:#0e0e10; }
+        @media(max-width:767px){ .mb-visual { flex:1; min-height:220px; } }
         .mb-visual-img { object-fit: cover; filter: saturate(1.1) brightness(1.02); }
         .mb-visual-placeholder { width:100%; height:100%; background: radial-gradient(circle at 24% 24%, rgba(176,208,255,0.18), transparent 46%),
           radial-gradient(circle at 82% 32%, rgba(120,180,220,0.2), transparent 44%),
@@ -506,13 +530,13 @@ const MagicBento: React.FC<BentoProps> = ({
                 clickEffect={clickEffect}
                 enableMagnetism={enableMagnetism}
               >
-                <div className={`mb-card-row ${index % 2 === 1 ? 'mb-card-row--reverse' : ''}`}>
-                  <div
-                    className="mb-visual"
-                    aria-hidden
-                    onMouseEnter={() => startImageCycle(index, images.length)}
-                    onMouseLeave={() => stopImageCycle(index)}
-                  >
+                <div
+                  className={`mb-card-row ${index % 2 === 1 ? 'mb-card-row--reverse' : ''}`}
+                  data-card-idx={index}
+                  onMouseEnter={() => startImageCycle(index, images.length)}
+                  onMouseLeave={() => stopImageCycle(index)}
+                >
+                  <div className="mb-visual" aria-hidden>
                     {currentImage ? (
                       <Image
                         src={currentImage}

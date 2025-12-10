@@ -11,7 +11,7 @@ const achievements = [
     },
     {
         title: "UIU CSE Project Show | Summer '24",
-        award: "Champion – System Analysis and Design Lab Course Project",
+        award: "Champion – System Analysis and Design ",
         date: "8 September 2024",
         project: "MediTouch",
         team: "Team Bcrypt",
@@ -19,10 +19,7 @@ const achievements = [
     },
     {
         title: "UIU CSE Project Show | Spring '24",
-        award: [
-            "1st Runner-Up – Database Management System (DBMS) Lab Course Project",
-            "1st Runner-Up – DBMS Poster Presentation",
-        ],
+        award: "1st Runner-Up – Database Management System (DBMS)",
         date: "3 June 2024",
         project: "Pharmabrew",
         team: "Team Bcrypt",
@@ -30,7 +27,7 @@ const achievements = [
     },
     {
         title: "UIU CSE Project Show | Spring '23",
-        award: "2nd Runner-Up – Advanced Object-Oriented Programming (AOOP) Lab Course Project",
+        award: "2nd Runner-Up – Advanced Object-Oriented Programming (AOOP) ",
         date: "3 May 2023",
         project: "Wayout",
         team: "Team Tripod",
