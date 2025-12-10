@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Sora } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Sora } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/components/custom/nav";
@@ -14,6 +14,12 @@ const sora = Sora({
   variable: "--font-sora",
   subsets: ["latin"],
 });
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -47,7 +53,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark h-full overflow-hidden">
-      <body className={`${sora.className} p-4 border h-full overflow-hidden`}>
+      <body className={`${inter.className} p-4 border h-full overflow-hidden`}>
 
         {/* main container */}
         <div className="relative w-full h-full overflow-hidden border rounded-md flex flex-col">

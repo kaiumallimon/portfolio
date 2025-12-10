@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Image from "next/image";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { MdEmail, MdOutlineEmail, MdOutlineMarkEmailRead } from "react-icons/md";
 
 export default function AboutMePage() {
   const sections = [
@@ -10,90 +13,39 @@ export default function AboutMePage() {
     { value: "soft_skills", label: "Soft Skills" },
   ];
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const sectionParam = searchParams.get("section");
-
-  const [activeSection, setActiveSection] = useState<string>(sectionParam || "personal_note");
-
-  useEffect(() => {
-    if (sectionParam && sectionParam !== activeSection) {
-      setActiveSection(sectionParam);
-    }
-  }, [sectionParam]);
-
-  const handleSectionChange = (value: string) => {
-    setActiveSection(value);
-    router.replace(`?section=${value}`);
-  };
-
-  const renderSection = () => {
-    switch (activeSection) {
-      case "personal_note":
-        return (
-          <>
-            <h1 className="text-2xl font-bold text-white">Personal Note</h1>
-            <p className="text-muted-foreground mt-2">This is your personal note section.</p>
-          </>
-        );
-
-      case "soft_skills":
-        return (
-          <>
-            <h1 className="text-2xl font-bold text-white">Soft Skills</h1>
-            <p className="text-muted-foreground mt-2">Showcase your strengths, teamwork, communication, and more.</p>
-          </>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
+    <div className="h-full w-full bg-white/8 backdrop-blur-sm">
+      <div className="flex flex-col-reverse md:flex-row max-w-7xl mx-auto pt-20">
+        {/* Left sided content */}
+        <div className="md:flex-1">
+          <div>
+            <p className="text-lg">/*</p>
+            <p className="text-lg font-bold">Hello there!</p><br/>
+            <p className="text-muted-foreground">I'm Kaium Al Limon, a Computer Science & Engineering student at United International University (UIU) and a Full-Stack Cross-Platform Mobile & Web Developer. I mainly use Flutter & Next.js to build innovative, high-quality mobile and web applications. I specialize in creating seamless user experiences backed by scalable, efficient architectures. I'm passionate about technology and continuously learning to improve my skills to craft future ready solutions.</p><br/>
+            <p className="text-muted-foreground">My interest in technology started when I was a kid, and it had guided me towards a career in software development. I love the challenge of solving complex problems and the satisfaction of creating innovative solutions that make a difference in people's lives. I'm improving my skills continuously to stay at the forefront of the industry and deliver cutting-edge solutions.</p><br/>
+            <p className="text-muted-foreground">I'm always looking for opportunities to grow, whether it's through projects or working with others who share my passion for technology. I believe in teamwork, problem-solving and creating apps that make life easier.</p>
+            <p className="text-lg">*/</p>
+          </div>
+        </div>
+        {/* Right sided content */}
+        <div className="md:flex-1 mx-auto p-6 flex flex-col space-y-4 justify-center items-center">
+          <Image
+            src="/IMG_7311~2.png"
+            alt="Profile Picture"
+            width={300}
+            height={300}
+            style={{ objectFit: "cover" }}
+            className="border-2 border-muted-foreground hover:border-white rounded-xl transition-all duration-300"
+          />
 
-    <div className="h-full relative flex-1 flex overflow-hidden p-0">
-      {/* Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 flex-none border-r backdrop-blur-sm h-full">
-        <p className="px-4 py-3 text-sm font-semibold border-b  text-white shrink-0">
-          About me
-        </p>
-        <ul className="flex-1 flex flex-col">
-          {sections.map((item) => (
-            <li
-              key={item.value}
-              onClick={() => handleSectionChange(item.value)}
-              className={`cursor-pointer px-4 py-3 border-b transition-colors duration-300 flex items-center space-x-2 hover:bg-white/30 hover:text-white ${activeSection === item.value ? "bg-white text-black" : "text-muted-foreground"
-                }`}
-            >
-              <span>{item.label}</span>
-            </li>
-          ))}
-        </ul>
-      </aside>
-
-      {/* Main content */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {/* Mobile Select */}
-        <div className="md:hidden p-4 border-b mb-4">
-          <Select onValueChange={handleSectionChange} value={activeSection}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select section" />
-            </SelectTrigger>
-            <SelectContent>
-              {sections.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-row w-[300px] items-center space-x-3 border-2 px-5 py-2 rounded-md hover:bg-white transition-all duration-300 cursor-pointer text-muted-foreground hover:text-black ">
+            <MdOutlineEmail className="w-6 h-6" />
+            <span className="ml-2 text-sm">kalimon291@gmail.com</span>
+          </div>
         </div>
 
-        {renderSection()}
       </div>
     </div>
-
 
   );
 }
