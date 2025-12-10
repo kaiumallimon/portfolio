@@ -59,16 +59,16 @@ export default function Navbar() {
     return (
         <>
             {/* Top Navbar */}
-            <nav className="z-20 flex border-b justify-between md:justify-start backdrop-blur-sm bg-white/8">
+            <nav className="z-20 flex border-b justify-between lg:justify-start backdrop-blur-sm bg-white/8">
                 <Link
                     href="/"
-                    className="font-bold items-center text-accent-foreground md:border-r px-4 md:px-17 py-3 hover:bg-white hover:text-black transition-colors duration-300 "
+                    className="font-bold items-center text-accent-foreground lg:border-r px-4 lg:px-17 py-3 hover:bg-white hover:text-black transition-colors duration-300 "
                 >
                     Kaium Al Limon
                 </Link>
 
                 {/* Desktop Nav */}
-                <div className="hidden md:flex flex-row">
+                <div className="hidden lg:flex flex-row">
                     {navs.map((nav) => (
                         <Link
                             key={nav.name}
@@ -84,7 +84,7 @@ export default function Navbar() {
                 {/* Mobile Hamburger */}
                 <button
                     onClick={() => setOpen(true)}
-                    className="flex border-l md:hidden items-center hover:bg-white/15"
+                    className="flex border-l lg:hidden items-center hover:bg-white/15"
                 >
                     <MenuIcon className="w-6 h-6 m-3 text-muted-foreground" />
                 </button>
@@ -94,13 +94,13 @@ export default function Navbar() {
             {open && (
                 <div
                     onClick={() => setOpen(false)}
-                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-80 md:hidden"
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-80 lg:hidden"
                 />
             )}
 
             {/* Mobile Drawer */}
             <div
-                className={`fixed top-0 left-0 h-full w-64 bg-white/10 backdrop-blur-sm border-r z-90 transform md:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"
+                className={`fixed top-0 left-0 h-full w-64 bg-white/10 backdrop-blur-sm border-r z-90 transform lg:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"
                     }`}
             >
                 {/* Header */}
