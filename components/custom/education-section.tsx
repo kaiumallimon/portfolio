@@ -7,7 +7,7 @@ const educationTimeline = [
     degree: "B.Sc. in Computer Science & Engineering",
     school: "United International University (UIU)",
     duration: "2022 - Present",
-    description: "Focused on software engineering, full-stack development, and cross-platform mobile apps. Participated in academic projects and hackathons.",
+    description: "Focused on software engineering, full-stack development, and cross-platform mobile apps",
   },
   {
     degree: "Higher Secondary Certificate (HSC)",
