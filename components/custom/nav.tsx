@@ -13,8 +13,10 @@ export default function Navbar() {
     const navs = [
         { name: "#about_me", href: "/about-me" },
         { name: "#projects", href: "/projects" },
+        { name: "#achievements", href: "/achievements" },
         { name: "#articles", href: "/articles" },
         { name: "#contact", href: "/contact" },
+        
     ];
 
     const socialLinks = [

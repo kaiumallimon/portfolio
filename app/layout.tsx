@@ -32,24 +32,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
 
-  const navs = [
-    {
-      name: "about_me",
-      href: "/about-me",
-    },
-    {
-      name: "projects",
-      href: "/projects",
-    },
-    {
-      name: "articles",
-      href: "/articles",
-    },
-    {
-      name: "contact",
-      href: "/contact",
-    },
-  ]
 
   return (
     <html lang="en" className="dark h-full overflow-hidden">
