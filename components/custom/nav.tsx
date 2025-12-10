@@ -60,7 +60,7 @@ export default function Navbar() {
             <nav className="z-20 flex border-b justify-between md:justify-start backdrop-blur-sm bg-white/8">
                 <Link
                     href="/"
-                    className="font-bold items-center text-accent-foreground md:border-r px-4 md:px-[90px] py-3 hover:bg-white hover:text-black transition-colors duration-300 "
+                    className="font-bold items-center text-accent-foreground md:border-r px-4 md:px-17 py-3 hover:bg-white hover:text-black transition-colors duration-300 "
                 >
                     Kaium Al Limon
                 </Link>

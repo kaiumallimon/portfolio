@@ -67,7 +67,7 @@ export default function RootLayout({
           {/* Navbar */}
           <Navbar />
 
-          <main className="relative flex-1 overflow-hidden scrollbar-custom">
+          <main className="relative flex-1 flex flex-col overflow-hidden scrollbar-custom">
             {/* Route transition splash (scoped to main content) */}
             <RouteSplash />
             <SmoothScroll easeDuration={0.6}>
