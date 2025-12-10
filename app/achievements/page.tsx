@@ -1,4 +1,7 @@
+"use client";
+
 import MagicBento from '@/components/MagicBento';
+import { motion } from "framer-motion";
 
 const achievements = [
     {
@@ -36,15 +39,55 @@ const achievements = [
 ];
 
 export default function AchievementsPage() {
+    const container = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.15,
+            },
+        },
+    };
+
+    const fadeUp = {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, ease: "easeOut" as const },
+        },
+    };
+
+    const fadeUpShort = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, ease: "easeOut" as const },
+        },
+    };
+
     return (
         <div className="min-h-screen w-full bg-white/8 backdrop-blur-sm text-white">
-            <div className="max-w-7xl mx-auto pt-24 pb-16 px-6">
-                <h1 className="text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-tight">Achievements & Awards</h1>
-                <p className="text-center text-white/70 mb-10 max-w-2xl mx-auto">
+            <motion.div
+                className="max-w-7xl mx-auto pt-24 pb-16 px-6"
+                initial="hidden"
+                animate="visible"
+                variants={container}
+            >
+                <motion.h1
+                    className="text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-tight"
+                    variants={fadeUp}
+                >
+                    Achievements & Awards
+                </motion.h1>
+                <motion.p
+                    className="text-center text-white/70 mb-10 max-w-2xl mx-auto"
+                    variants={fadeUpShort}
+                >
                     Celebrating the moments when hard work and creativity turned into recognition across university project showcases.
-                </p>
+                </motion.p>
 
-                <div className="w-full">
+                <motion.div className="w-full" variants={fadeUpShort}>
                     <MagicBento
                         achievements={achievements}
                         enableSpotlight={true}
@@ -56,8 +99,8 @@ export default function AchievementsPage() {
                         clickEffect={true}
                         glowColor={'176, 208, 255'}
                     />
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
         </div>
     );
 }
