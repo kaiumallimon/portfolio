@@ -61,9 +61,6 @@ export default function ProjectsPage() {
                 <div
                   key={project.id}
                   className="contents"
-                  onClick={() => {
-                    if (isValidId) router.push(`/projects/${project.id}`);
-                  }}
                 >
                   <BentoGridItem
                     title={
