@@ -38,31 +38,31 @@ export default function AboutMePage() {
   };
 
   return (
-    <div className="w-full bg-white/8 backdrop-blur-sm">
+    <div className="w-full overflow-x-hidden bg-white/8 backdrop-blur-sm">
       {/* Two-column layout */}
       <motion.div
-        className="flex flex-col-reverse md:flex-row max-w-7xl mx-auto pt-20 pb-10"
+        className="flex flex-col-reverse md:flex-row max-w-7xl mx-auto pt-10 md:pt-20 pb-10"
         initial="hidden"
         animate="visible"
         variants={container}
       >
         {/* Left sided content */}
         <motion.div className="md:flex-1 px-4" variants={fadeUp}>
-          <p className="text-2xl font-bold">Hello there!</p>
-          <p className="text-muted-foreground mt-4 ">
+          <p className="text-lg md:text-2xl font-bold">Hello there!</p>
+          <p className="text-sm md:text-base text-muted-foreground mt-4 ">
             I'm Kaium Al Limon, a Computer Science & Engineering student at United International University (UIU) and a Full-Stack Cross-Platform Mobile & Web Developer. I mainly use Flutter & Next.js to build innovative, high-quality mobile and web applications. I specialize in creating seamless user experiences backed by scalable, efficient architectures. I'm passionate about technology and continuously learning to improve my skills to craft future ready solutions.
           </p>
-          <p className="text-muted-foreground mt-4 ">
+          <p className="text-sm md:text-base text-muted-foreground mt-4 ">
             My interest in technology started when I was a kid, and it had guided me towards a career in software development. I love the challenge of solving complex problems and the satisfaction of creating innovative solutions that make a difference in people's lives. I'm improving my skills continuously to stay at the forefront of the industry and deliver cutting-edge solutions.
           </p>
-          <p className="text-muted-foreground mt-4 ">
+          <p className="text-sm md:text-base text-muted-foreground mt-4 ">
             I'm always looking for opportunities to grow, whether it's through projects or working with others who share my passion for technology. I believe in teamwork, problem-solving and creating apps that make life easier.
           </p>
 
           <div className="mt-8">
-            <p className="text-2xl font-bold">Soft Skills</p>
-            <p className="text-muted-foreground mt-2 ">Certain skills I've picked along the way that deserve mentioning:</p>
-            <ul className="list-disc list-inside mt-4 space-y-2 text-muted-foreground">
+            <p className="text-lg md:text-2xl font-bold">Soft Skills</p>
+            <p className="text-sm md:text-base text-muted-foreground mt-2 ">Certain skills I've picked along the way that deserve mentioning:</p>
+            <ul className="list-disc list-inside mt-4 space-y-2 text-muted-foreground text-sm md:text-base">
               <li className="">Strong problem-solving abilities, able to analyze complex issues and develop effective solutions.</li>
               <li className="">Excellent communication skills, both written and verbal, enabling effective collaboration with team members and stakeholders.</li>
               <li className="">Adaptability and flexibility, able to thrive in dynamic environments and quickly learn new technologies and methodologies.</li>
@@ -73,7 +73,7 @@ export default function AboutMePage() {
         </motion.div>
 
         {/* Right sided content */}
-        <motion.div className="md:flex-1 mx-auto p-6 flex flex-col space-y-4 justify-start items-center" variants={fadeUpShort}>
+        <motion.div className="md:flex-1 mx-auto mb-8 flex flex-col space-y-4 justify-start items-center" variants={fadeUpShort}>
           <Image
             src="/IMG_7311~2.png"
             alt="Profile Picture"
@@ -98,7 +98,7 @@ export default function AboutMePage() {
         animate="visible"
         variants={container}
       >
-        <motion.h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-white" variants={fadeUp}>
+        <motion.h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center text-white" variants={fadeUp}>
           My Github Contributions
         </motion.h2>
 

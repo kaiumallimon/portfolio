@@ -27,7 +27,7 @@ export default function EducationTimeline() {
   return (
     <div className="w-full py-10 ">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-bold mb-15 text-center text-white">
+        <h2 className="text-xl md:text-2xl font-bold mb-15 text-center text-white">
           Academic Path
         </h2>
 
@@ -44,13 +44,13 @@ export default function EducationTimeline() {
 
               {/* Text content */}
               <div className="ml-6 md:ml-8">
-                <h3 className="text-lg md:text-xl font-semibold text-white">
+                <h3 className="text-base md:text-lg font-semibold text-white">
                   {edu.degree}
                 </h3>
-                <p className="text-sm md:text-base text-white/70 font-medium">
+                <p className="mt-2 text-sm md:text-base text-white/70 font-medium">
                   {edu.school} • {edu.duration}
                 </p>
-                <p className="mt-2 text-muted-foreground">{edu.description}</p>
+                <p className="mt-2 text-muted-foreground text-sm md:text-base">{edu.description}</p>
               </div>
             </div>
           ))}

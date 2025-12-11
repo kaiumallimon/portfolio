@@ -78,7 +78,7 @@ export default function ToolsetGrid() {
 
   return (
     <div className="w-full py-10 ">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-white">
+      <h2 className="text-xl md:text-2xl font-bold mb-6 text-center text-white">
         My Development Toolset
       </h2>
 

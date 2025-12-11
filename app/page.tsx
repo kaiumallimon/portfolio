@@ -38,7 +38,7 @@ export default function Home() {
 
 
   return (
-    <section className="relative w-full flex min-h-full items-center">
+    <section className="relative w-full flex min-h-full overflow-x-hidden items-center">
       <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
         {/* Avatar + Name */}
         <motion.div
