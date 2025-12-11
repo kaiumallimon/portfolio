@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import { Suspense } from "react";
 
 import Navbar from "@/components/custom/nav";
 import Footer from "@/components/custom/footer";
@@ -79,7 +80,9 @@ export default function RootLayout({
         </Script>
 
         {/* SPA pageview listener */}
-        <GAListener />
+        <Suspense fallback={null}>
+          <GAListener />
+        </Suspense>
 
         <AnimatedCursor />
 
