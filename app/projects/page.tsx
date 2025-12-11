@@ -73,7 +73,7 @@ export default function ProjectsPage() {
               return (
                 <div
                   key={project.id}
-                  className="contents"
+                  className="contents cursor-pointer"
                 >
                   <BentoGridItem
                     title={
@@ -82,7 +82,7 @@ export default function ProjectsPage() {
                       </span>
                     }
                     description={
-                      <span className="text-white/80 text-sm">
+                      <span className="text-white/80 text-sm line-clamp-2">
                         {project.short_details}
                         {!isValidId && (
                           <span className="ml-2 text-[11px] text-white/60">(detail unavailable)</span>

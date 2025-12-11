@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans, Sora } from "next/font/google";
+import { Inter, JetBrains_Mono, Plus_Jakarta_Sans, Sora } from "next/font/google";
 import "./globals.css";
+import { headers } from "next/headers";
 
 import Navbar from "@/components/custom/nav";
 import Footer from "@/components/custom/footer";
@@ -10,8 +11,8 @@ import SmoothScroll from "@/components/custom/smooth-scroll";
 import Silk from "@/components/Silk";
 
 
-const sora = Sora({
-  variable: "--font-sora",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
@@ -64,7 +65,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark h-full overflow-hidden">
-      <body className={`${inter.className} p-4 border h-full overflow-hidden`}>
+      <body className={`${jetbrainsMono.className} p-4 border h-full overflow-hidden`}>
 
         {/* main container */}
         <div className="relative w-full h-full overflow-hidden border rounded-md flex flex-col">

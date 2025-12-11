@@ -75,7 +75,7 @@ export default function Home() {
           variants={container}
         >
           <motion.h2
-            className="mx-auto max-w-4xl text-3xl md:text-5xl lg:text-7xl font-semibold leading-tight tracking-tight text-white"
+            className="mx-auto max-w-4xl text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight text-white"
             variants={fadeUp}
           >
             Crafting seamless, user‑focused experiences across mobile and web
