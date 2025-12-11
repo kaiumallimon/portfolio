@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-
+import Script from "next/script";
 
 import Navbar from "@/components/custom/nav";
 import Footer from "@/components/custom/footer";
@@ -10,6 +10,7 @@ import RouteGate from "@/components/custom/route-gate";
 import SmoothScroll from "@/components/custom/smooth-scroll";
 import Silk from "@/components/Silk";
 import AnimatedCursor from "@/components/custom/animated-cursor";
+import GAListener from "@/lib/ga-listener";
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -63,6 +64,23 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark h-full overflow-hidden">
       <body className={`${jetbrainsMono.className} p-4 border h-full overflow-hidden`}>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-T8EL28VE67');
+          `}
+        </Script>
+
+        {/* SPA pageview listener */}
+        <GAListener />
+
         <AnimatedCursor />
 
         {/* main container */}
