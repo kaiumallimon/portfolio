@@ -62,7 +62,7 @@ export default function AnimatedCursor() {
     <>
       {/* Inner cursor with trailing */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999]"
+        className="fixed top-0 left-0 pointer-events-none z-9999"
         style={{
           x: cursorX,
           y: cursorY,
@@ -76,13 +76,13 @@ export default function AnimatedCursor() {
           rotate: { type: "spring", stiffness: 300, damping: 15 }
         }}
       >
-        <div className="w-2 h-2 rounded-full bg-blue-500 backdrop-blur-[2px] mix-blend-difference" />
+        <div className={`w-2 h-2 rounded-full backdrop-blur-[2px] mix-blend-difference ${isHovering? 'bg-orange-500': 'bg-white/75'}`} />
       </motion.div>
 
 
       {/* Outer cursor with more trailing */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9998]"
+        className="fixed top-0 left-0 pointer-events-none z-9998"
         style={{
           x: outerX,
           y: outerY,
@@ -97,7 +97,7 @@ export default function AnimatedCursor() {
         }}
       >
         <div
-          className="w-8 h-8 rounded-full border-2 border-white shadow-xl backdrop-blur-sm mix-blend-difference"
+          className={`w-8 h-8 rounded-full border-2 ${isHovering ? 'border-orange-500' : 'border-white'} shadow-xl backdrop-blur-sm mix-blend-difference`}
         />
       </motion.div>
     </>
