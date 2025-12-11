@@ -9,6 +9,7 @@ import RouteSplash from "@/components/custom/route-splash";
 import RouteGate from "@/components/custom/route-gate";
 import SmoothScroll from "@/components/custom/smooth-scroll";
 import Silk from "@/components/Silk";
+import AnimatedCursor from "@/components/custom/animated-cursor";
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -62,6 +63,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark h-full overflow-hidden">
       <body className={`${jetbrainsMono.className} p-4 border h-full overflow-hidden`}>
+        <AnimatedCursor />
 
         {/* main container */}
         <div className="relative w-full h-full overflow-hidden border rounded-md flex flex-col">
