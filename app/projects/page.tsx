@@ -42,7 +42,20 @@ export default function ProjectsPage() {
         </p>
 
         {loading ? (
-          <div className="text-center text-white/60">Loading projects...</div>
+          <BentoGrid className="gap-4 md:auto-rows-[14rem]">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className={`${
+                  i % 5 === 0 ? "md:col-span-2 md:row-span-1" : "md:col-span-1 md:row-span-1"
+                } rounded-xl border border-white/12 bg-black/10 p-5 animate-pulse`}
+              >
+                <div className="h-6 bg-white/10 rounded w-3/4 mb-3"></div>
+                <div className="h-4 bg-white/10 rounded w-full mb-2"></div>
+                <div className="h-4 bg-white/10 rounded w-2/3"></div>
+              </div>
+            ))}
+          </BentoGrid>
         ) : projects.length === 0 ? (
           <div className="text-center text-white/60">No projects found.</div>
         ) : (

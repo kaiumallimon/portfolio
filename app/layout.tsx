@@ -22,8 +22,37 @@ const inter = Inter({
 
 
 export const metadata: Metadata = {
-  title: "Kaium Al Limon",
-  description: "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer.",
+  title: "Kaium Al Limon | Full-Stack Developer",
+  description: "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer specializing in Flutter & Next.js. Computer Science student at UIU.",
+  keywords: ["Kaium Al Limon", "Full-Stack Developer", "Flutter Developer", "Next.js Developer", "Web Developer", "Mobile Developer", "UIU", "Bangladesh", "Portfolio"],
+  authors: [{ name: "Kaium Al Limon", url: "https://github.com/kaiumallimon" }],
+  creator: "Kaium Al Limon",
+  publisher: "Kaium Al Limon",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://kaiumallimon.vercel.app",
+    title: "Kaium Al Limon | Full-Stack Developer",
+    description: "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer specializing in Flutter & Next.js.",
+    siteName: "Kaium Al Limon Portfolio",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kaium Al Limon | Full-Stack Developer",
+    description: "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer.",
+    creator: "@kaiumallimon",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
