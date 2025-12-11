@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Plus_Jakarta_Sans, Sora } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { headers } from "next/headers";
+
 
 import Navbar from "@/components/custom/nav";
 import Footer from "@/components/custom/footer";
@@ -16,10 +16,6 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
 
 
 export const metadata: Metadata = {
