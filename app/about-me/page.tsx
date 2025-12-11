@@ -38,7 +38,7 @@ export default function AboutMePage() {
   };
 
   return (
-    <div className="h-full w-full bg-white/8 backdrop-blur-sm overflow-x-hidden">
+    <div className="w-full bg-white/8 backdrop-blur-sm">
       {/* Two-column layout */}
       <motion.div
         className="flex flex-col-reverse md:flex-row max-w-7xl mx-auto pt-20 pb-10"

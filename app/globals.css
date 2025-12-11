@@ -122,22 +122,22 @@
 }
 
 
-/* globals.css or component-specific CSS */
-.scrollbar-custom::-webkit-scrollbar {
-  width: 8px; /* scrollbar width */
+/* Scoped scrollbar to SmoothScroll container only */
+.smooth-scroll::-webkit-scrollbar {
+  width: 8px;
 }
 
-.scrollbar-custom::-webkit-scrollbar-track {
-  background: transparent; /* transparent track */
+.smooth-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.scrollbar-custom::-webkit-scrollbar-thumb {
-  background-color: white; /* white thumb */
-  border-radius: 9999px;   /* fully rounded */
-  border: 2px solid transparent; /* optional spacing */
+.smooth-scroll::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 9999px;
+  border: 2px solid transparent;
 }
 
-.scrollbar-custom {
-  scrollbar-width: thin;         /* Firefox */
-  scrollbar-color: white transparent; /* Firefox thumb + track */
+.smooth-scroll {
+  scrollbar-width: thin;          /* Firefox */
+  scrollbar-color: white transparent;
 }
