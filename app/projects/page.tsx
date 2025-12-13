@@ -111,6 +111,19 @@ export default function ProjectsPage() {
                               GitHub
                             </a>
                           )}
+
+                          {project.live_url && (
+                            <a
+                              href={project.live_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-sm text-white/80"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FiExternalLink className="w-4 h-4" />
+                              Live Demo
+                            </a>
+                          )}
                         </div>
                       </div>
                     }
