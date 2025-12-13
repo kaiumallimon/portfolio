@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Search, Loader2, Github, Trophy, Zap, Crown, Calendar, BarChart3, Star, Rocket } from "lucide-react";
+import { Search, Loader2, Github, Trophy, Zap, Crown, Calendar, BarChart3, Star, Rocket, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toPng } from "html-to-image";
 
 interface GitHubStats {
   user: {
@@ -41,6 +42,8 @@ export default function GithubUnwrappedPage() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<GitHubStats | null>(null);
   const [error, setError] = useState("");
+  const [downloading, setDownloading] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +64,28 @@ export default function GithubUnwrappedPage() {
       setError("Failed to fetch GitHub data. Please check the username and try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!statsRef.current) return;
+
+    setDownloading(true);
+    try {
+      const dataUrl = await toPng(statsRef.current, {
+        cacheBust: true,
+        backgroundColor: "#1a1a1a",
+        pixelRatio: 2,
+      });
+
+      const link = document.createElement("a");
+      link.download = `github-unwrapped-${username}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Failed to download image:", err);
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -142,7 +167,7 @@ export default function GithubUnwrappedPage() {
               className="inline-flex items-center gap-2 mb-4"
             >
               <Github className="w-8 h-8 text-white" />
-              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent">
                 GitHub Unwrapped
               </h1>
             </motion.div>
@@ -214,13 +239,42 @@ export default function GithubUnwrappedPage() {
                 transition={{ duration: 0.5 }}
                 className="space-y-6"
               >
-                {/* Profile Header Card */}
+                {/* Download Button */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6"
+                  transition={{ delay: 0.05 }}
+                  className="flex justify-end"
                 >
+                  <Button
+                    onClick={handleDownload}
+                    disabled={downloading}
+                    variant="outline"
+                    className="gap-2"
+                  >
+                    {downloading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Generating...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4" />
+                        <span>Download as Image</span>
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
+
+                {/* Stats Container */}
+                <div ref={statsRef} className="space-y-6 bg-[#1a1a1a] p-6 rounded-2xl">
+                  {/* Profile Header Card */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6"
+                  >
                   <div className="flex items-center gap-6">
                     <div className="relative">
                       <Image
@@ -372,7 +426,8 @@ export default function GithubUnwrappedPage() {
                     );
                   })}
                 </div>
-              </motion.div>
+              </div>
+            </motion.div>
             )}
           </AnimatePresence>
         </motion.div>
