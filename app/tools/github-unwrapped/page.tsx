@@ -249,54 +249,68 @@ export default function GithubUnwrappedPage() {
                     onClick={handleDownload}
                     disabled={downloading}
                     variant="outline"
-                    className="gap-2"
+                    className="gap-2 text-xs md:text-sm"
                   >
                     {downloading ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Generating...</span>
+                        <Loader2 className="w-3 h-3 md:w-4 md:h-4 animate-spin" />
+                        <span className="hidden sm:inline">Generating...</span>
                       </>
                     ) : (
                       <>
-                        <Download className="w-4 h-4" />
-                        <span>Download as Image</span>
+                        <Download className="w-3 h-3 md:w-4 md:h-4" />
+                        <span className="hidden sm:inline">Download as Image</span>
+                        <span className="sm:hidden">Download</span>
                       </>
                     )}
                   </Button>
                 </motion.div>
 
                 {/* Stats Container */}
-                <div ref={statsRef} className="space-y-6 bg-[#1a1a1a] p-6 rounded-2xl">
+                <div ref={statsRef} className="space-y-4 md:space-y-6 bg-[#1a1a1a] p-3 md:p-6 rounded-2xl">
                   {/* Profile Header Card */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6"
+                    className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-6"
                   >
-                  <div className="flex items-center gap-6">
-                    <div className="relative">
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+                    <div className="relative flex-shrink-0">
                       <Image
                         src={data.user.avatar_url}
                         alt={data.user.name || data.user.login}
-                        width={96}
-                        height={96}
-                        className="rounded-full border-2 border-white/20 shadow-xl"
+                        width={64}
+                        height={64}
+                        className="rounded-full border-2 border-white/20 shadow-xl md:w-24 md:h-24"
                       />
-                      <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 rounded-full border-4 border-black/50" />
                     </div>
-                    <div className="flex-1">
-                      <h2 className="text-2xl md:text-3xl font-bold mb-1">
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-xl md:text-3xl font-bold mb-1 truncate">
                         @{data.user.login}
                       </h2>
-                      <p className="text-purple-400 text-sm md:text-base font-medium mb-2">
+                      <p className="text-purple-400 text-xs md:text-base font-medium mb-2">
                         Past Year in Code (Public Data Only)
                       </p>
                       {data.user.bio && (
-                        <p className="text-white/60 text-sm max-w-xl">
+                        <p className="text-white/60 text-xs md:text-sm max-w-xl line-clamp-2">
                           {data.user.bio}
                         </p>
                       )}
+                      <div className="flex md:hidden gap-6 mt-3 text-sm">
+                        <div>
+                          <div className="text-lg font-bold text-white">
+                            {data.user.public_repos}
+                          </div>
+                          <div className="text-white/50 text-xs">Repos</div>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold text-white">
+                            {data.user.followers}
+                          </div>
+                          <div className="text-white/50 text-xs">Followers</div>
+                        </div>
+                      </div>
                     </div>
                     <div className="hidden md:flex flex-col gap-4 text-sm">
                       <div className="text-center">
@@ -322,17 +336,17 @@ export default function GithubUnwrappedPage() {
                   transition={{ delay: 0.2 }}
                   className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm"
                 >
-                  <div className="p-6 md:p-8 pb-4">
-                    <h3 className="text-lg font-semibold mb-1">
+                  <div className="p-4 md:p-8 pb-3 md:pb-4">
+                    <h3 className="text-base md:text-lg font-semibold mb-1">
                       Contribution Activity
                     </h3>
-                    <p className="text-white/60 text-sm">
+                    <p className="text-white/60 text-xs md:text-sm">
                       {data.stats.totalContributions.toLocaleString()} contributions in the last year
                     </p>
                   </div>
 
-                  <div className="overflow-x-auto px-6 md:px-8">
-                    <div className="inline-flex gap-0.5 w-full">
+                  <div className="overflow-x-auto px-4 md:px-8">
+                    <div className="inline-flex gap-[2px] md:gap-0.5 min-w-[600px] md:min-w-0 md:w-full">
                       {Array.from({ length: 53 }).map((_, weekIdx) => (
                         <div key={weekIdx} className="flex flex-col gap-0.5 flex-1">
                           {Array.from({ length: 7 }).map((_, dayIdx) => {
@@ -369,9 +383,9 @@ export default function GithubUnwrappedPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 px-6 md:px-8 py-4 text-xs text-white/50">
+                  <div className="flex items-center gap-2 px-4 md:px-8 py-3 md:py-4 text-[10px] md:text-xs text-white/50">
                     <span>Less</span>
-                    <div className="flex gap-1">
+                    <div className="flex gap-0.5 md:gap-1">
                       {[0, 1, 2, 3, 4].map((level) => (
                         <div
                           key={level}
@@ -397,15 +411,15 @@ export default function GithubUnwrappedPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="relative overflow-hidden"
+                  className="relative overflow-hidden px-1"
                 >
-                  <div className="flex justify-between items-center ">
-                    <h3 className="text-lg font-semibold">Statistics Overview <span className="text-muted-foreground">(Approximate)</span></h3>
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-base md:text-lg font-semibold">Statistics Overview <span className="text-muted-foreground text-xs md:text-base">(Approximate)</span></h3>
                   </div>
                 </motion.div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
                   {statCards.map((card, idx) => {
                     const IconComponent = card.icon;
                     return (
@@ -414,17 +428,17 @@ export default function GithubUnwrappedPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 + idx * 0.05 }}
-                        className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 group hover:scale-[1.02] transition-transform duration-200"
+                        className="relative overflow-hidden rounded-xl md:rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-3 md:p-5 group hover:scale-[1.02] transition-transform duration-200"
                       >
                         <div className="relative z-10">
-                          <div className="flex items-center gap-2 mb-3">
-                            <IconComponent className={`w-4 h-4 items-center ${card.iconColor}`} />
-                            <span className="text-white/70 text-xs items-center uppercase tracking-wide">
+                          <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                            <IconComponent className={`w-3 h-3 md:w-4 md:h-4 items-center ${card.iconColor}`} />
+                            <span className="text-white/70 text-[9px] md:text-xs items-center uppercase tracking-wide leading-tight">
                               {card.label}
                             </span>
                           </div>
                           <div
-                            className={`text-xl md:text-2xl font-bold ${card.valueColor} leading-tight`}
+                            className={`text-base md:text-2xl font-bold ${card.valueColor} leading-tight`}
                           >
                             {card.value}
                           </div>
