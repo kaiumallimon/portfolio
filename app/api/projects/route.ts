@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const { data, error } = await supabase
       .from('projects')
-      .select('id,name,short_details,github_url')
+      .select('id,name,short_details,github_url, live_url')
       .not('id', 'is', null)
       .order('created_at', { ascending: false });
 
