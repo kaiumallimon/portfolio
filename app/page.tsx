@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { FaFacebook, FaLinkedin, FaInstagram, FaGithub } from "react-icons/fa";
 
 export default function Home() {
   const router = useRouter();
@@ -35,6 +36,13 @@ export default function Home() {
       transition: { duration: 0.8, ease: "easeOut" as const },
     },
   };
+
+  const socialLinks = [
+    { name: "Facebook", href: "https://facebook.com/kaiumallimon", icon: <FaFacebook /> },
+    { name: "LinkedIn", href: "https://linkedin.com/in/kaiumallimon", icon: <FaLinkedin /> },
+    { name: "Instagram", href: "https://instagram.com/kaiumallimon", icon: <FaInstagram /> },
+    { name: "GitHub", href: "https://github.com/kaiumallimon", icon: <FaGithub /> },
+  ];
 
 
   return (
@@ -103,6 +111,41 @@ export default function Home() {
               View Projects
             </Button>
           </motion.div>
+        </motion.div>
+
+        <motion.div initial="hidden"
+          animate="visible"
+          variants={container}
+          className="mt-12 md:mt-16 text-center md:hidden lg:hidden"
+        >
+          <motion.p
+            className="mx-auto mt-4 max-w-3xl text-sm text-muted-foreground"
+            variants={fadeUpShort}
+          >
+            Stay connected with me via:
+          </motion.p>
+        </motion.div>
+
+        {/* Social links */}
+        <motion.div
+          className="mt-5 flex justify-center md:hidden lg:hidden space-x-6"
+          initial="hidden"
+          animate="visible"
+          variants={container}
+        >
+
+          {socialLinks.map((link) => (
+            <motion.a
+              key={link.name}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-white transition-colors duration-300 text-2xl"
+              variants={fadeUpShort}
+            >
+              {link.icon}
+            </motion.a>
+          ))}
         </motion.div>
       </div>
     </section>
