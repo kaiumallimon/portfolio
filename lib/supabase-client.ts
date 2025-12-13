@@ -15,4 +15,5 @@ export type Project = {
   features: string | null;
   conclusion: string | null;
   created_at: string;
+  live_url: string | null;
 };
