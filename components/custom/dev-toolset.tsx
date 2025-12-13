@@ -32,6 +32,8 @@ import {
   SiAdobeillustrator,
   SiPostman,
   SiGraphql,
+  SiFastapi,
+  SiLangchain,
 } from "react-icons/si";
 import { VscVscode } from "react-icons/vsc";
 import LogoLoop from "../LogoLoop";
@@ -47,6 +49,8 @@ const tools = [
   { name: "HTML5", icon: SiHtml5 },
   { name: "JavaScript", icon: SiJavascript },
   { name: "Python", icon: SiPython },
+  { name: "FastAPI", icon: SiFastapi },
+  { name: "Langchain", icon: SiLangchain },
   { name: "Node.js", icon: SiNodedotjs },
   { name: "Express.js", icon: SiExpress },
   { name: "Supabase", icon: SiSupabase },
@@ -56,18 +60,13 @@ const tools = [
   { name: "MongoDB", icon: SiMongodb },
   { name: "GitHub", icon: SiGithub },
   { name: "GitLab", icon: SiGitlab },
-  { name: "Docker", icon: SiDocker },
   { name: "VS Code", icon: VscVscode },
   { name: "Android Studio", icon: SiAndroidstudio },
-  { name: "Xcode", icon: SiApple },
   { name: "GitHub Actions", icon: SiGithubactions },
-  { name: "Jest", icon: SiJest },
   { name: "ESLint", icon: SiEslint },
   { name: "Prettier", icon: SiPrettier },
   { name: "Figma", icon: SiFigma },
-  { name: "Adobe Illustrator", icon: SiAdobeillustrator },
   { name: "Postman", icon: SiPostman },
-  { name: "GraphQL", icon: SiGraphql },
 ];
 
 export default function ToolsetGrid() {
