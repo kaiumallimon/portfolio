@@ -166,8 +166,7 @@ export default function GithubUnwrappedPage() {
               transition={{ delay: 0.1 }}
               className="inline-flex items-center gap-2 mb-4"
             >
-              <Github className="w-8 h-8 text-white" />
-              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent">
+              <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent">
                 GitHub Unwrapped
               </h1>
             </motion.div>
@@ -175,7 +174,7 @@ export default function GithubUnwrappedPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-white/70 text-base md:text-lg max-w-2xl mx-auto"
+              className="text-white/70 text-sm md:text-base mx-auto"
             >
               Visualize your coding journey with beautiful insights, contribution patterns, and achievements
             </motion.p>
@@ -291,7 +290,7 @@ export default function GithubUnwrappedPage() {
                         @{data.user.login}
                       </h2>
                       <p className="text-purple-400 text-sm md:text-base font-medium mb-2">
-                        Past Year in Code (Public Repositories Only)
+                        Past Year in Code (Public Data Only)
                       </p>
                       {data.user.bio && (
                         <p className="text-white/60 text-sm max-w-xl">
@@ -391,6 +390,17 @@ export default function GithubUnwrappedPage() {
                       ))}
                     </div>
                     <span>More</span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="relative overflow-hidden"
+                >
+                  <div className="flex justify-between items-center ">
+                    <h3 className="text-lg font-semibold">Statistics Overview <span className="text-muted-foreground">(Approximate)</span></h3>
                   </div>
                 </motion.div>
 
