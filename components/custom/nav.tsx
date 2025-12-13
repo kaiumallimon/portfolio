@@ -14,9 +14,8 @@ export default function Navbar() {
         { name: "#about_me", href: "/about-me" },
         { name: "#projects", href: "/projects" },
         { name: "#achievements", href: "/achievements" },
-        // { name: "#articles", href: "/articles" },
         { name: "#contact", href: "/contact" },
-        
+        { name: "#tools", href: "/tools" },
     ];
 
     const socialLinks = [
