@@ -72,10 +72,14 @@ export default function GithubUnwrappedPage() {
 
     setDownloading(true);
     try {
+      // Wait for images to load before capturing
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       const dataUrl = await toPng(statsRef.current, {
         cacheBust: true,
         backgroundColor: "#1a1a1a",
         pixelRatio: 2,
+        skipFonts: true,
       });
 
       const link = document.createElement("a");
@@ -277,12 +281,14 @@ export default function GithubUnwrappedPage() {
                   >
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
                     <div className="relative shrink-0">
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
                         src={data.user.avatar_url}
                         alt={data.user.name || data.user.login}
                         width={64}
                         height={64}
                         className="rounded-full border-2 border-white/20 shadow-xl md:w-24 md:h-24"
+                        crossOrigin="anonymous"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
