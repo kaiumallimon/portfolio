@@ -46,8 +46,6 @@ export default function ToolsPage() {
               <a
                 href={tool.link ?? "#"}
                 className={`block h-full ${!tool.status.isAvailable ? "pointer-events-none" : ""}`}
-                target={tool.link ? "_blank" : undefined}
-                rel={tool.link ? "noopener noreferrer" : undefined}
               >
                 <div className={`flex flex-col md:flex-row gap-10 h-full ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}>
                   {/* Icon Visual */}

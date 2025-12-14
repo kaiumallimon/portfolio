@@ -276,7 +276,7 @@ export default function GithubUnwrappedPage() {
                     className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 md:p-6"
                   >
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
-                    <div className="relative flex-shrink-0">
+                    <div className="relative shrink-0">
                       <Image
                         src={data.user.avatar_url}
                         alt={data.user.name || data.user.login}
@@ -346,7 +346,7 @@ export default function GithubUnwrappedPage() {
                   </div>
 
                   <div className="overflow-x-auto px-4 md:px-8">
-                    <div className="inline-flex gap-[2px] md:gap-0.5 min-w-[600px] md:min-w-0 md:w-full">
+                    <div className="inline-flex gap-0.5 md:gap-0.5 min-w-[600px] md:min-w-0 md:w-full">
                       {Array.from({ length: 53 }).map((_, weekIdx) => (
                         <div key={weekIdx} className="flex flex-col gap-0.5 flex-1">
                           {Array.from({ length: 7 }).map((_, dayIdx) => {

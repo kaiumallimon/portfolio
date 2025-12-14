@@ -48,7 +48,7 @@ export default function Navbar() {
     ];
 
     function isActive(path: string) {
-        return pathname === path;
+        return pathname === path || (path !== "/" && pathname.startsWith(path));
     }
 
     useEffect(() => {
