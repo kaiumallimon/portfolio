@@ -106,39 +106,57 @@ export default function UIUExamRoutinePage() {
 
     setDownloading(true);
     try {
-      // Wait for images and content to load
+      console.log("Starting download process...");
+      console.log("Stats ref element:", statsRef.current);
+
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Ensure all images are loaded
       const images = statsRef.current.getElementsByTagName('img');
+      console.log("Found images:", images.length);
+
       await Promise.all(
-        Array.from(images).map(img => {
+        Array.from(images).map((img, index) => {
+          console.log(`Image ${index} complete:`, img.complete, img.src);
           if (img.complete) return Promise.resolve();
-          return new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = resolve; // Continue even if image fails
-            setTimeout(resolve, 2000); // Timeout after 2 seconds
+          return new Promise((resolve) => {
+            img.onload = () => {
+              console.log(`Image ${index} loaded`);
+              resolve(null);
+            };
+            img.onerror = () => {
+              console.log(`Image ${index} failed to load`);
+              resolve(null);
+            };
+            setTimeout(() => {
+              console.log(`Image ${index} timeout`);
+              resolve(null);
+            }, 2000);
           });
         })
       );
 
+      console.log("Converting to PNG...");
       const dataUrl = await toPng(statsRef.current, {
         cacheBust: true,
         backgroundColor: "#1a1a1a",
         pixelRatio: 2,
         quality: 1,
         filter: (node) => {
-          // Don't include hidden elements
           return !node.classList?.contains('hidden');
         }
       });
 
+      console.log("PNG generated, downloading...");
       const link = document.createElement("a");
       link.download = `uiu-exam-routine-${studentID}.png`;
       link.href = dataUrl;
       link.click();
+      console.log("Download triggered");
     } catch (err) {
       console.error("Failed to download image:", err);
+      console.error("Error type:", typeof err);
+      console.error("Error message:", err instanceof Error ? err.message : "Unknown error");
+      console.error("Error stack:", err instanceof Error ? err.stack : "No stack");
       setError("Failed to generate image. Please try again.");
       setTimeout(() => setError(null), 3000);
     } finally {
