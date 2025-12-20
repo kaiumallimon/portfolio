@@ -175,7 +175,7 @@ export default function UIUExamRoutinePage() {
               transition={{ delay: 0.2 }}
               className="text-white/70 text-sm md:text-base mx-auto"
             >
-              Find and download your exam routines quickly and easily as a United International University student. Just login with your UCAM student ID and password to access your personalized exam schedule.
+              Find and download your exam routines quickly and easily as a United International University student. Just login with your UCAM student ID and password to access your personalized exam schedule. It is 100% safe and secured, no data or session is stored, as you refresh or leave the page all data will be cleared.
             </motion.p>
 
             <motion.div
