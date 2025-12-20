@@ -365,7 +365,7 @@ export default function UIUExamRoutinePage() {
                     <div className="p-4 md:p-6 border-b border-white/10">
                       <h3 className="text-base md:text-lg font-semibold flex items-center gap-2">
                         <Calendar className="w-4 h-4 md:w-5 md:h-5 text-orange-500" />
-                        Upcoming Exams
+                        Upcoming Exams (Fall 2025 Trimester)
                       </h3>
                     </div>
                     <Table containerClassName={snapshotMode ? "overflow-visible" : undefined}>
