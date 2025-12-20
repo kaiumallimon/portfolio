@@ -312,7 +312,10 @@ export default function UIUExamRoutinePage() {
                 </motion.div>
 
                 {/* Stats Container */}
-                <div ref={statsRef} className="space-y-6 bg-[#1a1a1a] p-3 md:p-6 rounded-2xl">
+                <div
+                  ref={statsRef}
+                  className={`space-y-6 bg-[#1a1a1a] p-3 md:p-6 rounded-2xl ${snapshotMode ? "min-w-5xl" : ""}`}
+                >
                 {/* Profile Card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -363,7 +366,7 @@ export default function UIUExamRoutinePage() {
                         Upcoming Exams
                       </h3>
                     </div>
-                    <Table>
+                    <Table containerClassName={snapshotMode ? "overflow-visible" : undefined}>
                       <TableHeader>
                         <TableRow className="border-white/10 hover:bg-transparent">
                           <TableHead className="text-white/70 py-4 px-4">Course</TableHead>
@@ -415,7 +418,7 @@ export default function UIUExamRoutinePage() {
                         Class Routine
                       </h3>
                     </div>
-                    <Table>
+                    <Table containerClassName={snapshotMode ? "overflow-visible" : undefined}>
                       <TableHeader>
                         <TableRow className="border-white/10 hover:bg-transparent">
                           <TableHead className="text-white/70">Day</TableHead>
