@@ -57,6 +57,7 @@ export default function UIUExamRoutinePage() {
   const [studentID, setStudentID] = useState("");
   const [password, setPassword] = useState("");
   const [imageError, setImageError] = useState(false);
+  const [snapshotMode, setSnapshotMode] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
 
@@ -111,29 +112,10 @@ export default function UIUExamRoutinePage() {
 
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      const images = statsRef.current.getElementsByTagName('img');
-      console.log("Found images:", images.length);
-
-      await Promise.all(
-        Array.from(images).map((img, index) => {
-          console.log(`Image ${index} complete:`, img.complete, img.src);
-          if (img.complete) return Promise.resolve();
-          return new Promise((resolve) => {
-            img.onload = () => {
-              console.log(`Image ${index} loaded`);
-              resolve(null);
-            };
-            img.onerror = () => {
-              console.log(`Image ${index} failed to load`);
-              resolve(null);
-            };
-            setTimeout(() => {
-              console.log(`Image ${index} timeout`);
-              resolve(null);
-            }, 2000);
-          });
-        })
-      );
+      // Enable snapshot mode to replace images with initials
+      setSnapshotMode(true);
+      // Wait a tick for UI to update
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       console.log("Converting to PNG...");
       const dataUrl = await toPng(statsRef.current, {
@@ -160,6 +142,8 @@ export default function UIUExamRoutinePage() {
       setError("Failed to generate image. Please try again.");
       setTimeout(() => setError(null), 3000);
     } finally {
+      // Restore normal mode
+      setSnapshotMode(false);
       setDownloading(false);
     }
   };
@@ -192,6 +176,15 @@ export default function UIUExamRoutinePage() {
             >
               Find and download your exam routines quickly and easily as a United International University student. Just login with your student ID and password to access your personalized exam schedule.
             </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mt-3 text-xs border flex items-center justify-center max-w-sm mx-auto px-3 py-3 rounded-lg border-border text-primary/75"
+            >
+              <p>Currently Only SOSE (BSCSE, BSDS, BSEEE and BSCE) is supported</p>
+            </motion.div>
           </div>
 
           {/* Search Form */}
@@ -329,7 +322,7 @@ export default function UIUExamRoutinePage() {
                 >
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
                     <div className="relative shrink-0">
-                      {routineResponse.profile.image_url && !imageError ? (
+                      {routineResponse.profile.image_url && !imageError && !snapshotMode ? (
                         <img
                           src={routineResponse.profile.image_url}
                           alt={routineResponse.profile.name}
@@ -339,8 +332,8 @@ export default function UIUExamRoutinePage() {
                           onError={() => setImageError(true)}
                         />
                       ) : (
-                        <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-white/20 shadow-xl bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center text-white text-xl md:text-3xl font-bold">
-                          {routineResponse.profile.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                        <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-white/20 shadow-xl bg-linear-to-br from-orange-500 to-purple-600 flex items-center justify-center text-white text-xl md:text-3xl font-bold">
+                          {routineResponse.profile.name.charAt(0).toUpperCase()}
                         </div>
                       )}
                     </div>
