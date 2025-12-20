@@ -106,15 +106,31 @@ export default function UIUExamRoutinePage() {
 
     setDownloading(true);
     try {
-      // Wait for images to load
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Wait for images and content to load
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Ensure all images are loaded
+      const images = statsRef.current.getElementsByTagName('img');
+      await Promise.all(
+        Array.from(images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = resolve; // Continue even if image fails
+            setTimeout(resolve, 2000); // Timeout after 2 seconds
+          });
+        })
+      );
 
       const dataUrl = await toPng(statsRef.current, {
         cacheBust: true,
         backgroundColor: "#1a1a1a",
         pixelRatio: 2,
-        skipFonts: false,
         quality: 1,
+        filter: (node) => {
+          // Don't include hidden elements
+          return !node.classList?.contains('hidden');
+        }
       });
 
       const link = document.createElement("a");
