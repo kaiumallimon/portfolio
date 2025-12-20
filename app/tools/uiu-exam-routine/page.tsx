@@ -185,7 +185,7 @@ export default function UIUExamRoutinePage() {
               className="mt-3 text-xs border flex flex-col gap-3 items-center justify-center max-w-sm mx-auto px-3 py-3 rounded-lg border-border text-primary/75"
             >
               <MdWarning className="w-5 h-5 text-yellow-400" />
-              <p>Currently Only SOSE (BSCSE, BSDS, BSEEE and BSCE) is supported</p>
+              <p>Currently Only SOSE (BSCSE, BSDS, BSEEE and BSCE) is supported!</p>
             </motion.div>
           </div>
 
