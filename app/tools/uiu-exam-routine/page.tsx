@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2, Search, Calendar, Clock, User, MapPin, BookOpen, Download } from "lucide-react";
 import { toPng } from "html-to-image";
+import { MdWarning } from "react-icons/md";
 
 interface Course {
   course_code: string;
@@ -181,8 +182,9 @@ export default function UIUExamRoutinePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="mt-3 text-xs border flex items-center justify-center max-w-sm mx-auto px-3 py-3 rounded-lg border-border text-primary/75"
+              className="mt-3 text-xs border flex flex-col gap-3 items-center justify-center max-w-sm mx-auto px-3 py-3 rounded-lg border-border text-primary/75"
             >
+              <MdWarning className="w-5 h-5 text-yellow-400" />
               <p>Currently Only SOSE (BSCSE, BSDS, BSEEE and BSCE) is supported</p>
             </motion.div>
           </div>
