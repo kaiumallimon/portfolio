@@ -1,4 +1,5 @@
-import { FaCalculator } from "react-icons/fa";
+import { Calendar } from "lucide-react";
+import { FaCalculator, FaTimesCircle } from "react-icons/fa";
 import { SiGithub } from "react-icons/si";
 
 export default function ToolsPage() {
@@ -13,6 +14,19 @@ export default function ToolsPage() {
         label: "Available",
       },
     },
+
+    {
+      name: "UIU Exam Routine Finder",
+      description:
+        "A tool to help United International University students quickly find and download their exam routines.",
+      link: "/tools/uiu-exam-routine",
+      icon: <Calendar className="w-12 h-12" />,
+      status: {
+        isAvailable: true,
+        label: "Available",
+      },
+    },
+
     {
       name: "UIU CGPA Calculator",
       description:
