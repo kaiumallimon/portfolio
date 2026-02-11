@@ -3,12 +3,22 @@ import { FaMobile, FaServer } from "react-icons/fa";
 import { SiFlutter } from "react-icons/si";
 import { CgPerformance } from "react-icons/cg";
 import { Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 export default function HomeHero() {
   return (
-    <div>
-      <main className="relative z-10 pt-45 pb-20 px-6 max-w-6xl mx-auto">
+    <div className="relative">
+      <div
+        className={cn(
+          "absolute inset-0",
+          "bg-size-[40px_40px]",
+          "bg-[linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]",
+          "dark:bg-[linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
+          "opacity-20"
+        )}
+      />
+      <main className="relative z-10 py-45 px-6 max-w-6xl mx-auto">
         <div className="flex flex-col items-center text-center space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium tracking-wide">
             <span className="relative flex h-2 w-2">
@@ -35,7 +45,7 @@ export default function HomeHero() {
               Download CV
               <Download size={18} className="transform group-hover:translate-x-1 transition-transform duration-300" />
             </a>
-            <a href="#contact" className="px-8 py-3.5 glass hover:bg-white/5 text-white rounded-full font-medium transition-all flex items-center justify-center gap-2">
+            <a href="#contact" className="px-8 py-3.5 border backdrop-blur-md hover:bg-white/5 text-white rounded-full font-medium transition-all flex items-center justify-center gap-2">
               Let's Talk
               <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-300" />
             </a>
