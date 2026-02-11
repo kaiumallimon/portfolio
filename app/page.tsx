@@ -1,5 +1,6 @@
 import HomeAboutSection from "@/components/custom-new/home-about";
 import HomeHero from "@/components/custom-new/home-hero";
+import HomeProjects from "@/components/custom-new/home-selected-work";
 import TechToolsSection from "@/components/custom-new/home-tech-tools";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home_bg";
@@ -15,6 +16,7 @@ export default function Home() {
       <div className="relative bg-[#0b001a]">
         <HomeAboutSection />
         <TechToolsSection />
+        <HomeProjects/>
       </div>
     </div>
   );
