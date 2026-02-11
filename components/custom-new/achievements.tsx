@@ -1,9 +1,24 @@
 
 
+'use client';
+
 import Image from "next/image";
-import { Trophy, Calendar, Users, Code } from "lucide-react";
+import { Trophy, Calendar, Users, Code, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function AchievementsSection() {
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && fullscreenImage) {
+        setFullscreenImage(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [fullscreenImage]);
   const achievements = [
     {
       title: "UIU CSE Project Show | Fall '24",
@@ -72,7 +87,10 @@ export default function AchievementsSection() {
                   </div>
 
                   {/* Image - Landscape */}
-                  <div className="relative rounded-xl overflow-hidden bg-slate-800/50 h-48">
+                  <div
+                    className="relative rounded-xl overflow-hidden bg-slate-800/50 h-48 cursor-pointer"
+                    onClick={() => setFullscreenImage(achievement.image[0])}
+                  >
                     <Image
                       src={achievement.image[0]}
                       alt={`${achievement.project}`}
@@ -102,6 +120,36 @@ export default function AchievementsSection() {
           })}
         </div>
       </div>
+
+      {/* Fullscreen Image Modal */}
+      {fullscreenImage && (
+        <div
+          className="fixed inset-0 z-99999 bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-200 cursor-default"
+          style={{ cursor: 'default' }}
+          onClick={() => setFullscreenImage(null)}
+        >
+          <button
+            className="absolute top-6 right-6 text-white/80 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10 cursor-pointer z-10"
+            style={{ cursor: 'pointer' }}
+            onClick={() => setFullscreenImage(null)}
+          >
+            <X size={32} />
+          </button>
+          <div className="relative w-full h-full max-w-7xl max-h-[90vh]">
+            <Image
+              src={fullscreenImage}
+              alt="Achievement"
+              fill
+              className="object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+          <div className="absolute bottom-15 left-1/2 -translate-x-1/2 text-white/60 text-sm flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm z-10">
+            <span className="text-white/80 font-mono text-xs px-2 py-1 bg-white/10 rounded">ESC</span>
+            <span>or click outside to close</span>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
