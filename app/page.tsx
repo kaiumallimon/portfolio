@@ -1,5 +1,6 @@
 'use client';
 
+import AchievementsSection from "@/components/custom-new/achievements";
 import HomeAboutSection from "@/components/custom-new/home-about";
 import HomeHero from "@/components/custom-new/home-hero";
 import HomeProjects from "@/components/custom-new/home-selected-work";
@@ -27,6 +28,7 @@ export default function Home() {
         <HomeAboutSection />
         <TechToolsSection />
         <HomeProjects/>
+        <AchievementsSection/>
       </div>
     </div>
   );
