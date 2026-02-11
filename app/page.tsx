@@ -6,6 +6,7 @@ import HomeHero from "@/components/custom-new/home-hero";
 import HomeProjects from "@/components/custom-new/home-selected-work";
 import TechToolsSection from "@/components/custom-new/home-tech-tools";
 import JourneySection from "@/components/custom-new/journey";
+import SectionSeparator from "@/components/custom-new/section-separator";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home_bg";
 import TargetCursor from "@/components/TargetCursor";
@@ -27,9 +28,13 @@ export default function Home() {
       <HomeHero />
       <div className="relative bg-[#0b001a]">
         <HomeAboutSection />
+        <SectionSeparator />
         <TechToolsSection />
+        <SectionSeparator />
         <HomeProjects />
+        <SectionSeparator />
         <JourneySection />
+        <SectionSeparator />
         <AchievementsSection />
       </div>
     </div>
