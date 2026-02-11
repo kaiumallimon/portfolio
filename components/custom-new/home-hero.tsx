@@ -41,11 +41,11 @@ export default function HomeHero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <a href="#projects" className="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-medium transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group">
+            <a href="#projects" className="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-medium transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group cursor-target">
               Download CV
               <Download size={18} className="transform group-hover:translate-x-1 transition-transform duration-300" />
             </a>
-            <a href="#contact" className="px-8 py-3.5 border backdrop-blur-md hover:bg-white/5 text-white rounded-full font-medium transition-all flex items-center justify-center gap-2">
+            <a href="#contact" className="px-8 py-3.5 border backdrop-blur-md hover:bg-white/5 text-white rounded-full font-medium transition-all flex items-center justify-center gap-2 cursor-target">
               Let's Talk
               <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-300" />
             </a>

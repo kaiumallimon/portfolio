@@ -11,14 +11,15 @@ export default function FloatingHeader() {
       <div className="bg-transparent backdrop-blur-md border border-slate-700/30 rounded-full pl-6 pr-4 py-3 flex items-center justify-between shadow-2xl shadow-black/50">
         <a href="#" className="text-slate-100 font-medium tracking-tight flex items-center gap-2">
           {/* <span className="w-8 h-8 rounded-full bg-indigo-600/20 flex items-center justify-center border border-indigo-500/30 text-indigo-400 font-semibold text-xs">KL</span> */}
-          <span className="">Kaium Al Limon</span>
+          <span className="cursor-target">Kaium Al Limon</span>
         </a>
 
         <div className="hidden md:flex items-center gap-1">
-          <a href="#about" className="px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">About</a>
-          <a href="#skills" className="px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Skills</a>
-          <a href="#projects" className="px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Projects</a>
-          <a href="#contact" className="ml-2 px-4 py-1.5 text-sm bg-white/10 hover:bg-white/20 text-white rounded-full transition-all border border-white/5">Contact</a>
+          <a href="#about" className="cursor-target px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">About</a>
+          <a href="#skills" className="cursor-target px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Skills</a>
+          <a href="#projects" className="cursor-target px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Projects</a>
+          <a href="/tools" className="cursor-target px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Tools</a>
+          <a href="#contact" className="cursor-target ml-2 px-4 py-1.5 text-sm bg-white/10 hover:bg-white/20 text-white rounded-full transition-all border border-white/5">Contact</a>
         </div>
 
         <button

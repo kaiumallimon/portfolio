@@ -51,13 +51,13 @@ export default function HomeAboutSection() {
 
 
           <div className="flex gap-4 pt-4">
-            <a href="https://github.com/kaiumallimon" target="_blank" className="p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
+            <a href="https://github.com/kaiumallimon" target="_blank" className="cursor-target p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
               <FaGithub size={20} className="text-slate-300" />
             </a>
-            <a href="https://linkedin.com/in/kaiumallimon" target="_blank" className="p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
+            <a href="https://linkedin.com/in/kaiumallimon" target="_blank" className="cursor-target p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
               <FaLinkedin size={20} className="text-slate-300" />
             </a>
-            <a href="mailto:kalimon291@gmail.com" className="p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
+            <a href="mailto:kalimon291@gmail.com" className="cursor-target p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
               <MdEmail size={20} className="text-slate-300" />
             </a>
           </div>

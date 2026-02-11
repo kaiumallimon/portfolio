@@ -1,13 +1,23 @@
+'use client';
+
 import HomeAboutSection from "@/components/custom-new/home-about";
 import HomeHero from "@/components/custom-new/home-hero";
 import HomeProjects from "@/components/custom-new/home-selected-work";
 import TechToolsSection from "@/components/custom-new/home-tech-tools";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home_bg";
+import TargetCursor from "@/components/TargetCursor";
 
 export default function Home() {
   return (
     <div className="bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 relative overflow-x-hidden">
+
+          <TargetCursor
+      spinDuration={2}
+      hideDefaultCursor
+      parallaxOn
+      hoverDuration={0.2}
+    />
 
       {/* Background gradient and top border */}
       <HomeBackground />
