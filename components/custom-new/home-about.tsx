@@ -39,13 +39,14 @@ export default function HomeAboutSection() {
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">Engineering beyond the framework.</h2>
           <div className="text-sm md:text-base space-y-4 text-slate-400 leading-relaxed">
             <p>
-              I am currently a B.Sc. Computer Science & Engineering student at <strong className="text-slate-200 font-medium">United International University</strong> (2022–Present). While my academic journey provides a strong theoretical foundation, my real education happens in the IDE.
+              I am currently a B.Sc. Computer Science & Engineering student at <strong className="text-slate-200 font-medium">United International University</strong> (2022–Present). While my academic journey provides the theoretical foundation, my real education happens in the IDE.
             </p>
             <p>
-              Over the past 3 years, I’ve grown into a capable <strong className="text-slate-200 font-medium">Software Engineer</strong> with a deep focus on Flutter. I don’t just write code; I design systems. From building scalable backends with <strong className="text-slate-200 font-medium">FastAPI</strong> and <strong className="text-slate-200 font-medium">Node.js + Express</strong> to creating interactive web experiences with <strong className="text-slate-200 font-medium">Next.js</strong> and optimizing mobile UIs, I am passionate about quality and seamless user experiences.
+              Over the past 3 years, I’ve grown into a capable <strong className="text-slate-200 font-medium">Software Engineer</strong> with a deep focus on Flutter. From building scalable backends with <strong className="text-slate-200 font-medium">FastAPI</strong> and <strong className="text-slate-200 font-medium">Node.js + Express</strong> to creating interactive web experiences with <strong className="text-slate-200 font-medium">Next.js</strong> and optimizing mobile UIs, I am passionate about quality and seamless user experiences. I value writing clean, understandable code and learning from real-world constraints through projects. Each build helps me better understand trade-offs, performance considerations, and how small decisions affect the overall system.
+
             </p>
             <p>
-              My goal is simple: to build robust, scalable, and elegant software that solves real-world problems across mobile and web.
+             My goal is to continue building robust and scalable software by learning from real projects, improving with each iteration, and solving practical problems across mobile and web.
             </p>
           </div>
 

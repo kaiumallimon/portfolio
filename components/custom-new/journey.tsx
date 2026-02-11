@@ -1,27 +1,31 @@
 export default function JourneySection() {
   const milestones = [
     {
-      title: "Full Stack Development Focus",
-      period: "2023 - PRESENT",
-      description: "Expanded expertise into backend engineering (Python/Node) to build end-to-end solutions. Developed multiple self-driven full-stack projects including a real-time chat application and a campus management tool.",
+      title: "Head of Software & Innovation",
+      organization: "UIU App Forum",
+      period: "Sep 2024 – Oct 2025",
+      description: "Led software initiatives and technical innovation within the organization. Oversaw development workflows, technical planning, and team coordination. Contributed to shaping project direction and mentoring junior developers.",
       active: true,
     },
     {
-      title: "Flutter & Mobile Engineering",
-      period: "2022 - 2023",
-      description: "Deep dive into cross-platform development. Mastered state management (Riverpod, Provider), animation controllers, and clean architecture principles.",
+      title: "Junior Executive of Development",
+      organization: "UIU App Forum",
+      period: "Aug 2023 – Sep 2024",
+      description: "Worked on application development and internal tools. Gained hands-on experience with Java, software design, and collaborative development. Assisted in planning and executing technical projects.",
       active: false,
     },
     {
-      title: "Web Development Foundation",
-      period: "2021 - 2022",
-      description: "Started with frontend development using React and Next.js. Built responsive UIs and learned modern web development practices.",
+      title: "Mentor — Grooming for CSE Project Show",
+      organization: "UIU App Forum",
+      period: "Aug 2023",
+      description: "Mentored students preparing academic software projects. Guided teams on Object-Oriented Programming, JavaFX, and project structure. Supported problem-solving, presentation, and implementation best practices.",
       active: false,
     },
     {
-      title: "Programming Fundamentals",
-      period: "2020 - 2021",
-      description: "Learned core programming concepts with C/C++ and Java. Developed strong problem-solving skills and algorithmic thinking.",
+      title: "General Member",
+      organization: "UIU App Forum",
+      period: "Mar 2022 – Aug 2023",
+      description: "Actively participated in technical activities and learning sessions. Built foundational experience in teamwork, communication, and software development culture.",
       active: false,
     },
   ];
@@ -30,13 +34,13 @@ export default function JourneySection() {
     <section className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
-          <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Journey & Milestones</h2>
-          <p className="text-slate-400">Evolution of my technical expertise and learning path.</p>
+          <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Co-Curricular Activities</h2>
+          <p className="text-slate-400">Involvement beyond the classroom and the code editor.</p>
         </div>
 
         <div className="relative">
           {/* Timeline Line */}
-          <div className="absolute left-[15px] top-4 bottom-4 w-[2px] bg-linear-to-b from-indigo-500/50 via-indigo-500/20 to-transparent"></div>
+          <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-linear-to-b from-indigo-500/50 via-indigo-500/20 to-transparent"></div>
 
           <div className="space-y-8">
             {milestones.map((milestone, index) => (
@@ -51,15 +55,18 @@ export default function JourneySection() {
                 </div>
 
                 <div className="cursor-target border border-white/10 backdrop-blur-md rounded-xl p-6 hover:border-white/20 transition-all duration-300 bg-slate-900/30">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
-                    <h3 className="text-xl font-semibold text-white">{milestone.title}</h3>
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full w-fit ${
-                      milestone.active
-                        ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-                        : 'bg-slate-800/50 text-slate-400 border border-slate-700/50'
-                    }`}>
-                      {milestone.period}
-                    </span>
+                  <div className="flex flex-col gap-2 mb-3">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                      <h3 className="text-xl font-semibold text-white">{milestone.title}</h3>
+                      <span className={`text-xs font-semibold px-3 py-1 rounded-full w-fit ${
+                        milestone.active
+                          ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
+                          : 'bg-slate-800/50 text-slate-400 border border-slate-700/50'
+                      }`}>
+                        {milestone.period}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-500">{milestone.organization}</p>
                   </div>
                   <p className="text-slate-400 text-sm leading-relaxed">
                     {milestone.description}

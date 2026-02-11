@@ -8,6 +8,8 @@ const techStack = [
         hoverBorder: "hover:border-blue-500/30",
         iconContainer: "bg-blue-500/10 text-blue-400",
         highlightStyles: "bg-blue-500/10 text-blue-300 border-blue-500/20",
+        cardGradient: "bg-gradient-to-br from-blue-500/5 to-transparent",
+        cardShadow: "shadow-lg shadow-blue-500/5",
         skills: [
             { name: "Flutter", highlight: true },
             { name: "Dart", highlight: true },
@@ -30,6 +32,8 @@ const techStack = [
         hoverBorder: "hover:border-emerald-500/30",
         iconContainer: "bg-emerald-500/10 text-emerald-400",
         highlightStyles: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
+        cardGradient: "bg-gradient-to-br from-emerald-500/5 to-transparent",
+        cardShadow: "shadow-lg shadow-emerald-500/5",
         skills: [
             { name: "FastAPI", highlight: true },
             { name: "Python", highlight: true },
@@ -48,6 +52,8 @@ const techStack = [
         hoverBorder: "hover:border-indigo-500/30",
         iconContainer: "bg-indigo-500/10 text-indigo-400",
         highlightStyles: "bg-indigo-500/10 text-indigo-300 border-indigo-500/20",
+        cardGradient: "bg-gradient-to-br from-indigo-500/5 to-transparent",
+        cardShadow: "shadow-lg shadow-indigo-500/5",
         skills: [
             { name: "Next.js", highlight: false },
             { name: "React", highlight: false },
@@ -74,9 +80,9 @@ export default function TechToolsSection() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {techStack.map((tech, index) => {
-                        const Icon = tech.icon;
+                        const Icon = tech.icon; ${tech.cardGradient} ${tech.cardShadow}
                         return (
-                            <div key={index} className={`glass p-6 rounded-2xl transition-colors ${tech.hoverBorder}`}>
+                            <div key={index} className={`cursor-target glass p-6 rounded-2xl transition-colors ${tech.hoverBorder}`}>
                                 <div className="flex items-center gap-3 mb-6">
                                     <span className={`p-2 rounded-lg ${tech.iconContainer}`}>
                                         <Icon size={16} />

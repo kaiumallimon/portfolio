@@ -14,12 +14,12 @@ export default function Home() {
   return (
     <div className="bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 relative overflow-x-hidden">
 
-          <TargetCursor
-      spinDuration={2}
-      hideDefaultCursor
-      parallaxOn
-      hoverDuration={0.2}
-    />
+      <TargetCursor
+        spinDuration={2}
+        hideDefaultCursor
+        parallaxOn
+        hoverDuration={0.2}
+      />
 
       {/* Background gradient and top border */}
       <HomeBackground />
@@ -28,9 +28,9 @@ export default function Home() {
       <div className="relative bg-[#0b001a]">
         <HomeAboutSection />
         <TechToolsSection />
-        <HomeProjects/>
-        <JourneySection/>
-        <AchievementsSection/>
+        <HomeProjects />
+        <JourneySection />
+        <AchievementsSection />
       </div>
     </div>
   );

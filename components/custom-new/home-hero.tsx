@@ -4,6 +4,7 @@ import { SiFlutter } from "react-icons/si";
 import { CgPerformance } from "react-icons/cg";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 export default function HomeHero() {
@@ -18,8 +19,16 @@ export default function HomeHero() {
           "opacity-20"
         )}
       />
-      <main className="relative z-10 py-45 px-6 max-w-6xl mx-auto">
+      <main className="relative z-10 py-38 px-6 max-w-6xl mx-auto">
         <div className="flex flex-col items-center text-center space-y-8">
+          <Image
+            src="/bordered.png"
+            alt="profile-picture"
+            width={75}
+            height={75}
+            className="rounded-full border-2 border-indigo-500/50 shadow-lg shadow-indigo-500/30 hover:scale-120 transition-transform duration-500 cursor-pointer cursor-target"
+          />
+
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium tracking-wide">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
@@ -32,7 +41,10 @@ export default function HomeHero() {
             Crafting <br />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-cyan-300">
               seamless, user‑focused experiences
-            </span> across platforms
+            </span> across <span className="inline-block bg-[#4c00a8] px-3  -skew-x-6">
+  platforms
+</span>
+
           </h1>
 
 
