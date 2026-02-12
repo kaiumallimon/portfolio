@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Preloader() {
   const [complete, setComplete] = useState(false);
@@ -38,6 +39,11 @@ export default function Preloader() {
 
   if (complete) return null;
 
+  // Circle properties for progress border
+  const radius = 54; // Slightly larger than the image (50px radius + padding)
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
   return (
     <motion.div
         initial={{ y: 0 }}
@@ -45,7 +51,7 @@ export default function Preloader() {
         transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }}
         className="fixed inset-0 z-[9999] flex flex-col justify-between bg-zinc-950 p-10 cursor-wait"
     >
-        {/* Name / Brand (Optional, keeping it subtle) */}
+        {/* Top-left Brand (Optional) */}
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -56,8 +62,48 @@ export default function Preloader() {
             <span className="text-zinc-400 font-mono text-sm uppercase tracking-widest">Portfolio</span>
         </motion.div>
 
-        {/* Large Counter */}
-        <div className="flex flex-col items-end">
+        {/* Center Image with Circular Progress */}
+        <div className="absolute inset-0 flex items-center justify-center">
+             <div className="relative flex items-center justify-center">
+                 {/* Progress Circle Background */}
+                 <svg className="absolute w-[120px] h-[120px] -rotate-90">
+                     <circle 
+                        cx="60" cy="60" r={radius} 
+                        fill="none" 
+                        stroke="#27272a" // zinc-800
+                        strokeWidth="4" 
+                     />
+                     <motion.circle 
+                        cx="60" cy="60" r={radius} 
+                        fill="none" 
+                        stroke="#6366f1" // indigo-500
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeDasharray={circumference}
+                        animate={{ strokeDashoffset }}
+                        transition={{ duration: 0.2 }}
+                     />
+                 </svg>
+
+                 {/* Profile Image */}
+                 <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative w-[100px] h-[100px] rounded-full overflow-hidden border-4 border-zinc-900"
+                 >
+                     <Image 
+                        src="/bordered.png" 
+                        alt="Profile" 
+                        fill 
+                        className="object-cover"
+                     />
+                 </motion.div>
+             </div>
+        </div>
+
+        {/* Bottom-right Large Counter */}
+        <div className="flex flex-col items-end relative z-10">
              <motion.p 
                 className="text-white text-[12vw] leading-[0.8] font-bold tracking-tighter"
                 initial={{ opacity: 0, y: 50 }}
@@ -66,9 +112,6 @@ export default function Preloader() {
                 {Math.round(progress)}
             </motion.p>
         </div>
-        
-        {/* SVG Curve for fluid exit (optional visual flair) */}
-        {/* We can keep it simple first */}
     </motion.div>
   );
 }
