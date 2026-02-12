@@ -6,6 +6,14 @@ import { SiGithub } from "react-icons/si";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home-color-bend";
 import TargetCursor from "@/components/TargetCursor";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export default function ToolsPage() {
   const tools = [

@@ -11,6 +11,14 @@ import { MdWarning } from "react-icons/md";
 import HomeBackground from "@/components/shared/home-color-bend";
 import FloatingHeader from "@/components/shared/header";
 import TargetCursor from "@/components/TargetCursor";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface Course {
   course_code: string;
@@ -163,6 +171,21 @@ export default function UIUExamRoutinePage() {
       <HomeBackground />
       <FloatingHeader />
       <div className="max-w-5xl mx-auto py-40 px-6 relative">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/" className="text-slate-400 hover:text-white">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/tools" className="text-slate-400 hover:text-white">Tools</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="text-white">UIU Exam Routine</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -176,7 +199,7 @@ export default function UIUExamRoutinePage() {
               transition={{ delay: 0.1 }}
               className="inline-flex items-center gap-2 mb-4"
             >
-              <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight bg-linear-to-r from-white to-white/70 bg-clip-text text-transparent">
+              <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight bg-white bg-clip-text text-transparent">
                 UIU Exam Routine Finder
               </h1>
             </motion.div>

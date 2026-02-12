@@ -9,6 +9,14 @@ import { toPng } from "html-to-image";
 import HomeBackground from "@/components/shared/home-color-bend";
 import FloatingHeader from "@/components/shared/header";
 import TargetCursor from "@/components/TargetCursor";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface GitHubStats {
   user: {
@@ -168,6 +176,21 @@ export default function GithubUnwrappedPage() {
       <HomeBackground />
       <FloatingHeader />
       <div className="max-w-5xl mx-auto py-38 px-6 relative">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/" className="text-slate-400 hover:text-white">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/tools" className="text-slate-400 hover:text-white">Tools</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="text-white">GitHub Unwrapped</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
