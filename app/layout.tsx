@@ -70,7 +70,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark">
-      <body className={`${ubuntu.className}`}>
+      <body className={`${ubuntu.className}`} suppressHydrationWarning>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
