@@ -240,7 +240,7 @@ export default function GithubUnwrappedPage() {
             <Button
               type="submit"
               disabled={loading || !username.trim()}
-              className="h-10 px-6 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white"
+              className="h-10 px-6 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white cursor-target"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

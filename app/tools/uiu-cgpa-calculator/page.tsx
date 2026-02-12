@@ -141,11 +141,11 @@ export default function UIUCGPACalculatorPage() {
                 <Breadcrumb className="mb-6">
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/" className="text-slate-400 hover:text-white">Home</BreadcrumbLink>
+                            <BreadcrumbLink href="/" className="text-slate-400 hover:text-white cursor-target">Home</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/tools" className="text-slate-400 hover:text-white">Tools</BreadcrumbLink>
+                            <BreadcrumbLink href="/tools" className="text-slate-400 hover:text-white cursor-target">Tools</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
@@ -308,7 +308,7 @@ export default function UIUCGPACalculatorPage() {
                                                 variant="destructive"
                                                 onClick={() => removeCourse(index)}
                                                 disabled={courses.length === 1}
-                                                className="w-full flex justify-center items-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30"
+                                                className="w-full flex justify-center items-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-white border border-red-500/30 cursor-target"
                                             >
                                                 <IconTrash className="h-4 w-4" />
                                                 <span className="hidden sm:inline">Remove</span>
@@ -320,7 +320,7 @@ export default function UIUCGPACalculatorPage() {
                                 {/* Add Course Button */}
                                 <Button
                                     onClick={handleAddCourse}
-                                    className="w-full sm:w-auto bg-indigo-500 hover:bg-indigo-600 text-white"
+                                    className="w-full sm:w-auto bg-indigo-500 hover:bg-indigo-600 text-white cursor-target"
                                 >
                                     + Add Course
                                 </Button>
@@ -332,14 +332,14 @@ export default function UIUCGPACalculatorPage() {
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 }}
-                        className="flex justify-end mb-4"
+                        transition={{ delay: 0.05 }}
+                        className="flex justify-end"
                     >
                         <Button
                             onClick={handleDownload}
                             disabled={downloading || !canDownload()}
                             variant="outline"
-                            className="gap-2 text-xs md:text-sm"
+                            className="gap-2 text-xs md:text-sm mb-5 cursor-target"
                         >
                             {downloading ? (
                                 <>

@@ -175,11 +175,11 @@ export default function UIUExamRoutinePage() {
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/" className="text-slate-400 hover:text-white">Home</BreadcrumbLink>
+              <BreadcrumbLink href="/" className="text-slate-400 hover:text-white cursor-target">Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/tools" className="text-slate-400 hover:text-white">Tools</BreadcrumbLink>
+              <BreadcrumbLink href="/tools" className="text-slate-400 hover:text-white cursor-target">Tools</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -262,7 +262,7 @@ export default function UIUExamRoutinePage() {
             <Button
               onClick={handleSubmit}
               disabled={loading || !studentID.trim() || !password.trim()}
-              className="px-6 whitespace-nowrap"
+              className="px-6 whitespace-nowrap bg-indigo-500 text-white hover:bg-indigo-500/75 cursor-target"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -331,7 +331,7 @@ export default function UIUExamRoutinePage() {
                     onClick={handleDownload}
                     disabled={downloading}
                     variant="outline"
-                    className="gap-2 text-xs md:text-sm"
+                    className="gap-2 text-xs md:text-sm cursor-target"
                   >
                     {downloading ? (
                       <>
