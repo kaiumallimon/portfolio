@@ -31,7 +31,7 @@ export default function JourneySection() {
   ];
 
   return (
-    <section className="py-24 px-6 relative">
+    <section id="activities" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Co-Curricular Activities</h2>

@@ -1,25 +1,104 @@
 'use client';
 
 import { Menu } from 'lucide-react';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function FloatingHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['about', 'skills', 'projects', 'activities', 'achievements', 'contact'];
+      let currentSection = '';
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // Check if section top is above viewport center
+          if (rect.top <= window.innerHeight / 2 && rect.bottom > 0) {
+            currentSection = section;
+          }
+        }
+      }
+
+      setActiveSection(currentSection);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Call once on mount to set initial state
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isActive = (href: string) => {
+    if (href.startsWith('#')) {
+      return activeSection === href.slice(1);
+    }
+    return pathname === href;
+  };
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // If on non-home page and clicking a hash link, navigate to home first
+    if (href.startsWith('#') && pathname !== '/') {
+      e.preventDefault();
+      window.location.href = '/' + href;
+    }
+  };
+
+  const navItems = [
+    { href: '#about', label: 'About' },
+    { href: '#skills', label: 'Skills' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#activities', label: 'Activities' },
+    { href: '#achievements', label: 'Achievements' },
+    { href: '/tools', label: 'Tools' },
+  ];
 
   return (
-    <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-4xl ">
+    <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-6xl ">
       <div className="bg-transparent backdrop-blur-md border border-slate-700/30 rounded-full pl-6 pr-4 py-3 flex items-center justify-between shadow-2xl shadow-black/50">
-        <a href="#" className="text-slate-100 font-medium tracking-tight flex items-center gap-2">
-          {/* <span className="w-8 h-8 rounded-full bg-indigo-600/20 flex items-center justify-center border border-indigo-500/30 text-indigo-400 font-semibold text-xs">KL</span> */}
-          <span className="cursor-target">Kaium Al Limon</span>
+        <a
+          href="/"
+          className="text-slate-100 font-medium tracking-tight flex items-center gap-2 cursor-target hover:text-white transition-colors"
+        >
+          Kaium Al Limon
         </a>
 
         <div className="hidden md:flex items-center gap-1">
-          <a href="#about" className="cursor-target px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">About</a>
-          <a href="#skills" className="cursor-target px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Skills</a>
-          <a href="#projects" className="cursor-target px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Projects</a>
-          <a href="/tools" className="cursor-target px-4 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Tools</a>
-          <a href="#contact" className="cursor-target ml-2 px-4 py-1.5 text-sm bg-white/10 hover:bg-white/20 text-white rounded-full transition-all border border-white/5">Contact</a>
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={(e) => handleNavClick(e, item.href)}
+              className={`cursor-target px-3 py-1.5 text-sm rounded-full transition-all duration-300 relative group ${
+                isActive(item.href)
+                  ? 'text-white'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <span className="relative z-10">{item.label}</span>
+              {/* Modern underline effect */}
+              <span
+                className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-linear-to-r from-indigo-500 to-indigo-600 transition-all duration-300 ${
+                  isActive(item.href) ? 'w-6' : 'w-0 group-hover:w-6'
+                }`}
+              />
+              {/* Background glow for active */}
+              {isActive(item.href) && (
+                <span className="absolute inset-0 rounded-full bg-indigo-500/10 border border-indigo-500/30 z-0" />
+              )}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            onClick={(e) => handleNavClick(e, '#contact')}
+            className="cursor-target ml-4 px-5 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-full transition-all font-medium"
+          >
+            Contact
+          </a>
         </div>
 
         <button
@@ -33,11 +112,33 @@ export default function FloatingHeader() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="absolute top-16 left-0 w-full bg-transparent  border border-slate-700/30 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-2 md:hidden animate-fade-in">
-          <a href="#about" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm cursor-target" onClick={() => setMobileMenuOpen(false)}>About</a>
-          <a href="#skills" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm cursor-target" onClick={() => setMobileMenuOpen(false)}>Skills</a>
-          <a href="#projects" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm cursor-target" onClick={() => setMobileMenuOpen(false)}>Projects</a>
-          <a href="/tools" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm cursor-target" onClick={() => setMobileMenuOpen(false)}>Tools</a>
-          <a href="#contact" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm text-indigo-400 cursor-target" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={(e) => {
+                handleNavClick(e, item.href);
+                setMobileMenuOpen(false);
+              }}
+              className={`p-3 rounded-xl text-sm cursor-target transition-all duration-300 ${
+                isActive(item.href)
+                  ? 'bg-indigo-500/20 border border-indigo-500/30 text-indigo-200'
+                  : 'hover:bg-white/5'
+              }`}
+            >
+              {item.label}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            onClick={(e) => {
+              handleNavClick(e, '#contact');
+              setMobileMenuOpen(false);
+            }}
+            className="p-3 rounded-xl text-sm cursor-target transition-all duration-300 bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
+          >
+            Contact
+          </a>
         </div>
       )}
     </nav>
