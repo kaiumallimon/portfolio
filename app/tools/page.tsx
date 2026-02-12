@@ -6,6 +6,7 @@ import { SiGithub } from "react-icons/si";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home-color-bend";
 import TargetCursor from "@/components/TargetCursor";
+import Footer from "@/components/custom-new/footer";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -67,6 +68,17 @@ export default function ToolsPage() {
 
       <div className="relative">
         <div className="max-w-7xl mx-auto py-42 px-6">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/" className="text-slate-400 hover:text-white">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="text-white">Tools</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <h1 className="text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-tight text-white">
           Tools & Utilities
         </h1>
@@ -115,6 +127,7 @@ export default function ToolsPage() {
           ))}
         </div>
         </div>
+        <Footer />
       </div>
     </div>
   );

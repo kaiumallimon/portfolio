@@ -11,6 +11,7 @@ import { MdWarning } from "react-icons/md";
 import HomeBackground from "@/components/shared/home-color-bend";
 import FloatingHeader from "@/components/shared/header";
 import TargetCursor from "@/components/TargetCursor";
+import Footer from "@/components/custom-new/footer";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -491,6 +492,7 @@ export default function UIUExamRoutinePage() {
           </AnimatePresence>
         </motion.div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -16,7 +16,11 @@ export default function Footer() {
     { name: "About", href: "#about" },
     { name: "Skills", href: "#skills" },
     { name: "Projects", href: "#projects" },
+    { name: "Activities", href: "#activities" },
+    { name: "Achievements", href: "#achievements" },
     { name: "Tools", href: "/tools" },
+    { name: "Github Unwrapped", href: "/tools/github-unwrapped" },
+    { name: "UIU Exam Routine", href: "/tools/uiu-exam-routine" },
     { name: "Contact", href: "#contact" },
   ];
 
@@ -35,7 +39,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="space-y-4">
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider">Quick Links</h4>
-            <nav className="flex flex-col space-y-2">
+            <nav className="grid grid-cols-2 gap-x-4 gap-y-2">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
