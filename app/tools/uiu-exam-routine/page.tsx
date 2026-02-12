@@ -133,7 +133,7 @@ export default function UIUExamRoutinePage() {
       console.log("Converting to PNG...");
       const dataUrl = await toPng(statsRef.current, {
         cacheBust: true,
-        backgroundColor: "#1a1a1a",
+        backgroundColor: "#1e1b4b",
         pixelRatio: 2,
         quality: 1,
         filter: (node) => {
@@ -351,7 +351,7 @@ export default function UIUExamRoutinePage() {
                 {/* Stats Container */}
                 <div
                   ref={statsRef}
-                  className={`space-y-6 bg-[#1a1a1a] p-3 md:p-6 rounded-2xl ${snapshotMode ? "min-w-5xl" : ""}`}
+                  className={`space-y-6 bg-[#1e1b4b] p-3 md:p-6 rounded-2xl ${snapshotMode ? "min-w-5xl" : ""}`}
                 >
                 {/* Profile Card */}
                 <motion.div

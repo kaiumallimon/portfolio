@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useState, useRef } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { toPng } from "html-to-image";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function UIUCGPACalculatorPage() {
     const [downloading, setDownloading] = useState(false);
@@ -88,8 +89,20 @@ export default function UIUCGPACalculatorPage() {
         }
     };
 
+    const hasValidCourses = () => {
+        return courses.some(course => course.courseName.trim() !== "" || course.gradePoint > 0);
+    };
+
+    const hasPreviousData = () => {
+        return previousCGPA > 0 || creditsCompleted > 0;
+    };
+
+    const canDownload = () => {
+        return hasValidCourses() || hasPreviousData();
+    };
+
     const handleDownload = async () => {
-        if (!resultsRef.current) return;
+        if (!resultsRef.current || !canDownload()) return;
 
         setDownloading(true);
         try {
@@ -97,7 +110,7 @@ export default function UIUCGPACalculatorPage() {
 
             const dataUrl = await toPng(resultsRef.current, {
                 cacheBust: true,
-                backgroundColor: "#0f172a",
+                backgroundColor: "#1e1b4b",
                 pixelRatio: 2,
                 skipFonts: true,
             });
@@ -218,7 +231,7 @@ export default function UIUCGPACalculatorPage() {
                     >
                         <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6">
                             <h3 className="text-lg font-semibold mb-4 text-white">Current Semester Courses</h3>
-                            
+
                             <div className="space-y-4">
                                 {courses.map((course, index) => (
                                     <motion.div
@@ -277,8 +290,8 @@ export default function UIUCGPACalculatorPage() {
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-slate-900 border-white/20">
                                                     {grades.map((grade) => (
-                                                        <SelectItem 
-                                                            key={grade.value} 
+                                                        <SelectItem
+                                                            key={grade.value}
                                                             value={grade.value.toFixed(2)}
                                                             className="text-white hover:bg-white/10 focus:bg-white/10"
                                                         >
@@ -324,7 +337,7 @@ export default function UIUCGPACalculatorPage() {
                     >
                         <Button
                             onClick={handleDownload}
-                            disabled={downloading}
+                            disabled={downloading || !canDownload()}
                             variant="outline"
                             className="gap-2 text-xs md:text-sm"
                         >
@@ -349,29 +362,89 @@ export default function UIUCGPACalculatorPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6 }}
-                        className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6"
+                        className="space-y-6 bg-[#1e1b4b] p-6 rounded-2xl"
                     >
-                        <h3 className="text-lg font-semibold mb-4 text-white">Results</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
-                                <p className="text-white/60 text-sm mb-2">Total Credits</p>
-                                <p className="text-3xl font-bold text-cyan-400">
-                                    {calculateCreditsCompleted()}
-                                </p>
-                            </div>
-                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
-                                <p className="text-white/60 text-sm mb-2">Semester GPA</p>
-                                <p className="text-3xl font-bold text-purple-400">
-                                    {isNaN(Number(calculateGPA())) ? "N/A" : calculateGPA()}
-                                </p>
-                            </div>
-                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
-                                <p className="text-white/60 text-sm mb-2">Cumulative CGPA</p>
-                                <p className="text-3xl font-bold text-indigo-400">
-                                    {isNaN(Number(calculateCGPA())) ? "N/A" : calculateCGPA()}
-                                </p>
+                        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6">
+                            <h3 className="text-lg font-semibold mb-4 text-white">Results</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                                    <p className="text-white/60 text-sm mb-2">Total Credits</p>
+                                    <p className="text-3xl font-bold text-cyan-400">
+                                        {calculateCreditsCompleted()}
+                                    </p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                                    <p className="text-white/60 text-sm mb-2">Semester GPA</p>
+                                    <p className="text-3xl font-bold text-purple-400">
+                                        {isNaN(Number(calculateGPA())) ? "N/A" : calculateGPA()}
+                                    </p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                                    <p className="text-white/60 text-sm mb-2">Cumulative CGPA</p>
+                                    <p className="text-3xl font-bold text-indigo-400">
+                                        {isNaN(Number(calculateCGPA())) ? "N/A" : calculateCGPA()}
+                                    </p>
+                                </div>
                             </div>
                         </div>
+
+                        {/* Previous Trimester Data */}
+                        {hasPreviousData() && (
+                            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6">
+                                <h3 className="text-lg font-semibold mb-4 text-white">Previous Academic Record</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                                        <p className="text-white/60 text-sm mb-2">Previous CGPA</p>
+                                        <p className="text-2xl font-bold text-white">
+                                            {previousCGPA.toFixed(2)}
+                                        </p>
+                                    </div>
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                                        <p className="text-white/60 text-sm mb-2">Credits Completed</p>
+                                        <p className="text-2xl font-bold text-white">
+                                            {creditsCompleted}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Current Semester Courses */}
+                        {hasValidCourses() && (
+                            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
+                                <div className="p-4 md:p-6 border-b border-white/10">
+                                    <h3 className="text-base md:text-lg font-semibold flex items-center gap-2 text-white">
+                                        Current Semester Courses
+                                    </h3>
+                                </div>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow className="border-white/10 hover:bg-transparent">
+                                            <TableHead className="text-white/70 py-4 px-4">Course Name</TableHead>
+                                            <TableHead className="text-white/70 py-4 px-4 text-center">Credit Hours</TableHead>
+                                            <TableHead className="text-white/70 py-4 px-4 text-center">Grade Point</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {courses.filter(course => course.courseName.trim() !== "" || course.gradePoint > 0).map((course, index) => (
+                                            <TableRow key={index} className="border-white/10 hover:bg-white/5">
+                                                <TableCell className="font-semibold text-white py-4 px-4">
+                                                    {course.courseName || "Unnamed Course"}
+                                                </TableCell>
+                                                <TableCell className="text-white/80 py-4 px-4 text-center">
+                                                    {course.creditHours}
+                                                </TableCell>
+                                                <TableCell className="text-white/80 py-4 px-4 text-center">
+                                                    <span className="px-2 py-1 bg-indigo-500/20 text-indigo-300 rounded text-sm">
+                                                        {course.gradePoint.toFixed(2)} ({grades.find(g => g.value === course.gradePoint)?.label || "N/A"})
+                                                    </span>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        )}
                     </motion.div>
                 </motion.div>
             </div>

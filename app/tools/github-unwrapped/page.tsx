@@ -89,7 +89,7 @@ export default function GithubUnwrappedPage() {
 
       const dataUrl = await toPng(statsRef.current, {
         cacheBust: true,
-        backgroundColor: "#1a1a1a",
+        backgroundColor: "#1e1b4b",
         pixelRatio: 2,
         skipFonts: true,
       });
@@ -306,7 +306,7 @@ export default function GithubUnwrappedPage() {
                 </motion.div>
 
                 {/* Stats Container */}
-                <div ref={statsRef} className="space-y-4 md:space-y-6 bg-[#1a1a1a] p-3 md:p-6 rounded-2xl">
+                <div ref={statsRef} className="space-y-4 md:space-y-6 bg-[#1e1b4b] p-3 md:p-6 rounded-2xl">
                   {/* Profile Header Card */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
