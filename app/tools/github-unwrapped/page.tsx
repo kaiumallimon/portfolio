@@ -6,6 +6,9 @@ import Image from "next/image";
 import { Search, Loader2, Github, Trophy, Zap, Crown, Calendar, BarChart3, Star, Rocket, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toPng } from "html-to-image";
+import HomeBackground from "@/components/shared/home-color-bend";
+import FloatingHeader from "@/components/shared/header";
+import TargetCursor from "@/components/TargetCursor";
 
 interface GitHubStats {
   user: {
@@ -155,8 +158,16 @@ export default function GithubUnwrappedPage() {
     : [];
 
   return (
-    <div className="min-h-screen w-full bg-white/8 backdrop-blur-sm text-white">
-      <div className="max-w-5xl mx-auto pt-24 pb-16 px-6">
+    <div className="min-h-screen w-full bg-slate-950 text-slate-300">
+      <TargetCursor
+        spinDuration={2}
+        hideDefaultCursor
+        parallaxOn
+        hoverDuration={0.2}
+      />
+      <HomeBackground />
+      <FloatingHeader />
+      <div className="max-w-5xl mx-auto py-38 px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

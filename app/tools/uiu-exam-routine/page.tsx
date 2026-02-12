@@ -8,6 +8,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Loader2, Search, Calendar, Clock, User, MapPin, BookOpen, Download } from "lucide-react";
 import { toPng } from "html-to-image";
 import { MdWarning } from "react-icons/md";
+import HomeBackground from "@/components/shared/home-color-bend";
+import FloatingHeader from "@/components/shared/header";
+import TargetCursor from "@/components/TargetCursor";
 
 interface Course {
   course_code: string;
@@ -150,8 +153,16 @@ export default function UIUExamRoutinePage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white/8 backdrop-blur-sm text-white">
-      <div className="max-w-5xl mx-auto pt-24 pb-16 px-6">
+    <div className="min-h-screen w-full bg-slate-950 text-slate-300">
+      <TargetCursor
+        spinDuration={2}
+        hideDefaultCursor
+        parallaxOn
+        hoverDuration={0.2}
+      />
+      <HomeBackground />
+      <FloatingHeader />
+      <div className="max-w-5xl mx-auto py-40 px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -182,10 +193,10 @@ export default function UIUExamRoutinePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="mt-3 text-xs border flex flex-col gap-3 items-center justify-center max-w-sm mx-auto px-3 py-3 rounded-lg border-border text-primary/75"
+              className="mt-3 text-xs flex flex-row gap-2 items-center justify-center max-w-sm mx-auto px-3 py-3 rounded-lg border-border text-primary/75"
             >
               <MdWarning className="w-5 h-5 text-yellow-400" />
-              <p>Currently Only SOSE (BSCSE, BSDS, BSEEE and BSCE) is supported!</p>
+              <p>Only SOSE is supported!</p>
             </motion.div>
           </div>
 

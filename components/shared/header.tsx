@@ -37,11 +37,11 @@ export default function FloatingHeader() {
     if (href.startsWith('#')) {
       return activeSection === href.slice(1);
     }
-    return pathname === href;
+    // For page routes, check if pathname starts with href (to include sub-routes)
+    return pathname.startsWith(href);
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // If on non-home page and clicking a hash link, navigate to home first
     if (href.startsWith('#') && pathname !== '/') {
       e.preventDefault();
       window.location.href = '/' + href;
