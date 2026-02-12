@@ -233,14 +233,14 @@ export default function GithubUnwrappedPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter GitHub username"
-                className="w-full h-10 px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all text-white placeholder:text-white/40"
+                className="w-full h-10 px-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-white placeholder:text-white/40"
                 disabled={loading}
               />
             </div>
             <Button
               type="submit"
               disabled={loading || !username.trim()}
-              className="h-10 px-6 rounded-lg"
+              className="h-10 px-6 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
