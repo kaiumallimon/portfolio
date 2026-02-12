@@ -6,6 +6,7 @@ import Image from "next/image";
 import { SiFlutter } from "react-icons/si";
 import { IoServer } from "react-icons/io5";
 import { FiSmartphone } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 export default function HomeHero() {
@@ -20,7 +21,13 @@ export default function HomeHero() {
           "opacity-20"
         )}
       />
-      <main className="relative z-10 py-38 px-6 max-w-6xl mx-auto">
+      <motion.main
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 py-38 px-6 max-w-6xl mx-auto"
+      >
         <div className="flex flex-col items-center text-center space-y-8">
           <Image
             src="/bordered.png"
@@ -84,7 +91,7 @@ export default function HomeHero() {
             </div>
           </div>
         </div>
-      </main>
+      </motion.main>
     </div>
   );
 }
