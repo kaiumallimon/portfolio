@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 import { gsap } from 'gsap';
 
 export interface TargetCursorProps {
@@ -26,19 +26,13 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
   const tickerFnRef = useRef<(() => void) | null>(null);
   const activeStrengthRef = useRef({ current: 0 });
 
-  // Add mounted state to prevent hydration mismatch
-  const [isMounted, setIsMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Check if mobile on client side only
-  useEffect(() => {
-    setIsMounted(true);
+  const isMobile = useMemo(() => {
     const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isSmallScreen = window.innerWidth <= 768;
     const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
     const mobileRegex = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
     const isMobileUserAgent = mobileRegex.test(userAgent.toLowerCase());
-    setIsMobile((hasTouchScreen && isSmallScreen) || isMobileUserAgent);
+    return (hasTouchScreen && isSmallScreen) || isMobileUserAgent;
   }, []);
 
   const constants = useMemo(() => ({ borderWidth: 3, cornerSize: 12 }), []);
@@ -281,8 +275,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     }
   }, [spinDuration, isMobile]);
 
-  // Don't render anything until mounted on client
-  if (!isMounted || isMobile) {
+  if (isMobile) {
     return null;
   }
 
