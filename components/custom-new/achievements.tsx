@@ -2,6 +2,7 @@
 
 'use client';
 
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { Trophy, Calendar, Users, Code, X } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -55,7 +56,14 @@ export default function AchievementsSection() {
   ];
 
   return (
-    <section id="achievements" className="py-24 px-6 relative">
+    <motion.section
+      id="achievements"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+      className="py-24 px-6 relative"
+    >
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Achievements</h2>
@@ -150,6 +158,6 @@ export default function AchievementsSection() {
           </div>
         </div>
       )}
-    </section>
+    </motion.section>
   );
 }
