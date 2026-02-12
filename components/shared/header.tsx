@@ -73,7 +73,7 @@ export default function FloatingHeader() {
       >
         <a
           href="/"
-          className="text-slate-100 font-medium tracking-tight flex items-center gap-2 cursor-target hover:text-white transition-colors"
+          className="text-slate-100 font-medium tracking-tight flex items-center gap-2 cursor-target hover:text-indigo-500 transition-colors duration-500"
         >
           Kaium Al Limon
         </a>
