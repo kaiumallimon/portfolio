@@ -7,7 +7,7 @@ export default function FloatingHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-4xl ">
+    <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-4xl ">
       <div className="bg-transparent backdrop-blur-md border border-slate-700/30 rounded-full pl-6 pr-4 py-3 flex items-center justify-between shadow-2xl shadow-black/50">
         <a href="#" className="text-slate-100 font-medium tracking-tight flex items-center gap-2">
           {/* <span className="w-8 h-8 rounded-full bg-indigo-600/20 flex items-center justify-center border border-indigo-500/30 text-indigo-400 font-semibold text-xs">KL</span> */}
@@ -33,10 +33,11 @@ export default function FloatingHeader() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="absolute top-16 left-0 w-full bg-transparent  border border-slate-700/30 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-2 md:hidden animate-fade-in">
-          <a href="#about" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm" onClick={() => setMobileMenuOpen(false)}>About</a>
-          <a href="#skills" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm" onClick={() => setMobileMenuOpen(false)}>Skills</a>
-          <a href="#projects" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm" onClick={() => setMobileMenuOpen(false)}>Projects</a>
-          <a href="#contact" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm text-indigo-400" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+          <a href="#about" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm cursor-target" onClick={() => setMobileMenuOpen(false)}>About</a>
+          <a href="#skills" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm cursor-target" onClick={() => setMobileMenuOpen(false)}>Skills</a>
+          <a href="#projects" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm cursor-target" onClick={() => setMobileMenuOpen(false)}>Projects</a>
+          <a href="/tools" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm cursor-target" onClick={() => setMobileMenuOpen(false)}>Tools</a>
+          <a href="#contact" className="p-3 hover:bg-white/5 transition-all duration-300 rounded-xl text-sm text-indigo-400 cursor-target" onClick={() => setMobileMenuOpen(false)}>Contact</a>
         </div>
       )}
     </nav>

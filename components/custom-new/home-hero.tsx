@@ -1,10 +1,11 @@
 import { ArrowRight, Download, Server } from "lucide-react";
-import { FaMobile, FaServer } from "react-icons/fa";
-import { SiFlutter } from "react-icons/si";
-import { CgPerformance } from "react-icons/cg";
+import { GiElectric } from "react-icons/gi";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { SiFlutter } from "react-icons/si";
+import { IoServer } from "react-icons/io5";
+import { FiSmartphone } from "react-icons/fi";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 export default function HomeHero() {
@@ -65,20 +66,20 @@ export default function HomeHero() {
 
           {/* <!-- Stats/Stack Preview --> */}
           <div className="pt-16 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 opacity-60 ">
-            <div className="flex flex-col items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
               <SiFlutter size={24} className="text-blue-400 " />
               <span className="text-xs md:text-sm font-medium">Flutter Expert</span>
             </div>
-            <div className="flex flex-col  items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500" >
-              <FaServer size={24} className="text-green-400" />
+            <div className="flex   items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500" >
+              <IoServer size={24} className="text-green-400" />
               <span className="text-xs md:text-sm font-medium">Backend Arch</span>
             </div>
-            <div className="flex  flex-col  items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
-              <FaMobile size={24} className="text-pink-400" />
+            <div className="flex  items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
+              <FiSmartphone size={24} className="text-pink-400" />
               <span className="text-xs md:text-sm font-medium">iOS & Android</span>
             </div>
-            <div className="flex flex-col items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
-              <CgPerformance size={24} className="text-yellow-400" />
+            <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
+              <GiElectric size={24} className="text-yellow-400" />
               <span className="text-xs md:text-sm font-medium">High Perf</span>
             </div>
           </div>
