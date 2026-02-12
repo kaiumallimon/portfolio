@@ -50,8 +50,8 @@ export default function HomeHero() {
             <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-cyan-300">
               seamless, user‑focused experiences
             </span> across <span className="inline-block bg-[#4c00a8] px-3  -skew-x-6">
-  platforms
-</span>
+              platforms
+            </span>
 
           </h1>
 
