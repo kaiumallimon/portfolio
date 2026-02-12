@@ -47,12 +47,12 @@ export default function ContactForm() {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  return (<div>
-        <motion.section
-          id="contact"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+  return (
+    <motion.section
+      id="contact"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
           className="py-24 px-6"
         >
@@ -155,5 +155,5 @@ export default function ContactForm() {
             </div>
         </div>
     </motion.section>
-  </div>);
+  );
 }

@@ -167,7 +167,7 @@ export default function GithubUnwrappedPage() {
     : [];
 
   return (
-    <div className="min-h-screen w-full bg-slate-950 text-slate-300">
+    <div className="min-h-screen w-full max-w-[100vw] bg-slate-950 text-slate-300 overflow-x-hidden">
       <TargetCursor
         spinDuration={2}
         hideDefaultCursor

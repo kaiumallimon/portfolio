@@ -68,8 +68,8 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en" className="dark h-full ">
-      <body className={`${ubuntu.className} `}>
+    <html lang="en" className="dark">
+      <body className={`${ubuntu.className}`}>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"

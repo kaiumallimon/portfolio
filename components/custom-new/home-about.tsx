@@ -34,8 +34,7 @@ const education = [
 ];
 
 export default function HomeAboutSection() {
-  return (<div>
-    {/* <!-- About & Education Section --> */}
+  return (
     <motion.section
       id="about"
       initial={{ opacity: 0, y: 50 }}
@@ -123,5 +122,5 @@ export default function HomeAboutSection() {
         </div>
       </div>
     </motion.section>
-  </div>);
+  );
 }

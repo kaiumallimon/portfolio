@@ -29,7 +29,7 @@ export default function HomeProjects() {
     fetchProjects();
   }, []);
 
-  return (<div>
+  return (
     <motion.section
       id="projects"
       initial={{ opacity: 0, y: 50 }}
@@ -183,5 +183,5 @@ export default function HomeProjects() {
         </div>
       </div>
     </motion.section>
-  </div>);
+  );
 }

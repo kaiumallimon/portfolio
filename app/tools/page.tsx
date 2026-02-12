@@ -56,7 +56,7 @@ export default function ToolsPage() {
   ];
 
   return (
-    <div className="bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 relative overflow-x-hidden">
+    <div className="bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 relative overflow-x-hidden w-full max-w-[100vw]">
       <TargetCursor
         spinDuration={2}
         hideDefaultCursor
