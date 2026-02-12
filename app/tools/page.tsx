@@ -46,11 +46,11 @@ export default function ToolsPage() {
       name: "UIU CGPA Calculator",
       description:
         "A simple CGPA calculator for United International University students to compute their semester and cumulative GPA.",
-      link: null,
+      link: '/tools/uiu-cgpa-calculator',
       icon: <FaCalculator className="w-12 h-12" />,
       status: {
-        isAvailable: false,
-        label: "Coming Soon",
+        isAvailable: true,
+        label: "Available",
       },
     },
   ];
