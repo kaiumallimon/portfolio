@@ -7,6 +7,7 @@ import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home-color-bend";
 import TargetCursor from "@/components/TargetCursor";
 import Footer from "@/components/custom-new/footer";
+import { motion } from "framer-motion";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -68,6 +69,11 @@ export default function ToolsPage() {
 
       <div className="relative">
         <div className="max-w-7xl mx-auto py-42 px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -79,18 +85,32 @@ export default function ToolsPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <h1 className="text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-tight text-white">
+        </motion.div>
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-tight text-white"
+        >
           Tools & Utilities
-        </h1>
-        <p className="text-center text-white/70 mb-10 max-w-2xl mx-auto">
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-center text-white/70 mb-10 max-w-2xl mx-auto"
+        >
           A collection of web-based tools that I have developed for making our digital lives easier and more efficient.
-        </p>
+        </motion.p>
 
         {/* Tools List */}
         <div className="flex flex-col gap-[18px] w-full">
           {tools.map((tool, index) => (
-            <div
+            <motion.div
               key={index}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
               className="relative overflow-hidden rounded-2xl p-4 min-h-[220px] bg-transparent border border-white/12 hover:-translate-y-1.5 transition-transform duration-200"
             >
               <a
@@ -123,7 +143,7 @@ export default function ToolsPage() {
                   </div>
                 </div>
               </a>
-            </div>
+            </motion.div>
           ))}
         </div>
         </div>

@@ -1,6 +1,9 @@
+'use client';
+
 import { Github, Linkedin, Mail, Twitter, Heart } from "lucide-react";
 import Link from "next/link";
 import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -25,42 +28,74 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative border-t border-white/10 bg-slate-950/50 backdrop-blur-md">
+    <motion.footer
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className="relative border-t border-white/10 bg-slate-950/50 backdrop-blur-md"
+    >
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Brand Section */}
-          <div className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="space-y-4"
+          >
             <h3 className="text-xl font-semibold text-white">Kaium Al Limon</h3>
             <p className="text-sm text-slate-400 leading-relaxed">
               Flutter Specialist & Full-Stack Engineer building high-performance applications.
             </p>
-          </div>
+          </motion.div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-4"
+          >
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider">Quick Links</h4>
             <nav className="grid grid-cols-2 gap-x-4 gap-y-2">
-              {navLinks.map((link) => (
-                <a
+              {navLinks.map((link, index) => (
+                <motion.a
                   key={link.name}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
                   href={link.href}
                   className="text-sm text-slate-400 hover:text-indigo-400 transition-colors cursor-target"
                 >
                   {link.name}
-                </a>
+                </motion.a>
               ))}
             </nav>
-          </div>
+          </motion.div>
 
           {/* Social Links */}
-          <div className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="space-y-4"
+          >
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider">Connect</h4>
             <div className="flex gap-3">
-              {socialLinks.map((social) => {
+              {socialLinks.map((social, index) => {
                 const Icon = social.icon;
                 return (
-                  <a
+                  <motion.a
                     key={social.label}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -68,23 +103,29 @@ export default function Footer() {
                     className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-indigo-400 hover:border-indigo-500/30 hover:bg-indigo-500/10 transition-all cursor-target"
                   >
                     <Icon size={18} />
-                  </a>
+                  </motion.a>
                 );
               })}
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400"
+        >
           <p>
             © {currentYear} Kaium Al Limon. All rights reserved.
           </p>
           <p className="flex items-center gap-1">
             Built with <Heart size={14} className="text-red-500 fill-red-500" /> using Next.js & Tailwind CSS
           </p>
-        </div>
+        </motion.div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }

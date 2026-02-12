@@ -1,8 +1,9 @@
 'use client';
 
-import { Menu } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FloatingHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -58,8 +59,18 @@ export default function FloatingHeader() {
   ];
 
   return (
-    <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-6xl ">
-      <div className="bg-transparent backdrop-blur-md border border-slate-700/30 rounded-full pl-6 pr-4 py-3 flex items-center justify-between shadow-2xl shadow-black/50">
+    <motion.nav
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-6xl "
+    >
+      <motion.div
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+        className="bg-transparent backdrop-blur-md border border-slate-700/30 rounded-full pl-6 pr-4 py-3 flex items-center justify-between shadow-2xl shadow-black/50"
+      >
         <a
           href="/"
           className="text-slate-100 font-medium tracking-tight flex items-center gap-2 cursor-target hover:text-white transition-colors"
@@ -105,13 +116,20 @@ export default function FloatingHeader() {
           className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300 cursor-pointer"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          <Menu size={20} />
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
-      </div>
+      </motion.div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-transparent  border border-slate-700/30 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-2 md:hidden animate-fade-in">
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-16 left-0 w-full bg-transparent border border-slate-700/30 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-2 md:hidden"
+          >
           {navItems.map((item) => (
             <a
               key={item.href}
@@ -139,8 +157,9 @@ export default function FloatingHeader() {
           >
             Contact
           </a>
-        </div>
-      )}
-    </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 }
