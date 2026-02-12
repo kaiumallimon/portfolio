@@ -1,4 +1,4 @@
-import { ArrowRight, Download, Server } from "lucide-react";
+import { ArrowRight, Download, Server, Loader2 } from "lucide-react";
 import { GiElectric } from "react-icons/gi";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -7,9 +7,48 @@ import { SiFlutter } from "react-icons/si";
 import { IoServer } from "react-icons/io5";
 import { FiSmartphone } from "react-icons/fi";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+
+interface Resume {
+  resume_url: string;
+}
+
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 export default function HomeHero() {
+
+  const [resume, setResume] = useState<Resume | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!resume?.resume_url) return;
+    
+    setDownloading(true);
+    try {
+      const response = await fetch(resume.resume_url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'CV-Kaium-Al-Limon.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetch('/api/resume')
+      .then((res) => res.json())
+      .then((data) => setResume(data.resume));
+  }, []);
+
   return (
     <div className="relative">
       <div
@@ -61,10 +100,23 @@ export default function HomeHero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <a href="#projects" className="px-8 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-medium transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group cursor-target">
-              Download CV
-              <Download size={18} className="transform group-hover:translate-x-1 transition-transform duration-300" />
-            </a>
+            <button 
+              onClick={handleDownload}
+              disabled={downloading || !resume}
+              className="px-8 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-medium transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group cursor-target"
+            >
+              {downloading ? (
+                <>
+                  Downloading...
+                  <Loader2 size={18} className="animate-spin" />
+                </>
+              ) : (
+                <>
+                  Download CV
+                  <Download size={18} className="transform group-hover:translate-x-1 transition-transform duration-300" />
+                </>
+              )}
+            </button>
             <a href="#contact" className="px-8 py-2 border backdrop-blur-md hover:bg-white/5 text-white rounded-full font-medium transition-all flex items-center justify-center gap-2 cursor-target">
               Let's Talk
               <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-300" />
