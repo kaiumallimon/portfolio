@@ -116,13 +116,10 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400"
+          className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-center items-center gap-4 text-sm text-slate-400"
         >
           <p>
             © {currentYear} Kaium Al Limon. All rights reserved.
-          </p>
-          <p className="flex items-center gap-1">
-            Built with <Heart size={14} className="text-red-500 fill-red-500" /> using Next.js & Tailwind CSS
           </p>
         </motion.div>
       </div>

@@ -52,10 +52,10 @@ const techStack = [
     {
         title: "Web & DevOps",
         icon: Globe,
-        hoverBorder: "hover:border-orange-500/30",
-        iconContainer: "bg-orange-500/10 text-orange-400",
-        highlightStyles: "bg-orange-500/10 text-orange-300 border-orange-500/20",
-        cardGradient: "bg-gradient-to-br from-orange-500/10 to-transparent",
+        hoverBorder: "hover:border-purple-500/30",
+        iconContainer: "bg-purple-500/10 text-purple-400",
+        highlightStyles: "bg-purple-500/10 text-purple-300 border-purple-500/20",
+        cardGradient: "bg-gradient-to-br from-purple-500/10 to-transparent",
         cardShadow: "shadow-inner",
         skills: [
             { name: "Next.js", highlight: true },
