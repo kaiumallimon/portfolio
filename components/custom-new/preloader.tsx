@@ -11,9 +11,14 @@ export default function Preloader() {
 
   useEffect(() => {
     setDimension({ width: window.innerWidth, height: window.innerHeight });
-  }, []);
 
-  useEffect(() => {
+    // Check if preloader has already been shown in this session
+    const hasShown = sessionStorage.getItem("preloaderShown");
+    if (hasShown) {
+      setComplete(true);
+      return;
+    }
+
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -33,6 +38,7 @@ export default function Preloader() {
     if (progress === 100) {
       setTimeout(() => {
         setComplete(true);
+        sessionStorage.setItem("preloaderShown", "true");
       }, 1000); // Wait for exit animation
     }
   }, [progress]);
