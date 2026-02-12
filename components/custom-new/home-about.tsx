@@ -1,7 +1,10 @@
+'use client';
+
 import { AwardIcon, Book, GraduationCap, Award } from "lucide-react";
 import { FaCertificate, FaGithub, FaLinkedin } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { SiEducative } from "react-icons/si";
+import { motion } from "framer-motion";
 
 const education = [
   {
@@ -33,7 +36,14 @@ const education = [
 export default function HomeAboutSection() {
   return (<div>
     {/* <!-- About & Education Section --> */}
-    <section id="about" className="py-24 px-6 relative">
+    <motion.section
+      id="about"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+      className="py-24 px-6 relative"
+    >
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-start">
         <div className="space-y-8">
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">Engineering beyond the framework.</h2>
@@ -112,6 +122,6 @@ export default function HomeAboutSection() {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   </div>);
 }

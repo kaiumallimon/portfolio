@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Project } from "@/types/project";
 import Link from 'next/link';
+import { motion } from "framer-motion";
 
 export default function HomeProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -29,7 +30,14 @@ export default function HomeProjects() {
   }, []);
 
   return (<div>
-    <section id="projects" className="py-24 px-6 relative">
+    <motion.section
+      id="projects"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+      className="py-24 px-6 relative"
+    >
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
@@ -174,6 +182,6 @@ export default function HomeProjects() {
           </Link>
         </div>
       </div>
-    </section>
+    </motion.section>
   </div>);
 }

@@ -1,5 +1,8 @@
+'use client';
+
 import { Globe, Server } from "lucide-react";
 import { FaMobile } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const techStack = [
     {
@@ -72,7 +75,14 @@ const techStack = [
 export default function TechToolsSection() {
     return (
         <div >
-            <section id="skills" className="py-20 px-6 max-w-6xl mx-auto relative z-10">
+            <motion.section
+                id="skills"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6 }}
+                className="py-20 px-6 max-w-6xl mx-auto relative z-10"
+            >
                 <div className="mb-12">
                     <h2 className="text-3xl font-semibold tracking-tight text-white mb-4">Engineering Toolkit</h2>
                     <p className="text-slate-400 max-w-xl">A full-stack approach with a mobile-first mindset. My stack is chosen for speed, scalability, and developer experience.</p>
@@ -106,7 +116,7 @@ export default function TechToolsSection() {
                         );
                     })}
                 </div>
-            </section>
+            </motion.section>
         </div>
     )
 }

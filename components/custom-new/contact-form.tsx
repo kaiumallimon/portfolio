@@ -3,6 +3,7 @@
 import { MailIcon, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { IoLocationOutline } from "react-icons/io5";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -47,7 +48,14 @@ export default function ContactForm() {
   };
 
   return (<div>
-        <section id="contact" className="py-24 px-6">
+        <motion.section
+          id="contact"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="py-24 px-6"
+        >
         <div className="max-w-4xl mx-auto border backdrop-blur-md rounded-3xl p-8 md:p-12 overflow-hidden relative">
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-[80px]"></div>
 
@@ -146,6 +154,6 @@ export default function ContactForm() {
                 </form>
             </div>
         </div>
-    </section>
+    </motion.section>
   </div>);
 }

@@ -1,3 +1,8 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Briefcase, Calendar } from "lucide-react";
+
 export default function JourneySection() {
   const milestones = [
     {
@@ -31,7 +36,14 @@ export default function JourneySection() {
   ];
 
   return (
-    <section id="activities" className="py-24 px-6 relative">
+    <motion.section
+      id="activities"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+      className="py-24 px-6 relative"
+    >
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Co-Curricular Activities</h2>
@@ -77,6 +89,6 @@ export default function JourneySection() {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
