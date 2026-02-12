@@ -1,6 +1,8 @@
 'use client';
 
 import AchievementsSection from "@/components/custom-new/achievements";
+import ContactForm from "@/components/custom-new/contact-form";
+import Footer from "@/components/custom-new/footer";
 import HomeAboutSection from "@/components/custom-new/home-about";
 import HomeHero from "@/components/custom-new/home-hero";
 import HomeProjects from "@/components/custom-new/home-selected-work";
@@ -36,6 +38,9 @@ export default function Home() {
         <JourneySection />
         <SectionSeparator />
         <AchievementsSection />
+        <SectionSeparator />
+        <ContactForm />
+        <Footer />
       </div>
     </div>
   );

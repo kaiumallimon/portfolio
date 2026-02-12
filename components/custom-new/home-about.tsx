@@ -80,7 +80,7 @@ export default function HomeAboutSection() {
 
           <div className="space-y-0 relative">
             {/* Timeline line */}
-            <div className="absolute left-3 top-0 bottom-0 w-[2px] bg-linear-to-b from-indigo-500 via-indigo-500/50 to-slate-500/50"></div>
+            <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-linear-to-b from-indigo-500 via-indigo-500/50 to-slate-500/50"></div>
 
             {education.map((edu, index) => {
               const IconComponent = edu.icon;

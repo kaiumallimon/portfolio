@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
   try {
-    const { name, email, subject, message } = await req.json();
+    const { name, email, message } = await req.json();
 
     if (!email || !message) {
       return NextResponse.json({ error: 'Email and message are required' }, { status: 400 });
@@ -34,7 +34,6 @@ export async function POST(req: Request) {
           <div style="padding:20px; color:#333; font-size:14px; line-height:1.5;">
             <p><strong>From:</strong> ${safe(name) || '-'}</p>
             <p><strong>Email:</strong> <a href="mailto:${safe(email)}" style="color:#1a73e8; text-decoration:none;">${safe(email)}</a></p>
-            <p><strong>Subject:</strong> ${safe(subject) || '-'}</p>
             <p><strong>Message:</strong></p>
             <p style="white-space: pre-wrap; background:#f5f5f5; padding:12px; border-radius:4px;">${safe(message)}</p>
           </div>
@@ -46,10 +45,10 @@ export async function POST(req: Request) {
     `;
 
     const info = await transporter.sendMail({
-      from: `"${safe(name) || 'Portfolio Form'}" <${SMTP_USER}>`,
+      from: `"Contact form submission" <${SMTP_USER}>`,
       to: SMTP_TO || SMTP_USER,
       replyTo: email,
-      subject: safe(subject) || 'New message from portfolio',
+      subject: `New message from ${safe(name) || 'Unknown'} via portfolio contact form`,
       text: `${safe(name)} <${safe(email)}> says:\n\n${safe(message)}`,
       html,
     });
