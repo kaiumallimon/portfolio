@@ -28,7 +28,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
 
   const isMobile = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    
+
     const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isSmallScreen = window.innerWidth <= 768;
     const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
