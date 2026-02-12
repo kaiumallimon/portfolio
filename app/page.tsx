@@ -15,7 +15,7 @@ import TargetCursor from "@/components/TargetCursor";
 
 export default function Home() {
   return (
-    <div className="bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 relative overflow-x-hidden w-full max-w-[100vw]">
+    <div className="min-h-screen w-full bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
 
       <TargetCursor
         spinDuration={2}
