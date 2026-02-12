@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Outfit, Poppins, Ubuntu } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -19,6 +19,11 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const ubuntu = Ubuntu({
+  variable: "--font-ubuntu",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
 
 
 export const metadata: Metadata = {
@@ -63,8 +68,8 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en" className="dark h-full overflow-hidden">
-      <body className={`${jetbrainsMono.className} p-4 border h-full overflow-hidden`}>
+    <html lang="en" className="dark">
+      <body className={`${ubuntu.className}`}>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
@@ -84,39 +89,7 @@ export default function RootLayout({
           <GAListener />
         </Suspense>
 
-        <AnimatedCursor />
-
-        {/* main container */}
-        <div className="relative w-full h-full overflow-hidden border rounded-md flex flex-col">
-
-          {/* background layer */}
-          {/* <BeamsBackground className="pointer-events-none absolute inset-0 -z-10" /> */}
-          <div className="pointer-events-none absolute inset-0 -z-10">
-            <Silk
-              speed={5}
-              scale={1}
-              color="#4f4f4f"
-              noiseIntensity={1.5}
-              rotation={0}
-            />
-          </div>
-
-          {/* Navbar */}
-          <Navbar />
-
-          <main className="relative flex-1 flex flex-col overflow-hidden scrollbar-custom">
-            {/* Route transition splash (scoped to main content) */}
-            <RouteSplash />
-            <SmoothScroll easeDuration={0.6}>
-              <RouteGate durationMs={700}>
-                {children}
-              </RouteGate>
-            </SmoothScroll>
-          </main>
-
-          <Footer />
-
-        </div>
+        {children}
       </body>
     </html>
   );
