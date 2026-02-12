@@ -46,11 +46,11 @@ export default function ToolsPage() {
       name: "UIU CGPA Calculator",
       description:
         "A simple CGPA calculator for United International University students to compute their semester and cumulative GPA.",
-      link: null,
+      link: '/tools/uiu-cgpa-calculator',
       icon: <FaCalculator className="w-12 h-12" />,
       status: {
-        isAvailable: false,
-        label: "Coming Soon",
+        isAvailable: true,
+        label: "Available",
       },
     },
   ];
@@ -68,7 +68,7 @@ export default function ToolsPage() {
       <FloatingHeader />
 
       <div className="relative">
-        <div className="max-w-7xl mx-auto py-42 px-6">
+        <div className="max-w-5xl mx-auto py-42 px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -124,7 +124,7 @@ export default function ToolsPage() {
                   </div>
 
                   {/* Content */}
-                  <div className={`relative z-4 flex flex-col gap-2.5 flex-1 ${index % 2 === 1 ? "md:items-start" : "md:items-end"}`}>
+                  <div className={`relative z-4 flex flex-col justify-center gap-2.5 flex-1 ${index % 2 === 1 ? "md:items-start" : "md:items-end"}`}>
                     <div className="flex flex-wrap gap-2">
                       <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium ${
@@ -139,7 +139,7 @@ export default function ToolsPage() {
 
                     <h2 className="font-bold text-[1.08rem] tracking-[-0.2px] text-[#f7f7f7]">{tool.name}</h2>
 
-                    <p className="text-[rgba(235,235,235,0.88)] text-[0.9rem]">{tool.description}</p>
+                    <p className={`text-[rgba(235,235,235,0.88)] text-[0.9rem] ${index%2===0? "text-right":"text-left"}`}>{tool.description}</p>
                   </div>
                 </div>
               </a>

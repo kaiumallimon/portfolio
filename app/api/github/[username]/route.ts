@@ -35,6 +35,8 @@ export async function GET(
 
   // Debug: Check if token exists
   const hasToken = !!process.env.GITHUB_TOKEN;
+  let useToken = hasToken;
+  
   console.log("=== GitHub API Debug ===");
   console.log("Username:", username);
   console.log("Token exists:", hasToken);
@@ -42,10 +44,10 @@ export async function GET(
 
   try {
     /* ---------------- USER PROFILE ---------------- */
-    const userRes = await fetch(`https://api.github.com/users/${username}`, {
+    let userRes = await fetch(`https://api.github.com/users/${username}`, {
       headers: {
         Accept: "application/vnd.github+json",
-        ...(process.env.GITHUB_TOKEN && {
+        ...(useToken && process.env.GITHUB_TOKEN && {
           Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
         }),
       },
@@ -53,8 +55,23 @@ export async function GET(
 
     console.log("User API status:", userRes.status);
 
+    // If 401 (Unauthorized), try again without token
+    if (userRes.status === 401 && useToken) {
+      console.warn("⚠️ GitHub Token is invalid or expired. Retrying without token...");
+      useToken = false; // Disable token for subsequent requests
+      userRes = await fetch(`https://api.github.com/users/${username}`, {
+        headers: {
+          Accept: "application/vnd.github+json",
+        },
+      });
+    }
+
     if (!userRes.ok) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      // If still failing (e.g. 404 or rate limited without token)
+      return NextResponse.json(
+          { error: userRes.status === 404 ? "User not found" : `GitHub API Error: ${userRes.status}` }, 
+          { status: userRes.status }
+      );
     }
 
     const user: GitHubUser = await userRes.json();
@@ -65,7 +82,7 @@ export async function GET(
       {
         headers: {
           Accept: "application/vnd.github+json",
-          ...(process.env.GITHUB_TOKEN && {
+          ...(useToken && process.env.GITHUB_TOKEN && {
             Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
           }),
         },
@@ -99,7 +116,8 @@ export async function GET(
 
     console.log("Fetching contribution data for:", username);
 
-    if (process.env.GITHUB_TOKEN) {
+    // Only attempt GraphQL if we have a valid token (GraphQL API requires auth)
+    if (useToken && process.env.GITHUB_TOKEN) {
       try {
         const graphqlRes = await fetch("https://api.github.com/graphql", {
           method: "POST",
@@ -138,7 +156,7 @@ export async function GET(
           const data = await graphqlRes.json();
 
           // Debug: Log the full response
-          console.log("GraphQL response:", JSON.stringify(data, null, 2));
+          // console.log("GraphQL response:", JSON.stringify(data, null, 2));
 
           // Check for GraphQL errors
           if (data.errors) {
@@ -173,14 +191,15 @@ export async function GET(
             console.error("❌ No calendar data in response");
           }
         } else {
-          const errorText = await graphqlRes.text();
-          console.error("❌ GraphQL request failed:", errorText);
+            console.warn(`⚠️ GraphQL request failed with status ${graphqlRes.status}. Contributions will be 0.`);
+          // const errorText = await graphqlRes.text();
+          // console.error("❌ GraphQL request failed:", errorText);
         }
       } catch (graphqlError) {
         console.error("❌ GraphQL fetch error:", graphqlError);
       }
     } else {
-      console.error("❌ GITHUB_TOKEN not set - contribution data unavailable");
+      console.warn("⚠️ GITHUB_TOKEN invalid or not set - skipping GraphQL (Contributions will be 0)");
     }
 
     /* ---------------- STREAK CALCULATION ---------------- */
@@ -270,6 +289,7 @@ export async function GET(
       languageDistribution,
       debug: {
         hasToken,
+        tokenValid: useToken, // Report if we actually used the token
         contributionDaysCount: contributionDays.length
       }
     });

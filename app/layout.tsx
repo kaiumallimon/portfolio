@@ -12,6 +12,7 @@ import SmoothScroll from "@/components/custom/smooth-scroll";
 import Silk from "@/components/Silk";
 import AnimatedCursor from "@/components/custom/animated-cursor";
 import GAListener from "@/lib/ga-listener";
+import Preloader from "@/components/custom-new/preloader";
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -69,7 +70,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark">
-      <body className={`${ubuntu.className}`}>
+      <body className={`${ubuntu.className}`} suppressHydrationWarning>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
@@ -86,6 +87,7 @@ export default function RootLayout({
 
         {/* SPA pageview listener */}
         <Suspense fallback={null}>
+          <Preloader />
           <GAListener />
         </Suspense>
 

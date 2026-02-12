@@ -133,7 +133,7 @@ export default function UIUExamRoutinePage() {
       console.log("Converting to PNG...");
       const dataUrl = await toPng(statsRef.current, {
         cacheBust: true,
-        backgroundColor: "#1a1a1a",
+        backgroundColor: "#1e1b4b",
         pixelRatio: 2,
         quality: 1,
         filter: (node) => {
@@ -175,11 +175,11 @@ export default function UIUExamRoutinePage() {
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/" className="text-slate-400 hover:text-white">Home</BreadcrumbLink>
+              <BreadcrumbLink href="/" className="text-slate-400 hover:text-white cursor-target">Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/tools" className="text-slate-400 hover:text-white">Tools</BreadcrumbLink>
+              <BreadcrumbLink href="/tools" className="text-slate-400 hover:text-white cursor-target">Tools</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -262,7 +262,7 @@ export default function UIUExamRoutinePage() {
             <Button
               onClick={handleSubmit}
               disabled={loading || !studentID.trim() || !password.trim()}
-              className="px-6 whitespace-nowrap"
+              className="px-6 whitespace-nowrap bg-indigo-500 text-white hover:bg-indigo-500/75 cursor-target"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -331,7 +331,7 @@ export default function UIUExamRoutinePage() {
                     onClick={handleDownload}
                     disabled={downloading}
                     variant="outline"
-                    className="gap-2 text-xs md:text-sm"
+                    className="gap-2 text-xs md:text-sm cursor-target"
                   >
                     {downloading ? (
                       <>
@@ -351,7 +351,7 @@ export default function UIUExamRoutinePage() {
                 {/* Stats Container */}
                 <div
                   ref={statsRef}
-                  className={`space-y-6 bg-[#1a1a1a] p-3 md:p-6 rounded-2xl ${snapshotMode ? "min-w-5xl" : ""}`}
+                  className={`space-y-6 bg-[#1e1b4b] p-3 md:p-6 rounded-2xl ${snapshotMode ? "min-w-5xl" : ""}`}
                 >
                 {/* Profile Card */}
                 <motion.div
