@@ -97,29 +97,31 @@ export default function ProjectsPage() {
               Array(4).fill(0).map((_, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="rounded-3xl p-1 overflow-hidden"
+                  transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                  className="border backdrop-blur-md rounded-3xl overflow-hidden border-white/10"
                 >
-                  <div className="bg-slate-900/50 rounded-[20px] p-6 md:p-10 grid md:grid-cols-2 gap-10 items-center">
-                    <div className="order-2 md:order-1 space-y-6">
+                  <div className="bg-slate-900/50 rounded-[20px] p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div className="order-2 md:order-1 space-y-4">
                       <div className="flex items-center gap-3">
-                        <Skeleton className="w-2 h-2 rounded-full bg-slate-700" />
-                        <Skeleton className="h-4 w-24 bg-slate-700" />
+                        <Skeleton className="w-2 h-2 rounded-full bg-slate-700/50" />
+                        <Skeleton className="h-3 w-20 bg-slate-700/50 rounded" />
                       </div>
-                      <Skeleton className="h-8 w-3/4 bg-slate-700" />
-                      <div className="space-y-2">
-                        <Skeleton className="h-4 w-full bg-slate-700" />
-                        <Skeleton className="h-4 w-5/6 bg-slate-700" />
-                        <Skeleton className="h-4 w-4/6 bg-slate-700" />
+                      <Skeleton className="h-7 w-3/4 bg-slate-700/50 rounded-lg" />
+                      <div className="space-y-2.5">
+                        <Skeleton className="h-4 w-full bg-slate-700/50 rounded" />
+                        <Skeleton className="h-4 w-11/12 bg-slate-700/50 rounded" />
+                        <Skeleton className="h-4 w-4/5 bg-slate-700/50 rounded" />
                       </div>
-                      <div className="pt-4 flex gap-4">
-                        <Skeleton className="h-5 w-24 bg-slate-700" />
-                        <Skeleton className="h-5 w-24 bg-slate-700" />
+                      <div className="pt-2 flex gap-4">
+                        <Skeleton className="h-5 w-28 bg-slate-700/50 rounded" />
+                        <Skeleton className="h-5 w-32 bg-slate-700/50 rounded" />
                       </div>
                     </div>
-                    <div className="order-1 md:order-2 h-64 md:h-80 w-full rounded-2xl bg-slate-800/50 animate-pulse"></div>
+                    <div className="order-1 md:order-2 h-56 md:h-72 w-full rounded-2xl bg-slate-800/30 border border-white/5 animate-pulse relative overflow-hidden">
+                      <div className="absolute inset-0 bg-linear-to-r from-transparent via-slate-700/10 to-transparent animate-shimmer"></div>
+                    </div>
                   </div>
                 </motion.div>
               ))
