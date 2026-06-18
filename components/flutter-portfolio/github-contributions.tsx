@@ -1,10 +1,15 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { ArrowUpRight, Flame, GitCommitHorizontal } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from "@/components/shared/scroll-reveal";
 
 const GITHUB_USERNAME = "kaiumallimon";
 
@@ -104,16 +109,9 @@ export default function FlutterGithubContributions() {
     : [];
 
   return (
-    <motion.section
-      id="contributions"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
-    >
+    <ScrollRevealSection id="contributions" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Open Source Activity</h2>
             <p className="text-slate-400">Consistent coding habits reflected in my GitHub contribution graph.</p>
@@ -127,8 +125,9 @@ export default function FlutterGithubContributions() {
             View profile on GitHub
             <ArrowUpRight size={16} />
           </a>
-        </div>
+        </ScrollReveal>
 
+        <ScrollReveal delay={0.1}>
         {loading ? (
           <ContributionsSkeleton />
         ) : error || !data ? (
@@ -149,18 +148,12 @@ export default function FlutterGithubContributions() {
             <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="p-6 md:p-8 space-y-6 relative">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {statCards.map((stat, index) => {
+              <ScrollRevealStagger className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {statCards.map((stat) => {
                   const Icon = stat.icon;
                   return (
-                    <motion.div
-                      key={stat.label}
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3"
-                    >
+                    <ScrollRevealStaggerItem key={stat.label}>
+                    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
                       <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
                         <Icon size={16} className="text-indigo-400" />
                       </div>
@@ -168,10 +161,11 @@ export default function FlutterGithubContributions() {
                         <p className="text-lg font-semibold text-white leading-tight">{stat.value}</p>
                         <p className="text-xs text-slate-500">{stat.label}</p>
                       </div>
-                    </motion.div>
+                    </div>
+                    </ScrollRevealStaggerItem>
                   );
                 })}
-              </div>
+              </ScrollRevealStagger>
 
               <div>
                 <p className="text-sm text-slate-400 mb-4">
@@ -208,7 +202,8 @@ export default function FlutterGithubContributions() {
             </div>
           </div>
         )}
+        </ScrollReveal>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

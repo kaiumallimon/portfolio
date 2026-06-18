@@ -5,6 +5,12 @@ import { motion, useInView } from 'framer-motion';
 import { Crown, Smartphone, Star, Trophy, Users } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from '@/components/shared/scroll-reveal';
 
 const GITHUB_USERNAME = 'kaiumallimon';
 
@@ -104,18 +110,14 @@ function BentoSkeleton({ featured }: { featured?: boolean }) {
   );
 }
 
-function MetricBentoCard({ metric, index }: { metric: MetricCard; index: number }) {
+function MetricBentoCard({ metric }: { metric: MetricCard; index: number }) {
   const Icon = metric.icon;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
+    <ScrollRevealStaggerItem className={cn(metric.bento, 'h-full')}>
+    <div
       className={cn(
-        'cursor-target group relative overflow-hidden border border-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 bg-slate-900/30 hover:border-white/20 transition-all duration-300',
-        metric.bento,
+        'cursor-target group relative overflow-hidden border border-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 bg-slate-900/30 hover:border-white/20 transition-all duration-300 h-full',
         metric.featured && 'bg-gradient-to-br from-blue-500/10 via-slate-900/30 to-slate-900/30 min-h-[160px] md:min-h-0'
       )}
     >
@@ -147,7 +149,8 @@ function MetricBentoCard({ metric, index }: { metric: MetricCard; index: number 
           </p>
         </div>
       </div>
-    </motion.div>
+    </div>
+    </ScrollRevealStaggerItem>
   );
 }
 
@@ -189,21 +192,14 @@ export default function FlutterPortfolioImpact() {
   ];
 
   return (
-    <motion.section
-      id="impact"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
-    >
+    <ScrollRevealSection id="impact" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-12">
+        <ScrollReveal className="mb-12">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Impact at a Glance</h2>
           <p className="text-slate-400">Quantifying years of software development, leadership, and competition results.</p>
-        </div>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-3 md:gap-4">
+        <ScrollRevealStagger className="grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-3 md:gap-4">
           {loading
             ? (
               <>
@@ -216,8 +212,8 @@ export default function FlutterPortfolioImpact() {
             : allMetrics.map((metric, index) => (
                 <MetricBentoCard key={metric.label} metric={metric} index={index} />
               ))}
-        </div>
+        </ScrollRevealStagger>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

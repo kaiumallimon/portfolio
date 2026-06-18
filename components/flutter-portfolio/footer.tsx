@@ -4,9 +4,14 @@ import { useEffect, useState } from 'react';
 import { ArrowUpRight, GitCommitHorizontal, Mail, MapPin, Star } from 'lucide-react';
 import { FaFacebook, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { SiDart, SiFlutter } from 'react-icons/si';
-import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from '@/components/shared/scroll-reveal';
 
 const GITHUB_USERNAME = 'kaiumallimon';
 
@@ -98,21 +103,15 @@ export default function FlutterFooter() {
   };
 
   return (
-    <motion.footer
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
-      className="relative px-6 pb-8 pt-4"
-    >
+    <ScrollRevealSection as="footer" className="relative px-6 pb-8 pt-4">
       <div className="max-w-6xl mx-auto">
+        <ScrollReveal>
         <div className="relative border border-slate-700/30 backdrop-blur-md rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
           <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-indigo-500/40 to-transparent pointer-events-none" />
 
           <div className="p-6 md:p-8 lg:p-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
-              {/* Brand */}
-              <div className="lg:col-span-4 space-y-5">
+            <ScrollRevealStagger className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
+              <ScrollRevealStaggerItem className="lg:col-span-4 space-y-5">
                 <div>
                   <a
                     href="/"
@@ -162,10 +161,9 @@ export default function FlutterFooter() {
                     );
                   })}
                 </div>
-              </div>
+              </ScrollRevealStaggerItem>
 
-              {/* Navigation — mirrors header */}
-              <div className="lg:col-span-3 space-y-4">
+              <ScrollRevealStaggerItem className="lg:col-span-3 space-y-4">
                 <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Navigate</h4>
                 <nav className="grid grid-cols-2 gap-x-4 gap-y-2">
                   {navItems.map((item) => (
@@ -186,10 +184,9 @@ export default function FlutterFooter() {
                 >
                   Contact
                 </a>
-              </div>
+              </ScrollRevealStaggerItem>
 
-              {/* Tools */}
-              <div className="lg:col-span-2 space-y-4">
+              <ScrollRevealStaggerItem className="lg:col-span-2 space-y-4">
                 <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Tools</h4>
                 <nav className="space-y-2">
                   {toolLinks.map((link) => (
@@ -203,10 +200,9 @@ export default function FlutterFooter() {
                     </a>
                   ))}
                 </nav>
-              </div>
+              </ScrollRevealStaggerItem>
 
-              {/* Live snapshot */}
-              <div className="lg:col-span-3 space-y-4">
+              <ScrollRevealStaggerItem className="lg:col-span-3 space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Live Snapshot</h4>
                   <a
@@ -255,8 +251,8 @@ export default function FlutterFooter() {
                     </span>
                   </div>
                 )}
-              </div>
-            </div>
+              </ScrollRevealStaggerItem>
+            </ScrollRevealStagger>
           </div>
 
           {/* Bottom bar */}
@@ -278,7 +274,8 @@ export default function FlutterFooter() {
             </div>
           </div>
         </div>
+        </ScrollReveal>
       </div>
-    </motion.footer>
+    </ScrollRevealSection>
   );
 }

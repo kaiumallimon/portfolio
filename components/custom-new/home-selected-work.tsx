@@ -6,7 +6,12 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Project } from "@/types/project";
 import Link from 'next/link';
-import { motion } from "framer-motion";
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from "@/components/shared/scroll-reveal";
 
 export default function HomeProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -30,16 +35,9 @@ export default function HomeProjects() {
   }, []);
 
   return (
-    <motion.section
-      id="projects"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
-    >
+    <ScrollRevealSection id="projects" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
             <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Selected Work</h2>
             <p className="text-slate-400">Highlighting architecture, performance, and user-centric design.</p>
@@ -48,9 +46,9 @@ export default function HomeProjects() {
             View complete portfolio on GitHub
             <ArrowUpRight size={16} className="text-indigo-400" />
           </a>
-        </div>
+        </ScrollReveal>
 
-        <div className="space-y-8">
+        <ScrollRevealStagger className="space-y-8">
           {loading ? (
             // Skeleton Loading State
             Array(2).fill(0).map((_, i) => (
@@ -100,7 +98,8 @@ export default function HomeProjects() {
               const imageOrder = index % 2 === 1 ? 'md:order-1' : 'md:order-2';
 
               return (
-                <div key={project.id} className={`cursor-target border backdrop-blur-md rounded-3xl overflow-hidden group ${groupHoverBorder} transition-all duration-500`}>
+                <ScrollRevealStaggerItem key={project.id}>
+                <div className={`cursor-target border backdrop-blur-md rounded-3xl overflow-hidden group ${groupHoverBorder} transition-all duration-500`}>
                   <div className="bg-slate-900/50 rounded-[20px] p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
                     <div className={`order-2 ${textOrder} space-y-4`}>
                       <div className="flex items-center gap-3">
@@ -170,18 +169,19 @@ export default function HomeProjects() {
                     </div>
                   </div>
                 </div>
+                </ScrollRevealStaggerItem>
               );
             })
           )}
-        </div>
+        </ScrollRevealStagger>
 
-        <div className="mt-16 flex justify-center">
+        <ScrollReveal delay={0.15} className="mt-16 flex justify-center">
           <Link href="/projects" className="cursor-target group flex items-center gap-2 px-8 py-3 rounded-full border hover:bg-white/10 backdrop:blur-in-md transition-all duration-300">
             <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">View All Projects</span>
             <ArrowUpRight size={16} className="text-slate-400 group-hover:text-white transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
-        </div>
+        </ScrollReveal>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

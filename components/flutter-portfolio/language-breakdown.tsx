@@ -4,6 +4,15 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, Calendar, Code2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+  SCROLL_VIEWPORT,
+  scrollTransition,
+  SCROLL_EASE,
+} from '@/components/shared/scroll-reveal';
 
 const GITHUB_USERNAME = 'kaiumallimon';
 
@@ -96,22 +105,16 @@ export default function FlutterLanguageBreakdown() {
     : [];
 
   return (
-    <motion.section
-      id="languages"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
-    >
+    <ScrollRevealSection id="languages" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-12">
+        <ScrollReveal className="mb-12">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Codebase Composition</h2>
           <p className="text-slate-400">
             Language distribution across {data?.stats.totalRepos ?? '—'} public repositories and coding rhythm insights.
           </p>
-        </div>
+        </ScrollReveal>
 
+        <ScrollReveal delay={0.1}>
         {loading ? (
           <BreakdownSkeleton />
         ) : error || !data ? (
@@ -123,18 +126,12 @@ export default function FlutterLanguageBreakdown() {
             <div className="absolute top-0 left-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="p-6 md:p-8 space-y-8 relative">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {insightCards.map((insight, index) => {
+              <ScrollRevealStagger className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {insightCards.map((insight) => {
                   const Icon = insight.icon;
                   return (
-                    <motion.div
-                      key={insight.label}
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3"
-                    >
+                    <ScrollRevealStaggerItem key={insight.label}>
+                    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
                       <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
                         <Icon size={16} className="text-indigo-400" />
                       </div>
@@ -142,10 +139,11 @@ export default function FlutterLanguageBreakdown() {
                         <p className="text-sm font-semibold text-white truncate">{insight.value}</p>
                         <p className="text-xs text-slate-500">{insight.label}</p>
                       </div>
-                    </motion.div>
+                    </div>
+                    </ScrollRevealStaggerItem>
                   );
                 })}
-              </div>
+              </ScrollRevealStagger>
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
@@ -163,8 +161,8 @@ export default function FlutterLanguageBreakdown() {
                         key={language}
                         initial={{ opacity: 0, x: -12 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4, delay: index * 0.06 }}
+                        viewport={SCROLL_VIEWPORT}
+                        transition={scrollTransition(index * 0.06)}
                         className="space-y-2"
                       >
                         <div className="flex items-center justify-between text-sm">
@@ -177,8 +175,8 @@ export default function FlutterLanguageBreakdown() {
                           <motion.div
                             initial={{ width: 0 }}
                             whileInView={{ width: `${percentage}%` }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: index * 0.06, ease: 'easeOut' }}
+                            viewport={SCROLL_VIEWPORT}
+                            transition={{ duration: 0.8, delay: index * 0.06, ease: SCROLL_EASE }}
                             className={`h-full rounded-full ${barColor}`}
                           />
                         </div>
@@ -192,7 +190,8 @@ export default function FlutterLanguageBreakdown() {
             </div>
           </div>
         )}
+        </ScrollReveal>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

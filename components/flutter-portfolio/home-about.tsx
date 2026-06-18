@@ -107,6 +107,7 @@ export default function FlutterHomeAboutSection() {
                     <p className="text-xs text-slate-500 mt-0.5">{edu.period}</p>
                     <p className="text-xs text-slate-400 mt-2 leading-relaxed">{edu.description}</p>
                   </div>
+                  </div>
                 </ScrollRevealStaggerItem>
               );
             })}
