@@ -1,13 +1,13 @@
 'use client';
 
-import FlutterAchievementsSection from "@/components/flutter-portfolio/achievements";
-import FlutterContactForm from "@/components/flutter-portfolio/contact-form";
-import FlutterFooter from "@/components/flutter-portfolio/footer";
-import FlutterHomeAboutSection from "@/components/flutter-portfolio/home-about";
-import FlutterHomeHero from "@/components/flutter-portfolio/home-hero";
+import AchievementsSection from "@/components/custom-new/achievements";
+import ContactForm from "@/components/custom-new/contact-form";
+import Footer from "@/components/custom-new/footer";
+import HomeAboutSection from "@/components/custom-new/home-about";
+import HomeHero from "@/components/custom-new/home-hero";
 import HomeProjects from "@/components/custom-new/home-selected-work";
-import FlutterTechToolsSection from "@/components/flutter-portfolio/home-tech-tools";
-import FlutterJourneySection from "@/components/flutter-portfolio/journey";
+import TechToolsSection from "@/components/custom-new/home-tech-tools";
+import JourneySection from "@/components/custom-new/journey";
 import SectionSeparator from "@/components/custom-new/section-separator";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home_bg";
@@ -24,22 +24,23 @@ export default function Home() {
         hoverDuration={0.2}
       />
 
+      {/* Background gradient and top border */}
       <HomeBackground />
       <FloatingHeader />
-      <FlutterHomeHero />
+      <HomeHero />
       <div className="relative bg-[#0b001a]">
-        <FlutterHomeAboutSection />
+        <HomeAboutSection />
         <SectionSeparator />
-        <FlutterTechToolsSection />
+        <TechToolsSection />
         <SectionSeparator />
         <HomeProjects />
         <SectionSeparator />
-        <FlutterJourneySection />
+        <JourneySection />
         <SectionSeparator />
-        <FlutterAchievementsSection />
+        <AchievementsSection />
         <SectionSeparator />
-        <FlutterContactForm />
-        <FlutterFooter />
+        <ContactForm />
+        <Footer />
       </div>
     </div>
   );
