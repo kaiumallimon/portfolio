@@ -12,7 +12,7 @@ export default function FloatingHeader() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'skills', 'projects', 'contributions', 'activities', 'achievements', 'contact'];
+      const sections = ['about', 'skills', 'impact', 'projects', 'contributions', 'languages', 'activities', 'achievements', 'contact'];
       let currentSection = '';
 
       for (const section of sections) {
@@ -52,6 +52,7 @@ export default function FloatingHeader() {
   const navItems = [
     { href: '#about', label: 'About' },
     { href: '#skills', label: 'Skills' },
+    { href: '#impact', label: 'Impact' },
     { href: '/projects', label: 'Projects' },
     { href: '#contributions', label: 'Open Source' },
     { href: '#activities', label: 'Activities' },

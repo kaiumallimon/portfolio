@@ -8,7 +8,9 @@ import FlutterHomeHero from "@/components/flutter-portfolio/home-hero";
 import HomeProjects from "@/components/custom-new/home-selected-work";
 import FlutterTechToolsSection from "@/components/flutter-portfolio/home-tech-tools";
 import FlutterGithubContributions from "@/components/flutter-portfolio/github-contributions";
+import FlutterLanguageBreakdown from "@/components/flutter-portfolio/language-breakdown";
 import FlutterJourneySection from "@/components/flutter-portfolio/journey";
+import FlutterPortfolioImpact from "@/components/flutter-portfolio/portfolio-impact";
 import SectionSeparator from "@/components/custom-new/section-separator";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home_bg";
@@ -33,9 +35,13 @@ export default function Home() {
         <SectionSeparator />
         <FlutterTechToolsSection />
         <SectionSeparator />
+        <FlutterPortfolioImpact />
+        <SectionSeparator />
         <HomeProjects />
         <SectionSeparator />
         <FlutterGithubContributions />
+        <SectionSeparator />
+        <FlutterLanguageBreakdown />
         <SectionSeparator />
         <FlutterJourneySection />
         <SectionSeparator />

@@ -17,6 +17,7 @@ export default function FlutterFooter() {
   const navLinks = [
     { name: "About", href: "#about" },
     { name: "Skills", href: "#skills" },
+    { name: "Impact", href: "#impact" },
     { name: "Projects", href: "#projects" },
     { name: "Contributions", href: "#contributions" },
     { name: "Activities", href: "#activities" },
