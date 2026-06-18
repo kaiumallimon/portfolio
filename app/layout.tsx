@@ -1,24 +1,11 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Outfit, Poppins, Ubuntu } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
 
-import Navbar from "@/components/custom/nav";
-import Footer from "@/components/custom/footer";
-import RouteSplash from "@/components/custom/route-splash";
-import RouteGate from "@/components/custom/route-gate";
-import SmoothScroll from "@/components/custom/smooth-scroll";
-import Silk from "@/components/Silk";
-import AnimatedCursor from "@/components/custom/animated-cursor";
 import GAListener from "@/lib/ga-listener";
 import Preloader from "@/components/custom-new/preloader";
-
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-});
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
@@ -26,26 +13,43 @@ const ubuntu = Ubuntu({
   weight: ["400", "500", "700"],
 });
 
-
 export const metadata: Metadata = {
-  title: "Kaium Al Limon | Full-Stack Developer",
-  description: "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer specializing in Flutter & Next.js. Computer Science student at UIU.",
-  keywords: ["Kaium Al Limon", "Full-Stack Developer", "Flutter Developer", "Next.js Developer", "Web Developer", "Mobile Developer", "UIU", "Bangladesh", "Portfolio"],
+  metadataBase: new URL("https://kaiumallimon.tech"),
+  title: "Kaium Al Limon | Flutter Developer",
+  description:
+    "Flutter Developer crafting cross-platform mobile experiences with clean architecture, expressive UIs, and production-ready Dart code for iOS and Android.",
+  keywords: [
+    "Kaium Al Limon",
+    "Flutter Developer",
+    "Dart Developer",
+    "Cross-Platform Mobile Developer",
+    "iOS Developer",
+    "Android Developer",
+    "BLoC",
+    "Provider",
+    "Firebase",
+    "Mobile App Developer",
+    "UIU",
+    "Bangladesh",
+    "Portfolio",
+  ],
   authors: [{ name: "Kaium Al Limon", url: "https://github.com/kaiumallimon" }],
   creator: "Kaium Al Limon",
   publisher: "Kaium Al Limon",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://kaiumallimon.vercel.app",
-    title: "Kaium Al Limon | Full-Stack Developer",
-    description: "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer specializing in Flutter & Next.js.",
-    siteName: "Kaium Al Limon Portfolio",
+    url: "https://kaiumallimon.tech",
+    title: "Kaium Al Limon | Flutter Developer",
+    description:
+      "Flutter Developer crafting cross-platform mobile experiences with clean architecture, expressive UIs, and production-ready Dart code for iOS and Android.",
+    siteName: "Kaium Al Limon — Flutter Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kaium Al Limon | Full-Stack Developer",
-    description: "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer.",
+    title: "Kaium Al Limon | Flutter Developer",
+    description:
+      "Flutter Developer crafting cross-platform mobile apps with clean architecture, expressive UIs, and production-ready Dart.",
     creator: "@kaiumallimon",
   },
   robots: {
@@ -61,17 +65,22 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#020617",
+  colorScheme: "dark",
+};
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-
-
   return (
     <html lang="en" className="dark">
-      <body className={`${ubuntu.className}`} suppressHydrationWarning>
-        {/* Google Analytics */}
+      <body
+        className={`${ubuntu.className} bg-slate-950 text-slate-300 antialiased`}
+        suppressHydrationWarning
+      >
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
           strategy="afterInteractive"
@@ -85,7 +94,6 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* SPA pageview listener */}
         <Suspense fallback={null}>
           <Preloader />
           <GAListener />
@@ -95,5 +103,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-
 }
