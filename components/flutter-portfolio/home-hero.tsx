@@ -119,6 +119,7 @@ export default function FlutterHomeHero() {
             </a>
           </div>
 
+          {/* Dynamic / Performance Focused */}
           <div className="pt-16 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 opacity-60">
             <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
               <SiFlutter size={24} className="text-blue-400" />
@@ -126,18 +127,18 @@ export default function FlutterHomeHero() {
             </div>
             <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
               <SiDart size={24} className="text-cyan-400" />
-              <span className="text-xs md:text-sm font-medium">Dart Native</span>
+              <span className="text-xs md:text-sm font-medium">Dart Specialist</span>
             </div>
             <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
               <div className="flex items-center gap-0.5">
                 <TbBrandAndroid size={22} className="text-green-400" />
                 <TbBrandApple size={20} className="text-slate-300" />
               </div>
-              <span className="text-xs md:text-sm font-medium">iOS & Android</span>
+              <span className="text-xs md:text-sm font-medium">Multiplatform</span>
             </div>
             <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
               <GiElectric size={24} className="text-yellow-400" />
-              <span className="text-xs md:text-sm font-medium">60fps UI</span>
+              <span className="text-xs md:text-sm font-medium">High-Perf UI</span>
             </div>
           </div>
         </div>

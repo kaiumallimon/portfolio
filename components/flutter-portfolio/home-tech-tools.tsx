@@ -23,8 +23,6 @@ const techStack = [
       { name: "Navigation 2.0", highlight: false },
       { name: "GoRouter", highlight: false },
       { name: "Platform Channels", highlight: false },
-      { name: "Widget Testing", highlight: false },
-      { name: "Integration Testing", highlight: false },
     ]
   },
   {
@@ -40,11 +38,9 @@ const techStack = [
       { name: "Provider", highlight: true },
       { name: "Clean Architecture", highlight: true },
       { name: "GetX", highlight: false },
-      { name: "Riverpod", highlight: false },
       { name: "MVVM", highlight: false },
       { name: "Repository Pattern", highlight: false },
       { name: "Dependency Injection", highlight: false },
-      { name: "Freezed", highlight: false },
       { name: "Dio", highlight: false },
     ]
   },
@@ -58,15 +54,11 @@ const techStack = [
     cardShadow: "shadow-inner",
     skills: [
       { name: "Firebase", highlight: true },
+      { name: "Supabase", highlight: true },
       { name: "REST APIs", highlight: true },
       { name: "Hive", highlight: false },
       { name: "SharedPreferences", highlight: false },
-      { name: "Push Notifications", highlight: false },
-      { name: "Google Maps", highlight: false },
       { name: "CI/CD", highlight: false },
-      { name: "App Store Deploy", highlight: false },
-      { name: "Play Store Deploy", highlight: false },
-      { name: "Fastlane", highlight: false },
     ]
   }
 ];
