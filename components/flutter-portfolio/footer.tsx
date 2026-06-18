@@ -18,6 +18,7 @@ export default function FlutterFooter() {
     { name: "About", href: "#about" },
     { name: "Skills", href: "#skills" },
     { name: "Projects", href: "#projects" },
+    { name: "Contributions", href: "#contributions" },
     { name: "Activities", href: "#activities" },
     { name: "Achievements", href: "#achievements" },
     { name: "Tools", href: "/tools" },

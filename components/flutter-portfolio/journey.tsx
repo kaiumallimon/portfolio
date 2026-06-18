@@ -8,28 +8,24 @@ export default function FlutterJourneySection() {
       title: "Head of Software & Innovation",
       organization: "UIU App Forum",
       period: "Sep 2024 – Oct 2025",
-      description: "Led mobile development initiatives and Flutter-based project direction. Oversaw app architecture decisions, code reviews, and mentored teams on cross-platform best practices. Drove technical innovation across student-led mobile products.",
       active: true,
     },
     {
       title: "Junior Executive of Development",
       organization: "UIU App Forum",
       period: "Aug 2023 – Sep 2024",
-      description: "Built and maintained Flutter applications for internal tools and campus initiatives. Gained hands-on experience with state management, API integration, and collaborative mobile development workflows.",
       active: false,
     },
     {
       title: "Mentor — Grooming for CSE Project Show",
       organization: "UIU App Forum",
       period: "Aug 2023",
-      description: "Mentored student teams building mobile and desktop applications. Guided teams on Flutter project structure, UI design patterns, and presentation-ready demos for academic showcases.",
       active: false,
     },
     {
       title: "General Member",
       organization: "UIU App Forum",
       period: "Mar 2022 – Aug 2023",
-      description: "Participated in mobile development workshops and hackathon-style events. Built foundational experience in Flutter, Dart, and collaborative app development culture.",
       active: false,
     },
   ];
@@ -64,7 +60,7 @@ export default function FlutterJourneySection() {
                 </div>
 
                 <div className="cursor-target border border-white/10 backdrop-blur-md rounded-xl p-6 hover:border-white/20 transition-all duration-300 bg-slate-900/30">
-                  <div className="flex flex-col gap-2 mb-3">
+                  <div className="flex flex-col gap-2">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                       <h3 className="text-xl font-semibold text-white">{milestone.title}</h3>
                       <span className={`text-xs font-semibold px-3 py-1 rounded-full w-fit ${
@@ -77,9 +73,6 @@ export default function FlutterJourneySection() {
                     </div>
                     <p className="text-sm text-slate-500">{milestone.organization}</p>
                   </div>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    {milestone.description}
-                  </p>
                 </div>
               </div>
             ))}
