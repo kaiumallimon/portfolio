@@ -3,7 +3,12 @@
 import { Book, GraduationCap, Award } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { motion } from "framer-motion";
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from "@/components/shared/scroll-reveal";
 
 const education = [
   {
@@ -34,23 +39,16 @@ const education = [
 
 export default function FlutterHomeAboutSection() {
   return (
-    <motion.section
-      id="about"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
-    >
+    <ScrollRevealSection id="about" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-start">
-        <div className="space-y-8">
+        <ScrollReveal className="space-y-8" direction="right">
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">Crafting mobile experiences in Flutter.</h2>
           <div className="text-sm md:text-base space-y-4 text-slate-400 leading-relaxed">
             <p>
               I am a B.Sc. Computer Science & Engineering student at <strong className="text-slate-200 font-medium">United International University</strong> (2022–Present) with a deep passion for mobile development. While academics build the foundation, my expertise grows with every Flutter widget I ship.
             </p>
             <p>
-              Over the past 3 years, I&apos;ve evolved into a dedicated <strong className="text-slate-200 font-medium">Flutter Developer</strong> — building polished cross-platform apps with <strong className="text-slate-200 font-medium">BLoC</strong>, <strong className="text-slate-200 font-medium">Provider</strong>, and clean architecture. From custom animations and responsive layouts to Firebase integration and REST API consumption, I focus on delivering smooth 60fps experiences that feel native on both iOS and Android.
+              Over the past 3 years, I&apos;ve evolved into a dedicated <strong className="text-slate-200 font-medium">Flutter Developer</strong> — building polished cross-platform apps with <strong className="text-slate-200 font-medium">BLoC</strong>, <strong className="text-slate-200 font-medium">Provider</strong>, and clean architecture. From responsive layouts to Firebase integration and REST API consumption, I focus on delivering smooth experiences that feel native on both iOS and Android.
             </p>
             <p>
               My goal is to keep pushing the boundaries of what Flutter can do — building scalable mobile products, refining UI/UX craft, and solving real-world problems one release at a time.
@@ -68,9 +66,9 @@ export default function FlutterHomeAboutSection() {
               <MdEmail size={20} className="text-slate-300" />
             </a>
           </div>
-        </div>
+        </ScrollReveal>
 
-        <div className="border border-muted/75 p-8 rounded-3xl relative overflow-hidden group">
+        <ScrollReveal delay={0.12} direction="left" className="border border-muted/75 p-8 rounded-3xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl transition-all"></div>
 
           <div className="flex items-start justify-between mb-8">
@@ -83,7 +81,7 @@ export default function FlutterHomeAboutSection() {
             </div>
           </div>
 
-          <div className="space-y-0 relative">
+          <ScrollRevealStagger className="space-y-0 relative">
             <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-linear-to-b from-indigo-500 via-indigo-500/50 to-slate-500/50"></div>
 
             {education.map((edu, index) => {
@@ -91,7 +89,8 @@ export default function FlutterHomeAboutSection() {
               const isCurrent = edu.status === "current";
 
               return (
-                <div key={index} className="relative pl-16 py-6">
+                <ScrollRevealStaggerItem key={index}>
+                  <div className="relative pl-16 py-6">
                   <div className={`absolute left-0 top-7 w-7 h-7 rounded-full ring-4 ring-slate-900/90 flex items-center justify-center transition-all ${isCurrent
                     ? 'bg-indigo-500'
                     : 'bg-slate-500'
@@ -108,12 +107,12 @@ export default function FlutterHomeAboutSection() {
                     <p className="text-xs text-slate-500 mt-0.5">{edu.period}</p>
                     <p className="text-xs text-slate-400 mt-2 leading-relaxed">{edu.description}</p>
                   </div>
-                </div>
+                </ScrollRevealStaggerItem>
               );
             })}
-          </div>
-        </div>
+          </ScrollRevealStagger>
+        </ScrollReveal>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

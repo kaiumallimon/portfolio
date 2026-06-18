@@ -3,7 +3,10 @@
 import { MailIcon, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { IoLocationOutline } from "react-icons/io5";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+} from "@/components/shared/scroll-reveal";
 
 export default function FlutterContactForm() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -48,19 +51,12 @@ export default function FlutterContactForm() {
   };
 
   return (
-    <motion.section
-      id="contact"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6"
-    >
+    <ScrollRevealSection id="contact" className="py-24 px-6">
       <div className="max-w-4xl mx-auto border backdrop-blur-md rounded-3xl p-8 md:p-12 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-[80px]"></div>
 
         <div className="grid md:grid-cols-2 gap-12 relative z-10">
-          <div className="space-y-6">
+          <ScrollReveal direction="right" className="space-y-6">
             <h2 className="text-3xl font-semibold tracking-tight text-white">Let&apos;s build your next Flutter app.</h2>
             <p className="text-slate-400">
               I am currently available for Flutter developer roles and mobile app projects. Whether you need a cross-platform MVP or want to discuss app architecture, I&apos;d love to hear from you!
@@ -80,8 +76,9 @@ export default function FlutterContactForm() {
                 <span className="text-sm">Dhaka, Bangladesh</span>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
 
+          <ScrollReveal delay={0.12} direction="left">
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label className="text-xs font-medium text-slate-400 ml-1">Name</label>
@@ -152,8 +149,9 @@ export default function FlutterContactForm() {
               )}
             </button>
           </form>
+          </ScrollReveal>
         </div>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

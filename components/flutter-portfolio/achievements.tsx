@@ -1,10 +1,15 @@
 
 'use client';
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { Trophy, Calendar, Users, Code, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from "@/components/shared/scroll-reveal";
 
 export default function FlutterAchievementsSection() {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
@@ -56,29 +61,22 @@ export default function FlutterAchievementsSection() {
   ];
 
   return (
-    <motion.section
-      id="achievements"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
-    >
+    <ScrollRevealSection id="achievements" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-16">
+        <ScrollReveal className="mb-16">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Achievements</h2>
           <p className="text-slate-400">Award-winning Flutter mobile apps from university project showcases.</p>
-        </div>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ScrollRevealStagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {achievements.map((achievement, index) => {
             const isChampion = achievement.award.toLowerCase().includes('champion');
             const badgeColor = isChampion ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30';
 
             return (
+              <ScrollRevealStaggerItem key={index}>
               <div
-                key={index}
-                className="group cursor-target border border-white/10 backdrop-blur-md rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500"
+                className="group cursor-target border border-white/10 backdrop-blur-md rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 h-full"
               >
                 <div className="bg-slate-900/50 p-6 space-y-4">
                   <div className="space-y-3">
@@ -120,9 +118,10 @@ export default function FlutterAchievementsSection() {
                   </div>
                 </div>
               </div>
+              </ScrollRevealStaggerItem>
             );
           })}
-        </div>
+        </ScrollRevealStagger>
       </div>
 
       {fullscreenImage && (
@@ -153,6 +152,6 @@ export default function FlutterAchievementsSection() {
           </div>
         </div>
       )}
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

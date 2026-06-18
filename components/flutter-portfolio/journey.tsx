@@ -1,6 +1,11 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from '@/components/shared/scroll-reveal';
 
 export default function FlutterJourneySection() {
   const milestones = [
@@ -31,26 +36,20 @@ export default function FlutterJourneySection() {
   ];
 
   return (
-    <motion.section
-      id="activities"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
-    >
+    <ScrollRevealSection id="activities" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-16">
+        <ScrollReveal className="mb-16">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Co-Curricular Activities</h2>
           <p className="text-slate-400">Leading mobile development beyond the classroom.</p>
-        </div>
+        </ScrollReveal>
 
         <div className="relative">
           <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-linear-to-b from-indigo-500/50 via-indigo-500/20 to-transparent"></div>
 
-          <div className="space-y-8">
+          <ScrollRevealStagger className="space-y-8">
             {milestones.map((milestone, index) => (
-              <div key={index} className="relative pl-12 group">
+              <ScrollRevealStaggerItem key={index}>
+              <div className="relative pl-12 group">
                 <div className={`absolute left-0 top-2 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                   milestone.active
                     ? 'bg-indigo-500 border-indigo-400 shadow-lg shadow-indigo-500/50'
@@ -75,10 +74,11 @@ export default function FlutterJourneySection() {
                   </div>
                 </div>
               </div>
+              </ScrollRevealStaggerItem>
             ))}
-          </div>
+          </ScrollRevealStagger>
         </div>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

@@ -1,7 +1,12 @@
 'use client';
 
 import { Layers, Smartphone, Cloud } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from "@/components/shared/scroll-reveal";
 
 const techStack = [
   {
@@ -65,24 +70,18 @@ const techStack = [
 
 export default function FlutterTechToolsSection() {
   return (
-    <motion.section
-      id="skills"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="py-20 px-6 max-w-6xl mx-auto relative z-10"
-    >
-      <div className="mb-12">
+    <ScrollRevealSection id="skills" className="py-20 px-6 max-w-6xl mx-auto relative z-10">
+      <ScrollReveal className="mb-12">
         <h2 className="text-3xl font-semibold tracking-tight text-white mb-4">Flutter Toolkit</h2>
         <p className="text-slate-400 max-w-xl">A mobile-first stack built for expressive UIs, maintainable architecture, and shipping production apps to both app stores.</p>
-      </div>
+      </ScrollReveal>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <ScrollRevealStagger className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {techStack.map((tech, index) => {
           const Icon = tech.icon;
           return (
-            <div key={index} className={`cursor-target backdrop-blur-md border p-6 rounded-2xl transition-colors ${tech.hoverBorder} ${tech.cardGradient} ${tech.cardShadow}`}>
+            <ScrollRevealStaggerItem key={index}>
+              <div className={`cursor-target backdrop-blur-md border p-6 rounded-2xl transition-colors h-full ${tech.hoverBorder} ${tech.cardGradient} ${tech.cardShadow}`}>
               <div className="flex items-center gap-3 mb-6">
                 <span className={`p-2 rounded-lg ${tech.iconContainer}`}>
                   <Icon size={16} />
@@ -102,10 +101,11 @@ export default function FlutterTechToolsSection() {
                   </span>
                 ))}
               </div>
-            </div>
+              </div>
+            </ScrollRevealStaggerItem>
           );
         })}
-      </div>
-    </motion.section>
+      </ScrollRevealStagger>
+    </ScrollRevealSection>
   );
 }
