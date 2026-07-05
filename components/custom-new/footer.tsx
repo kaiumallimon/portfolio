@@ -3,7 +3,13 @@
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, GitCommitHorizontal, Mail, MapPin, Star } from 'lucide-react';
 import { FaFacebook, FaGithub, FaLinkedin } from 'react-icons/fa';
-import { SiDart, SiFlutter } from 'react-icons/si';
+import {
+  SiDart,
+  SiFlutter,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiTypescript,
+} from 'react-icons/si';
 import { usePathname } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -120,7 +126,7 @@ export default function FlutterFooter() {
                     Kaium Al Limon
                   </a>
                   <p className="text-sm text-slate-400 leading-relaxed mt-3">
-                    Flutter Developer crafting cross-platform mobile apps with clean architecture, expressive UIs, and production-ready Dart.
+                    Full-Stack Mobile & Web Software Engineer building cross-platform apps, modern web experiences, and scalable backends with clean architecture and production-ready code.
                   </p>
                 </div>
 
@@ -138,10 +144,16 @@ export default function FlutterFooter() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-slate-500">
-                  <SiFlutter size={18} className="text-blue-400" />
-                  <SiDart size={16} className="text-cyan-400" />
-                  <span className="text-xs">Flutter · Dart · Firebase</span>
+                <div className="flex flex-col gap-2 text-slate-500">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <SiFlutter size={18} className="text-blue-400" />
+                    <SiDart size={16} className="text-cyan-400" />
+                    <SiNextdotjs size={16} className="text-white" />
+
+                    <SiTypescript size={16} className="text-blue-500" />
+                    <SiNodedotjs size={16} className="text-green-500" />
+                  </div>
+                  <span className="text-xs">Flutter · Next.js · TypeScript · Node.js</span>
                 </div>
 
                 <div className="flex gap-2">

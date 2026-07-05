@@ -27,7 +27,7 @@ interface MetricCard {
 
 const STATIC_METRICS: Omit<MetricCard, 'bento' | 'featured'>[] = [
   {
-    label: 'Years in Flutter',
+    label: 'Years in Software Development',
     value: 3,
     suffix: '+',
     icon: Smartphone,
@@ -154,7 +154,7 @@ function MetricBentoCard({ metric }: { metric: MetricCard; index: number }) {
   );
 }
 
-export default function FlutterPortfolioImpact() {
+export default function PortfolioImpact() {
   const [githubStars, setGithubStars] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 

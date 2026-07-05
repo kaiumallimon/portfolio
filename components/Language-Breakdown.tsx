@@ -63,7 +63,7 @@ function BreakdownSkeleton() {
   );
 }
 
-export default function FlutterLanguageBreakdown() {
+export default function LanguageBreakdown() {
   const [data, setData] = useState<LanguageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

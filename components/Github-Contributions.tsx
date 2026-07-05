@@ -76,7 +76,7 @@ function ContributionsSkeleton() {
   );
 }
 
-export default function FlutterGithubContributions() {
+export default function GithubContributions() {
   const [data, setData] = useState<GitHubContributionsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

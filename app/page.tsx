@@ -9,6 +9,9 @@ import HomeProjects from "@/components/custom-new/home-selected-work";
 import TechToolsSection from "@/components/custom-new/home-tech-tools";
 import JourneySection from "@/components/custom-new/journey";
 import SectionSeparator from "@/components/custom-new/section-separator";
+import GithubContributions from "@/components/Github-Contributions";
+import PortfolioImpact from "@/components/Impacts";
+import LanguageBreakdown from "@/components/Language-Breakdown";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home_bg";
 import TargetCursor from "@/components/TargetCursor";
@@ -33,7 +36,13 @@ export default function Home() {
         <SectionSeparator />
         <TechToolsSection />
         <SectionSeparator />
+        <PortfolioImpact/>
+        <SectionSeparator />
         <HomeProjects />
+        <SectionSeparator />
+        <GithubContributions/>
+        <SectionSeparator />
+        <LanguageBreakdown/>
         <SectionSeparator />
         <JourneySection />
         <SectionSeparator />
