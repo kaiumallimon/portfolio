@@ -5,6 +5,7 @@ import { FaGithub } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Project } from "@/types/project";
+import { toExternalUrl } from "@/lib/utils";
 import { motion } from "framer-motion";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home-color-bend";
@@ -179,7 +180,7 @@ export default function ProjectsPage() {
                         <div className="pt-2 flex gap-4">
                           {project.live_url && (
                             <a
-                              href={project.live_url}
+                              href={toExternalUrl(project.live_url)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className={`cursor-target text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}
@@ -189,7 +190,7 @@ export default function ProjectsPage() {
                           )}
                           {project.github_url && (
                             <a
-                              href={project.github_url}
+                              href={toExternalUrl(project.github_url)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className={`cursor-target text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}

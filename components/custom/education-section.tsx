@@ -6,7 +6,7 @@ const educationTimeline = [
   {
     degree: "B.Sc. in Computer Science & Engineering",
     school: "United International University (UIU)",
-    duration: "2022 - Present",
+    duration: "2022 - 2026 (July)",
     description: "Focused on software engineering, full-stack development, and cross-platform mobile apps",
   },
   {

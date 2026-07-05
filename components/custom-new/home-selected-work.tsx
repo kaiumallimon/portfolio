@@ -5,6 +5,7 @@ import { FaGithub } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Project } from "@/types/project";
+import { toExternalUrl } from "@/lib/utils";
 import Link from 'next/link';
 import { motion } from "framer-motion";
 
@@ -116,12 +117,12 @@ export default function HomeProjects() {
 
                       <div className="pt-2 flex gap-4">
                         {project.live_url && (
-                          <a href={project.live_url} target="_blank" className={`text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}>
+                          <a href={toExternalUrl(project.live_url)} target="_blank" className={`text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}>
                             <LinkIcon size={16} /> Live Demo
                           </a>
                         )}
                         {project.github_url && (
-                          <a href={project.github_url} target="_blank" className={`text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}>
+                          <a href={toExternalUrl(project.github_url)} target="_blank" className={`text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}>
                             <FaGithub size={16} /> Source Code
                           </a>
                         )}
