@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Crown, Smartphone, Star, Trophy, Users } from 'lucide-react';
+import { Crown, Smartphone, Star, Trophy, Users, ComputerIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
