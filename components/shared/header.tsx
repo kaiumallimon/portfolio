@@ -12,7 +12,7 @@ export default function FloatingHeader() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'skills', 'projects', 'activities', 'achievements', 'contact'];
+      const sections = ['about', 'skills', 'impact', 'projects', 'contributions', 'languages', 'activities', 'achievements', 'contact'];
       let currentSection = '';
 
       for (const section of sections) {
@@ -52,7 +52,9 @@ export default function FloatingHeader() {
   const navItems = [
     { href: '#about', label: 'About' },
     { href: '#skills', label: 'Skills' },
+    { href: '#impact', label: 'Impact' },
     { href: '/projects', label: 'Projects' },
+    { href: '#contributions', label: 'Open Source' },
     { href: '#activities', label: 'Activities' },
     { href: '#achievements', label: 'Achievements' },
     { href: '/tools', label: 'Tools' },
@@ -78,7 +80,7 @@ export default function FloatingHeader() {
           Kaium Al Limon
         </a>
 
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden lg:flex items-center gap-1">
           {navItems.map((item) => (
             <a
               key={item.href}
@@ -113,7 +115,7 @@ export default function FloatingHeader() {
         </div>
 
         <button
-          className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+          className="lg:hidden text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300 cursor-pointer"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -128,7 +130,7 @@ export default function FloatingHeader() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-16 left-0 w-full bg-transparent border border-slate-700/30 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-2 md:hidden"
+            className="absolute top-16 left-0 w-full bg-transparent border border-slate-700/30 backdrop-blur-md rounded-2xl p-4 flex flex-col gap-2 lg:hidden"
           >
           {navItems.map((item) => (
             <a

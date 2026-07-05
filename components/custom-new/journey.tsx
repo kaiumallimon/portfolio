@@ -1,63 +1,55 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Briefcase, Calendar } from "lucide-react";
+import {
+  ScrollReveal,
+  ScrollRevealSection,
+  ScrollRevealStagger,
+  ScrollRevealStaggerItem,
+} from '@/components/shared/scroll-reveal';
 
-export default function JourneySection() {
+export default function FlutterJourneySection() {
   const milestones = [
     {
       title: "Head of Software & Innovation",
       organization: "UIU App Forum",
       period: "Sep 2024 – Oct 2025",
-      description: "Led software initiatives and technical innovation within the organization. Oversaw development workflows, technical planning, and team coordination. Contributed to shaping project direction and mentoring junior developers.",
       active: true,
     },
     {
       title: "Junior Executive of Development",
       organization: "UIU App Forum",
       period: "Aug 2023 – Sep 2024",
-      description: "Worked on application development and internal tools. Gained hands-on experience with Java, software design, and collaborative development. Assisted in planning and executing technical projects.",
       active: false,
     },
     {
       title: "Mentor — Grooming for CSE Project Show",
       organization: "UIU App Forum",
       period: "Aug 2023",
-      description: "Mentored students preparing academic software projects. Guided teams on Object-Oriented Programming, JavaFX, and project structure. Supported problem-solving, presentation, and implementation best practices.",
       active: false,
     },
     {
       title: "General Member",
       organization: "UIU App Forum",
       period: "Mar 2022 – Aug 2023",
-      description: "Actively participated in technical activities and learning sessions. Built foundational experience in teamwork, communication, and software development culture.",
       active: false,
     },
   ];
 
   return (
-    <motion.section
-      id="activities"
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
-    >
+    <ScrollRevealSection id="activities" className="py-24 px-6 relative">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-16">
+        <ScrollReveal className="mb-16">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Co-Curricular Activities</h2>
-          <p className="text-slate-400">Involvement beyond the classroom and the code editor.</p>
-        </div>
+          <p className="text-slate-400">Leading software development beyond the classroom.</p>
+        </ScrollReveal>
 
         <div className="relative">
-          {/* Timeline Line */}
           <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-linear-to-b from-indigo-500/50 via-indigo-500/20 to-transparent"></div>
 
-          <div className="space-y-8">
+          <ScrollRevealStagger className="space-y-8">
             {milestones.map((milestone, index) => (
-              <div key={index} className="relative pl-12 group">
-                {/* Timeline Dot */}
+              <ScrollRevealStaggerItem key={index}>
+              <div className="relative pl-12 group">
                 <div className={`absolute left-0 top-2 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                   milestone.active
                     ? 'bg-indigo-500 border-indigo-400 shadow-lg shadow-indigo-500/50'
@@ -67,7 +59,7 @@ export default function JourneySection() {
                 </div>
 
                 <div className="cursor-target border border-white/10 backdrop-blur-md rounded-xl p-6 hover:border-white/20 transition-all duration-300 bg-slate-900/30">
-                  <div className="flex flex-col gap-2 mb-3">
+                  <div className="flex flex-col gap-2">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                       <h3 className="text-xl font-semibold text-white">{milestone.title}</h3>
                       <span className={`text-xs font-semibold px-3 py-1 rounded-full w-fit ${
@@ -80,15 +72,13 @@ export default function JourneySection() {
                     </div>
                     <p className="text-sm text-slate-500">{milestone.organization}</p>
                   </div>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    {milestone.description}
-                  </p>
                 </div>
               </div>
+              </ScrollRevealStaggerItem>
             ))}
-          </div>
+          </ScrollRevealStagger>
         </div>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }
