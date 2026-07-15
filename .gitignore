@@ -39,4 +39,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-/cosmos-admin-panel/
+/.cosmos-admin-panel/
