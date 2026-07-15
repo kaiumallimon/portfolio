@@ -78,8 +78,11 @@ export default function ProjectsAdmin({
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
   const [addOpen, setAddOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editSelected, setEditSelected] = useState<Project | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selected, setSelected] = useState<Project | null>(null);
+  const [confirmText, setConfirmText] = useState("");
   const [saving, setSaving] = useState(false);
 
   const totalPages = Math.max(1, Math.ceil(total / size));
@@ -137,6 +140,17 @@ export default function ProjectsAdmin({
     const fd = new FormData(e.currentTarget);
     await saveProject(fd);
     setAddOpen(false);
+    setSaving(false);
+    router.refresh();
+  };
+
+  const handleEdit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+    const fd = new FormData(e.currentTarget);
+    await saveProject(fd);
+    setEditOpen(false);
+    setEditSelected(null);
     setSaving(false);
     router.refresh();
   };
@@ -291,24 +305,27 @@ export default function ProjectsAdmin({
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuItem asChild>
-                              <a href={`/admin/projects/${project.id}/edit`}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit Project
-                              </a>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-destructive focus:text-destructive"
-                              onSelect={() => {
-                                setSelected(project);
-                                setDeleteOpen(true);
-                              }}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete Project
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              setEditSelected(project);
+                              setEditOpen(true);
+                            }}
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Project
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onSelect={() => {
+                              setSelected(project);
+                              setDeleteOpen(true);
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Project
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
@@ -407,22 +424,94 @@ export default function ProjectsAdmin({
         </DialogContent>
       </Dialog>
 
+      {/* Edit Project Dialog */}
+      <Dialog
+        open={editOpen}
+        onOpenChange={(o) => {
+          setEditOpen(o);
+          if (!o) setEditSelected(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Project</DialogTitle>
+            <DialogDescription>Update the project details below.</DialogDescription>
+          </DialogHeader>
+          {editSelected && (
+            <form onSubmit={handleEdit} className="grid gap-4 py-4">
+              <input type="hidden" name="id" value={editSelected.id} />
+              <TextField label="Name *" name="name" defaultValue={editSelected.name} required />
+              <TextAreaField label="Short Details" name="short_details" defaultValue={editSelected.short_details} />
+              <SelectField
+                label="Client *"
+                name="client"
+                defaultValue={editSelected.client}
+                options={[
+                  { value: "mobile", label: "Mobile" },
+                  { value: "web", label: "Web" },
+                ]}
+                required
+              />
+              <TextField label="GitHub URL" name="github_url" defaultValue={editSelected.github_url} />
+              <TextField label="Live URL" name="live_url" defaultValue={editSelected.live_url} />
+              <NumberField label="Order" name="order" defaultValue={editSelected.order} />
+              <TextField
+                label="Technologies (comma separated)"
+                name="technologies"
+                defaultValue={editSelected.technologies?.join(", ")}
+                placeholder="Flutter, Dart, FastAPI"
+              />
+              <ImageUploader label="Image" name="image" bucket="portfolio-media" defaultValue={editSelected.image} />
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setEditOpen(false)} disabled={saving}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={saving}>
+                  {saving ? "Saving..." : "Save Changes"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Delete Project Dialog */}
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <Dialog
+        open={deleteOpen}
+        onOpenChange={(o) => {
+          setDeleteOpen(o);
+          if (!o) {
+            setSelected(null);
+            setConfirmText("");
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Delete Project</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this project? This action cannot be undone.
+              This action cannot be undone. Type the project name below to confirm deletion.
             </DialogDescription>
           </DialogHeader>
           {selected && (
-            <div className="py-4">
+            <div className="py-4 space-y-4">
               <div className="bg-muted p-4 rounded-lg">
                 <h4 className="font-medium">{selected.name}</h4>
                 <p className="text-sm text-muted-foreground">
                   {selected.client ?? "N/A"} • Order {selected.order}
                 </p>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Type <span className="font-semibold text-destructive">{selected.name}</span> to confirm
+                </label>
+                <Input
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder={selected.name}
+                  className="font-mono"
+                  autoFocus
+                />
               </div>
             </div>
           )}
@@ -430,7 +519,12 @@ export default function ProjectsAdmin({
             <Button type="button" variant="outline" onClick={() => setDeleteOpen(false)} disabled={saving}>
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleDelete} disabled={saving}>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={saving || !selected || confirmText.trim() !== selected.name}
+            >
               {saving ? "Deleting..." : "Delete Project"}
             </Button>
           </DialogFooter>
