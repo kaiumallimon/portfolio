@@ -83,7 +83,7 @@ export default function HomeHero({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 py-38 px-6 max-w-6xl mx-auto"
+        className="relative z-10 pt-35 md:pt-50 pb-25 md:pb-38 px-6 max-w-6xl mx-auto"
       >
         <div className="flex flex-col items-center text-center space-y-8">
           <Image
