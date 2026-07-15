@@ -317,6 +317,23 @@ export async function saveSettings(formData: FormData) {
     facebook_url: str(formData, "facebook_url"),
   };
   await supabase.from("site_settings").upsert(payload);
+
+  // Keep the `resume` table as a single entry and clean up the old file in
+  // storage when a new resume is uploaded.
+  const resumeUrl = str(formData, "resume_url");
+  if (resumeUrl) {
+    const { data: rows } = await supabase.from("resume").select("resume_url");
+    const stale = (rows ?? [])
+      .map((r) => r.resume_url)
+      .filter((u): u is string => Boolean(u) && u !== resumeUrl);
+    for (const u of stale) {
+      const m = /\/public\/resumes\/(.+)$/.exec(u);
+      if (m) await supabase.storage.from("resumes").remove([m[1]]).catch(() => {});
+    }
+    await supabase.from("resume").delete();
+    await supabase.from("resume").insert({ resume_url: resumeUrl });
+  }
+
   revalidateAll();
   revalidatePath("/admin/settings");
 }
