@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadImage } from "@/app/admin/actions";
 import { cn } from "@/lib/utils";
+import { FileText } from "lucide-react";
 import type { SkillItem } from "@/types/content";
 
 export function TextField({
@@ -196,6 +197,76 @@ export function ImageUploader({
       </div>
       {error && <p className="text-xs text-destructive">{error}</p>}
       {url && <p className="text-xs text-muted-foreground break-all">{url}</p>}
+    </div>
+  );
+}
+
+export function FileUploader({
+  label,
+  name,
+  bucket,
+  accept = "application/pdf",
+  defaultValue,
+}: {
+  label: string;
+  name: string;
+  bucket: string;
+  accept?: string;
+  defaultValue?: string | null;
+}) {
+  const [url, setUrl] = useState<string | null>(defaultValue ?? null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("bucket", bucket);
+      fd.append("file", file);
+      const res = await uploadImage(fd);
+      if (res.error || !res.url) {
+        setError(res.error ?? "Upload failed");
+      } else {
+        setUrl(res.url);
+      }
+    } catch {
+      setError("Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const fileName = url ? decodeURIComponent(url.split("/").pop() ?? url) : null;
+
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium text-foreground">{label}</label>
+      <input type="hidden" name={name} value={url ?? ""} />
+      <div className="flex items-center gap-4">
+        {url && (
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-border bg-muted">
+            <FileText className="h-5 w-5 text-indigo-400" />
+          </div>
+        )}
+        <label className="cursor-pointer px-4 py-2 rounded-md border border-input bg-background text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+          {uploading ? "Uploading..." : url ? "Replace file" : "Choose file"}
+          <input
+            type="file"
+            accept={accept}
+            className="hidden"
+            onChange={handleFile}
+            disabled={uploading}
+          />
+        </label>
+      </div>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+      {fileName && (
+        <p className="text-xs text-muted-foreground break-all">{fileName}</p>
+      )}
     </div>
   );
 }

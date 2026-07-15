@@ -103,12 +103,20 @@ export default function HomeHero({
           </div>
 
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white max-w-4xl leading-[1.1]">
-            Crafting <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-violet-400 to-indigo-500">
-              seamless, user‑focused experiences
-            </span> across <span className="inline-block bg-indigo-500 px-3 -skew-x-6">
-              platforms
-            </span>
+            {settings?.hero_headline ? (
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-violet-400 to-indigo-500">
+                {settings.hero_headline}
+              </span>
+            ) : (
+              <>
+                Crafting <br />
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-violet-400 to-indigo-500">
+                  seamless, user‑focused experiences
+                </span> across <span className="inline-block bg-indigo-500 px-3 -skew-x-6">
+                  platforms
+                </span>
+              </>
+            )}
           </h1>
 
           <p className="text-sm md:text-base text-slate-400 max-w-2xl leading-relaxed">

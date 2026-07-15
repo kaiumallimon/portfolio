@@ -7,8 +7,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FloatingHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
+  const [activeSection, setActiveSection] = useState("");
+  const [displayName, setDisplayName] = useState("Kaium Al Limon");
   const pathname = usePathname();
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/settings")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!cancelled && d?.display_name) setDisplayName(d.display_name);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,7 +91,7 @@ export default function FloatingHeader() {
           href="/"
           className="text-slate-100 font-medium tracking-tight flex items-center gap-2 cursor-target hover:text-indigo-500 transition-colors duration-500"
         >
-          Kaium Al Limon
+          {displayName}
         </a>
 
         <div className="hidden lg:flex items-center gap-1">

@@ -7,6 +7,8 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const s = await getSiteSettings();
   return NextResponse.json({
+    display_name: s?.display_name ?? null,
+    available_status: s?.available_status ?? null,
     footer_description: s?.footer_description ?? null,
     facebook_url: s?.facebook_url ?? null,
     github_url: s?.github_url ?? null,

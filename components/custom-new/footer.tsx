@@ -50,6 +50,8 @@ const DEFAULT_SOCIALS = {
 };
 
 interface PublicSettings {
+  display_name: string | null;
+  available_status: boolean | null;
   footer_description: string | null;
   facebook_url: string | null;
   github_url: string | null;
@@ -123,6 +125,9 @@ export default function FlutterFooter() {
   }, []);
 
   const footerDescription = site?.footer_description ?? DEFAULT_FOOTER_DESCRIPTION;
+  const displayName = site?.display_name ?? "Kaium Al Limon";
+  const location = site?.location ?? "Dhaka, Bangladesh";
+  const available = site?.available_status ?? true;
   const socials = [
     { icon: FaGithub, href: site?.github_url ?? DEFAULT_SOCIALS.github, label: 'GitHub' },
     { icon: FaLinkedin, href: site?.linkedin_url ?? DEFAULT_SOCIALS.linkedin, label: 'LinkedIn' },
@@ -157,7 +162,7 @@ export default function FlutterFooter() {
                     href="/"
                     className="text-xl font-semibold text-white hover:text-indigo-400 transition-colors cursor-target"
                   >
-                    Kaium Al Limon
+                    {displayName}
                   </a>
                   <p className="text-sm text-slate-400 leading-relaxed mt-3">
                     {footerDescription}
@@ -170,11 +175,11 @@ export default function FlutterFooter() {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
                     </span>
-                    Available for work
+                    {available ? "Available for work" : "Unavailable"}
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400 text-xs">
                     <MapPin size={12} />
-                    Dhaka, Bangladesh
+                    {location}
                   </span>
                 </div>
 
