@@ -48,6 +48,19 @@ interface NavGroup {
   items: NavItem[];
 }
 
+const SUBTITLES: Record<string, string> = {
+  "/admin": "Overview of your portfolio content",
+  "/admin/projects": "Manage your showcased projects",
+  "/admin/achievements": "Manage awards and competition results",
+  "/admin/activities": "Manage co-curricular activities and roles",
+  "/admin/education": "Manage your education history",
+  "/admin/skills": "Manage skill categories and tools",
+  "/admin/hobbies": "Manage personal hobbies",
+  "/admin/metrics": "Manage impact metrics",
+  "/admin/settings": "Manage site settings and profile",
+  "/admin/messages": "Manage contact form messages",
+};
+
 const NAV: NavGroup[] = [
   {
     label: "Overview",
@@ -103,14 +116,16 @@ export default function AdminShell({
 
   const activeFor = (item: NavItem) => isActive(item.href, item.exact);
 
-  const title = (() => {
+  const { title, subtitle } = (() => {
     for (const g of NAV) {
       for (const it of g.items) {
         if (it.external) continue;
-        if (isActive(it.href, it.exact)) return it.label;
+        if (isActive(it.href, it.exact)) {
+          return { title: it.label, subtitle: SUBTITLES[it.href] ?? "" };
+        }
       }
     }
-    return "Dashboard";
+    return { title: "Dashboard", subtitle: "Overview of your portfolio content" };
   })();
 
   const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => (
@@ -261,7 +276,7 @@ export default function AdminShell({
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           <main className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/20">
-            <FrostedHeader title={title} onMobileMenuToggle={() => setMobileMenuOpen(true)} />
+            <FrostedHeader title={title} subtitle={subtitle} onMobileMenuToggle={() => setMobileMenuOpen(true)} />
             <MobileMenuProvider toggleMobileMenu={() => setMobileMenuOpen(true)}>
               {children}
             </MobileMenuProvider>

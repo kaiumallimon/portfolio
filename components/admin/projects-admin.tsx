@@ -1,0 +1,269 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
+import { StatsCard } from "@/components/dashboard/stats-card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { TextField, TextAreaField, NumberField, SelectField, ImageUploader } from "@/components/admin/fields";
+import { FolderKanban, Plus, MoreHorizontal, Edit, Trash2, X } from "lucide-react";
+import { saveProject, deleteProject } from "@/app/admin/actions";
+import type { Project } from "@/types/project";
+import { useState } from "react";
+
+export default function ProjectsAdmin({ projects }: { projects: Project[] }) {
+  const router = useRouter();
+  const [addOpen, setAddOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [selected, setSelected] = useState<Project | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const total = projects.length;
+  const mobile = projects.filter((p) => p.client === "mobile").length;
+  const web = projects.filter((p) => p.client === "web").length;
+
+  const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+    const fd = new FormData(e.currentTarget);
+    await saveProject(fd);
+    setAddOpen(false);
+    setSaving(false);
+    router.refresh();
+  };
+
+  const handleDelete = async () => {
+    if (!selected) return;
+    setSaving(true);
+    const fd = new FormData();
+    fd.append("id", selected.id);
+    await deleteProject(fd);
+    setDeleteOpen(false);
+    setSelected(null);
+    setSaving(false);
+    router.refresh();
+  };
+
+  return (
+    <div className="p-6">
+      {/* Breadcrumbs */}
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Projects</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <StatsCard icon={FolderKanban} title="Total Projects" value={total} />
+        <StatsCard icon={FolderKanban} title="Mobile Apps" value={mobile} />
+        <StatsCard icon={FolderKanban} title="Web Apps" value={web} />
+      </div>
+
+      {/* Projects List */}
+      <Card className="mt-5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FolderKanban className="h-5 w-5" />
+            Projects
+          </CardTitle>
+          <CardDescription>Manage portfolio projects shown on the home and /projects pages.</CardDescription>
+          <CardAction>
+            <Button onClick={() => setAddOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Project
+            </Button>
+          </CardAction>
+        </CardHeader>
+
+        <CardContent>
+          {projects.length === 0 ? (
+            <div className="p-12 text-center">
+              <FolderKanban className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No projects found</h3>
+              <p className="text-muted-foreground mb-4">No projects have been created yet.</p>
+              <Button onClick={() => setAddOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add First Project
+              </Button>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                  <TableHead className="font-semibold py-4">Project</TableHead>
+                  <TableHead className="font-semibold py-4">Type</TableHead>
+                  <TableHead className="font-semibold py-4">Order</TableHead>
+                  <TableHead className="font-semibold py-4">Technologies</TableHead>
+                  <TableHead className="font-semibold py-4 text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {projects.map((project) => (
+                  <TableRow key={project.id} className="hover:bg-muted/30 transition-colors">
+                    <TableCell className="py-4">
+                      <div className="font-medium">{project.name}</div>
+                      <div className="text-sm text-muted-foreground truncate max-w-xs">
+                        {project.short_details}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <Badge variant="secondary" className="capitalize">
+                        {project.client ?? "N/A"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-4 text-sm text-muted-foreground">
+                      {project.order}
+                    </TableCell>
+                    <TableCell className="py-4 text-sm text-muted-foreground">
+                      {project.technologies?.length
+                        ? `${project.technologies.length} skill${project.technologies.length !== 1 ? "s" : ""}`
+                        : "—"}
+                    </TableCell>
+                    <TableCell className="py-4 text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem asChild>
+                            <a href={`/admin/projects/${project.id}/edit`}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit Project
+                            </a>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onSelect={() => {
+                              setSelected(project);
+                              setDeleteOpen(true);
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Project
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Add Project Dialog */}
+      <Dialog open={addOpen} onOpenChange={setAddOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add New Project</DialogTitle>
+            <DialogDescription>
+              Create a new project. All fields marked with * are required.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAdd} className="grid gap-4 py-4">
+            <TextField label="Name *" name="name" placeholder="e.g. MediTouch" required />
+            <TextAreaField label="Short Details" name="short_details" placeholder="One-line summary" />
+            <SelectField
+              label="Client *"
+              name="client"
+              options={[
+                { value: "mobile", label: "Mobile" },
+                { value: "web", label: "Web" },
+              ]}
+              required
+            />
+            <TextField label="GitHub URL" name="github_url" placeholder="https://github.com/..." />
+            <TextField label="Live URL" name="live_url" placeholder="https://..." />
+            <NumberField label="Order" name="order" />
+            <ImageUploader label="Image" name="image" bucket="portfolio-media" />
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setAddOpen(false)} disabled={saving}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {saving ? "Creating..." : "Create Project"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Project Dialog */}
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Delete Project</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this project? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          {selected && (
+            <div className="py-4">
+              <div className="bg-muted p-4 rounded-lg">
+                <h4 className="font-medium">{selected.name}</h4>
+                <p className="text-sm text-muted-foreground">
+                  {selected.client ?? "N/A"} • Order {selected.order}
+                </p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setDeleteOpen(false)} disabled={saving}>
+              Cancel
+            </Button>
+            <Button type="button" variant="destructive" onClick={handleDelete} disabled={saving}>
+              {saving ? "Deleting..." : "Delete Project"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
