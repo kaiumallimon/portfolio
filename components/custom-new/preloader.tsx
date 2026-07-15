@@ -75,6 +75,10 @@ export default function Preloader() {
       return;
     }
 
+    // Mark as shown up front so a reload mid-animation still counts as
+    // "already shown" for this session and won't replay the intro.
+    sessionStorage.setItem("preloaderShown", "true");
+
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -95,7 +99,6 @@ export default function Preloader() {
     const exitTimer = setTimeout(() => setExiting(true), 1800);
     const completeTimer = setTimeout(() => {
       setComplete(true);
-      sessionStorage.setItem("preloaderShown", "true");
     }, 3200);
 
     return () => {
