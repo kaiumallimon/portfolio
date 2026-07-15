@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,9 +31,11 @@ function fmt(iso: string) {
 export function MessageThreadList({
   threads,
   activeEmail,
+  onSelect,
 }: {
   threads: ThreadItem[];
   activeEmail?: string;
+  onSelect: (email: string) => void;
 }) {
   const [q, setQ] = useState("");
 
@@ -81,11 +82,12 @@ export function MessageThreadList({
           filtered.map((t) => {
             const active = t.email === activeEmail;
             return (
-              <Link
+              <button
                 key={t.email}
-                href={`/admin/messages?email=${encodeURIComponent(t.email)}`}
+                type="button"
+                onClick={() => onSelect(t.email)}
                 className={cn(
-                  "flex items-start gap-3 p-4 border-b border-border transition-colors",
+                  "w-full text-left flex items-start gap-3 p-4 border-b border-border transition-colors",
                   active ? "bg-primary/10" : "hover:bg-muted/40"
                 )}
               >
@@ -108,7 +110,7 @@ export function MessageThreadList({
                 {t.unread > 0 && (
                   <span className="shrink-0 mt-1 h-2 w-2 rounded-full bg-primary" title={`${t.unread} unread`} />
                 )}
-              </Link>
+              </button>
             );
           })
         )}
