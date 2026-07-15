@@ -508,7 +508,7 @@ export default function ProjectsAdmin({
                 <Input
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}
-                  placeholder={selected.name}
+                  placeholder={selected.name ?? ""}
                   className="font-mono"
                   autoFocus
                 />
