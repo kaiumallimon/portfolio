@@ -1,53 +1,55 @@
-import { ArrowRight, Download, Server, Loader2 } from "lucide-react";
-import { GiElectric } from "react-icons/gi";
+"use client";
+
+import { ArrowRight, Download, Loader2 } from "lucide-react";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { SiFlutter } from "react-icons/si";
 import { IoServer } from "react-icons/io5";
 import { FiSmartphone } from "react-icons/fi";
+import { GiElectric } from "react-icons/gi";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import type { SiteSettings } from "@/types/content";
 
-interface Resume {
-  resume_url: string;
-}
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
-export default function HomeHero() {
-
-  const [resume, setResume] = useState<Resume | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function HomeHero({
+  settings,
+  resumeUrl,
+}: {
+  settings: SiteSettings | null;
+  resumeUrl: string | null;
+}) {
   const [downloading, setDownloading] = useState(false);
 
   const handleDownload = async () => {
-    if (!resume?.resume_url) return;
-    
+    if (!resumeUrl) return;
     setDownloading(true);
     try {
-      const response = await fetch(resume.resume_url);
+      const response = await fetch(resumeUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', 'CV-Kaium-Al-Limon.pdf');
+      link.setAttribute("download", "CV-Kaium-Al-Limon.pdf");
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Download failed:', error);
+      console.error("Download failed:", error);
     } finally {
       setDownloading(false);
     }
   };
 
-  useEffect(() => {
-    fetch('/api/resume')
-      .then((res) => res.json())
-      .then((data) => setResume(data.resume));
-  }, []);
+  const profileImage = settings?.profile_image || "/bordered.png";
+  const headline = settings?.hero_headline || "Crafting seamless, user-focused experiences across platforms";
+  const subheadline =
+    settings?.hero_subheadline ||
+    "Flutter Specialist & Full-Stack Engineer crafting high-performance mobile apps and scalable backends.";
+  const available = settings?.available_status ?? true;
 
   return (
     <div className="relative">
@@ -69,7 +71,7 @@ export default function HomeHero() {
       >
         <div className="flex flex-col items-center text-center space-y-8">
           <Image
-            src="/bordered.png"
+            src={profileImage}
             alt="profile-picture"
             width={75}
             height={75}
@@ -81,28 +83,23 @@ export default function HomeHero() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
             </span>
-            Available
+            {available ? "Available" : "Unavailable"}
           </div>
 
           <h1 className={`text-5xl md:text-6xl font-bold tracking-tight text-white max-w-4xl leading-[1.1] ${inter.className}`}>
-            Crafting <br />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-cyan-300">
-              seamless, user‑focused experiences
-            </span> across <span className="inline-block bg-[#4c00a8] px-3  -skew-x-6">
-              platforms
+              {headline}
             </span>
-
           </h1>
 
-
           <p className="text-sm md:text-base text-slate-400 max-w-2xl leading-relaxed">
-            Flutter Specialist & Full-Stack Engineer crafting high-performance mobile apps and scalable backends with Flutter, FastAPI, Node.js + Express, and Next.js.
+            {subheadline}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <button 
+            <button
               onClick={handleDownload}
-              disabled={downloading || !resume}
+              disabled={downloading || !resumeUrl}
               className="px-8 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-medium transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group cursor-target"
             >
               {downloading ? (
@@ -123,17 +120,16 @@ export default function HomeHero() {
             </a>
           </div>
 
-          {/* <!-- Stats/Stack Preview --> */}
           <div className="pt-16 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 opacity-60 ">
             <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
-              <SiFlutter size={24} className="text-blue-400 " />
+              <SiFlutter size={24} className="text-blue-400" />
               <span className="text-xs md:text-sm font-medium">Flutter Expert</span>
             </div>
-            <div className="flex   items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500" >
+            <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
               <IoServer size={24} className="text-green-400" />
               <span className="text-xs md:text-sm font-medium">Backend Arch</span>
             </div>
-            <div className="flex  items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
               <FiSmartphone size={24} className="text-pink-400" />
               <span className="text-xs md:text-sm font-medium">iOS & Android</span>
             </div>

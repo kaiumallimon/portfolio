@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { getServerSupabase } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
   try {
@@ -7,6 +8,14 @@ export async function POST(req: Request) {
 
     if (!email || !message) {
       return NextResponse.json({ error: 'Email and message are required' }, { status: 400 });
+    }
+
+    // Persist the message (best-effort; never block the email send).
+    try {
+      const supabase = getServerSupabase();
+      await supabase.from('contact_messages').insert({ name, email, message });
+    } catch (dbErr) {
+      console.error('Failed to store contact message:', dbErr);
     }
 
     const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_TO } = process.env;

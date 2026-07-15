@@ -4,13 +4,6 @@ import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
 
-import Navbar from "@/components/custom/nav";
-import Footer from "@/components/custom/footer";
-import RouteSplash from "@/components/custom/route-splash";
-import RouteGate from "@/components/custom/route-gate";
-import SmoothScroll from "@/components/custom/smooth-scroll";
-import Silk from "@/components/Silk";
-import AnimatedCursor from "@/components/custom/animated-cursor";
 import GAListener from "@/lib/ga-listener";
 import Preloader from "@/components/custom-new/preloader";
 

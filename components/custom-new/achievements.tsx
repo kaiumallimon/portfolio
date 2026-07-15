@@ -1,59 +1,27 @@
-
-
-'use client';
+"use client";
 
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Trophy, Calendar, Users, Code, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { Achievement } from "@/types/content";
 
-export default function AchievementsSection() {
+export default function AchievementsSection({
+  achievements,
+}: {
+  achievements: Achievement[];
+}) {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && fullscreenImage) {
+      if (e.key === "Escape" && fullscreenImage) {
         setFullscreenImage(null);
       }
     };
-
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
   }, [fullscreenImage]);
-  const achievements = [
-    {
-      title: "UIU CSE Project Show | Fall '24",
-      award: "1st Runner-Up – Software Engineering Lab",
-      date: "27 January 2025",
-      project: "MediTouch",
-      team: "Team Bcrypt",
-      image: ["/software-lab.jpg"],
-    },
-    {
-      title: "UIU CSE Project Show | Summer '24",
-      award: "Champion – System Analysis and Design ",
-      date: "8 September 2024",
-      project: "MediTouch",
-      team: "Team Bcrypt",
-      image: ["/sad-lab.png"],
-    },
-    {
-      title: "UIU CSE Project Show | Spring '24",
-      award: "1st Runner-Up – Database Management System (DBMS)",
-      date: "3 June 2024",
-      project: "Pharmabrew",
-      team: "Team Bcrypt",
-      image: ["/dbms-lab.png"],
-    },
-    {
-      title: "UIU CSE Project Show | Spring '23",
-      award: "2nd Runner-Up – Advanced Object-Oriented Programming (AOOP) ",
-      date: "3 May 2023",
-      project: "Wayout",
-      team: "Team Tripod",
-      image: ["/aoop-lab.jpg"],
-    },
-  ];
 
   return (
     <motion.section
@@ -71,56 +39,63 @@ export default function AchievementsSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {achievements.map((achievement, index) => {
-            const isChampion = achievement.award.toLowerCase().includes('champion');
-            const badgeColor = isChampion ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30';
+          {achievements.map((achievement) => {
+            const isChampion = achievement.award_rank === "champion";
+            const badgeColor = isChampion
+              ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
+              : "bg-indigo-500/20 text-indigo-400 border-indigo-500/30";
+            const badgeLabel = achievement.award.split("–")[0].trim();
 
             return (
               <div
-                key={index}
+                key={achievement.id}
                 className="group cursor-target border border-white/10 backdrop-blur-md rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500"
               >
-                {/* Bento Grid Layout */}
                 <div className="bg-slate-900/50 p-6 space-y-4">
-                  {/* Header Info */}
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
-                      <Trophy className={`w-4 h-4 ${isChampion ? 'text-amber-400' : 'text-indigo-400'}`} />
+                      <Trophy className={`w-4 h-4 ${isChampion ? "text-amber-400" : "text-indigo-400"}`} />
                       <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${badgeColor}`}>
-                        {achievement.award.split('–')[0].trim()}
+                        {badgeLabel}
                       </span>
                     </div>
                     <h3 className="text-xl font-semibold text-white">{achievement.title}</h3>
-                    <p className="text-sm text-slate-400">{achievement.award.split('–')[1]?.trim()}</p>
+                    <p className="text-sm text-slate-400">{achievement.award.split("–")[1]?.trim()}</p>
                   </div>
 
-                  {/* Image - Landscape */}
-                  <div
-                    className="relative rounded-xl overflow-hidden bg-slate-800/50 h-48 cursor-pointer"
-                    onClick={() => setFullscreenImage(achievement.image[0])}
-                  >
-                    <Image
-                      src={achievement.image[0]}
-                      alt={`${achievement.project}`}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
+                  {achievement.image && (
+                    <div
+                      className="relative rounded-xl overflow-hidden bg-slate-800/50 h-48 cursor-pointer"
+                      onClick={() => setFullscreenImage(achievement.image)}
+                    >
+                      <Image
+                        src={achievement.image}
+                        alt={achievement.project || achievement.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
 
-                  {/* Meta Info */}
                   <div className="flex flex-wrap gap-6 pt-2 text-sm text-slate-400">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>{achievement.date}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Code className="w-4 h-4" />
-                      <span>{achievement.project}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      <span>{achievement.team}</span>
-                    </div>
+                    {achievement.date && (
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        <span>{achievement.date}</span>
+                      </div>
+                    )}
+                    {achievement.project && (
+                      <div className="flex items-center gap-2">
+                        <Code className="w-4 h-4" />
+                        <span>{achievement.project}</span>
+                      </div>
+                    )}
+                    {achievement.team && (
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        <span>{achievement.team}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -129,16 +104,15 @@ export default function AchievementsSection() {
         </div>
       </div>
 
-      {/* Fullscreen Image Modal */}
       {fullscreenImage && (
         <div
           className="fixed inset-0 z-99999 bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-200 cursor-default"
-          style={{ cursor: 'default' }}
+          style={{ cursor: "default" }}
           onClick={() => setFullscreenImage(null)}
         >
           <button
             className="absolute top-6 right-6 text-white/80 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10 cursor-pointer z-10"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             onClick={() => setFullscreenImage(null)}
           >
             <X size={32} />
