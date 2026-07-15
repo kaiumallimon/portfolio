@@ -34,7 +34,7 @@ export async function getRepoReadme(
   const repo = parseRepo(githubUrl);
   if (!repo) return null;
 
-  const token = process.env.GITHUB_TOKEN;
+  const token = process.env.GITHUB_FINE_GRAINED_TOKEN;
 
   // 1) REST API — most reliable, supports private repos when the token has access.
   try {
