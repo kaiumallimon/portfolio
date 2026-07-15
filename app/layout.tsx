@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 import GAListener from "@/lib/ga-listener";
 import Preloader from "@/components/custom-new/preloader";
+import { ThemeProvider } from "@/components/theme-provider";
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -62,8 +63,8 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en" className="dark">
-      <body className={`${ubuntu.className}`} suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${ubuntu.className}`}>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
@@ -84,7 +85,9 @@ export default function RootLayout({
           <GAListener />
         </Suspense>
 
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
