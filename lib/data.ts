@@ -110,6 +110,43 @@ export async function getAchievements(): Promise<Achievement[]> {
   }, []);
 }
 
+export async function getAchievementsPaginated({
+  page = 1,
+  size = 15,
+  q = "",
+  awardRank = "all",
+}: {
+  page?: number;
+  size?: number;
+  q?: string;
+  awardRank?: string;
+}): Promise<{ achievements: Achievement[]; total: number }> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const from = (page - 1) * size;
+    const to = from + size - 1;
+
+    let query = supabase
+      .from("achievements")
+      .select("*", { count: "exact" })
+      .order("order", { ascending: true });
+
+    if (awardRank && awardRank !== "all") {
+      query = query.eq("award_rank", awardRank);
+    }
+
+    const term = q.trim();
+    if (term) {
+      const like = `%${term}%`;
+      query = query.or(`title.ilike.${like},award.ilike.${like}`);
+    }
+
+    const { data, error, count } = await query.range(from, to);
+    if (error) throw error;
+    return { achievements: (data as Achievement[]) ?? [], total: count ?? 0 };
+  }, { achievements: [], total: 0 });
+}
+
 export async function getActivities(): Promise<Activity[]> {
   return safeQuery(async () => {
     const supabase = getServerSupabase();
@@ -122,6 +159,42 @@ export async function getActivities(): Promise<Activity[]> {
   }, []);
 }
 
+export async function getActivitiesPaginated({
+  page = 1,
+  size = 15,
+  q = "",
+  status = "all",
+}: {
+  page?: number;
+  size?: number;
+  q?: string;
+  status?: string;
+}): Promise<{ activities: Activity[]; total: number }> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const from = (page - 1) * size;
+    const to = from + size - 1;
+
+    let query = supabase
+      .from("activities")
+      .select("*", { count: "exact" })
+      .order("order", { ascending: true });
+
+    if (status === "active") query = query.eq("active", true);
+    else if (status === "inactive") query = query.eq("active", false);
+
+    const term = q.trim();
+    if (term) {
+      const like = `%${term}%`;
+      query = query.or(`title.ilike.${like},organization.ilike.${like}`);
+    }
+
+    const { data, error, count } = await query.range(from, to);
+    if (error) throw error;
+    return { activities: (data as Activity[]) ?? [], total: count ?? 0 };
+  }, { activities: [], total: 0 });
+}
+
 export async function getEducation(): Promise<Education[]> {
   return safeQuery(async () => {
     const supabase = getServerSupabase();
@@ -132,6 +205,42 @@ export async function getEducation(): Promise<Education[]> {
     if (error) throw error;
     return (data as Education[]) ?? [];
   }, []);
+}
+
+export async function getEducationPaginated({
+  page = 1,
+  size = 15,
+  q = "",
+  status = "all",
+}: {
+  page?: number;
+  size?: number;
+  q?: string;
+  status?: string;
+}): Promise<{ education: Education[]; total: number }> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const from = (page - 1) * size;
+    const to = from + size - 1;
+
+    let query = supabase
+      .from("education")
+      .select("*", { count: "exact" })
+      .order("order", { ascending: true });
+
+    if (status === "current") query = query.eq("status", "current");
+    else if (status === "completed") query = query.eq("status", "completed");
+
+    const term = q.trim();
+    if (term) {
+      const like = `%${term}%`;
+      query = query.or(`degree.ilike.${like},institution.ilike.${like}`);
+    }
+
+    const { data, error, count } = await query.range(from, to);
+    if (error) throw error;
+    return { education: (data as Education[]) ?? [], total: count ?? 0 };
+  }, { education: [], total: 0 });
 }
 
 export async function getSkills(): Promise<SkillCategory[]> {

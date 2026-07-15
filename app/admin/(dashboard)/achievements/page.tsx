@@ -1,36 +1,37 @@
-import Link from "next/link";
-import { getAchievements } from "@/lib/data";
-import { deleteAchievement } from "@/app/admin/actions";
-import { AdminCard } from "@/components/admin/fields";
-import { ResourceTable } from "@/components/admin/resource-table";
+import { getAchievements, getAchievementsPaginated } from "@/lib/data";
+import AchievementsAdmin from "@/components/admin/achievements-admin";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminAchievementsPage() {
-  const achievements = await getAchievements();
+type SP = Record<string, string | string[] | undefined>;
+const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
+
+export default async function AdminAchievementsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SP>;
+}) {
+  const sp = await searchParams;
+  const page = Math.max(1, parseInt(first(sp.page) || "1", 10) || 1);
+  const sizeRaw = parseInt(first(sp.size) || "15", 10);
+  const size = [15, 30, 50].includes(sizeRaw) ? sizeRaw : 15;
+  const q = first(sp.q);
+  const awardRank = first(sp.award_rank) || "all";
+
+  const [all, { achievements, total }] = await Promise.all([
+    getAchievements(),
+    getAchievementsPaginated({ page, size, q, awardRank }),
+  ]);
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-white">Achievements</h1>
-          <p className="text-sm text-slate-400">Awards and recognition from project showcases.</p>
-        </div>
-        <Link href="/admin/achievements/new" className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors">
-          + Add Achievement
-        </Link>
-      </div>
-      <AdminCard title={`${achievements.length} achievements`}>
-        <ResourceTable
-          columns={[
-            { key: "title", label: "Title" },
-            { key: "award", label: "Award" },
-            { key: "order", label: "Order" },
-          ]}
-          rows={achievements as unknown as Record<string, unknown>[]}
-          editBase="/admin/achievements"
-          deleteAction={deleteAchievement}
-        />
-      </AdminCard>
-    </div>
+    <AchievementsAdmin
+      all={all}
+      achievements={achievements}
+      total={total}
+      page={page}
+      size={size}
+      q={q}
+      awardRank={awardRank}
+    />
   );
 }
