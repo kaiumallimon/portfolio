@@ -32,6 +32,7 @@ import { useTheme } from "next-themes";
 import type { LucideIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { MobileMenuProvider } from "@/components/mobile-menu-context";
+import { FrostedHeader } from "@/components/custom/frosted-header";
 import { browserSupabase } from "@/lib/supabase/browser";
 
 interface NavItem {
@@ -101,6 +102,16 @@ export default function AdminShell({
     exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
   const activeFor = (item: NavItem) => isActive(item.href, item.exact);
+
+  const title = (() => {
+    for (const g of NAV) {
+      for (const it of g.items) {
+        if (it.external) continue;
+        if (isActive(it.href, it.exact)) return it.label;
+      }
+    }
+    return "Dashboard";
+  })();
 
   const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => (
     <div className="flex h-full flex-col overflow-hidden">
@@ -250,6 +261,7 @@ export default function AdminShell({
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           <main className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/20">
+            <FrostedHeader title={title} onMobileMenuToggle={() => setMobileMenuOpen(true)} />
             <MobileMenuProvider toggleMobileMenu={() => setMobileMenuOpen(true)}>
               {children}
             </MobileMenuProvider>
