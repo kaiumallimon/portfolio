@@ -1,6 +1,6 @@
 "use client";
 
-import { Globe, Server } from "lucide-react";
+import { Globe, Server, Brain } from "lucide-react";
 import { FaMobile } from "react-icons/fa";
 import { motion } from "framer-motion";
 import type { ComponentType } from "react";
@@ -10,6 +10,7 @@ const ICON_MAP: Record<string, ComponentType<{ size?: number; className?: string
   FaMobile,
   Server,
   Globe,
+  Brain,
 };
 
 // Distinct accent per toolkit card (icon chip, hover border, highlighted chips).
@@ -29,6 +30,25 @@ const ACCENTS = [
     hoverBorder: "hover:border-sky-500/30",
     chip: "bg-sky-500/10 text-sky-300 border-sky-500/20",
   },
+  {
+    iconChip: "bg-amber-500/10 text-amber-400",
+    hoverBorder: "hover:border-amber-500/30",
+    chip: "bg-amber-500/10 text-amber-300 border-amber-500/20",
+  },
+  {
+    iconChip: "bg-fuchsia-500/10 text-fuchsia-400",
+    hoverBorder: "hover:border-fuchsia-500/30",
+    chip: "bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/20",
+  },
+];
+
+// Asymmetric bento spans (desktop). Feature card is large; rest vary in width.
+const SPANS = [
+  "md:col-span-4 md:row-span-2",
+  "md:col-span-2",
+  "md:col-span-2",
+  "md:col-span-3",
+  "md:col-span-3",
 ];
 
 export default function TechToolsSection({
@@ -50,19 +70,24 @@ export default function TechToolsSection({
         <p className="text-slate-400 max-w-xl">A full-stack approach with a mobile-first mindset. My stack is chosen for speed, scalability, and developer experience.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-6 md:auto-rows-[minmax(180px,auto)] gap-5">
         {skills.map((tech, index) => {
           const Icon = ICON_MAP[tech.icon || ""] || Globe;
           const accent = ACCENTS[index % ACCENTS.length];
+          const span = SPANS[index] ?? "md:col-span-2";
+          const isFeature = index === 0;
           return (
-            <div key={tech.id} className={`cursor-target backdrop-blur-md border border-white/10 p-6 rounded-2xl transition-colors ${accent.hoverBorder} bg-slate-900/30`}>
+            <div
+              key={tech.id}
+              className={`cursor-target group flex flex-col backdrop-blur-md border border-white/10 p-6 rounded-3xl transition-all duration-300 ${accent.hoverBorder} bg-slate-900/30 ${span}`}
+            >
               <div className="flex items-center gap-3 mb-6">
-                <span className={`p-2 rounded-lg ${accent.iconChip}`}>
-                  <Icon size={16} />
+                <span className={`p-2 rounded-xl ${accent.iconChip}`}>
+                  <Icon size={isFeature ? 20 : 16} />
                 </span>
-                <h3 className="font-medium text-white">{tech.category}</h3>
+                <h3 className={`font-medium text-white ${isFeature ? "text-lg" : ""}`}>{tech.category}</h3>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mt-auto">
                 {tech.skills.map((skill, skillIndex) => (
                   <span
                     key={skillIndex}

@@ -154,7 +154,7 @@ export default function HomeHero({
             </div>
             <div className="flex items-center gap-2 grayscale hover:grayscale-0 transition-all duration-500">
               <GiElectric size={24} className="text-yellow-400" />
-              <span className="text-xs md:text-sm font-medium">High Perf</span>
+              <span className="text-xs md:text-sm font-medium">High Perf Web Apps</span>
             </div>
           </div>
         </div>
