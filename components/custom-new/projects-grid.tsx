@@ -1,9 +1,8 @@
 "use client";
 
-import { Code, Link as LinkIcon } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
+import { Code, ArrowUpRight } from "lucide-react";
 import type { Project } from "@/types/project";
-import { toExternalUrl } from "@/lib/utils";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 export function ProjectsGrid({ projects }: { projects: Project[] }) {
@@ -58,27 +57,14 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
                 <h3 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">{project.name}</h3>
                 <p className="text-slate-400 leading-relaxed text-sm md:text-base">{project.short_details}</p>
 
-                <div className="pt-2 flex gap-4">
-                  {project.live_url && (
-                    <a
-                      href={toExternalUrl(project.live_url)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`cursor-target text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}
-                    >
-                      <LinkIcon size={16} /> Live Demo
-                    </a>
-                  )}
-                  {project.github_url && (
-                    <a
-                      href={toExternalUrl(project.github_url)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`cursor-target text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}
-                    >
-                      <FaGithub size={16} /> Source Code
-                    </a>
-                  )}
+                <div className="pt-2">
+                  <Link
+                    href={`/projects/${project.id}`}
+                    className={`cursor-target text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors w-fit`}
+                  >
+                    View Details
+                    <ArrowUpRight size={16} />
+                  </Link>
                 </div>
               </div>
 
@@ -149,9 +135,8 @@ export function ProjectsGridSkeleton() {
                 <div className="h-4 w-11/12 bg-slate-700/50 rounded" />
                 <div className="h-4 w-4/5 bg-slate-700/50 rounded" />
               </div>
-              <div className="pt-2 flex gap-4">
+              <div className="pt-2">
                 <div className="h-5 w-28 bg-slate-700/50 rounded" />
-                <div className="h-5 w-32 bg-slate-700/50 rounded" />
               </div>
             </div>
             <div className="order-1 md:order-2 h-56 md:h-72 w-full rounded-2xl bg-slate-800/30 border border-white/5 animate-pulse relative overflow-hidden">

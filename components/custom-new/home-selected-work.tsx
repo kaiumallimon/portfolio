@@ -1,9 +1,7 @@
 "use client";
 
-import { ArrowUpRight, Link as LinkIcon } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
+import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/types/project";
-import { toExternalUrl } from "@/lib/utils";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -58,17 +56,14 @@ export default function HomeProjects({ projects }: { projects: Project[] }) {
                     <h3 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">{project.name}</h3>
                     <p className="text-slate-400 leading-relaxed text-sm md:text-base">{project.short_details}</p>
 
-                    <div className="pt-2 flex gap-4">
-                      {project.live_url && (
-                        <a href={toExternalUrl(project.live_url)} target="_blank" className={`text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}>
-                          <LinkIcon size={16} /> Live Demo
-                        </a>
-                      )}
-                      {project.github_url && (
-                        <a href={toExternalUrl(project.github_url)} target="_blank" className={`text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors`}>
-                          <FaGithub size={16} /> Source Code
-                        </a>
-                      )}
+                    <div className="pt-2">
+                      <Link
+                        href={`/projects/${project.id}`}
+                        className={`cursor-target text-white text-sm font-medium flex items-center gap-2 ${linkHoverColor} transition-colors w-fit`}
+                      >
+                        View Details
+                        <ArrowUpRight size={16} />
+                      </Link>
                     </div>
                   </div>
 
