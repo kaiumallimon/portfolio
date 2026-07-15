@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Breadcrumb,
@@ -42,22 +43,93 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { TextField, TextAreaField, NumberField, SelectField, ImageUploader } from "@/components/admin/fields";
-import { FolderKanban, Plus, MoreHorizontal, Edit, Trash2, X } from "lucide-react";
+import { FolderKanban, Plus, MoreHorizontal, Edit, Trash2, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { saveProject, deleteProject } from "@/app/admin/actions";
 import type { Project } from "@/types/project";
-import { useState } from "react";
 
-export default function ProjectsAdmin({ projects }: { projects: Project[] }) {
+const PAGE_SIZES = [15, 30, 50];
+
+export default function ProjectsAdmin({
+  all,
+  projects,
+  total,
+  page,
+  size,
+  q,
+  client,
+}: {
+  all: Project[];
+  projects: Project[];
+  total: number;
+  page: number;
+  size: number;
+  q: string;
+  client: string;
+}) {
   const router = useRouter();
+  const searchRef = useRef<HTMLInputElement>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selected, setSelected] = useState<Project | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const total = projects.length;
-  const mobile = projects.filter((p) => p.client === "mobile").length;
-  const web = projects.filter((p) => p.client === "web").length;
+  const totalPages = Math.max(1, Math.ceil(total / size));
+  const from = total === 0 ? 0 : (page - 1) * size + 1;
+  const to = Math.min(page * size, total);
+
+  const hrefWith = (over: { page?: number; size?: number; q?: string; client?: string }) => {
+    const next = {
+      page: over.page ?? page,
+      size: over.size ?? size,
+      q: over.q !== undefined ? over.q : q,
+      client: over.client !== undefined ? over.client : client,
+    };
+    const sp = new URLSearchParams();
+    sp.set("page", String(next.page));
+    sp.set("size", String(next.size));
+    if (next.q) sp.set("q", next.q);
+    if (next.client && next.client !== "all") sp.set("client", next.client);
+    return `/admin/projects?${sp.toString()}`;
+  };
+
+  const go = (href: string) => router.push(href);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const v = searchRef.current?.value ?? "";
+    go(hrefWith({ q: v, page: 1 }));
+  };
+
+  const clearSearch = () => {
+    if (searchRef.current) searchRef.current.value = "";
+    go(hrefWith({ q: "", page: 1 }));
+  };
+
+  const handleClientChange = (value: string) => {
+    go(hrefWith({ client: value, page: 1 }));
+  };
+
+  const handleSizeChange = (n: number) => {
+    go(hrefWith({ size: n, page: 1 }));
+  };
+
+  const goPage = (p: number) => {
+    if (p < 1 || p > totalPages) return;
+    go(hrefWith({ page: p }));
+  };
+
+  const totalAll = all.length;
+  const mobileAll = all.filter((p) => p.client === "mobile").length;
+  const webAll = all.filter((p) => p.client === "web").length;
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -96,11 +168,11 @@ export default function ProjectsAdmin({ projects }: { projects: Project[] }) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      {/* Stats Cards */}
+      {/* Stats Cards — independent of pagination/filters */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        <StatsCard icon={FolderKanban} title="Total Projects" value={total} />
-        <StatsCard icon={FolderKanban} title="Mobile Apps" value={mobile} />
-        <StatsCard icon={FolderKanban} title="Web Apps" value={web} />
+        <StatsCard icon={FolderKanban} title="Total Projects" value={totalAll} />
+        <StatsCard icon={FolderKanban} title="Mobile Apps" value={mobileAll} />
+        <StatsCard icon={FolderKanban} title="Web Apps" value={webAll} />
       </div>
 
       {/* Projects List */}
@@ -120,80 +192,180 @@ export default function ProjectsAdmin({ projects }: { projects: Project[] }) {
         </CardHeader>
 
         <CardContent>
+          {/* Toolbar: search + filter */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between py-4">
+            <form onSubmit={handleSearch} className="relative w-full sm:max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                ref={searchRef}
+                defaultValue={q}
+                placeholder="Search projects..."
+                className="pl-9 pr-9"
+              />
+              {q && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label="Clear search"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </form>
+
+            <Select value={client} onValueChange={handleClientChange}>
+              <SelectTrigger className="w-full sm:w-[150px]">
+                <SelectValue placeholder="Filter type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="mobile">Mobile</SelectItem>
+                <SelectItem value="web">Web</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {projects.length === 0 ? (
             <div className="p-12 text-center">
               <FolderKanban className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No projects found</h3>
-              <p className="text-muted-foreground mb-4">No projects have been created yet.</p>
-              <Button onClick={() => setAddOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add First Project
-              </Button>
+              <p className="text-muted-foreground mb-4">
+                {q || client !== "all"
+                  ? "No projects match your search or filter."
+                  : "No projects have been created yet."}
+              </p>
+              {(q || client !== "all") ? (
+                <Button variant="outline" onClick={() => go(hrefWith({ q: "", client: "all", page: 1 }))}>
+                  Clear filters
+                </Button>
+              ) : (
+                <Button onClick={() => setAddOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add First Project
+                </Button>
+              )}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/50 hover:bg-muted/50">
-                  <TableHead className="font-semibold py-4">Project</TableHead>
-                  <TableHead className="font-semibold py-4">Type</TableHead>
-                  <TableHead className="font-semibold py-4">Order</TableHead>
-                  <TableHead className="font-semibold py-4">Technologies</TableHead>
-                  <TableHead className="font-semibold py-4 text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {projects.map((project) => (
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-12 font-semibold py-4">#</TableHead>
+                    <TableHead className="font-semibold py-4">Project</TableHead>
+                    <TableHead className="font-semibold py-4">Type</TableHead>
+                    <TableHead className="font-semibold py-4">Order</TableHead>
+                    <TableHead className="font-semibold py-4">Technologies</TableHead>
+                    <TableHead className="font-semibold py-4 text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {projects.map((project, i) => (
                   <TableRow key={project.id} className="hover:bg-muted/30 transition-colors">
+                    <TableCell className="py-4 text-sm text-muted-foreground w-12">
+                      {from + i}
+                    </TableCell>
                     <TableCell className="py-4">
                       <div className="font-medium">{project.name}</div>
-                      <div className="text-sm text-muted-foreground truncate max-w-xs">
-                        {project.short_details}
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <Badge variant="secondary" className="capitalize">
-                        {project.client ?? "N/A"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="py-4 text-sm text-muted-foreground">
-                      {project.order}
-                    </TableCell>
-                    <TableCell className="py-4 text-sm text-muted-foreground">
-                      {project.technologies?.length
-                        ? `${project.technologies.length} skill${project.technologies.length !== 1 ? "s" : ""}`
-                        : "—"}
-                    </TableCell>
-                    <TableCell className="py-4 text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem asChild>
-                            <a href={`/admin/projects/${project.id}/edit`}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit Project
-                            </a>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
-                            onSelect={() => {
-                              setSelected(project);
-                              setDeleteOpen(true);
-                            }}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete Project
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                        <div className="text-sm text-muted-foreground truncate max-w-xs">
+                          {project.short_details}
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4">
+                        <Badge variant="secondary" className="capitalize">
+                          {project.client ?? "N/A"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="py-4 text-sm text-muted-foreground">
+                        {project.order}
+                      </TableCell>
+                      <TableCell className="py-4 text-sm text-muted-foreground">
+                        {project.technologies?.length
+                          ? `${project.technologies.length} skill${project.technologies.length !== 1 ? "s" : ""}`
+                          : "—"}
+                      </TableCell>
+                      <TableCell className="py-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem asChild>
+                              <a href={`/admin/projects/${project.id}/edit`}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit Project
+                              </a>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onSelect={() => {
+                                setSelected(project);
+                                setDeleteOpen(true);
+                              }}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete Project
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {total > 0 && (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-4">
+              <p className="text-sm text-muted-foreground">
+                Showing <span className="font-medium text-foreground">{from}</span>–
+                <span className="font-medium text-foreground">{to}</span> of{" "}
+                <span className="font-medium text-foreground">{total}</span>
+              </p>
+              <div className="flex items-center gap-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      {size} per page
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {PAGE_SIZES.map((n) => (
+                      <DropdownMenuItem key={n} onClick={() => handleSizeChange(n)}>
+                        {n} per page
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => goPage(page - 1)}
+                    disabled={page <= 1}
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">
+                    Page {page} of {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => goPage(page + 1)}
+                    disabled={page >= totalPages}
+                    aria-label="Next page"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

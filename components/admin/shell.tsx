@@ -90,9 +90,11 @@ const NAV: NavGroup[] = [
 
 export default function AdminShell({
   email,
+  profileImage,
   children,
 }: {
   email: string;
+  profileImage?: string | null;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -133,8 +135,13 @@ export default function AdminShell({
       {/* Header */}
       <div className="border-b border-border/40 p-4 shrink-0">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-md shrink-0">
-            P
+          <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-md shrink-0 ring-2 ring-border">
+            {profileImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profileImage} alt="Logo" className="h-full w-full object-cover" />
+            ) : (
+              "P"
+            )}
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-sm font-semibold leading-none truncate">Portfolio</span>

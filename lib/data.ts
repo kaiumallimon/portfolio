@@ -48,6 +48,43 @@ export async function getProjects(): Promise<Project[]> {
   }, []);
 }
 
+export async function getProjectsPaginated({
+  page = 1,
+  size = 15,
+  q = "",
+  client = "all",
+}: {
+  page?: number;
+  size?: number;
+  q?: string;
+  client?: string;
+}): Promise<{ projects: Project[]; total: number }> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const from = (page - 1) * size;
+    const to = from + size - 1;
+
+    let query = supabase
+      .from("projects")
+      .select("*", { count: "exact" })
+      .order("order", { ascending: true });
+
+    if (client && client !== "all") {
+      query = query.eq("client", client);
+    }
+
+    const term = q.trim();
+    if (term) {
+      const like = `%${term}%`;
+      query = query.or(`name.ilike.${like},short_details.ilike.${like}`);
+    }
+
+    const { data, error, count } = await query.range(from, to);
+    if (error) throw error;
+    return { projects: (data as Project[]) ?? [], total: count ?? 0 };
+  }, { projects: [], total: 0 });
+}
+
 export async function getProjectById(id: string): Promise<Project | null> {
   return safeQuery(async () => {
     const supabase = getServerSupabase();
