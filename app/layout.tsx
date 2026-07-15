@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Outfit, Poppins, Ubuntu } from "next/font/google";
+import { Bricolage_Grotesque, Inter, JetBrains_Mono, Outfit, Poppins, Ubuntu } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -18,6 +18,12 @@ const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
   subsets: ["latin"],
   weight: ["400", "500", "700"],
+});
+
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 
@@ -64,7 +70,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${ubuntu.className}`}>
+      <body className={`${ubuntu.className} ${bricolage.variable}`}>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
