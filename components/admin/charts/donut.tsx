@@ -29,6 +29,7 @@ export function DonutChart({
 
   let offset = 0;
   const segments = data
+    .map((d, idx) => ({ ...d, idx }))
     .filter((d) => d.value > 0)
     .map((d) => {
       const len = total > 0 ? (d.value / total) * circumference : 0;
@@ -93,7 +94,7 @@ export function DonutChart({
             className="text-border"
             strokeWidth={thickness}
           />
-          {segments.map((s, i) => (
+          {segments.map((s) => (
             <circle
               key={s.label}
               cx={cx}
@@ -101,12 +102,12 @@ export function DonutChart({
               r={radius}
               fill="none"
               stroke={s.color}
-              strokeWidth={active === i ? thickness + 5 : thickness}
+              strokeWidth={active === s.idx ? thickness + 5 : thickness}
               strokeDasharray={`${s.len} ${circumference - s.len}`}
               strokeDashoffset={s.dashOffset}
               strokeLinecap="round"
               className="cursor-pointer transition-all duration-300"
-              onMouseEnter={() => setActive(i)}
+              onMouseEnter={() => setActive(s.idx)}
               onMouseLeave={() => setActive(null)}
             />
           ))}

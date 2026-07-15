@@ -23,8 +23,11 @@ export function BarChart({
   const base = "#6366f1";
 
   return (
-    <div className="w-full">
-      <div className="flex items-end gap-2 sm:gap-3" style={{ height }}>
+    <div className="w-full pt-7">
+      <div
+        className="flex gap-2 sm:gap-3"
+        style={{ height }}
+      >
         {data.map((d, i) => {
           const pct = (d.value / max) * 100;
           return (
@@ -32,7 +35,7 @@ export function BarChart({
               key={d.label}
               className="flex min-w-0 flex-1 flex-col items-center justify-end gap-2"
             >
-              <div className="relative flex w-full flex-1 items-end justify-center">
+              <div className="relative flex min-h-0 w-full flex-1 items-end justify-center">
                 <span
                   className="pointer-events-none absolute -top-6 z-10 whitespace-nowrap rounded-md bg-popover px-2 py-0.5 text-xs font-medium text-popover-foreground shadow-md transition-opacity"
                   style={{ opacity: active === i ? 1 : 0 }}

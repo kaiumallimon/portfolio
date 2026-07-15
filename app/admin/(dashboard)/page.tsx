@@ -17,6 +17,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { StatsCard } from "@/components/dashboard/stats-card";
 import { Button } from "@/components/ui/button";
 import {
   Breadcrumb,
@@ -58,40 +59,6 @@ const C = {
   cyan: "#06b6d4",
   slate: "#64748b",
 };
-
-function Kpi({
-  label,
-  value,
-  sub,
-  icon: Icon,
-  color,
-}: {
-  label: string;
-  value: number | string;
-  sub: string;
-  icon: React.ElementType;
-  color: string;
-}) {
-  return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">{label}</span>
-          <span
-            className="flex h-9 w-9 items-center justify-center rounded-lg"
-            style={{ backgroundColor: `${color}1f`, color }}
-          >
-            <Icon className="h-4 w-4" />
-          </span>
-        </div>
-        <div className="mt-3 text-3xl font-bold tabular-nums text-foreground">
-          {typeof value === "number" ? value.toLocaleString() : value}
-        </div>
-        <div className="mt-1 text-xs text-muted-foreground">{sub}</div>
-      </CardContent>
-    </Card>
-  );
-}
 
 export default async function AdminOverview() {
   const [settings, projects, achievements, activities, education, skills, hobbies, metrics, messages] =
@@ -230,33 +197,29 @@ export default async function AdminOverview() {
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi
-          label="Projects"
-          value={projects.length}
-          sub={`${mobile} mobile · ${web} web`}
+        <StatsCard
           icon={FolderKanban}
-          color={C.indigo}
+          title="Projects"
+          value={projects.length}
+          description={`${mobile} mobile · ${web} web`}
         />
-        <Kpi
-          label="Achievements"
-          value={achievements.length}
-          sub={`${achievementsByRank[0].value} championships`}
+        <StatsCard
           icon={Award}
-          color={C.amber}
+          title="Achievements"
+          value={achievements.length}
+          description={`${achievementsByRank[0].value} championships`}
         />
-        <Kpi
-          label="Messages"
-          value={messages.length}
-          sub={`${unread} unread`}
+        <StatsCard
           icon={Mail}
-          color={C.cyan}
+          title="Messages"
+          value={messages.length}
+          description={`${unread} unread`}
         />
-        <Kpi
-          label="Skill Categories"
-          value={skills.length}
-          sub={`${skills.reduce((s, c) => s + (c.skills?.length ?? 0), 0)} skills`}
+        <StatsCard
           icon={Code2}
-          color={C.fuchsia}
+          title="Skill Categories"
+          value={skills.length}
+          description={`${skills.reduce((s, c) => s + (c.skills?.length ?? 0), 0)} skills`}
         />
       </div>
 
