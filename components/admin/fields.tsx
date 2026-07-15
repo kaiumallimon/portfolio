@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { uploadImage } from "@/app/admin/actions";
 import { cn } from "@/lib/utils";
 import type { SkillItem } from "@/types/content";
@@ -22,14 +24,13 @@ export function TextField({
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-slate-400">{label}</label>
-      <input
+      <label className="text-sm font-medium text-foreground">{label}</label>
+      <Input
         type={type}
         name={name}
         defaultValue={defaultValue ?? ""}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all"
       />
     </div>
   );
@@ -52,14 +53,13 @@ export function TextAreaField({
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-slate-400">{label}</label>
-      <textarea
+      <label className="text-sm font-medium text-foreground">{label}</label>
+      <Textarea
         name={name}
         defaultValue={defaultValue ?? ""}
         placeholder={placeholder}
         rows={rows}
         required={required}
-        className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all resize-y"
       />
     </div>
   );
@@ -78,13 +78,12 @@ export function NumberField({
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-slate-400">{label}</label>
-      <input
+      <label className="text-sm font-medium text-foreground">{label}</label>
+      <Input
         type="number"
         name={name}
         defaultValue={defaultValue ?? 0}
         required={required}
-        className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all"
       />
     </div>
   );
@@ -105,12 +104,12 @@ export function SelectField({
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-slate-400">{label}</label>
+      <label className="text-sm font-medium text-foreground">{label}</label>
       <select
         name={name}
         defaultValue={defaultValue ?? options[0]?.value}
         required={required}
-        className="w-full bg-slate-950/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-all"
+        className="flex h-9 w-full appearance-none rounded-md border border-input bg-background px-3 py-1 text-sm text-foreground shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -137,9 +136,9 @@ export function SwitchField({
         type="checkbox"
         name={name}
         defaultChecked={defaultChecked ?? false}
-        className="h-4 w-4 accent-indigo-500"
+        className="h-4 w-4 accent-primary"
       />
-      <span className="text-sm text-slate-300">{label}</span>
+      <span className="text-sm text-foreground">{label}</span>
     </label>
   );
 }
@@ -183,20 +182,20 @@ export function ImageUploader({
 
   return (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-slate-400">{label}</label>
+      <label className="text-sm font-medium text-foreground">{label}</label>
       <input type="hidden" name={name} value={url ?? ""} />
       <div className="flex items-center gap-4">
         {url && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={url} alt="preview" className="h-16 w-16 rounded-lg object-cover border border-white/10" />
+          <img src={url} alt="preview" className="h-16 w-16 rounded-lg object-cover border border-border" />
         )}
-        <label className="cursor-pointer px-4 py-2 rounded-lg border border-white/10 text-sm text-slate-300 hover:bg-white/5 transition-colors">
+        <label className="cursor-pointer px-4 py-2 rounded-md border border-input bg-background text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
           {uploading ? "Uploading..." : "Choose file"}
           <input type="file" accept="image/*" className="hidden" onChange={handleFile} disabled={uploading} />
         </label>
       </div>
-      {error && <p className="text-xs text-red-400">{error}</p>}
-      {url && <p className="text-xs text-slate-500 break-all">{url}</p>}
+      {error && <p className="text-xs text-destructive">{error}</p>}
+      {url && <p className="text-xs text-muted-foreground break-all">{url}</p>}
     </div>
   );
 }
@@ -214,12 +213,12 @@ export function SkillsField({
 
   return (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-slate-400">Skills (name + highlight)</label>
+      <label className="text-sm font-medium text-foreground">Skills (name + highlight)</label>
       <input type="hidden" name={name} value={JSON.stringify(items)} />
       <div className="space-y-2">
         {items.map((item, idx) => (
           <div key={idx} className="flex items-center gap-2">
-            <input
+            <Input
               value={item.name}
               onChange={(e) => {
                 const next = [...items];
@@ -227,9 +226,8 @@ export function SkillsField({
                 update(next);
               }}
               placeholder="Skill name"
-              className="flex-1 bg-slate-950/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50"
             />
-            <label className="flex items-center gap-1 text-xs text-slate-400">
+            <label className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
               <input
                 type="checkbox"
                 checked={item.highlight}
@@ -238,14 +236,14 @@ export function SkillsField({
                   next[idx] = { ...item, highlight: e.target.checked };
                   update(next);
                 }}
-                className="h-4 w-4 accent-indigo-500"
+                className="h-4 w-4 accent-primary"
               />
               Top
             </label>
             <button
               type="button"
               onClick={() => update(items.filter((_, i) => i !== idx))}
-              className="px-2 py-1 text-xs text-red-400 hover:bg-red-500/10 rounded"
+              className="px-2 py-1 text-xs text-destructive hover:bg-destructive/10 rounded"
             >
               ✕
             </button>
@@ -255,7 +253,7 @@ export function SkillsField({
       <button
         type="button"
         onClick={() => update([...items, { name: "", highlight: false }])}
-        className="text-xs text-indigo-400 hover:text-indigo-300"
+        className="text-xs text-primary hover:text-primary/80"
       >
         + Add skill
       </button>
@@ -273,9 +271,9 @@ export function AdminCard({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="border border-white/10 bg-slate-900/40 rounded-2xl p-6">
+    <div className="border border-border bg-card rounded-2xl p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-white">{title}</h2>
+        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
         {action}
       </div>
       {children}
