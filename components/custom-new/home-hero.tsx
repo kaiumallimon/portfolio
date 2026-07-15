@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, Download, Loader2 } from "lucide-react";
-import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { SiFlutter } from "react-icons/si";
@@ -13,7 +12,6 @@ import { useState } from "react";
 import ColorBends from "@/components/ColorBends";
 import type { SiteSettings } from "@/types/content";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export default function HomeHero({
   settings,
@@ -104,7 +102,7 @@ export default function HomeHero({
             {available ? "Available" : "Unavailable"}
           </div>
 
-          <h1 className={`text-5xl md:text-6xl font-bold tracking-tight text-white max-w-4xl leading-[1.1] ${inter.className}`}>
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white max-w-4xl leading-[1.1]">
             Crafting <br />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 via-violet-400 to-indigo-500">
               seamless, user‑focused experiences
