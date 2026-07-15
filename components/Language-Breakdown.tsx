@@ -105,7 +105,7 @@ export default function LanguageBreakdown() {
     : [];
 
   return (
-    <ScrollRevealSection id="languages" className="py-24 px-6 relative">
+    <ScrollRevealSection id="languages" className="py-24 px-6 max-w-6xl mx-auto relative">
       <div className="max-w-6xl mx-auto">
         <ScrollReveal className="mb-12">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Codebase Composition</h2>

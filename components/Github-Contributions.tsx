@@ -109,7 +109,7 @@ export default function GithubContributions() {
     : [];
 
   return (
-    <ScrollRevealSection id="contributions" className="py-24 px-6 relative">
+    <ScrollRevealSection id="contributions" className="py-24 px-6 max-w-6xl mx-auto relative">
       <div className="max-w-6xl mx-auto">
         <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>

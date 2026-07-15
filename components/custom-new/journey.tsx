@@ -14,7 +14,7 @@ export default function FlutterJourneySection({
   activities: Activity[];
 }) {
   return (
-    <ScrollRevealSection id="activities" className="py-24 px-6 relative">
+    <ScrollRevealSection id="activities" className="py-24 px-6 max-w-6xl mx-auto relative">
       <div className="max-w-6xl mx-auto">
         <ScrollReveal className="mb-16">
           <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Co-Curricular Activities</h2>

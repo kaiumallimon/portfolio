@@ -32,7 +32,7 @@ export default function HomeAboutSection({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative"
+      className="py-24 px-6 max-w-6xl mx-auto relative"
     >
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-start">
         <div className="space-y-8">

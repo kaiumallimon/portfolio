@@ -109,7 +109,7 @@ export default function FlutterFooter() {
   };
 
   return (
-    <ScrollRevealSection as="footer" className="relative px-6 pb-8 pt-4">
+    <ScrollRevealSection as="footer" className="relative px-6 pb-8 pt-4 max-w-6xl mx-auto">
       <div className="max-w-6xl mx-auto">
         <ScrollReveal>
         <div className="relative border border-slate-700/30 backdrop-blur-md rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
