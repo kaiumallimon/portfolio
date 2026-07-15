@@ -255,6 +255,37 @@ export async function getSkills(): Promise<SkillCategory[]> {
   }, []);
 }
 
+export async function getSkillsPaginated({
+  page = 1,
+  size = 15,
+  q = "",
+}: {
+  page?: number;
+  size?: number;
+  q?: string;
+}): Promise<{ skills: SkillCategory[]; total: number }> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const from = (page - 1) * size;
+    const to = from + size - 1;
+
+    let query = supabase
+      .from("skills")
+      .select("*", { count: "exact" })
+      .order("order", { ascending: true });
+
+    const term = q.trim();
+    if (term) {
+      const like = `%${term}%`;
+      query = query.ilike("category", like);
+    }
+
+    const { data, error, count } = await query.range(from, to);
+    if (error) throw error;
+    return { skills: (data as SkillCategory[]) ?? [], total: count ?? 0 };
+  }, { skills: [], total: 0 });
+}
+
 export async function getHobbies(): Promise<Hobby[]> {
   return safeQuery(async () => {
     const supabase = getServerSupabase();
