@@ -1,7 +1,7 @@
 "use client";
 
 import { GraduationCap, Award } from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { Book } from "lucide-react";
 import { motion } from "framer-motion";
@@ -24,6 +24,7 @@ export default function HomeAboutSection({
   const github = settings?.github_url || "https://github.com/kaiumallimon";
   const linkedin = settings?.linkedin_url || "https://linkedin.com/in/kaiumallimon";
   const email = settings?.email || "kalimon291@gmail.com";
+  const facebook = "https://facebook.com/kaiumallimon";
 
   return (
     <motion.section
@@ -58,6 +59,9 @@ export default function HomeAboutSection({
             </a>
             <a href={`mailto:${email}`} className="cursor-target p-3 border border-white/10 rounded-full hover:bg-white/10 hover:scale-110 transition-all">
               <MdEmail size={20} className="text-slate-300" />
+            </a>
+            <a href={facebook} target="_blank" rel="noopener noreferrer" className="cursor-target p-3 border border-white/10 rounded-full hover:bg-white/10 hover:scale-110 transition-all">
+              <FaFacebook size={20} className="text-slate-300" />
             </a>
           </div>
         </div>
