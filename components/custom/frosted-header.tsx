@@ -37,7 +37,7 @@ export const FrostedHeader: React.FC<FrostedHeaderProps> = ({
 
   return (
     <div
-      className={`sticky top-0 z-20 bg-transparent dark:bg-transparent backdrop-blur-sm border-border/50 p-4 md:p-4 transition-all duration-300 ${className} ${hasBorder ? 'border-b' : ''}`}
+      className={`sticky top-0 z-20 bg-background/80 dark:bg-transparent backdrop-blur-sm border-border/50 p-4 md:p-4 transition-all duration-300 ${className} ${hasBorder ? 'border-b' : ''}`}
     >
       <div className="flex items-center justify-between gap-4">
         {/* Left side - Mobile menu button + Title */}

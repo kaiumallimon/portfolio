@@ -275,7 +275,7 @@ export default function AdminShell({
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/20">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-page">
             <FrostedHeader title={title} subtitle={subtitle} onMobileMenuToggle={() => setMobileMenuOpen(true)} />
             <MobileMenuProvider toggleMobileMenu={() => setMobileMenuOpen(true)}>
               {children}
