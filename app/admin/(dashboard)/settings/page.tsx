@@ -101,6 +101,28 @@ export default async function AdminSettingsPage() {
           </form>
         </CardContent>
       </Card>
+
+      {/* Footer */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Footer</CardTitle>
+          <CardDescription>Footer description and social links shown across the site.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={saveSettings} className="space-y-4">
+            <TextAreaField
+              label="Footer Description"
+              name="footer_description"
+              defaultValue={settings?.footer_description}
+              rows={3}
+            />
+            <TextField label="Facebook URL" name="facebook_url" defaultValue={settings?.facebook_url} placeholder="https://facebook.com/your-handle" />
+            <Button type="submit" className="w-full">
+              Save Settings
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

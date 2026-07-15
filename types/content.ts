@@ -88,6 +88,8 @@ export type SiteSettings = {
   resume_url: string | null;
   seo_title: string | null;
   seo_description: string | null;
+  footer_description: string | null;
+  facebook_url: string | null;
 };
 
 export type ContactMessage = {

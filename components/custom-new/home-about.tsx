@@ -24,7 +24,7 @@ export default function HomeAboutSection({
   const github = settings?.github_url || "https://github.com/kaiumallimon";
   const linkedin = settings?.linkedin_url || "https://linkedin.com/in/kaiumallimon";
   const email = settings?.email || "kalimon291@gmail.com";
-  const facebook = "https://facebook.com/kaiumallimon";
+  const facebook = settings?.facebook_url || "https://facebook.com/kaiumallimon";
 
   return (
     <motion.section

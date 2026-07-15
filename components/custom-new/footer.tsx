@@ -39,12 +39,24 @@ const toolLinks = [
   { href: '/tools/uiu-cgpa-calculator', label: 'UIU CGPA Calculator' },
 ];
 
-const socialLinks = [
-  { icon: FaGithub, href: 'https://github.com/kaiumallimon', label: 'GitHub' },
-  { icon: FaLinkedin, href: 'https://linkedin.com/in/kaiumallimon', label: 'LinkedIn' },
-  { icon: FaFacebook, href: 'https://facebook.com/kaiumallimon', label: 'Facebook' },
-  { icon: Mail, href: 'mailto:kalimon291@gmail.com', label: 'Email' },
-];
+const DEFAULT_FOOTER_DESCRIPTION =
+  'Full-Stack Mobile & Web Software Engineer building cross-platform apps, modern web experiences, and scalable backends with clean architecture and production-ready code.';
+
+const DEFAULT_SOCIALS = {
+  github: 'https://github.com/kaiumallimon',
+  linkedin: 'https://linkedin.com/in/kaiumallimon',
+  facebook: 'https://facebook.com/kaiumallimon',
+  email: 'kalimon291@gmail.com',
+};
+
+interface PublicSettings {
+  footer_description: string | null;
+  facebook_url: string | null;
+  github_url: string | null;
+  linkedin_url: string | null;
+  email: string | null;
+  location: string | null;
+}
 
 interface FooterStats {
   totalContributions: number;
@@ -76,6 +88,7 @@ export default function FlutterFooter() {
   const pathname = usePathname();
   const [stats, setStats] = useState<FooterStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [site, setSite] = useState<PublicSettings | null>(null);
 
   useEffect(() => {
     async function fetchStats() {
@@ -96,6 +109,27 @@ export default function FlutterFooter() {
     }
     fetchStats();
   }, []);
+
+  useEffect(() => {
+    async function fetchSite() {
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) setSite(await res.json());
+      } catch {
+        /* keep defaults */
+      }
+    }
+    fetchSite();
+  }, []);
+
+  const footerDescription = site?.footer_description ?? DEFAULT_FOOTER_DESCRIPTION;
+  const socials = [
+    { icon: FaGithub, href: site?.github_url ?? DEFAULT_SOCIALS.github, label: 'GitHub' },
+    { icon: FaLinkedin, href: site?.linkedin_url ?? DEFAULT_SOCIALS.linkedin, label: 'LinkedIn' },
+    { icon: FaFacebook, href: site?.facebook_url ?? DEFAULT_SOCIALS.facebook, label: 'Facebook' },
+    { icon: Mail, href: `mailto:${site?.email ?? DEFAULT_SOCIALS.email}`, label: 'Email' },
+  ];
+  const email = site?.email ?? DEFAULT_SOCIALS.email;
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#') && pathname !== '/') {
@@ -126,7 +160,7 @@ export default function FlutterFooter() {
                     Kaium Al Limon
                   </a>
                   <p className="text-sm text-slate-400 leading-relaxed mt-3">
-                    Full-Stack Mobile & Web Software Engineer building cross-platform apps, modern web experiences, and scalable backends with clean architecture and production-ready code.
+                    {footerDescription}
                   </p>
                 </div>
 
@@ -157,7 +191,7 @@ export default function FlutterFooter() {
                 </div>
 
                 <div className="flex gap-2">
-                  {socialLinks.map((social) => {
+                  {socials.map((social) => {
                     const Icon = social.icon;
                     return (
                       <a
@@ -272,10 +306,10 @@ export default function FlutterFooter() {
             <p>© {currentYear} Kaium Al Limon. All rights reserved.</p>
             <div className="flex items-center gap-4">
               <a
-                href="mailto:kalimon291@gmail.com"
+                href={`mailto:${email}`}
                 className="hover:text-indigo-400 transition-colors cursor-target"
               >
-                kalimon291@gmail.com
+                {email}
               </a>
               <button
                 onClick={scrollToTop}

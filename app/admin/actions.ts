@@ -313,6 +313,8 @@ export async function saveSettings(formData: FormData) {
     resume_url: str(formData, "resume_url"),
     seo_title: str(formData, "seo_title"),
     seo_description: str(formData, "seo_description"),
+    footer_description: str(formData, "footer_description"),
+    facebook_url: str(formData, "facebook_url"),
   };
   await supabase.from("site_settings").upsert(payload);
   revalidateAll();
