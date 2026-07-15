@@ -192,7 +192,7 @@ export default function FlutterFooter() {
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, '#contact')}
-                  className="inline-flex mt-2 px-5 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-full transition-all font-medium cursor-target"
+                  className="inline-flex mt-2 px-5 py-2 text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded-full transition-all font-medium cursor-target"
                 >
                   Contact
                 </a>

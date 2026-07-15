@@ -108,7 +108,7 @@ export default function FloatingHeader() {
           <a
             href="#contact"
             onClick={(e) => handleNavClick(e, '#contact')}
-            className="cursor-target ml-4 px-5 py-2 text-sm bg-primary hover:bg-primary/90 text-white rounded-full transition-all font-medium"
+            className="cursor-target ml-4 px-5 py-2 text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded-full transition-all font-medium"
           >
             Contact
           </a>
@@ -155,7 +155,7 @@ export default function FloatingHeader() {
               handleNavClick(e, '#contact');
               setMobileMenuOpen(false);
             }}
-            className="p-3 rounded-xl text-sm cursor-target transition-all duration-300 bg-primary hover:bg-primary/90 text-white font-medium"
+            className="p-3 rounded-xl text-sm cursor-target transition-all duration-300 bg-indigo-500 hover:bg-indigo-600 text-white font-medium"
           >
             Contact
           </a>
