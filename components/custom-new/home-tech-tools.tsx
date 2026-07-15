@@ -42,7 +42,7 @@ const ACCENTS = [
   },
 ];
 
-// Asymmetric bento spans (desktop). Feature card is large; rest vary in width.
+// Asymmetric bento spans (desktop). Feature spans 2 rows; last item forced full width below.
 const SPANS = [
   "md:col-span-4 md:row-span-2",
   "md:col-span-2",
@@ -74,7 +74,8 @@ export default function TechToolsSection({
         {skills.map((tech, index) => {
           const Icon = ICON_MAP[tech.icon || ""] || Globe;
           const accent = ACCENTS[index % ACCENTS.length];
-          const span = SPANS[index] ?? "md:col-span-2";
+          const isLast = index === skills.length - 1;
+          const span = isLast ? "md:col-span-6" : (SPANS[index] ?? "md:col-span-3");
           const isFeature = index === 0;
           return (
             <div
