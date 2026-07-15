@@ -298,6 +298,37 @@ export async function getHobbies(): Promise<Hobby[]> {
   }, []);
 }
 
+export async function getHobbiesPaginated({
+  page = 1,
+  size = 15,
+  q = "",
+}: {
+  page?: number;
+  size?: number;
+  q?: string;
+}): Promise<{ hobbies: Hobby[]; total: number }> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const from = (page - 1) * size;
+    const to = from + size - 1;
+
+    let query = supabase
+      .from("hobbies")
+      .select("*", { count: "exact" })
+      .order("order", { ascending: true });
+
+    const term = q.trim();
+    if (term) {
+      const like = `%${term}%`;
+      query = query.ilike("title", like);
+    }
+
+    const { data, error, count } = await query.range(from, to);
+    if (error) throw error;
+    return { hobbies: (data as Hobby[]) ?? [], total: count ?? 0 };
+  }, { hobbies: [], total: 0 });
+}
+
 export async function getMetrics(): Promise<Metric[]> {
   return safeQuery(async () => {
     const supabase = getServerSupabase();
@@ -322,6 +353,41 @@ export async function getResumeUrl(): Promise<string | null> {
     if (error) throw error;
     return (data?.resume_url as string) ?? null;
   }, null);
+}
+
+export async function getMetricsPaginated({
+  page = 1,
+  size = 15,
+  q = "",
+  featured = "all",
+}: {
+  page?: number;
+  size?: number;
+  q?: string;
+  featured?: string;
+}): Promise<{ metrics: Metric[]; total: number }> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const from = (page - 1) * size;
+    const to = from + size - 1;
+
+    let query = supabase
+      .from("metrics")
+      .select("*", { count: "exact" })
+      .order("order", { ascending: true });
+
+    if (featured === "featured") query = query.eq("featured", true);
+
+    const term = q.trim();
+    if (term) {
+      const like = `%${term}%`;
+      query = query.ilike("label", like);
+    }
+
+    const { data, error, count } = await query.range(from, to);
+    if (error) throw error;
+    return { metrics: (data as Metric[]) ?? [], total: count ?? 0 };
+  }, { metrics: [], total: 0 });
 }
 
 export async function getContactMessages(): Promise<ContactMessage[]> {
