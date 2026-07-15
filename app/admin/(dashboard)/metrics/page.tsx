@@ -1,36 +1,37 @@
-import Link from "next/link";
-import { getMetrics } from "@/lib/data";
-import { deleteMetric } from "@/app/admin/actions";
-import { AdminCard } from "@/components/admin/fields";
-import { ResourceTable } from "@/components/admin/resource-table";
+import { getMetrics, getMetricsPaginated } from "@/lib/data";
+import MetricsAdmin from "@/components/admin/metrics-admin";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminMetricsPage() {
-  const metrics = await getMetrics();
+type SP = Record<string, string | string[] | undefined>;
+const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
+
+export default async function AdminMetricsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SP>;
+}) {
+  const sp = await searchParams;
+  const page = Math.max(1, parseInt(first(sp.page) || "1", 10) || 1);
+  const sizeRaw = parseInt(first(sp.size) || "15", 10);
+  const size = [15, 30, 50].includes(sizeRaw) ? sizeRaw : 15;
+  const q = first(sp.q);
+  const featured = first(sp.featured) || "all";
+
+  const [all, { metrics, total }] = await Promise.all([
+    getMetrics(),
+    getMetricsPaginated({ page, size, q, featured }),
+  ]);
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-white">Impact Metrics</h1>
-          <p className="text-sm text-slate-400">Stat cards in the Impact at a Glance section. (GitHub Stars are fetched live.)</p>
-        </div>
-        <Link href="/admin/metrics/new" className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors">
-          + Add Metric
-        </Link>
-      </div>
-      <AdminCard title={`${metrics.length} metrics`}>
-        <ResourceTable
-          columns={[
-            { key: "label", label: "Label" },
-            { key: "value", label: "Value" },
-            { key: "order", label: "Order" },
-          ]}
-          rows={metrics as unknown as Record<string, unknown>[]}
-          editBase="/admin/metrics"
-          deleteAction={deleteMetric}
-        />
-      </AdminCard>
-    </div>
+    <MetricsAdmin
+      all={all}
+      metrics={metrics}
+      total={total}
+      page={page}
+      size={size}
+      q={q}
+      featured={featured}
+    />
   );
 }
