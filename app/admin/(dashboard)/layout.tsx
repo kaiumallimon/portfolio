@@ -4,7 +4,7 @@ import AdminSidebar from "@/components/admin/sidebar";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getSessionUser();
   if (!user) redirect("/admin/login");
 
