@@ -336,3 +336,17 @@ export async function toggleMessageRead(formData: FormData) {
   if (id) await supabase.from("contact_messages").update({ read }).eq("id", id);
   revalidatePath("/admin/messages");
 }
+
+export async function markThreadRead(formData: FormData) {
+  const supabase = getServerSupabase();
+  const email = str(formData, "email");
+  if (email) await supabase.from("contact_messages").update({ read: true }).eq("email", email);
+  revalidatePath("/admin/messages");
+}
+
+export async function deleteThread(formData: FormData) {
+  const supabase = getServerSupabase();
+  const email = str(formData, "email");
+  if (email) await supabase.from("contact_messages").delete().eq("email", email);
+  revalidatePath("/admin/messages");
+}
