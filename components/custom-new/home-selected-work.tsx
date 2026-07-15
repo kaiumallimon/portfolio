@@ -46,7 +46,7 @@ export default function HomeProjects({ projects }: { projects: Project[] }) {
             const imageOrder = index % 2 === 1 ? "md:order-1" : "md:order-2";
 
             return (
-              <div key={project.id} className={`cursor-target border backdrop-blur-md rounded-3xl overflow-hidden group ${groupHoverBorder} transition-all duration-500`}>
+              <div key={project.id} className={`cursor-target border border-white/10 backdrop-blur-md rounded-3xl overflow-hidden group ${groupHoverBorder} transition-all duration-500`}>
                 <div className="bg-slate-900/50 rounded-[20px] p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
                   <div className={`order-2 ${textOrder} space-y-4`}>
                     <div className="flex items-center gap-3">
@@ -115,7 +115,7 @@ export default function HomeProjects({ projects }: { projects: Project[] }) {
         </div>
 
         <div className="mt-16 flex justify-center">
-          <Link href="/projects" className="cursor-target group flex items-center gap-2 px-8 py-3 rounded-full border hover:bg-white/10 backdrop:blur-in-md transition-all duration-300">
+          <Link href="/projects" className="cursor-target group flex items-center gap-2 px-8 py-3 rounded-full border border-white/10 hover:bg-white/10 backdrop:blur-in-md transition-all duration-300">
             <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">View All Projects</span>
             <ArrowUpRight size={16} className="text-slate-400 group-hover:text-white transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>

@@ -59,8 +59,8 @@ export default function ContactForm({
       transition={{ duration: 0.6 }}
       className="py-24 px-6"
     >
-      <div className="max-w-4xl mx-auto border backdrop-blur-md rounded-3xl p-8 md:p-12 overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-[80px]"></div>
+      <div className="max-w-4xl mx-auto border border-white/10 bg-slate-900/30 backdrop-blur-md rounded-3xl p-8 md:p-12 overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl"></div>
 
         <div className="grid md:grid-cols-2 gap-12 relative z-10">
           <div className="space-y-6">

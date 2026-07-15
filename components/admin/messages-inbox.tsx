@@ -193,12 +193,12 @@ export function MessagesInbox({
           </span>
         </div>
 
-        <div className="border border-border/60 rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-[340px_1fr] min-h-[60vh]">
+        <div className="border border-border/60 rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-[340px_1fr] min-h-[60vh] bg-card">
           {/* Thread list */}
           <MessageThreadList threads={threads} activeEmail={activeEmail} onSelect={setActiveEmail} />
 
           {/* Conversation */}
-          <div className="flex flex-col min-h-[60vh]">
+          <div className="flex flex-col min-h-[60vh] bg-background">
             {!activeThread ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-12">
                 <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />

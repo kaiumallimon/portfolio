@@ -12,6 +12,25 @@ const ICON_MAP: Record<string, ComponentType<{ size?: number; className?: string
   Globe,
 };
 
+// Distinct accent per toolkit card (icon chip, hover border, highlighted chips).
+const ACCENTS = [
+  {
+    iconChip: "bg-indigo-500/10 text-indigo-400",
+    hoverBorder: "hover:border-indigo-500/30",
+    chip: "bg-indigo-500/10 text-indigo-300 border-indigo-500/20",
+  },
+  {
+    iconChip: "bg-emerald-500/10 text-emerald-400",
+    hoverBorder: "hover:border-emerald-500/30",
+    chip: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
+  },
+  {
+    iconChip: "bg-sky-500/10 text-sky-400",
+    hoverBorder: "hover:border-sky-500/30",
+    chip: "bg-sky-500/10 text-sky-300 border-sky-500/20",
+  },
+];
+
 export default function TechToolsSection({
   skills,
 }: {
@@ -32,12 +51,13 @@ export default function TechToolsSection({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {skills.map((tech) => {
+        {skills.map((tech, index) => {
           const Icon = ICON_MAP[tech.icon || ""] || Globe;
+          const accent = ACCENTS[index % ACCENTS.length];
           return (
-            <div key={tech.id} className="cursor-target backdrop-blur-md border p-6 rounded-2xl transition-colors hover:border-white/20 bg-slate-900/30">
+            <div key={tech.id} className={`cursor-target backdrop-blur-md border border-white/10 p-6 rounded-2xl transition-colors ${accent.hoverBorder} bg-slate-900/30`}>
               <div className="flex items-center gap-3 mb-6">
-                <span className="p-2 rounded-lg bg-white/5 text-indigo-400">
+                <span className={`p-2 rounded-lg ${accent.iconChip}`}>
                   <Icon size={16} />
                 </span>
                 <h3 className="font-medium text-white">{tech.category}</h3>
@@ -48,7 +68,7 @@ export default function TechToolsSection({
                     key={skillIndex}
                     className={`px-3 py-1 text-xs font-medium rounded-md border ${
                       skill.highlight
-                        ? "bg-indigo-500/10 text-indigo-300 border-indigo-500/20"
+                        ? accent.chip
                         : "bg-white/5 text-slate-300 border-white/10"
                     }`}
                   >

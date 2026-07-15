@@ -45,7 +45,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-            className={`cursor-target border backdrop-blur-md rounded-3xl overflow-hidden group ${groupHoverBorder} transition-all duration-500`}
+            className={`cursor-target border border-white/10 backdrop-blur-md rounded-3xl overflow-hidden group ${groupHoverBorder} transition-all duration-500`}
           >
             <div className="bg-slate-900/50 rounded-[20px] p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
               <div className={`order-2 ${textOrder} space-y-4`}>

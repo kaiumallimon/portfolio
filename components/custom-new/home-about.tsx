@@ -50,19 +50,19 @@ export default function HomeAboutSection({
           </div>
 
           <div className="flex gap-4 pt-4">
-            <a href={github} target="_blank" rel="noopener noreferrer" className="cursor-target p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
+            <a href={github} target="_blank" rel="noopener noreferrer" className="cursor-target p-3 border border-white/10 rounded-full hover:bg-white/10 hover:scale-110 transition-all">
               <FaGithub size={20} className="text-slate-300" />
             </a>
-            <a href={linkedin} target="_blank" rel="noopener noreferrer" className="cursor-target p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
+            <a href={linkedin} target="_blank" rel="noopener noreferrer" className="cursor-target p-3 border border-white/10 rounded-full hover:bg-white/10 hover:scale-110 transition-all">
               <FaLinkedin size={20} className="text-slate-300" />
             </a>
-            <a href={`mailto:${email}`} className="cursor-target p-3 border rounded-full hover:bg-white/10 hover:scale-110 transition-all">
+            <a href={`mailto:${email}`} className="cursor-target p-3 border border-white/10 rounded-full hover:bg-white/10 hover:scale-110 transition-all">
               <MdEmail size={20} className="text-slate-300" />
             </a>
           </div>
         </div>
 
-        <div className="border border-muted/75 p-8 rounded-3xl relative overflow-hidden group">
+        <div className="border border-white/10 bg-slate-900/30 p-8 rounded-3xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl transition-all"></div>
 
           <div className="flex items-start justify-between mb-8">

@@ -32,7 +32,7 @@ export default function HobbiesSection({ hobbies }: { hobbies: Hobby[] }) {
             return (
               <div
                 key={hobby.id}
-                className="flex flex-col items-center text-center p-6 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300"
+                className="flex flex-col items-center text-center p-6 bg-slate-900/30 backdrop-blur-md border border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-300"
               >
                 <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-4">
                   <Icon className="text-white w-6 h-6" />

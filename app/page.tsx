@@ -92,9 +92,8 @@ export default function Home() {
       <HomeBackground />
       <FloatingHeader />
       <HomeHeroWrapper />
-
+      
       <div className="relative bg-[#0b001a]">
-        <SectionSeparator />
         <Suspense fallback={<AboutSkeleton />}>
           <AboutSection />
         </Suspense>
