@@ -251,40 +251,40 @@ export default function ProjectsAdmin({
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50 hover:bg-muted/50">
-                    <TableHead className="w-12 font-semibold py-4">#</TableHead>
-                    <TableHead className="font-semibold py-4">Project</TableHead>
-                    <TableHead className="font-semibold py-4">Type</TableHead>
-                    <TableHead className="font-semibold py-4">Order</TableHead>
-                    <TableHead className="font-semibold py-4">Technologies</TableHead>
-                    <TableHead className="font-semibold py-4 text-right">Actions</TableHead>
+                    <TableHead className="w-12 font-semibold px-4 py-4">#</TableHead>
+                    <TableHead className="font-semibold px-4 py-4">Project</TableHead>
+                    <TableHead className="font-semibold px-4 py-4">Type</TableHead>
+                    <TableHead className="font-semibold px-4 py-4">Order</TableHead>
+                    <TableHead className="font-semibold px-4 py-4">Technologies</TableHead>
+                    <TableHead className="font-semibold px-4 py-4 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {projects.map((project, i) => (
-                  <TableRow key={project.id} className="hover:bg-muted/30 transition-colors">
-                    <TableCell className="py-4 text-sm text-muted-foreground w-12">
-                      {from + i}
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <div className="font-medium">{project.name}</div>
+                    <TableRow key={project.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="px-4 py-4 text-sm text-muted-foreground w-12">
+                        {from + i}
+                      </TableCell>
+                      <TableCell className="px-4 py-4">
+                        <div className="font-medium">{project.name}</div>
                         <div className="text-sm text-muted-foreground truncate max-w-xs">
                           {project.short_details}
                         </div>
                       </TableCell>
-                      <TableCell className="py-4">
+                      <TableCell className="px-4 py-4">
                         <Badge variant="secondary" className="capitalize">
                           {project.client ?? "N/A"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="py-4 text-sm text-muted-foreground">
+                      <TableCell className="px-4 py-4 text-sm text-muted-foreground">
                         {project.order}
                       </TableCell>
-                      <TableCell className="py-4 text-sm text-muted-foreground">
+                      <TableCell className="px-4 py-4 text-sm text-muted-foreground">
                         {project.technologies?.length
                           ? `${project.technologies.length} skill${project.technologies.length !== 1 ? "s" : ""}`
                           : "—"}
                       </TableCell>
-                      <TableCell className="py-4 text-right">
+                      <TableCell className="px-4 py-4 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0">
