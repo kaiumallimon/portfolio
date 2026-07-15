@@ -28,6 +28,7 @@ import { toExternalUrl } from "@/lib/utils";
 import { ReadmeRenderer } from "@/components/custom-new/readme-renderer";
 import { Reveal } from "@/components/custom-new/reveal";
 import { DonutChart } from "@/components/admin/charts/donut";
+import { ProjectGallery } from "@/components/custom-new/project-gallery";
 
 export const dynamic = "force-dynamic";
 
@@ -112,6 +113,13 @@ export default async function ProjectDetailPage({
   const { id } = await params;
   const project = await getProjectById(id);
   if (!project) notFound();
+
+  const projectImages =
+    project.images && project.images.length > 0
+      ? project.images
+      : project.image
+        ? [project.image]
+        : [];
 
   const isMobile = project.client === "mobile";
   const glowColor = isMobile ? "bg-indigo-500" : "bg-emerald-500";
@@ -223,15 +231,8 @@ export default async function ProjectDetailPage({
                 </div>
               </div>
 
-              {/* Banner */}
-              {project.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={project.image}
-                  alt={project.name ?? "Project"}
-                  className="w-full max-h-[440px] object-cover border-y border-white/10"
-                />
-              )}
+              {/* Banner gallery */}
+              <ProjectGallery images={projectImages} alt={project.name ?? "Project"} />
 
               {/* Body */}
               <div className="space-y-12 border-t border-white/10 p-6 md:p-10">

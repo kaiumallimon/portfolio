@@ -1,5 +1,6 @@
 import {
   ImageUploader,
+  MultiImageUploader,
   NumberField,
   SelectField,
   SkillsField,
@@ -54,7 +55,12 @@ export function ProjectForm({ project }: { project?: Project }) {
         defaultValue={project?.technologies?.join(", ")}
         placeholder="Flutter, Dart, FastAPI"
       />
-      <ImageUploader label="Project Image" name="image" bucket="portfolio-media" defaultValue={project?.image} />
+      <MultiImageUploader
+        label="Project Images"
+        name="images"
+        bucket="portfolio-media"
+        defaultValue={project?.images ?? (project?.image ? [project.image] : [])}
+      />
       <button className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors">
         {project ? "Update Project" : "Create Project"}
       </button>

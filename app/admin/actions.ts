@@ -72,6 +72,18 @@ function revalidateAll() {
 export async function saveProject(formData: FormData) {
   const supabase = getServerSupabase();
   const id = str(formData, "id");
+
+  const imagesRaw = str(formData, "images");
+  let images: string[] | null = null;
+  if (imagesRaw) {
+    try {
+      const parsed = JSON.parse(imagesRaw);
+      if (Array.isArray(parsed)) images = parsed.map(String).filter(Boolean);
+    } catch {
+      images = null;
+    }
+  }
+
   const payload = {
     name: str(formData, "name"),
     short_details: str(formData, "short_details"),
@@ -79,7 +91,8 @@ export async function saveProject(formData: FormData) {
     live_url: str(formData, "live_url"),
     client: str(formData, "client"),
     technologies: csv(formData, "technologies"),
-    image: str(formData, "image"),
+    image: images?.[0] ?? null,
+    images,
     order: num(formData, "order"),
   };
   if (id) {

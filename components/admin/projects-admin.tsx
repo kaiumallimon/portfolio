@@ -51,7 +51,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { TextField, TextAreaField, NumberField, SelectField, ImageUploader } from "@/components/admin/fields";
+import { TextField, TextAreaField, NumberField, SelectField, MultiImageUploader } from "@/components/admin/fields";
 import { FolderKanban, Plus, MoreHorizontal, Edit, Trash2, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { saveProject, deleteProject } from "@/app/admin/actions";
 import type { Project } from "@/types/project";
@@ -411,7 +411,7 @@ export default function ProjectsAdmin({
             <TextField label="GitHub URL" name="github_url" placeholder="https://github.com/..." />
             <TextField label="Live URL" name="live_url" placeholder="https://..." />
             <NumberField label="Order" name="order" />
-            <ImageUploader label="Image" name="image" bucket="portfolio-media" />
+            <MultiImageUploader label="Project Images" name="images" bucket="portfolio-media" />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setAddOpen(false)} disabled={saving}>
                 Cancel
@@ -461,7 +461,12 @@ export default function ProjectsAdmin({
                 defaultValue={editSelected.technologies?.join(", ")}
                 placeholder="Flutter, Dart, FastAPI"
               />
-              <ImageUploader label="Image" name="image" bucket="portfolio-media" defaultValue={editSelected.image} />
+              <MultiImageUploader
+                label="Project Images"
+                name="images"
+                bucket="portfolio-media"
+                defaultValue={editSelected.images ?? (editSelected.image ? [editSelected.image] : [])}
+              />
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setEditOpen(false)} disabled={saving}>
                   Cancel

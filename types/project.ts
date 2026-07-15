@@ -10,6 +10,7 @@ export type Project = {
   conclusion: string | null;
   technologies: string[] | null;
   image: string | null;
+  images: string[] | null;
   order: number;
   created_at: string;
 };

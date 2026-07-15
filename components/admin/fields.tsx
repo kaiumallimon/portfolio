@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadImage } from "@/app/admin/actions";
 import { cn } from "@/lib/utils";
-import { FileText } from "lucide-react";
+import { FileText, X } from "lucide-react";
 import type { SkillItem } from "@/types/content";
 
 export function TextField({
@@ -197,6 +197,88 @@ export function ImageUploader({
       </div>
       {error && <p className="text-xs text-destructive">{error}</p>}
       {url && <p className="text-xs text-muted-foreground break-all">{url}</p>}
+    </div>
+  );
+}
+
+export function MultiImageUploader({
+  label,
+  name,
+  bucket,
+  defaultValue,
+}: {
+  label: string;
+  name: string;
+  bucket: string;
+  defaultValue?: string[] | null;
+}) {
+  const [urls, setUrls] = useState<string[]>(defaultValue ?? []);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("bucket", bucket);
+      fd.append("file", file);
+      const res = await uploadImage(fd);
+      if (res.error || !res.url) {
+        setError(res.error ?? "Upload failed");
+      } else {
+        setUrls((prev) => [...prev, res.url as string]);
+      }
+    } catch {
+      setError("Upload failed");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const remove = (index: number) =>
+    setUrls((prev) => prev.filter((_, i) => i !== index));
+
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium text-foreground">{label}</label>
+      <input type="hidden" name={name} value={JSON.stringify(urls)} />
+      {urls.length > 0 && (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {urls.map((u, i) => (
+            <div key={i} className="group relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={u}
+                alt="preview"
+                className="h-24 w-full rounded-lg border border-border object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => remove(i)}
+                aria-label="Remove image"
+                className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white opacity-0 transition-opacity hover:bg-black/80 group-hover:opacity-100"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <label className="inline-flex cursor-pointer items-center rounded-md border border-input bg-background px-4 py-2 text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
+        {uploading ? "Uploading..." : urls.length > 0 ? "Add image" : "Choose file"}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFile}
+          disabled={uploading}
+        />
+      </label>
+      {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
 }
