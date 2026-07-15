@@ -7,7 +7,6 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { ClientOnlyDialog } from "@/components/client-only-dialog";
 import {
   LayoutDashboard,
   FolderKanban,
@@ -27,10 +26,20 @@ import {
   Sun,
   Moon,
   Monitor,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import type { LucideIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { MobileMenuProvider } from "@/components/mobile-menu-context";
 import { FrostedHeader } from "@/components/custom/frosted-header";
 import { browserSupabase } from "@/lib/supabase/browser";
@@ -102,13 +111,18 @@ export default function AdminShell({
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
+  const [signOutLoading, setSignOutLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const handleSignOut = async () => {
+    setSignOutLoading(true);
     await browserSupabase.auth.signOut();
+    setSignOutLoading(false);
+    setSignOutOpen(false);
     router.push("/admin/login");
     router.refresh();
   };
@@ -227,36 +241,63 @@ export default function AdminShell({
         </div>
 
         {/* User Profile */}
-        <ClientOnlyDialog
-          trigger={
-            <button className="w-full flex items-center justify-start gap-3 p-3 rounded-md hover:bg-primary/30 transition-colors overflow-hidden border-0 bg-transparent cursor-pointer">
-              <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
-                <div className="h-8 w-8 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium shrink-0 ring-2 ring-border">
-                  {(email.charAt(0) || "A").toUpperCase()}
-                </div>
-                <div className="flex flex-col items-start min-w-0 overflow-hidden">
-                  <span className="text-sm font-medium truncate max-w-full">{email}</span>
-                  <span className="text-xs text-muted-foreground truncate max-w-full">Admin</span>
-                </div>
-              </div>
-              <ChevronDown className="h-4 w-4 shrink-0" />
-            </button>
-          }
-          title={
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Account Menu
-            </div>
-          }
-          description="Manage your account settings and preferences."
+        <button
+          onClick={() => setSignOutOpen(true)}
+          className="w-full flex items-center justify-start gap-3 p-3 rounded-md hover:bg-primary/30 transition-colors overflow-hidden border-0 bg-transparent cursor-pointer"
         >
-          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-            <Button variant="destructive" onClick={handleSignOut} className="w-full gap-2">
-              <LogOut className="h-4 w-4" />
-              Sign out
-            </Button>
+          <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+            <div className="h-8 w-8 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium shrink-0 ring-2 ring-border">
+              {(email.charAt(0) || "A").toUpperCase()}
+            </div>
+            <div className="flex flex-col items-start min-w-0 overflow-hidden">
+              <span className="text-sm font-medium truncate max-w-full">{email}</span>
+              <span className="text-xs text-muted-foreground truncate max-w-full">Admin</span>
+            </div>
           </div>
-        </ClientOnlyDialog>
+          <ChevronDown className="h-4 w-4 shrink-0" />
+        </button>
+
+        {mounted && (
+          <Dialog open={signOutOpen} onOpenChange={setSignOutOpen}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                  </span>
+                  Sign out?
+                </DialogTitle>
+                <DialogDescription className="pt-1">
+                  Are you sure you want to sign out of your admin session? You&apos;ll
+                  need to log in again to manage your portfolio.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => setSignOutOpen(false)}
+                  disabled={signOutLoading}
+                  className="w-full sm:w-auto"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleSignOut}
+                  disabled={signOutLoading}
+                  className="w-full gap-2 sm:w-auto"
+                >
+                  {signOutLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <LogOut className="h-4 w-4" />
+                  )}
+                  Sign out
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );
