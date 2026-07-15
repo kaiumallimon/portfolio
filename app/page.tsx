@@ -81,7 +81,8 @@ async function HobbiesViewSection() {
 
 async function ContactViewSection() {
   const settings = await getSiteSettings();
-  return <ContactForm settings={settings} />;
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? null;
+  return <ContactForm settings={settings} recaptchaSiteKey={recaptchaSiteKey} />;
 }
 
 export default function Home() {

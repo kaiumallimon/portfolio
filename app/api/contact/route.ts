@@ -4,10 +4,31 @@ import { getServerSupabase } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
   try {
-    const { name, email, message } = await req.json();
+    const { name, email, message, token } = await req.json();
 
     if (!email || !message) {
       return NextResponse.json({ error: 'Email and message are required' }, { status: 400 });
+    }
+
+    // reCAPTCHA verification (only enforced when a secret is configured).
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    if (recaptchaSecret) {
+      if (!token) {
+        return NextResponse.json({ error: 'reCAPTCHA verification required' }, { status: 400 });
+      }
+      try {
+        const verifyRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(token)}`,
+        });
+        const verifyData = await verifyRes.json();
+        if (!verifyData.success) {
+          return NextResponse.json({ error: 'reCAPTCHA verification failed. Please try again.' }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: 'reCAPTCHA verification failed. Please try again.' }, { status: 400 });
+      }
     }
 
     // Persist the message (best-effort; never block the email send).

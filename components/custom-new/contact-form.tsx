@@ -2,27 +2,100 @@
 
 import { MailIcon, Loader2, CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
 import { IoLocationOutline } from "react-icons/io5";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { SiteSettings } from "@/types/content";
 
+declare global {
+  interface GrecaptchaParameters {
+    sitekey: string;
+    callback?: (token: string) => void;
+    "expired-callback"?: () => void;
+    "error-callback"?: () => void;
+    theme?: "light" | "dark";
+    size?: "normal" | "compact";
+  }
+  interface Window {
+    grecaptcha?: {
+      ready: (cb: () => void) => void;
+      render: (container: HTMLElement, parameters: GrecaptchaParameters) => number;
+      getResponse: (widgetId?: number) => string;
+      reset: (widgetId?: number) => void;
+    };
+  }
+}
+
 export default function ContactForm({
   settings,
+  recaptchaSiteKey,
 }: {
   settings: SiteSettings | null;
+  recaptchaSiteKey?: string | null;
 }) {
   const email = settings?.email || "kalimon291@gmail.com";
   const location = settings?.location || "Dhaka, Bangladesh";
   const available = settings?.available_status ?? true;
 
+  const RECAPTCHA_SITE_KEY = recaptchaSiteKey ?? null;
+
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error" | null; message: string }>({ type: null, message: "" });
+
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!RECAPTCHA_SITE_KEY) return;
+    let script: HTMLScriptElement | null = null;
+
+    const renderWidget = () => {
+      if (!captchaRef.current || widgetIdRef.current !== null) return;
+      const g = window.grecaptcha;
+      if (g) {
+        widgetIdRef.current = g.render(captchaRef.current, {
+          sitekey: RECAPTCHA_SITE_KEY,
+          theme: "dark",
+          callback: (token: string) => setCaptchaToken(token),
+          "expired-callback": () => setCaptchaToken(null),
+          "error-callback": () => setCaptchaToken(null),
+        });
+      }
+    };
+
+    if (window.grecaptcha) {
+      window.grecaptcha.ready(renderWidget);
+    } else {
+      script = document.createElement("script");
+      script.src = "https://www.google.com/recaptcha/api.js";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => window.grecaptcha?.ready(renderWidget);
+      document.body.appendChild(script);
+    }
+
+    return () => {
+      if (script && script.parentNode) script.parentNode.removeChild(script);
+      widgetIdRef.current = null;
+    };
+  }, []);
+
+  const resetCaptcha = () => {
+    if (widgetIdRef.current !== null && window.grecaptcha) {
+      window.grecaptcha.reset(widgetIdRef.current);
+    }
+    setCaptchaToken(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.email || !formData.message) {
       setStatus({ type: "error", message: "Email and message are required" });
+      return;
+    }
+    if (RECAPTCHA_SITE_KEY && !captchaToken) {
+      setStatus({ type: "error", message: "Please verify you are not a robot." });
       return;
     }
     setLoading(true);
@@ -31,17 +104,20 @@ export default function ContactForm({
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, token: captchaToken }),
       });
       const data = await response.json();
       if (response.ok) {
         setStatus({ type: "success", message: "Message sent successfully! I'll get back to you soon." });
         setFormData({ name: "", email: "", message: "" });
+        resetCaptcha();
       } else {
         setStatus({ type: "error", message: data.error || "Failed to send message. Please try again." });
+        resetCaptcha();
       }
     } catch {
       setStatus({ type: "error", message: "Something went wrong. Please try again later." });
+      resetCaptcha();
     } finally {
       setLoading(false);
     }
@@ -160,6 +236,12 @@ export default function ContactForm({
                   placeholder="Tell me about your project..."
                 ></textarea>
               </div>
+
+              {RECAPTCHA_SITE_KEY && (
+                <div className="flex w-full justify-start">
+                  <div className="origin-left scale-90 -mb-1.5" ref={captchaRef} />
+                </div>
+              )}
 
               {status.type && (
                 <div
