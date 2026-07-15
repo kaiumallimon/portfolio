@@ -279,3 +279,14 @@ body {
     transparent 4px
   );
 }
+
+/* Keep native autofill consistent with the dark glass theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0 1000px rgba(2, 6, 23, 0.5) inset;
+  caret-color: #fff;
+  transition: background-color 9999s ease-in-out 0s;
+}
