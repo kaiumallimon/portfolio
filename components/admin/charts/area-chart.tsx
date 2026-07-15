@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface AreaDatum {
@@ -17,7 +17,8 @@ export function AreaChart({
   height?: number;
   color?: string;
 }) {
-  const gid = useId();
+  // Deterministic id (avoids useId hydration mismatches across SSR/client).
+  const gid = `area-${color.replace("#", "")}-${data.length}`;
   const [active, setActive] = useState<number | null>(null);
   const max = Math.max(1, ...data.map((d) => d.value));
   const W = 100;
