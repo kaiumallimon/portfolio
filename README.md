@@ -1,182 +1,162 @@
-# Portfolio Website
+# Kaium Al Limon · Portfolio
 
-A modern, interactive portfolio website showcasing full-stack development skills with a focus on seamless user experiences across mobile and web platforms.
-
-## ✨ Features
-
-- **Custom Animated Cursor** - Physics-based cursor with spring animations and hover effects
-- **Smooth Scrolling** - Buttery-smooth page transitions and scroll behavior
-- **Route Splash Animations** - Engaging page transitions with Framer Motion
-- **Interactive Bento Grid** - Dynamic achievement showcase with GSAP animations
-- **3D Graphics** - Three.js and React Three Fiber integration for immersive experiences
-- **Silk Canvas Effects** - Advanced WebGL effects using OGL
-- **GitHub Calendar** - Live contribution activity visualization
-- **Contact Form** - Integrated with Nodemailer for email communications
-- **Responsive Design** - Optimized for desktop, tablet, and mobile devices
-- **Dark Mode UI** - Modern dark-themed interface with Tailwind CSS
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework:** Next.js 16 (App Router)
-- **UI Library:** React 19
-- **Styling:** Tailwind CSS 4
-- **Animations:** 
-  - Framer Motion
-  - GSAP
-- **3D Graphics:**
-  - Three.js
-  - React Three Fiber
-  - OGL
-- **UI Components:** 
-  - Radix UI
-  - Custom components with shadcn/ui
-  - Lucide & Tabler Icons
-
-### Backend & Services
-- **Database:** Supabase
-- **Email:** Nodemailer
-- **Deployment:** Vercel (recommended)
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 20+ 
-- npm, yarn, pnpm, or bun
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <your-repo-url>
-cd portfolio
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Set up environment variables:
-```bash
-# Create a .env.local file in the root directory
-# Add your Supabase and email credentials
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-EMAIL_USER=your_email
-EMAIL_PASS=your_email_password
-```
-
-4. Run the development server:
-```bash
-npm run dev
-```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## 📁 Project Structure
-
-```
-portfolio/
-├── app/                      # Next.js App Router pages
-│   ├── about-me/            # About page with bio and skills
-│   ├── achievements/        # Achievements showcase
-│   ├── api/                 # API routes
-│   │   ├── contact/         # Contact form endpoint
-│   │   └── projects/        # Projects data endpoints
-│   ├── contact/             # Contact page
-│   ├── projects/            # Projects gallery
-│   └── page.tsx             # Home page
-├── components/              
-│   ├── custom/              # Custom components
-│   │   ├── animated-cursor.tsx
-│   │   ├── nav.tsx
-│   │   ├── route-splash.tsx
-│   │   ├── smooth-scroll.tsx
-│   │   └── ...
-│   ├── ui/                  # shadcn/ui components
-│   ├── LogoLoop.tsx         # Animated logo carousel
-│   ├── MagicBento.tsx       # Interactive bento grid
-│   └── Silk.tsx             # WebGL canvas effects
-├── lib/                     # Utilities and configurations
-│   ├── supabase-client.ts
-│   └── utils.ts
-└── public/                  # Static assets
-```
-
-## 🎨 Key Components
-
-### Animated Cursor
-Custom cursor with physics-based animations and smart hover detection for interactive elements.
-
-### Magic Bento Grid
-Dynamic achievement display with:
-- GSAP-powered animations
-- Spotlight effects
-- Particle systems
-- Tilt interactions
-- Border glow effects
-
-### Route Splash
-Smooth page transitions with customizable animations between route changes.
-
-### Smooth Scroll
-Native-like smooth scrolling implementation for enhanced UX.
-
-## 📝 Customization
-
-### Update Personal Information
-Edit the home page content in [app/page.tsx](app/page.tsx):
-```tsx
-// Update name, title, and description
-<h1>Your Name</h1>
-<p>Your title</p>
-```
-
-### Add Projects
-Add or modify projects through the API route in [app/api/projects/route.ts](app/api/projects/route.ts).
-
-### Configure Email
-Update email settings in [app/api/contact/route.ts](app/api/contact/route.ts) with your SMTP credentials.
-
-## 🏗️ Building for Production
-
-```bash
-npm run build
-npm start
-```
-
-## 🚀 Deployment
-
-### Deploy on Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Import your repository on [Vercel](https://vercel.com)
-3. Add environment variables in project settings
-4. Deploy
-
-### Other Platforms
-This Next.js application can be deployed on any platform that supports Node.js applications.
-
-## 📦 Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-
-## 🤝 Contributing
-
-Feel free to fork this project and customize it for your own portfolio!
-
-## 📄 License
-
-This project is open source and available for personal and commercial use.
-
-## 📧 Contact
-
-For questions or collaborations, use the contact form on the website or reach out directly.
+A full-stack developer portfolio built with Next.js 16, Supabase, and an arsenal of modern web technologies — featuring a full admin panel, live GitHub integration, custom 3D shader backgrounds, reCAPTCHA-protected contact, and three built-in utility tools.
 
 ---
 
-Built with ❤️ using Next.js, React, and modern web technologies.
+## Tech Stack
+
+| Layer | Technologies |
+|---|---|
+| **Framework** | Next.js 16 (App Router), React 19 |
+| **Styling** | Tailwind CSS 4, shadcn/ui, Radix UI |
+| **Animation** | Framer Motion, GSAP, Three.js (custom GLSL shaders) |
+| **Database** | Supabase (Postgres + Auth + Storage + Realtime) |
+| **Email** | Nodemailer (SMTP) with HTML templates |
+| **APIs** | GitHub REST + GraphQL, reCAPTCHA v2 |
+| **Icons** | Lucide, Tabler, React Icons |
+| **Deployment** | Vercel-ready |
+
+---
+
+## Home Page Sections
+
+- **Hero** — Profile image, headline, tech stack pills, animated background (Three.js ColorBends shader), CV download
+- **About** — Bio, education timeline
+- **Skills** — Categorized skill cards with icons
+- **Impact** — Animated metric counters, live GitHub stars
+- **Featured Projects** — Preview grid with mobile/web mockups
+- **GitHub Contributions** — Live contribution calendar heatmap
+- **Language Breakdown** — GitHub language distribution charts
+- **Journey** — Co-curricular activities timeline
+- **Achievements** — Award cards with rank badges
+- **Hobbies** — Interest cards
+- **Contact** — reCAPTCHA-protected form with SMTP email delivery
+
+---
+
+## Project Detail Pages
+
+Every project has a rich detail page (`/projects/[id]`) with:
+
+- Full-screen image gallery with lightbox dialog
+- GitHub stats strip — stars, forks, open issues, watchers
+- Language breakdown donut chart
+- Repository details card (license, topics, size, default branch)
+- Top contributors grid (avatar, username, additions/deletions)
+- Renderered GitHub README with full markdown support
+- Features, overview, conclusion sections
+
+---
+
+## Built-in Utility Tools
+
+Three sub-applications live under `/tools`:
+
+- **GitHub Unwrapped** — Personalized year-in-review: total contributions, streak, repositories, gamification rank. Exports as PNG.
+- **UIU Exam Routine Finder** — Scrapes and filters exam schedules for United International University.
+- **UIU CGPA Calculator** — Semester GPA and cumulative CGPA calculator.
+
+---
+
+## Admin Dashboard (`/admin`)
+
+Full content management system protected by Supabase Auth (email/password + custom password reset flow):
+
+### Content CRUD
+| Section | Management |
+|---|---|
+| **Projects** | Add/edit/delete with multi-image upload, pagination, search, client filter |
+| **Achievements** | Rank, date, team, image upload |
+| **Activities** | Organization, period, active status |
+| **Education** | Degree, institution, period, status (current/completed) |
+| **Skills** | Categorized with highlight toggle |
+| **Hobbies** | Icon-picker, description |
+| **Metrics** | Value, suffix, featured flag |
+
+### Dashboard Analytics
+- Key performance indicators (total projects, achievements, messages)
+- Area chart — message volume over time
+- Bar chart — messages by day of week
+- Donut chart — read/unread message ratio
+
+### Settings
+Unified settings editor covering:
+- Profile & Hero (display name, headline, subheadline, bio, profile image, availability)
+- Social & Contact (GitHub, LinkedIn, Facebook, email, location)
+- SEO (custom title + description for metadata)
+- Footer (description, social links)
+
+### Message Inbox
+Real-time contact message inbox with Supabase Realtime. Threaded view, mark as read, delete threads. Paginated.
+
+---
+
+## Unique UI & Effects
+
+### Custom Animated Cursor
+GSAP-powered cursor with four corner brackets. Snaps to interactive elements (`cursor-target`), rotates when idle, hides on touch devices.
+
+### Three.js Shader Background
+`ColorBends` component renders fluid GLSL color bends with up to 8 configurable colors, warp controls, mouse influence, and parallax — used on the hero section and admin login.
+
+### Terminal Preloader
+A boot-sequence animation (init → import → tsc → build → api → perf → deploy → done) with progress bar, floating code snippets, scanline overlay, and blinking cursor. Plays once per session via `sessionStorage`.
+
+### Glass Morphism
+Subtle glass card effects (`backdrop-blur`, rgba borders, `bg-slate-900/30`) across the admin panel and public sections.
+
+### Scroll Reveals
+Framer Motion-powered scroll-reveal primitives with direction and stagger support.
+
+---
+
+## SEO & Performance
+
+- Dynamic `generateMetadata` reading from Supabase settings (per-deploy control)
+- `robots.ts` — full crawl access
+- `sitemap.ts` — all static routes + every project by ID
+- `force-dynamic` on admin and dynamic pages
+- Google Analytics (G-T8EL28VE67) with SPA pageview tracking
+
+---
+
+## Project Structure
+
+```
+app/                  # Next.js App Router (pages, API, admin)
+├── api/              # Contact, settings, GitHub, auth, tools
+├── admin/            # Dashboard, CRUD pages, login, settings
+├── projects/         # Projects listing + detail pages
+└── tools/            # GitHub Unwrapped, Exam Routine, CGPA Calculator
+components/           # React components
+├── shared/           # Header, backgrounds, scroll-reveal
+├── custom-new/       # Home page sections, preloader, footer
+├── admin/            # Admin tables, forms, charts, inbox
+└── ui/               # shadcn/ui primitives
+lib/                  # Data fetching, GitHub client, Supabase, utilities
+types/                # TypeScript types (content, project)
+supabase/migrations/  # Database schema (0001–0007)
+```
+
+---
+
+## Database Tables
+
+| Table | Purpose |
+|---|---|
+| `projects` | Portfolio projects with multi-image gallery |
+| `achievements` | Awards and competitions |
+| `activities` | Co-curricular activities |
+| `education` | Academic history |
+| `skills` | Skills grouped by category |
+| `hobbies` | Personal interests |
+| `metrics` | Impact statistics |
+| `site_settings` | Global site configuration |
+| `contact_messages` | Contact form submissions |
+| `resume` | Resume/CV download link |
+| `password_resets` | Password reset tokens |
+
+---
+
+*Designed and developed by **Kaium Al Limon** — full-stack developer from Dhaka, Bangladesh.*
