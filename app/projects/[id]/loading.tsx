@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <div className="min-h-screen w-full bg-slate-950 text-slate-300 antialiased">
       <div className="relative">
-        <div className="max-w-5xl mx-auto px-6 py-32">
+        <div className="max-w-6xl mx-auto px-6 py-32">
           <Skeleton className="h-4 w-28" />
 
           <div className="mt-8 space-y-6 border border-white/10 bg-slate-900/30 backdrop-blur-md rounded-3xl p-8 md:p-10">

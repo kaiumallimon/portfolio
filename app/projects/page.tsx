@@ -23,7 +23,7 @@ export default function ProjectsPage() {
       <FloatingHeader />
 
       <div className="relative">
-        <div className="max-w-5xl mx-auto py-42 px-6">
+        <div className="max-w-6xl mx-auto py-42 px-6">
           <ProjectsIntro />
 
           <div className="mt-16">

@@ -14,11 +14,13 @@ export function DonutChart({
   size = 184,
   thickness = 22,
   unit = "Total",
+  showPercentage = false,
 }: {
   data: DonutDatum[];
   size?: number;
   thickness?: number;
   unit?: string;
+  showPercentage?: boolean;
 }) {
   const [active, setActive] = useState<number | null>(null);
   const total = data.reduce((s, d) => s + d.value, 0);
@@ -39,6 +41,8 @@ export function DonutChart({
     });
 
   const center = active != null ? data[active] : null;
+  const pct = (v: number) =>
+    total > 0 ? Math.round((v / total) * 100) : 0;
 
   if (total === 0) {
     return (
@@ -114,7 +118,13 @@ export function DonutChart({
         </svg>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
           <span className="text-2xl font-bold text-foreground tabular-nums">
-            {center ? center.value : total}
+            {center
+              ? showPercentage
+                ? `${pct(center.value)}%`
+                : center.value
+              : showPercentage
+                ? data.length
+                : total}
           </span>
           <span className="max-w-[6rem] text-xs text-muted-foreground">
             {center ? center.label : unit}
@@ -140,7 +150,7 @@ export function DonutChart({
               <span className="truncate text-muted-foreground">{d.label}</span>
             </span>
             <span className="font-medium tabular-nums text-foreground">
-              {d.value}
+              {showPercentage ? `${pct(d.value)}%` : d.value}
             </span>
           </li>
         ))}
