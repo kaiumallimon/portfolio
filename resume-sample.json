@@ -1,0 +1,114 @@
+{
+  "fullName": "Kaium Al Limon",
+  "designation": "Full-Stack Developer",
+  "phone": "+880 1700-000000",
+  "email": "kaium@example.com",
+  "github": "github.com/kaiumallimon",
+  "githubShow": "github/kaiumallimon",
+  "linkedin": "linkedin.com/in/kaiumallimon",
+  "linkedinShow": "linkedin/in/kaiumallimon",
+  "portfolio": "kaiumallimon.dev",
+  "portfolioShow": "portfolio",
+  "overview": "Passionate Full-Stack Developer with expertise in Flutter, Next.js, and Supabase. Experienced in building cross-platform mobile and web applications with clean architecture and modern UI/UX principles.",
+  "experiences": [
+    {
+      "id": "exp-1",
+      "designation": "Junior Software Engineer",
+      "company": "Tech Solutions Ltd.",
+      "bulletPoints": [
+        "Developed and maintained cross-platform mobile applications using Flutter, serving 10K+ users",
+        "Built RESTful APIs with Next.js and integrated Supabase for real-time data synchronization",
+        "Collaborated with a team of 5 developers using Git and Agile methodology"
+      ],
+      "status": "Full-time",
+      "startDate": "2024-01",
+      "endDate": "2025-07"
+    },
+    {
+      "id": "exp-2",
+      "designation": "Software Engineering Intern",
+      "company": "Digital Innovations Inc.",
+      "bulletPoints": [
+        "Assisted in developing web dashboards using React and Tailwind CSS",
+        "Wrote unit tests and integration tests achieving 85% code coverage",
+        "Participated in code reviews and daily stand-up meetings"
+      ],
+      "status": "Internship",
+      "startDate": "2023-06",
+      "endDate": "2023-12"
+    }
+  ],
+  "skillGroups": [
+    {
+      "id": "sg-1",
+      "title": "Languages",
+      "skills": "Dart, JavaScript, TypeScript, Python, C++"
+    },
+    {
+      "id": "sg-2",
+      "title": "Frameworks & Libraries",
+      "skills": "Flutter, Next.js, React, Node.js, Express"
+    },
+    {
+      "id": "sg-3",
+      "title": "Databases & Tools",
+      "skills": "Supabase, PostgreSQL, Firebase, Git, Docker"
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-1",
+      "course": "B.Sc. in Computer Science & Engineering",
+      "institution": "United International University",
+      "startDate": "2022-01",
+      "endDate": "2025-12",
+      "result": "3.67 / 4.00"
+    }
+  ],
+  "activities": [
+    {
+      "id": "act-1",
+      "title": "Vice President",
+      "organization": "UIU Computer Club",
+      "duration": "2024 - Present",
+      "description": "Organized workshops and hackathons for 200+ students"
+    },
+    {
+      "id": "act-2",
+      "title": "Volunteer",
+      "organization": "National STEM Olympiad",
+      "duration": "2023",
+      "description": "Coordinated event logistics and managed participant registrations"
+    }
+  ],
+  "achievements": [
+    {
+      "id": "ach-1",
+      "result": "Champion",
+      "description": "UIU Intra-University Hackathon 2024 — Built a real-time disaster response platform"
+    },
+    {
+      "id": "ach-2",
+      "result": "1st Runner-up",
+      "description": "National Collegiate Programming Contest 2023"
+    }
+  ],
+  "references": [
+    {
+      "id": "ref-1",
+      "name": "Dr. Sarah Rahman",
+      "designation": "Associate Professor",
+      "company": "United International University",
+      "phone": "+880 1711-111111",
+      "email": "sarah.rahman@uiu.ac.bd"
+    },
+    {
+      "id": "ref-2",
+      "name": "Mr. Tanvir Ahmed",
+      "designation": "Senior Software Engineer",
+      "company": "Tech Solutions Ltd.",
+      "phone": "+880 1722-222222",
+      "email": "tanvir.ahmed@techsol.com"
+    }
+  ]
+}

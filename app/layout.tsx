@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Inter, JetBrains_Mono, Outfit, Poppins, Ubuntu } from "next/font/google";
+import { Bricolage_Grotesque, Crimson_Pro, Inter, JetBrains_Mono, Outfit, Poppins, Ubuntu } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -24,6 +24,14 @@ const ubuntu = Ubuntu({
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const crimsonPro = Crimson_Pro({
+  variable: "--font-crimson-pro",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -79,7 +87,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${ubuntu.className} ${bricolage.variable}`}>
+      <body className={`${ubuntu.className} ${bricolage.variable} ${crimsonPro.variable}`}>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"

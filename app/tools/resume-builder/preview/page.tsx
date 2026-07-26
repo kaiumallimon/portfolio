@@ -3,8 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Download, Loader2, ArrowLeft } from "lucide-react";
+import { Download, Loader2, ArrowLeft, Phone, Mail } from "lucide-react";
+import { FaGithub, FaLinkedin, FaGlobe } from "react-icons/fa";
 import { toPng } from "html-to-image";
+import { jsPDF } from "jspdf";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home-color-bend";
 import TargetCursor from "@/components/TargetCursor";
@@ -105,19 +107,38 @@ function formatDate(ym: string) {
   return `${months[parseInt(m, 10) - 1] || m} ${y}`;
 }
 
-function contactParts(d: ResumeData) {
-  const parts: string[] = [];
-  if (d.phone) parts.push(d.phone);
-  if (d.email) parts.push(d.email);
-  if (d.github) parts.push(d.githubShow || d.github);
-  if (d.linkedin) parts.push(d.linkedinShow || d.linkedin);
-  if (d.portfolio) parts.push(d.portfolioShow || d.portfolio);
-  return parts;
+function normalizeUrl(url: string) {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `https://${url}`;
 }
 
 function hasData(arr: any[]) {
   return arr.some((item) =>
     Object.values(item).some((v) => typeof v === "string" ? v.trim() !== "" : true)
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Section Title                                                      */
+/* ------------------------------------------------------------------ */
+
+function SectionTitle({ text }: { text: string }) {
+  return (
+    <div style={{ marginTop: "1.5em", marginBottom: "0.5em" }}>
+      <h2
+        className="font-bold tracking-wider text-gray-900"
+        style={{
+          fontSize: "12.5pt",
+          textTransform: "uppercase",
+          borderBottom: "0.8px solid rgba(0,0,0,0.15)",
+          paddingBottom: "0.1em",
+          fontFamily: "inherit",
+        }}
+      >
+        {text}
+      </h2>
+    </div>
   );
 }
 
@@ -170,7 +191,6 @@ export default function ResumePreviewPage() {
     );
   }
 
-  const contacts = contactParts(data);
   const hasExperience = hasData(data.experiences);
   const hasSkills = hasData(data.skillGroups);
   const hasEducation = hasData(data.education);
@@ -178,12 +198,23 @@ export default function ResumePreviewPage() {
   const hasAchievements = hasData(data.achievements);
   const hasReferences = hasData(data.references);
 
+  const ICON_SIZE = { width: 10, height: 10 };
+
   return (
     <div className="min-h-screen w-full bg-slate-950 text-slate-300">
       <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn hoverDuration={0.2} />
       <HomeBackground />
       <FloatingHeader />
       <div className="max-w-4xl mx-auto py-38 px-6 relative">
+        <style>{`
+          @media print {
+            body * { visibility: hidden !important; }
+            #resume-print-area, #resume-print-area * { visibility: visible !important; }
+            #resume-print-area { position: absolute !important; left: 0 !important; top: 0 !important; width: 210mm !important; margin: 0 !important; padding: 16.5mm !important; box-shadow: none !important; }
+            #resume-print-area a { color: inherit !important; text-decoration: none !important; }
+            @page { margin: 0; size: A4; }
+          }
+        `}</style>
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -209,7 +240,6 @@ export default function ResumePreviewPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {/* Header */}
           <div className="text-center mb-10">
             <motion.h1
               initial={{ scale: 0.9, opacity: 0 }}
@@ -225,12 +255,11 @@ export default function ResumePreviewPage() {
               transition={{ delay: 0.2 }}
               className="text-white/70 text-sm md:text-base mt-2"
             >
-              This is how your resume will look. You can download it as an image.
+              This is how your resume will look. You can download it as a PDF or image.
             </motion.p>
           </div>
 
-          {/* Toolbar */}
-          <div className="flex justify-center gap-4 mb-8">
+          <div className="flex justify-center gap-4 mb-8 flex-wrap">
             <Button
               variant="outline"
               onClick={() => router.push("/tools/resume-builder")}
@@ -250,83 +279,121 @@ export default function ResumePreviewPage() {
               )}
               Download as Image
             </Button>
+            <Button
+              onClick={() => window.print()}
+              className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              <Download className="w-4 h-4" />
+              Download as PDF
+            </Button>
           </div>
 
-          {/* Resume */}
+          {/* === RESUME === */}
           <div
+            id="resume-print-area"
             ref={resumeRef}
-            className="bg-white text-gray-900 rounded-none shadow-2xl mx-auto"
-            style={{ width: "210mm", padding: "20mm 25mm" }}
+            className="bg-white text-gray-900 shadow-2xl mx-auto"
+            style={{
+              width: "210mm",
+              padding: "16.5mm 16.5mm",
+              fontSize: "10pt",
+              lineHeight: "1.15",
+              fontFamily: "var(--font-crimson-pro), Georgia, serif",
+              WebkitFontSmoothing: "antialiased",
+              MozOsxFontSmoothing: "grayscale",
+              textRendering: "optimizeLegibility",
+            }}
           >
-            {/* Name */}
-            <h1
-              className="text-3xl font-bold tracking-tight text-gray-900"
-              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-            >
-              {data.fullName}
-            </h1>
-            <p className="text-base text-gray-600 mt-0.5">{data.designation}</p>
-
-            {/* Contact */}
-            {contacts.length > 0 && (
-              <p className="text-xs text-gray-500 mt-2 leading-relaxed">
-                {contacts.join("  |  ")}
+            {/* ===== HEADER ===== */}
+            <div className="text-center">
+              <h1
+                className="font-bold tracking-tight text-gray-900"
+                style={{ fontSize: "25pt", fontFamily: "inherit" }}
+              >
+                {data.fullName.toUpperCase()}
+              </h1>
+              <div style={{ height: "0.3em" }} />
+              <p className="text-gray-800" style={{ fontSize: "11pt" }}>
+                {data.designation.toUpperCase()}
               </p>
-            )}
+              <div style={{ height: "0.5em" }} />
+              <div className="text-gray-600" style={{ fontSize: "8pt" }}>
+                {data.phone && (
+                  <span>
+                    <Phone style={{ display: "inline", ...ICON_SIZE, marginRight: 2, verticalAlign: "middle" }} />
+                    {data.phone}
+                  </span>
+                )}
+                {data.email && (
+                  <span className="ml-3">
+                    <Mail style={{ display: "inline", ...ICON_SIZE, marginRight: 2, verticalAlign: "middle" }} />
+                    <a href={`mailto:${data.email}`} className="text-gray-600 no-underline hover:underline">{data.email}</a>
+                  </span>
+                )}
+                {data.github && (
+                  <span className="ml-3">
+                    <FaGithub style={{ display: "inline", ...ICON_SIZE, marginRight: 2, verticalAlign: "middle" }} />
+                    <a href={normalizeUrl(data.github)} target="_blank" rel="noopener noreferrer" className="text-gray-600 no-underline hover:underline">{data.githubShow || data.github}</a>
+                  </span>
+                )}
+                {data.linkedin && (
+                  <span className="ml-3">
+                    <FaLinkedin style={{ display: "inline", ...ICON_SIZE, marginRight: 2, verticalAlign: "middle" }} />
+                    <a href={normalizeUrl(data.linkedin)} target="_blank" rel="noopener noreferrer" className="text-gray-600 no-underline hover:underline">{data.linkedinShow || data.linkedin}</a>
+                  </span>
+                )}
+                {data.portfolio && (
+                  <span className="ml-3">
+                    <FaGlobe style={{ display: "inline", ...ICON_SIZE, marginRight: 2, verticalAlign: "middle" }} />
+                    <a href={normalizeUrl(data.portfolio)} target="_blank" rel="noopener noreferrer" className="text-gray-600 no-underline hover:underline">{data.portfolioShow || data.portfolio}</a>
+                  </span>
+                )}
+              </div>
+            </div>
 
-            {/* Divider */}
-            <hr className="my-3 border-gray-300" />
+            <div style={{ height: "1.5em" }} />
 
-            {/* Overview */}
+            {/* ===== PROFILE ===== */}
             {data.overview.trim() && (
               <>
-                <h2 className="text-sm font-bold tracking-wider uppercase text-gray-800 mb-1">
-                  Professional Summary
-                </h2>
-                <p className="text-xs text-gray-700 leading-relaxed mb-4">
+                <p className="text-gray-800" style={{ fontSize: "9.5pt", lineHeight: "1.2" }}>
                   {data.overview}
                 </p>
+                <div style={{ height: "0.5em" }} />
               </>
             )}
 
-            {/* Experience */}
+            {/* ===== PROJECTS ===== */}
             {hasExperience && (
               <>
-                <h2 className="text-sm font-bold tracking-wider uppercase text-gray-800 mb-2">
-                  Experience
-                </h2>
+                <SectionTitle text="PROJECTS" />
                 {data.experiences
                   .filter((e) => e.designation.trim())
                   .map((exp, i) => (
-                    <div key={i} className="mb-3">
+                    <div key={i} style={{ marginBottom: "0.5em" }}>
                       <div className="flex justify-between items-baseline">
-                        <div>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {exp.designation}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            {[exp.company, exp.status].filter(Boolean).join(" — ")}
-                          </p>
-                        </div>
-                        <p className="text-xs text-gray-500 shrink-0 ml-4">
-                          {[formatDate(exp.startDate), formatDate(exp.endDate)]
-                            .filter(Boolean)
-                            .join(" – ")}
-                        </p>
+                        <span className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
+                          {exp.designation}
+                        </span>
+                        <span className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
+                          {exp.status || (exp.company ? "Complete" : "")}
+                        </span>
                       </div>
+                      {exp.company && (
+                        <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic" }}>
+                          {exp.company}
+                          {exp.startDate || exp.endDate
+                            ? ` — ${[formatDate(exp.startDate), formatDate(exp.endDate)].filter(Boolean).join(" – ")}`
+                            : ""}
+                        </p>
+                      )}
                       {exp.bulletPoints.filter(Boolean).length > 0 && (
-                        <ul className="mt-1 space-y-0.5">
-                          {exp.bulletPoints
-                            .filter(Boolean)
-                            .map((bp, j) => (
-                              <li
-                                key={j}
-                                className="text-xs text-gray-700 pl-4 relative"
-                              >
-                                <span className="absolute left-0 top-[0.35em] w-1 h-1 rounded-full bg-gray-400" />
-                                {bp}
-                              </li>
-                            ))}
+                        <ul style={{ margin: "0.3em 0 0 0", paddingLeft: "1.2em", listStyle: "disc outside", fontSize: "9.5pt" }}>
+                          {exp.bulletPoints.filter(Boolean).map((bp, j) => (
+                            <li key={j} className="text-gray-800" style={{ lineHeight: "1.2" }}>
+                              {bp}
+                            </li>
+                          ))}
                         </ul>
                       )}
                     </div>
@@ -334,20 +401,16 @@ export default function ResumePreviewPage() {
               </>
             )}
 
-            {/* Skills */}
+            {/* ===== TECHNICAL SKILLS ===== */}
             {hasSkills && (
               <>
-                <h2 className="text-sm font-bold tracking-wider uppercase text-gray-800 mb-2 mt-4">
-                  Technical Skills
-                </h2>
-                <div className="space-y-1">
+                <SectionTitle text="TECHNICAL SKILLS" />
+                <div style={{ fontSize: "9.5pt", lineHeight: "1.4" }}>
                   {data.skillGroups
                     .filter((s) => s.title.trim())
                     .map((sg, i) => (
-                      <p key={i} className="text-xs text-gray-700">
-                        <span className="font-semibold text-gray-900">
-                          {sg.title}:
-                        </span>{" "}
+                      <p key={i} className="text-gray-800" style={{ margin: "0 0 0.1em 0" }}>
+                        <span className="font-bold text-gray-900">{sg.title}:</span>{" "}
                         {sg.skills}
                       </p>
                     ))}
@@ -355,110 +418,104 @@ export default function ResumePreviewPage() {
               </>
             )}
 
-            {/* Education */}
+            {/* ===== EDUCATION ===== */}
             {hasEducation && (
               <>
-                <h2 className="text-sm font-bold tracking-wider uppercase text-gray-800 mb-2 mt-4">
-                  Education
-                </h2>
+                <SectionTitle text="EDUCATION" />
                 {data.education
                   .filter((e) => e.course.trim())
                   .map((edu, i) => (
-                    <div key={i} className="flex justify-between items-baseline mb-2">
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">
+                    <div key={i} style={{ marginBottom: "0.5em" }}>
+                      <div className="flex justify-between items-baseline">
+                        <span className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
                           {edu.course}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          {edu.institution}
-                          {edu.result ? ` — ${edu.result}` : ""}
-                        </p>
+                        </span>
+                        <span className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
+                          {[formatDate(edu.startDate), formatDate(edu.endDate)].filter(Boolean).join(" – ")}
+                        </span>
                       </div>
-                      <p className="text-xs text-gray-500 shrink-0 ml-4">
-                        {[formatDate(edu.startDate), formatDate(edu.endDate)]
-                          .filter(Boolean)
-                          .join(" – ")}
+                      <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic" }}>
+                        {edu.institution}
                       </p>
+                      {edu.result && (
+                        <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic" }}>
+                          {edu.result}
+                        </p>
+                      )}
                     </div>
                   ))}
               </>
             )}
 
-            {/* Extracurricular */}
+            {/* ===== EXTRACURRICULAR ACTIVITIES ===== */}
             {hasActivities && (
               <>
-                <h2 className="text-sm font-bold tracking-wider uppercase text-gray-800 mb-2 mt-4">
-                  Extracurricular Activities
-                </h2>
+                <SectionTitle text="EXTRACURRICULAR ACTIVITIES" />
                 {data.activities
                   .filter((a) => a.title.trim())
                   .map((act, i) => (
-                    <div key={i} className="mb-2">
+                    <div key={i} style={{ marginBottom: "0.3em" }}>
                       <div className="flex justify-between items-baseline">
-                        <p className="text-sm font-semibold text-gray-900">
+                        <span className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
                           {act.title}
-                        </p>
+                        </span>
                         {act.duration && (
-                          <p className="text-xs text-gray-500 shrink-0 ml-4">
+                          <span className="text-gray-600" style={{ fontSize: "9pt" }}>
                             {act.duration}
-                          </p>
+                          </span>
                         )}
                       </div>
                       {act.organization && (
-                        <p className="text-xs text-gray-600">{act.organization}</p>
+                        <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic" }}>
+                          {act.organization}
+                        </p>
                       )}
                       {act.description && (
-                        <p className="text-xs text-gray-700 mt-0.5">{act.description}</p>
+                        <p className="text-gray-700" style={{ fontSize: "9pt" }}>
+                          {act.description}
+                        </p>
                       )}
                     </div>
                   ))}
               </>
             )}
 
-            {/* Achievements */}
+            {/* ===== ACHIEVEMENTS ===== */}
             {hasAchievements && (
               <>
-                <h2 className="text-sm font-bold tracking-wider uppercase text-gray-800 mb-2 mt-4">
-                  Achievements
-                </h2>
-                {data.achievements
-                  .filter((a) => a.result.trim() || a.description.trim())
-                  .map((ach, i) => (
-                    <div key={i} className="mb-2">
-                      <p className="text-sm font-semibold text-gray-900">
-                        {ach.result}
-                      </p>
-                      {ach.description && (
-                        <p className="text-xs text-gray-700">{ach.description}</p>
-                      )}
-                    </div>
-                  ))}
+                <SectionTitle text="ACHIEVEMENTS" />
+                <ul style={{ margin: "0.3em 0 0 0", paddingLeft: "1.2em", listStyle: "disc outside", fontSize: "9.5pt" }}>
+                  {data.achievements
+                    .filter((a) => a.result.trim() || a.description.trim())
+                    .map((ach, i) => (
+                      <li key={i} className="text-gray-800" style={{ lineHeight: "1.2", marginBottom: "0.3em" }}>
+                        <span className="font-bold text-gray-900">{ach.result}</span>
+                        {ach.description ? ` – ${ach.description}` : ""}
+                      </li>
+                    ))}
+                </ul>
               </>
             )}
 
-            {/* References */}
+            {/* ===== REFERENCES ===== */}
             {hasReferences && (
               <>
-                <h2 className="text-sm font-bold tracking-wider uppercase text-gray-800 mb-2 mt-4">
-                  References
-                </h2>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                  {data.references
-                    .filter((r) => r.name.trim())
-                    .map((ref, i) => (
-                      <div key={i}>
-                        <p className="text-sm font-semibold text-gray-900">
-                          {ref.name}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          {[ref.designation, ref.company].filter(Boolean).join(", ")}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {[ref.phone, ref.email].filter(Boolean).join(" | ")}
-                        </p>
-                      </div>
-                    ))}
-                </div>
+                <SectionTitle text="REFERENCES" />
+                {data.references
+                  .filter((r) => r.name.trim())
+                  .map((ref, i) => (
+                    <div key={i} style={{ marginBottom: "0.5em" }}>
+                      <p className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
+                        {ref.name}
+                      </p>
+                      <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic" }}>
+                        {[ref.designation, ref.company].filter(Boolean).join(", ")}
+                      </p>
+                      <p className="text-gray-600" style={{ fontSize: "9pt" }}>
+                        {[ref.phone, ref.email].filter(Boolean).join(" | ")}
+                      </p>
+                    </div>
+                  ))}
               </>
             )}
           </div>
