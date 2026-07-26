@@ -288,7 +288,7 @@ export default function GithubUnwrappedPage() {
                     onClick={handleDownload}
                     disabled={downloading}
                     variant="outline"
-                    className="gap-2 text-xs md:text-sm"
+                    className="gap-2 text-xs md:text-sm border-indigo-500 bg-transparent hover:bg-indigo-500 text-white cursor-target hover:border-indigo-500 hover:text-white transition-all"
                   >
                     {downloading ? (
                       <>

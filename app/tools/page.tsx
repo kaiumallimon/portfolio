@@ -119,7 +119,7 @@ export default function ToolsPage() {
               >
                 <div className={`flex flex-col md:flex-row gap-10 h-full ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}>
                   {/* Icon Visual */}
-                  <div className="relative flex-[0_0_48%] min-h-[350px] md:min-h-[220px] rounded-xl overflow-hidden bg-[#841fff] flex items-center justify-center">
+                  <div className="relative flex-[0_0_48%] min-h-[350px] md:min-h-[220px] rounded-xl overflow-hidden bg-indigo-500 flex items-center justify-center">
                     <div className="text-white/80">{tool.icon}</div>
                   </div>
 
