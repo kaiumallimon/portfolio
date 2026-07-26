@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar } from "lucide-react";
+import { Calendar, FileText } from "lucide-react";
 import { FaCalculator, FaTimesCircle } from "react-icons/fa";
 import { SiGithub } from "react-icons/si";
 import FloatingHeader from "@/components/shared/header";
@@ -48,6 +48,18 @@ export default function ToolsPage() {
         "A simple CGPA calculator for United International University students to compute their semester and cumulative GPA.",
       link: '/tools/uiu-cgpa-calculator',
       icon: <FaCalculator className="w-12 h-12" />,
+      status: {
+        isAvailable: true,
+        label: "Available",
+      },
+    },
+
+    {
+      name: "Resume Builder",
+      description:
+        "A streamlined tool to build, customize, and export professional resumes with multiple templates and section options.",
+      link: "/tools/resume-builder",
+      icon: <FileText className="w-12 h-12" />,
       status: {
         isAvailable: true,
         label: "Available",
