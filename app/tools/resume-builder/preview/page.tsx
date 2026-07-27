@@ -63,6 +63,7 @@ type Project = {
   bulletPoints: string[];
   status: string;
   liveUrl: string;
+  tools: string;
 };
 
 type Achievement = {
@@ -123,7 +124,12 @@ function normalizeUrl(url: string) {
 
 function hasData(arr: any[]) {
   return arr.some((item) =>
-    Object.values(item).some((v) => typeof v === "string" ? v.trim() !== "" : true)
+    Object.entries(item).some(([k, v]) => {
+      if (k === "id") return false;
+      if (typeof v === "string" && v.trim() !== "") return true;
+      if (Array.isArray(v) && v.some((x: any) => typeof x === "string" && x.trim() !== "")) return true;
+      return false;
+    })
   );
 }
 
@@ -240,7 +246,7 @@ export default function ResumePreviewPage() {
       <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn hoverDuration={0.2} />
       <HomeBackground />
       <FloatingHeader />
-      <div className="max-w-4xl mx-auto py-38 px-6 relative">
+      <div className="max-w-4xl mx-auto py-38 px-6 relative" style={{ maxWidth: "calc(215.9mm + 3rem)" }}>
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -285,38 +291,59 @@ export default function ResumePreviewPage() {
             </motion.p>
           </div>
 
-          <div className="flex justify-center gap-4 mb-8 flex-wrap">
-            <Button
-              variant="outline"
-              onClick={() => router.push("/tools/resume-builder")}
-              className="gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" /> Edit
-            </Button>
-            <Button
-              onClick={handleDownloadPng}
-              disabled={downloadingImg}
-              className="gap-2 bg-indigo-500 hover:bg-indigo-600 text-white"
-            >
-              {downloadingImg ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              Download as Image
-            </Button>
-            <Button
-              onClick={handleDownloadPdf}
-              disabled={downloadingPdf}
-              className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
-            >
-              {downloadingPdf ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              Download as PDF
-            </Button>
+          <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                onClick={() => router.push("/tools/resume-builder")}
+                className="gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" /> Edit
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const raw = localStorage.getItem("resume-builder-data");
+                  if (!raw) return;
+                  const blob = new Blob([raw], { type: "application/json" });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download = `${data?.fullName?.replace(/\s+/g, "_") || "resume"}.json`;
+                  link.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="gap-2 border-slate-500 text-slate-300 hover:bg-slate-800"
+              >
+                <Download className="w-4 h-4" /> Export JSON
+              </Button>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button
+                onClick={handleDownloadPng}
+                disabled={downloadingImg}
+                className="gap-2 bg-indigo-500 hover:bg-indigo-600 text-white"
+              >
+                {downloadingImg ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                Download as Image
+              </Button>
+              <Button
+                onClick={handleDownloadPdf}
+                disabled={downloadingPdf}
+                className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                {downloadingPdf ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                Download as PDF
+              </Button>
+            </div>
           </div>
 
           {/* === RESUME === */}
@@ -411,13 +438,20 @@ export default function ResumePreviewPage() {
                           {proj.status || ""}
                         </span>
                       </div>
-                      {proj.liveUrl && (
-                        <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic" }}>
-                          <a href={normalizeUrl(proj.liveUrl)} target="_blank" rel="noopener noreferrer" className="text-gray-700 no-underline hover:underline">
-                            {proj.liveUrl}
-                          </a>
-                        </p>
-                      )}
+                      <div className="flex justify-between">
+                        {proj.liveUrl && (
+                          <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic" }}>
+                            <a href={normalizeUrl(proj.liveUrl)} target="_blank" rel="noopener noreferrer" className="text-gray-700 no-underline hover:underline">
+                              {proj.liveUrl}
+                            </a>
+                          </p>
+                        )}
+                        {proj.tools && (
+                          <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic", textAlign: "right" }}>
+                            {proj.tools}
+                          </p>
+                        )}
+                      </div>
                       {proj.bulletPoints.filter(Boolean).length > 0 && (
                         <ul style={{ margin: "0.3em 0 0 0", paddingLeft: "1.2em", listStyle: "disc outside", fontSize: "9.5pt" }}>
                           {proj.bulletPoints.filter(Boolean).map((bp, j) => (
@@ -588,19 +622,6 @@ export default function ResumePreviewPage() {
               </>
             )}
           </div>
-          <div
-            style={{
-              position: "absolute",
-              top: "16.51mm",
-              left: "16.51mm",
-              width: "calc(215.9mm - 33.02mm)",
-              height: "calc(100% - 33.02mm)",
-              pointerEvents: "none",
-              backgroundRepeat: "repeat-y",
-              backgroundImage:
-                "repeating-linear-gradient(to bottom, transparent 0, transparent 246.35mm, rgba(0,0,0,0.08) 246.35mm, rgba(0,0,0,0.08) 246.38mm)",
-            }}
-          />
         </div>
         </motion.div>
       </div>

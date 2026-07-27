@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Plus, Trash2, ArrowRight, RotateCcw } from "lucide-react";
+import { Plus, Trash2, ArrowRight, RotateCcw, Download } from "lucide-react";
 import { v4 as uuid } from "uuid";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home-color-bend";
@@ -65,6 +65,7 @@ type Project = {
   bulletPoints: string[];
   status: string;
   liveUrl: string;
+  tools: string;
 };
 
 type Achievement = {
@@ -146,6 +147,7 @@ const emptyProject = (): Project => ({
   bulletPoints: [""],
   status: "",
   liveUrl: "",
+  tools: "",
 });
 
 const emptyAchievement = (): Achievement => ({
@@ -186,13 +188,24 @@ const defaultData = (): ResumeData => ({
   references: [{ ...emptyReference() }],
 });
 
+function migrateItem<T extends Record<string, any>>(saved: any, defaults: T): T {
+  return { ...defaults, ...saved } as T;
+}
+
 function loadSaved(): ResumeData {
   if (typeof window === "undefined") return defaultData();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return { ...defaultData(), ...parsed };
+      const merged = { ...defaultData(), ...parsed };
+      merged.projects = merged.projects.map((p: any) => migrateItem(p, emptyProject()));
+      merged.experiences = merged.experiences.map((e: any) => migrateItem(e, emptyExperience()));
+      merged.education = merged.education.map((e: any) => migrateItem(e, emptyEducation()));
+      merged.activities = merged.activities.map((a: any) => migrateItem(a, emptyActivity()));
+      merged.achievements = merged.achievements.map((a: any) => migrateItem(a, emptyAchievement()));
+      merged.references = merged.references.map((r: any) => migrateItem(r, emptyReference()));
+      return merged;
     }
   } catch {}
   return defaultData();
@@ -562,6 +575,15 @@ export default function ResumeBuilderPage() {
                           placeholder="https://my-project.vercel.app"
                           value={proj.liveUrl}
                           onChange={(e) => updateField("projects", i, "liveUrl", e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className={labelClass}>Tools (comma separated)</Label>
+                        <Input
+                          className={inputClass}
+                          placeholder="React, Node.js, PostgreSQL"
+                          value={proj.tools}
+                          onChange={(e) => updateField("projects", i, "tools", e.target.value)}
                         />
                       </div>
                     </div>
@@ -1086,6 +1108,39 @@ export default function ResumeBuilderPage() {
               className="sticky bottom-6 z-10 flex justify-center"
             >
               <div className="rounded-2xl border border-white/10 bg-slate-900/90 backdrop-blur-md px-8 py-4 shadow-2xl shadow-black/40 flex items-center gap-4">
+                <input
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  id="import-json"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      try {
+                        const parsed = JSON.parse(ev.target?.result as string);
+                        if (parsed.fullName !== undefined && parsed.projects !== undefined) {
+                          setData(parsed);
+                        } else {
+                          alert("Invalid resume JSON file.");
+                        }
+                      } catch {
+                        alert("Failed to parse JSON file.");
+                      }
+                    };
+                    reader.readAsText(file);
+                    e.target.value = "";
+                  }}
+                />
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => document.getElementById("import-json")?.click()}
+                  className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:text-blue-300"
+                >
+                  <Download className="w-4 h-4 mr-2" /> Import JSON
+                </Button>
                 <Button
                   variant="outline"
                   size="lg"

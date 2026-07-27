@@ -12,9 +12,9 @@ const styles = StyleSheet.create({
   },
   header: { textAlign: "center" },
   name: { fontSize: 25, fontWeight: 700, letterSpacing: 1 },
-  gap1: { height: 4 },
+  gap1: { height: 18 },
   designation: { fontSize: 11, color: "#374151" },
-  gap2: { height: 5 },
+  gap2: { height: 7 },
   contactRow: { flexDirection: "row", justifyContent: "center", flexWrap: "wrap", fontSize: 8, color: "#4b5563" },
   contactItem: { flexDirection: "row", alignItems: "center", marginHorizontal: 4 },
   overview: { fontSize: 9.5, lineHeight: 1.2, color: "#374151" },
@@ -105,7 +105,7 @@ export type ResumeData = {
   portfolio: string;
   portfolioShow: string;
   overview: string;
-  projects: { id: string; title: string; bulletPoints: string[]; status: string; liveUrl: string }[];
+  projects: { id: string; title: string; bulletPoints: string[]; status: string; liveUrl: string; tools: string }[];
   experiences: { id: string; designation: string; company: string; bulletPoints: string[]; status: string; startDate: string; endDate: string }[];
   skillGroups: { id: string; title: string; skills: string }[];
   education: { id: string; course: string; institution: string; startDate: string; endDate: string; result: string }[];
@@ -162,7 +162,14 @@ function GlobeIcon() {
 }
 
 export default function ResumePDF({ data }: { data: ResumeData }) {
-  const h = (arr: any[]) => arr.some((item) => Object.values(item).some((v) => typeof v === "string" ? v.trim() !== "" : true));
+  const h = (arr: any[]) => arr.some((item) =>
+    Object.entries(item).some(([k, v]) => {
+      if (k === "id") return false;
+      if (typeof v === "string" && v.trim() !== "") return true;
+      if (Array.isArray(v) && v.some((x: any) => typeof x === "string" && x.trim() !== "")) return true;
+      return false;
+    })
+  );
 
   return (
     <Document>
@@ -224,11 +231,16 @@ export default function ResumePDF({ data }: { data: ResumeData }) {
                   <Text style={styles.expTitle}>{p.title}</Text>
                   <Text style={styles.expStatus}>{p.status}</Text>
                 </View>
-                {p.liveUrl && (
-                  <Text style={styles.expMeta}>
-                    <Link src={normalizeUrl(p.liveUrl)} style={{ textDecoration: "none" }}>{portfolioDisplay(p.liveUrl)}</Link>
-                  </Text>
-                )}
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  {p.liveUrl && (
+                    <Text style={[styles.expMeta, { flex: 1 }]}>
+                      <Link src={normalizeUrl(p.liveUrl)} style={{ textDecoration: "none", color: "#4b5563" }}>{portfolioDisplay(p.liveUrl)}</Link>
+                    </Text>
+                  )}
+                  {p.tools && (
+                    <Text style={[styles.expMeta, { textAlign: "right", flex: 1 }]}>{p.tools}</Text>
+                  )}
+                </View>
                 {p.bulletPoints.filter(Boolean).length > 0 && (
                   <View style={styles.bulletList}>
                     {p.bulletPoints.filter(Boolean).map((bp, j) => (
