@@ -272,7 +272,7 @@ export default function ResumePreviewPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-10">
+          <div className="text-center mb-15 mt-15">
             <motion.h1
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -296,7 +296,7 @@ export default function ResumePreviewPage() {
               <Button
                 variant="outline"
                 onClick={() => router.push("/tools/resume-builder")}
-                className="gap-2"
+                className="gap-2 bg-transparent border-border/25 text-slate-300 hover:bg-indigo-500 transition-all duration-300 hover:border-transparent hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4" /> Edit
               </Button>
@@ -313,9 +313,9 @@ export default function ResumePreviewPage() {
                   link.click();
                   URL.revokeObjectURL(url);
                 }}
-                className="gap-2 border-slate-500 text-slate-300 hover:bg-slate-800"
+                className="gap-2 border-border/25 text-slate-300 bg-transparent hover:bg-indigo-500 transition-all duration-300 hover:border-transparent hover:text-white"
               >
-                <Download className="w-4 h-4" /> Export JSON
+                <Download className="w-4 h-4" /> Export as JSON
               </Button>
             </div>
             <div className="flex items-center gap-4">
