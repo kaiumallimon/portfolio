@@ -10,6 +10,28 @@
   "portfolio": "kaiumallimon.dev",
   "portfolioShow": "portfolio",
   "overview": "Passionate Full-Stack Developer with expertise in Flutter, Next.js, and Supabase. Experienced in building cross-platform mobile and web applications with clean architecture and modern UI/UX principles.",
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "Portfolio Website – Interactive Developer Portfolio",
+      "bulletPoints": [
+        "Built a modern, interactive portfolio website using Next.js 16 App Router and React 19, featuring custom physics-based cursor animations with GSAP and smooth page transitions with Framer Motion.",
+        "Developed three web-based tools: GitHub Unwrapped (stats visualization with contribution graphs), UIU CGPA Calculator, and UIU Exam Routine Finder."
+      ],
+      "status": "Complete",
+      "liveUrl": "https://kaiumallimon.vercel.app"
+    },
+    {
+      "id": "proj-2",
+      "title": "GadgetWizard – Online Electronics Shopping Platform",
+      "bulletPoints": [
+        "Built a complete online electronics shopping platform where customers can browse products, manage carts, and place orders seamlessly.",
+        "Integrated secure Stripe payments and added admin-side management features for products, categories, and orders."
+      ],
+      "status": "95% Complete",
+      "liveUrl": ""
+    }
+  ],
   "experiences": [
     {
       "id": "exp-1",

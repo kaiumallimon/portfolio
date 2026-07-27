@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Plus, Trash2, ArrowRight } from "lucide-react";
+import { Plus, Trash2, ArrowRight, RotateCcw } from "lucide-react";
 import { v4 as uuid } from "uuid";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home-color-bend";
@@ -59,6 +59,14 @@ type Activity = {
   description: string;
 };
 
+type Project = {
+  id: string;
+  title: string;
+  bulletPoints: string[];
+  status: string;
+  liveUrl: string;
+};
+
 type Achievement = {
   id: string;
   result: string;
@@ -86,6 +94,7 @@ type ResumeData = {
   portfolio: string;
   portfolioShow: string;
   overview: string;
+  projects: Project[];
   experiences: Experience[];
   skillGroups: SkillGroup[];
   education: Education[];
@@ -131,6 +140,14 @@ const emptyActivity = (): Activity => ({
   description: "",
 });
 
+const emptyProject = (): Project => ({
+  id: uuid(),
+  title: "",
+  bulletPoints: [""],
+  status: "",
+  liveUrl: "",
+});
+
 const emptyAchievement = (): Achievement => ({
   id: uuid(),
   result: "",
@@ -145,6 +162,41 @@ const emptyReference = (): Reference => ({
   phone: "",
   email: "",
 });
+
+const STORAGE_KEY = "resume-builder-data";
+
+const defaultData = (): ResumeData => ({
+  fullName: "",
+  designation: "",
+  phone: "",
+  email: "",
+  github: "",
+  githubShow: "",
+  linkedin: "",
+  linkedinShow: "",
+  portfolio: "",
+  portfolioShow: "",
+  overview: "",
+  projects: [{ ...emptyProject() }],
+  experiences: [{ ...emptyExperience() }],
+  skillGroups: [{ ...emptySkillGroup() }],
+  education: [{ ...emptyEducation() }],
+  activities: [{ ...emptyActivity() }],
+  achievements: [{ ...emptyAchievement() }],
+  references: [{ ...emptyReference() }],
+});
+
+function loadSaved(): ResumeData {
+  if (typeof window === "undefined") return defaultData();
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...defaultData(), ...parsed };
+    }
+  } catch {}
+  return defaultData();
+}
 
 /* ------------------------------------------------------------------ */
 /* Section shell component                                            */
@@ -175,25 +227,25 @@ function SectionCard({
 
 export default function ResumeBuilderPage() {
   const router = useRouter();
-  const [data, setData] = useState<ResumeData>({
-    fullName: "",
-    designation: "",
-    phone: "",
-    email: "",
-    github: "",
-    githubShow: "",
-    linkedin: "",
-    linkedinShow: "",
-    portfolio: "",
-    portfolioShow: "",
-    overview: "",
-    experiences: [{ ...emptyExperience() }],
-    skillGroups: [{ ...emptySkillGroup() }],
-    education: [{ ...emptyEducation() }],
-    activities: [{ ...emptyActivity() }],
-    achievements: [{ ...emptyAchievement() }],
-    references: [{ ...emptyReference() }],
-  });
+  const [data, setData] = useState<ResumeData>(defaultData);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const saved = loadSaved();
+    setData(saved);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (hydrated) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+  }, [data, hydrated]);
+
+  const clearForm = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setData(defaultData());
+  };
 
   /* ---------- generic updaters ---------- */
 
@@ -224,6 +276,35 @@ export default function ResumeBuilderPage() {
       const arr = [...(prev[key] as any[])];
       if (arr.length > 1) arr.splice(index, 1);
       return { ...prev, [key]: arr };
+    });
+
+  /* ---------- project bullet helpers ---------- */
+
+  const addProjectBullet = (projIndex: number) =>
+    setData((prev) => {
+      const projects = [...prev.projects];
+      projects[projIndex] = {
+        ...projects[projIndex],
+        bulletPoints: [...projects[projIndex].bulletPoints, ""],
+      };
+      return { ...prev, projects };
+    });
+
+  const updateProjectBullet = (projIndex: number, bpIndex: number, value: string) =>
+    setData((prev) => {
+      const projects = [...prev.projects];
+      const bps = [...projects[projIndex].bulletPoints];
+      bps[bpIndex] = value;
+      projects[projIndex] = { ...projects[projIndex], bulletPoints: bps };
+      return { ...prev, projects };
+    });
+
+  const removeProjectBullet = (projIndex: number, bpIndex: number) =>
+    setData((prev) => {
+      const projects = [...prev.projects];
+      const bps = projects[projIndex].bulletPoints.filter((_, i) => i !== bpIndex);
+      projects[projIndex] = { ...projects[projIndex], bulletPoints: bps };
+      return { ...prev, projects };
     });
 
   /* ---------- bullet helpers ---------- */
@@ -432,7 +513,103 @@ export default function ResumeBuilderPage() {
               </div>
             </SectionCard>
 
-            {/* 5. Experiences */}
+            {/* 5. Projects */}
+            <SectionCard title="Projects">
+              <div className="space-y-6">
+                {data.projects.map((proj, i) => (
+                  <motion.div
+                    key={proj.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-medium text-white/60">
+                        Project #{i + 1}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={() => removeItem("projects", i)}
+                        disabled={data.projects.length === 1}
+                      >
+                        <Trash2 className="w-4 h-4 text-red-400" />
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className={labelClass}>Title</Label>
+                        <Input
+                          className={inputClass}
+                          placeholder="Project Name"
+                          value={proj.title}
+                          onChange={(e) => updateField("projects", i, "title", e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className={labelClass}>Status</Label>
+                        <Input
+                          className={inputClass}
+                          placeholder="Complete / 95% Complete / In Progress"
+                          value={proj.status}
+                          onChange={(e) => updateField("projects", i, "status", e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className={labelClass}>Live URL (optional)</Label>
+                        <Input
+                          className={inputClass}
+                          placeholder="https://my-project.vercel.app"
+                          value={proj.liveUrl}
+                          onChange={(e) => updateField("projects", i, "liveUrl", e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bullet Points */}
+                    <div className="mt-4 space-y-2">
+                      <Label className={labelClass}>Key Features / Descriptions</Label>
+                      {proj.bulletPoints.map((bp, bIdx) => (
+                        <div key={bIdx} className="flex items-center gap-2">
+                          <span className="text-indigo-400 shrink-0">•</span>
+                          <Input
+                            className={inputClass + " flex-1"}
+                            placeholder="Describe a feature or detail"
+                            value={bp}
+                            onChange={(e) => updateProjectBullet(i, bIdx, e.target.value)}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => removeProjectBullet(i, bIdx)}
+                            disabled={proj.bulletPoints.length === 1}
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => addProjectBullet(i)}
+                        className="text-indigo-400 hover:bg-indigo-500/20"
+                      >
+                        <Plus className="w-3.5 h-3.5 mr-1" /> Add bullet point
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+                <Button
+                  onClick={() => addItem("projects", emptyProject)}
+                  variant="default"
+                  className="w-full bg-indigo-500 hover:bg-indigo-600 text-white"
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Add Project
+                </Button>
+              </div>
+            </SectionCard>
+
+            {/* 6. Experiences */}
             <SectionCard title="Experience">
               <div className="space-y-6">
                 {data.experiences.map((exp, i) => (
@@ -908,12 +1085,20 @@ export default function ResumeBuilderPage() {
               animate={{ opacity: 1, y: 0 }}
               className="sticky bottom-6 z-10 flex justify-center"
             >
-              <div className="rounded-2xl border border-white/10 bg-slate-900/90 backdrop-blur-md px-8 py-4 shadow-2xl shadow-black/40">
+              <div className="rounded-2xl border border-white/10 bg-slate-900/90 backdrop-blur-md px-8 py-4 shadow-2xl shadow-black/40 flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={clearForm}
+                  className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" /> Clear
+                </Button>
                 <Button
                   size="lg"
                   disabled={!data.fullName.trim() || !data.designation.trim() || (!data.phone.trim() && !data.email.trim())}
                   onClick={() => {
-                    localStorage.setItem("resume-builder-data", JSON.stringify(data));
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
                     router.push("/tools/resume-builder/preview");
                   }}
                   className="bg-indigo-500 hover:bg-indigo-600 text-white px-10"

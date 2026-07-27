@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { Download, Loader2, ArrowLeft, Phone, Mail } from "lucide-react";
 import { FaGithub, FaLinkedin, FaGlobe } from "react-icons/fa";
 import { toPng } from "html-to-image";
-import { jsPDF } from "jspdf";
 import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home-color-bend";
 import TargetCursor from "@/components/TargetCursor";
@@ -58,6 +57,14 @@ type Activity = {
   description: string;
 };
 
+type Project = {
+  id: string;
+  title: string;
+  bulletPoints: string[];
+  status: string;
+  liveUrl: string;
+};
+
 type Achievement = {
   id: string;
   result: string;
@@ -85,6 +92,7 @@ type ResumeData = {
   portfolio: string;
   portfolioShow: string;
   overview: string;
+  projects: Project[];
   experiences: Experience[];
   skillGroups: SkillGroup[];
   education: Education[];
@@ -129,7 +137,7 @@ function SectionTitle({ text }: { text: string }) {
       <h2
         className="font-bold tracking-wider text-gray-900"
         style={{
-          fontSize: "12.5pt",
+          fontSize: "13.5pt",
           textTransform: "uppercase",
           borderBottom: "0.8px solid rgba(0,0,0,0.15)",
           paddingBottom: "0.1em",
@@ -149,7 +157,8 @@ function SectionTitle({ text }: { text: string }) {
 export default function ResumePreviewPage() {
   const router = useRouter();
   const [data, setData] = useState<ResumeData | null>(null);
-  const [downloading, setDownloading] = useState(false);
+  const [downloadingImg, setDownloadingImg] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const resumeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -161,25 +170,50 @@ export default function ResumePreviewPage() {
     setData(JSON.parse(raw));
   }, [router]);
 
-  const handleDownload = async () => {
+  const handleDownloadPng = async () => {
     if (!resumeRef.current) return;
-    setDownloading(true);
+    setDownloadingImg(true);
     try {
       await new Promise((r) => setTimeout(r, 500));
       const dataUrl = await toPng(resumeRef.current, {
         cacheBust: true,
         backgroundColor: "#ffffff",
-        pixelRatio: 2,
-        skipFonts: true,
+        pixelRatio: 3,
+        style: { boxShadow: "none" } as Partial<CSSStyleDeclaration>,
       });
       const link = document.createElement("a");
       link.download = `${data?.fullName?.replace(/\s+/g, "_") || "resume"}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
-      console.error("Failed to download resume:", err);
+      console.error("Failed to download resume image:", err);
     } finally {
-      setDownloading(false);
+      setDownloadingImg(false);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!data) return;
+    setDownloadingPdf(true);
+    try {
+      const response = await fetch("/api/resume-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error(await response.text());
+      const blob = await response.blob();
+      const fileName = `${data.fullName.replace(/\s+/g, "_") || "resume"}.pdf`;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to download resume PDF:", err);
+    } finally {
+      setDownloadingPdf(false);
     }
   };
 
@@ -191,6 +225,7 @@ export default function ResumePreviewPage() {
     );
   }
 
+  const hasProjects = hasData(data.projects);
   const hasExperience = hasData(data.experiences);
   const hasSkills = hasData(data.skillGroups);
   const hasEducation = hasData(data.education);
@@ -206,15 +241,6 @@ export default function ResumePreviewPage() {
       <HomeBackground />
       <FloatingHeader />
       <div className="max-w-4xl mx-auto py-38 px-6 relative">
-        <style>{`
-          @media print {
-            body * { visibility: hidden !important; }
-            #resume-print-area, #resume-print-area * { visibility: visible !important; }
-            #resume-print-area { position: absolute !important; left: 0 !important; top: 0 !important; width: 210mm !important; margin: 0 !important; padding: 16.5mm !important; box-shadow: none !important; }
-            #resume-print-area a { color: inherit !important; text-decoration: none !important; }
-            @page { margin: 0; size: A4; }
-          }
-        `}</style>
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -268,11 +294,11 @@ export default function ResumePreviewPage() {
               <ArrowLeft className="w-4 h-4" /> Edit
             </Button>
             <Button
-              onClick={handleDownload}
-              disabled={downloading}
+              onClick={handleDownloadPng}
+              disabled={downloadingImg}
               className="gap-2 bg-indigo-500 hover:bg-indigo-600 text-white"
             >
-              {downloading ? (
+              {downloadingImg ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Download className="w-4 h-4" />
@@ -280,29 +306,35 @@ export default function ResumePreviewPage() {
               Download as Image
             </Button>
             <Button
-              onClick={() => window.print()}
+              onClick={handleDownloadPdf}
+              disabled={downloadingPdf}
               className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
             >
-              <Download className="w-4 h-4" />
+              {downloadingPdf ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
               Download as PDF
             </Button>
           </div>
 
           {/* === RESUME === */}
-          <div
-            id="resume-print-area"
-            ref={resumeRef}
-            className="bg-white text-gray-900 shadow-2xl mx-auto"
-            style={{
-              width: "210mm",
-              padding: "16.5mm 16.5mm",
-              fontSize: "10pt",
-              lineHeight: "1.15",
-              fontFamily: "var(--font-crimson-pro), Georgia, serif",
-              WebkitFontSmoothing: "antialiased",
-              MozOsxFontSmoothing: "grayscale",
-              textRendering: "optimizeLegibility",
-            }}
+          <div style={{ position: "relative" }}>
+            <div
+              id="resume-print-area"
+              ref={resumeRef}
+              className="bg-white text-gray-900 mx-auto"
+              style={{
+                width: "215.9mm",
+                padding: "16.51mm 16.51mm",
+                fontSize: "10pt",
+                lineHeight: "1.15",
+                fontFamily: "var(--font-crimson-pro), Georgia, serif",
+                WebkitFontSmoothing: "antialiased",
+                MozOsxFontSmoothing: "grayscale",
+                textRendering: "optimizeLegibility",
+              }}
           >
             {/* ===== HEADER ===== */}
             <div className="text-center">
@@ -364,9 +396,46 @@ export default function ResumePreviewPage() {
             )}
 
             {/* ===== PROJECTS ===== */}
-            {hasExperience && (
+            {hasProjects && (
               <>
                 <SectionTitle text="PROJECTS" />
+                {data.projects
+                  .filter((p) => p.title.trim())
+                  .map((proj, i) => (
+                    <div key={i} style={{ marginBottom: "0.5em" }}>
+                      <div className="flex justify-between items-baseline">
+                        <span className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
+                          {proj.title}
+                        </span>
+                        <span className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
+                          {proj.status || ""}
+                        </span>
+                      </div>
+                      {proj.liveUrl && (
+                        <p className="text-gray-700" style={{ fontSize: "9pt", fontStyle: "italic" }}>
+                          <a href={normalizeUrl(proj.liveUrl)} target="_blank" rel="noopener noreferrer" className="text-gray-700 no-underline hover:underline">
+                            {proj.liveUrl}
+                          </a>
+                        </p>
+                      )}
+                      {proj.bulletPoints.filter(Boolean).length > 0 && (
+                        <ul style={{ margin: "0.3em 0 0 0", paddingLeft: "1.2em", listStyle: "disc outside", fontSize: "9.5pt" }}>
+                          {proj.bulletPoints.filter(Boolean).map((bp, j) => (
+                            <li key={j} className="text-gray-800" style={{ lineHeight: "1.2" }}>
+                              {bp}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+              </>
+            )}
+
+            {/* ===== EXPERIENCE ===== */}
+            {hasExperience && (
+              <>
+                <SectionTitle text="EXPERIENCE" />
                 {data.experiences
                   .filter((e) => e.designation.trim())
                   .map((exp, i) => (
@@ -376,7 +445,7 @@ export default function ResumePreviewPage() {
                           {exp.designation}
                         </span>
                         <span className="font-bold text-gray-900" style={{ fontSize: "10pt" }}>
-                          {exp.status || (exp.company ? "Complete" : "")}
+                          {exp.status || ""}
                         </span>
                       </div>
                       {exp.company && (
@@ -519,6 +588,20 @@ export default function ResumePreviewPage() {
               </>
             )}
           </div>
+          <div
+            style={{
+              position: "absolute",
+              top: "16.51mm",
+              left: "16.51mm",
+              width: "calc(215.9mm - 33.02mm)",
+              height: "calc(100% - 33.02mm)",
+              pointerEvents: "none",
+              backgroundRepeat: "repeat-y",
+              backgroundImage:
+                "repeating-linear-gradient(to bottom, transparent 0, transparent 246.35mm, rgba(0,0,0,0.08) 246.35mm, rgba(0,0,0,0.08) 246.38mm)",
+            }}
+          />
+        </div>
         </motion.div>
       </div>
       <Footer />
