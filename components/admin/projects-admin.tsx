@@ -168,7 +168,7 @@ export default function ProjectsAdmin({
   };
 
   return (
-    <div className="p-6">
+    <div>
       {/* Breadcrumbs */}
       <Breadcrumb>
         <BreadcrumbList>

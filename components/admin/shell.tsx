@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  SidebarProvider,
-} from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 import {
   LayoutDashboard,
   FolderKanban,
@@ -20,34 +18,22 @@ import {
   Mail,
   ExternalLink,
   LogOut,
-  User,
-  ChevronDown,
-  Menu,
   Sun,
   Moon,
   Monitor,
-  AlertTriangle,
-  Loader2,
+  Menu,
+  X,
+  Bell,
+  Search,
 } from "lucide-react";
-import { useTheme } from "next-themes";
-import type { LucideIcon } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { MobileMenuProvider } from "@/components/mobile-menu-context";
-import { FrostedHeader } from "@/components/custom/frosted-header";
+import { Button } from "@/components/ui/button";
 import { browserSupabase } from "@/lib/supabase/browser";
+import GlobalSearch from "@/components/global-search";
 
 interface NavItem {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<{ className?: string }>;
   exact?: boolean;
   external?: boolean;
 }
@@ -97,6 +83,18 @@ const NAV: NavGroup[] = [
   },
 ];
 
+const HEADER_NAV = [
+  { name: "About", href: "/#about" },
+  { name: "Skills", href: "/#skills" },
+  { name: "Impact", href: "/#impact" },
+  { name: "Projects", href: "/projects" },
+  { name: "Open Source", href: "/#contributions" },
+  { name: "Activities", href: "/#activities" },
+  { name: "Achievements", href: "/#achievements" },
+  { name: "Tools", href: "/tools" },
+  { name: "Contact", href: "/#contact" },
+];
+
 export default function AdminShell({
   email,
   profileImage,
@@ -110,12 +108,30 @@ export default function AdminShell({
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [signOutLoading, setSignOutLoading] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timeout = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    if (mobileNavOpen) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
+  }, [mobileNavOpen]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileNavOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, []);
 
   const handleSignOut = async () => {
@@ -144,193 +160,289 @@ export default function AdminShell({
     return { title: "Dashboard", subtitle: "Overview of your portfolio content" };
   })();
 
-  const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => (
-    <div className="flex h-full flex-col overflow-hidden">
-      {/* Header */}
-      <div className="border-b border-border/40 p-4 shrink-0">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-md shrink-0 ring-2 ring-border">
+  const initials = (email?.charAt(0) || "A").toUpperCase();
+
+  const renderBrand = () => (
+    <Link href="/admin" className="flex items-center gap-2">
+      <div className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#6366f1]">
+        {profileImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={profileImage} alt="Logo" className="size-6 rounded-full object-cover" />
+        ) : (
+          <span className="text-[10px] font-bold text-white">{initials}</span>
+        )}
+      </div>
+      <span className="font-bricolage text-base font-semibold">Portfolio</span>
+    </Link>
+  );
+
+  const renderSidebar = ({ onNavigate }: { onNavigate?: () => void }) => (
+    <aside className="flex h-full w-56 flex-col rounded-4xl border border-border bg-card">
+      <div className="border-b border-border/50 p-4">
+        <div className="flex items-center gap-3">
+          <div className="relative">
             {profileImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={profileImage} alt="Logo" className="h-full w-full object-cover" />
+              <img src={profileImage} alt="Admin" className="size-9 shrink-0 rounded-full object-cover" />
             ) : (
-              "P"
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#6366f1] text-sm font-medium text-white">
+                {initials}
+              </div>
             )}
+            <span className="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-card bg-emerald-500" />
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-sm font-semibold leading-none truncate">Portfolio</span>
-            <span className="text-xs text-muted-foreground truncate">Admin Panel</span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium leading-none truncate">Admin</p>
+              <span className="shrink-0 rounded-full bg-violet-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-violet-600 dark:text-violet-400">
+                Admin
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground truncate">{email}</p>
+            <p className="mt-0.5 text-[10px] font-medium text-muted-foreground/60">Admin Panel</p>
           </div>
         </div>
       </div>
 
-      {/* Content - Scrollable Area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 scrollbar-hide">
+      <nav className="admin-sidebar-scroll flex-1 overflow-y-auto px-3 py-2">
         {NAV.map((group) => (
           <div key={group.label}>
-            <div className="text-xs font-medium text-muted-foreground/80 uppercase tracking-wider px-2 mb-2 truncate">
+            <div className="px-3 mb-2 text-xs font-medium text-muted-foreground/80">
               {group.label}
             </div>
-            <div>
-              {group.items.map((item, i) => {
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
                 const Icon = item.icon;
                 const active = activeFor(item);
-                const base = `flex items-center gap-3 min-w-0 overflow-hidden rounded-md p-2 text-sm transition-all duration-200 hover:bg-primary/30 ${
-                  active ? "bg-primary text-primary-foreground font-semibold" : ""
-                }`;
-                return (
-                  <div className={i > 0 ? "mt-1" : ""} key={item.href}>
-                    {item.external ? (
-                      <a href={item.href} target="_blank" rel="noreferrer" className={base}>
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span className="font-medium truncate">{item.label}</span>
-                      </a>
-                    ) : (
-                      <Link href={item.href} onClick={onLinkClick} className={base}>
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span className="font-medium truncate">{item.label}</span>
-                      </Link>
-                    )}
-                  </div>
+                const base = cn(
+                  "flex items-center gap-3 rounded-4xl px-3 py-2 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-[#6366f1]/35 text-foreground dark:bg-[#6366f1]/10 dark:text-[#6366f1]"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                );
+                return item.external ? (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={onNavigate}
+                    className={base}
+                  >
+                    <Icon className="size-4 shrink-0" />
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link key={item.href} href={item.href} onClick={onNavigate} className={base}>
+                    <Icon className="size-4 shrink-0" />
+                    {item.label}
+                  </Link>
                 );
               })}
             </div>
-            <div className="my-4 h-px bg-border"></div>
+            <div className="my-4 h-px bg-border/50" />
           </div>
         ))}
-      </div>
+      </nav>
 
-      {/* Footer */}
-      <div className="border-t border-border/40 p-4 shrink-0 overflow-hidden">
-        {/* Theme Toggle */}
-        <div className="mb-3 overflow-hidden">
-          <div className="flex items-center justify-between min-w-0">
-            <span className="text-xs font-medium text-muted-foreground truncate">Theme</span>
+      <div className="border-t border-border/50 p-3">
+        <div className="mb-3">
+          <div className="flex items-center justify-between px-3">
+            <span className="text-xs font-medium text-muted-foreground">Theme</span>
             {mounted && (
-              <div className="flex items-center rounded-md border p-1 shrink-0">
+              <div className="flex items-center gap-1 rounded-4xl border border-border p-1">
                 <button
-                  className={`h-6 w-6 p-0 shrink-0 rounded-sm flex items-center justify-center transition-colors ${
-                    theme === "light" ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"
-                  }`}
                   onClick={() => setTheme("light")}
+                  className={cn(
+                    "flex size-6 items-center justify-center rounded-4xl transition-colors",
+                    theme === "light"
+                      ? "bg-[#6366f1] text-white"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
                   aria-label="Light theme"
                 >
-                  <Sun className="h-3 w-3" />
+                  <Sun className="size-3" />
                 </button>
                 <button
-                  className={`h-6 w-6 p-0 shrink-0 rounded-sm flex items-center justify-center transition-colors ${
-                    theme === "dark" ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"
-                  }`}
                   onClick={() => setTheme("dark")}
+                  className={cn(
+                    "flex size-6 items-center justify-center rounded-4xl transition-colors",
+                    theme === "dark"
+                      ? "bg-[#6366f1] text-white"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
                   aria-label="Dark theme"
                 >
-                  <Moon className="h-3 w-3" />
+                  <Moon className="size-3" />
                 </button>
                 <button
-                  className={`h-6 w-6 p-0 shrink-0 rounded-sm flex items-center justify-center transition-colors ${
-                    theme === "system" ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"
-                  }`}
                   onClick={() => setTheme("system")}
+                  className={cn(
+                    "flex size-6 items-center justify-center rounded-4xl transition-colors",
+                    theme === "system"
+                      ? "bg-[#6366f1] text-white"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
                   aria-label="System theme"
                 >
-                  <Monitor className="h-3 w-3" />
+                  <Monitor className="size-3" />
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* User Profile */}
-        <button
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => setSignOutOpen(true)}
-          className="w-full flex items-center justify-start gap-3 p-3 rounded-md hover:bg-primary/30 transition-colors overflow-hidden border-0 bg-transparent cursor-pointer"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") setSignOutOpen(true);
+          }}
+          className="flex w-full cursor-pointer items-center gap-3 rounded-4xl px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
         >
-          <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
-            <div className="h-8 w-8 rounded-full bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium shrink-0 ring-2 ring-border">
-              {(email.charAt(0) || "A").toUpperCase()}
-            </div>
-            <div className="flex flex-col items-start min-w-0 overflow-hidden">
-              <span className="text-sm font-medium truncate max-w-full">{email}</span>
-              <span className="text-xs text-muted-foreground truncate max-w-full">Admin</span>
-            </div>
-          </div>
-          <ChevronDown className="h-4 w-4 shrink-0" />
-        </button>
-
-        {mounted && (
-          <Dialog open={signOutOpen} onOpenChange={setSignOutOpen}>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10">
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
-                  </span>
-                  Sign out?
-                </DialogTitle>
-                <DialogDescription className="pt-1">
-                  Are you sure you want to sign out of your admin session? You&apos;ll
-                  need to log in again to manage your portfolio.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                <Button
-                  variant="outline"
-                  onClick={() => setSignOutOpen(false)}
-                  disabled={signOutLoading}
-                  className="w-full sm:w-auto"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleSignOut}
-                  disabled={signOutLoading}
-                  className="w-full gap-2 sm:w-auto"
-                >
-                  {signOutLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <LogOut className="h-4 w-4" />
-                  )}
-                  Sign out
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
+          <LogOut className="size-4 shrink-0" />
+          Sign out
+        </div>
       </div>
-    </div>
+    </aside>
   );
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen w-screen bg-background overflow-hidden fixed inset-0">
-        {/* Desktop Sidebar - Hidden on mobile */}
-        <div className="hidden md:flex w-64 border-r border-border/40 bg-card overflow-hidden">
-          <SidebarContent />
+    <div className="flex h-screen flex-col bg-background p-3">
+      <header className="flex h-14 items-center justify-between rounded-4xl border border-border bg-card px-4">
+        <div className="flex items-center gap-6">
+          {renderBrand()}
+
+          <nav className="hidden items-center gap-1 md:flex">
+            {HEADER_NAV.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="rounded-4xl px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
         </div>
 
-        {/* Mobile Drawer */}
-        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetContent side="left" className="p-0 w-64">
-            <SheetHeader className="sr-only">
-              <SheetTitle>Navigation Menu</SheetTitle>
-              <SheetDescription>Main navigation menu for the application</SheetDescription>
-            </SheetHeader>
-            <SidebarContent onLinkClick={() => setMobileMenuOpen(false)} />
-          </SheetContent>
-        </Sheet>
+        <div className="flex items-center gap-2">
+          <GlobalSearch
+            trigger={
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 rounded-4xl border border-border px-2.5 text-muted-foreground"
+              >
+                <Search className="size-4" />
+                <span className="hidden md:inline">Search...</span>
+                <kbd className="pointer-events-none hidden select-none rounded-4xl border border-border bg-muted px-1.5 text-[10px] font-medium md:inline">
+                  ⌘K
+                </kbd>
+              </Button>
+            }
+          />
+          <Button variant="ghost" size="icon" className="size-9 rounded-4xl" asChild>
+            <Link href="/admin/messages" aria-label="Messages">
+              <Bell className="size-4" />
+            </Link>
+          </Button>
+          <button
+            onClick={() => setMobileNavOpen(true)}
+            className="flex size-9 items-center justify-center rounded-4xl border border-border text-foreground transition-colors hover:bg-muted md:hidden"
+            aria-label="Open menu"
+          >
+            <Menu className="size-4" />
+          </button>
+        </div>
+      </header>
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-page">
-            <FrostedHeader title={title} subtitle={subtitle} onMobileMenuToggle={() => setMobileMenuOpen(true)} />
-            <MobileMenuProvider toggleMobileMenu={() => setMobileMenuOpen(true)}>
-              {children}
-            </MobileMenuProvider>
-          </main>
+      <div className="flex flex-1 gap-3 overflow-hidden pt-3">
+        <div className="hidden md:block">
+          {renderSidebar({})}
+        </div>
+
+        <main className="admin-scroll flex-1 min-w-0 overflow-x-hidden overflow-y-auto rounded-4xl border border-border bg-card">
+          <div className="px-6 py-8">
+            <div className="-mx-6 border-b border-border pb-6">
+              <div className="flex items-center justify-between gap-4 px-6">
+                <div className="min-w-0">
+                  <h1 className="font-bricolage text-2xl font-semibold tracking-tight">
+                    {title}
+                  </h1>
+                  <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+                </div>
+              </div>
+            </div>
+            <div className="pt-6">{children}</div>
+          </div>
+        </main>
+      </div>
+
+      <div
+        className={cn(
+          "fixed inset-0 z-50 md:hidden",
+          mobileNavOpen ? "" : "pointer-events-none"
+        )}
+        aria-hidden={!mobileNavOpen}
+      >
+        <div
+          className={cn(
+            "absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300",
+            mobileNavOpen ? "opacity-100" : "opacity-0"
+          )}
+          onClick={() => setMobileNavOpen(false)}
+        />
+        <div
+          className={cn(
+            "absolute top-0 right-0 flex h-full w-60 flex-col border-l border-border bg-background shadow-2xl transition-transform duration-300",
+            mobileNavOpen ? "translate-x-0" : "translate-x-full"
+          )}
+        >
+          <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
+            {renderBrand()}
+            <button
+              onClick={() => setMobileNavOpen(false)}
+              className="flex size-8 items-center justify-center rounded-4xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="Close menu"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+          <div className="min-h-0 flex-1 p-2">
+            {renderSidebar({ onNavigate: () => setMobileNavOpen(false) })}
+          </div>
         </div>
       </div>
-    </SidebarProvider>
+
+      {signOutOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-4xl bg-card p-6 shadow-md ring-1 ring-foreground/5">
+            <h2 className="font-bricolage text-base font-medium text-card-foreground">
+              Sign out
+            </h2>
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              Are you sure you want to sign out?
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setSignOutOpen(false)}
+                className="inline-flex shrink-0 items-center justify-center rounded-4xl border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSignOut}
+                disabled={signOutLoading}
+                className="inline-flex shrink-0 items-center justify-center rounded-4xl border border-transparent bg-destructive/10 px-4 py-2 text-sm font-medium text-destructive transition-all hover:bg-destructive/20 disabled:pointer-events-none disabled:opacity-50"
+              >
+                {signOutLoading ? "Signing out..." : "Sign out"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

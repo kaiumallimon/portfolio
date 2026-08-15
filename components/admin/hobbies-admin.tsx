@@ -153,7 +153,7 @@ export default function HobbiesAdmin({
   };
 
   return (
-    <div className="p-6">
+    <div>
       {/* Breadcrumbs */}
       <Breadcrumb>
         <BreadcrumbList>

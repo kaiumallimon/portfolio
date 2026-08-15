@@ -233,6 +233,64 @@ body {
   scrollbar-width: none;
 }
 
+/* Admin dashboard scroll container (rounded-corner shell) */
+.admin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #6366f1 transparent;
+}
+
+.admin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.admin-scroll::-webkit-scrollbar-button {
+  display: none;
+}
+
+.admin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-scroll::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 9999px;
+}
+
+.admin-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+  opacity: 0.8;
+}
+
+/* Admin sidebar scroll container (transparent track, muted thumb) */
+.admin-sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #6366f1 transparent;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-button {
+  display: none;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 9999px;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+  opacity: 0.8;
+}
+
 /* Shimmer animation for skeleton loading */
 @keyframes shimmer {
   0% {

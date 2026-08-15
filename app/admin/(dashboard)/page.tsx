@@ -155,7 +155,7 @@ export default async function AdminOverview() {
   const recentMessages = messages.slice(0, 5);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Breadcrumb */}
       <Breadcrumb>
         <BreadcrumbList>
