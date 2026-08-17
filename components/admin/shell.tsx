@@ -182,7 +182,7 @@ export default function AdminShell({
   );
 
   const renderSidebar = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <aside className="flex h-full w-56 flex-col rounded-4xl border border-border bg-card">
+    <aside data-lenis-prevent="true" className="flex h-full w-56 flex-col rounded-4xl border border-border bg-card overscroll-contain">
       <div className="border-b border-border/50 p-4">
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -209,7 +209,7 @@ export default function AdminShell({
         </div>
       </div>
 
-      <nav className="admin-sidebar-scroll flex-1 overflow-y-auto px-3 py-2">
+      <nav data-lenis-prevent="true" className="admin-sidebar-scroll flex-1 overflow-y-auto overscroll-contain px-3 py-2">
         {NAV.map((group) => (
           <div key={group.label}>
             <div className="px-3 mb-2 text-xs font-medium text-muted-foreground/80">
