@@ -30,6 +30,8 @@ import { Reveal } from "@/components/custom-new/reveal";
 import { DonutChart } from "@/components/admin/charts/donut";
 import { ProjectGallery } from "@/components/custom-new/project-gallery";
 
+import { SITE_URL } from "@/lib/site";
+
 export const dynamic = "force-dynamic";
 
 type Params = { id: string };
@@ -41,10 +43,51 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const project = await getProjectById(id);
-  if (!project) return { title: "Project not found" };
+  if (!project) {
+    return {
+      title: "Project Not Found",
+      description: "The requested project case study could not be found.",
+    };
+  }
+
+  const title = `${project.name} — ${project.client === "mobile" ? "Mobile App" : "Web Platform"} Case Study`;
+  const description =
+    project.short_details ||
+    project.overview ||
+    `Explore ${project.name}, a ${project.client === "mobile" ? "mobile" : "web"} application built by Kaium Al Limon using ${project.technologies?.join(", ") || "modern technologies"}.`;
+
+  const projectImage = project.image || project.images?.[0] || "/bordered.png";
+  const imageUrl = projectImage.startsWith("http") ? projectImage : `${SITE_URL}${projectImage}`;
+
   return {
-    title: `${project.name ?? "Project"} — Portfolio`,
-    description: project.short_details ?? undefined,
+    title,
+    description,
+    keywords: [
+      project.name ?? "Project",
+      ...(project.technologies ?? []),
+      project.client === "mobile" ? "Flutter App" : "Next.js Web App",
+      "Case Study",
+      "Kaium Al Limon",
+      "Software Engineering",
+    ],
+    alternates: {
+      canonical: `${SITE_URL}/projects/${project.id}`,
+    },
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: `${SITE_URL}/projects/${project.id}`,
+      siteName: "Kaium Al Limon Portfolio",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: project.name ?? "Project Preview",
+        },
+      ],
+    },
   };
 }
 
@@ -160,8 +203,32 @@ export default async function ProjectDetailPage({
       })()
     : null;
 
+  const primaryImage = project.image || project.images?.[0] || "/bordered.png";
+  const projectImageUrl = primaryImage.startsWith("http") ? primaryImage : `${SITE_URL}${primaryImage}`;
+
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@type": isMobile ? "MobileApplication" : "WebApplication",
+    name: project.name,
+    description: project.short_details || project.overview,
+    applicationCategory: isMobile ? "MobileApp" : "WebApplication",
+    operatingSystem: isMobile ? "Android, iOS" : "All",
+    author: {
+      "@type": "Person",
+      name: "Kaium Al Limon",
+      url: SITE_URL,
+    },
+    url: `${SITE_URL}/projects/${project.id}`,
+    image: projectImageUrl,
+    keywords: project.technologies?.join(", "),
+  };
+
   return (
     <div className="min-h-screen w-full bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }}
+      />
       <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn hoverDuration={0.2} />
       <HomeBackground />
       <FloatingHeader />
