@@ -1,8 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentType } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, Calendar, Code2 } from 'lucide-react';
+import { BarChart3, Calendar, Code2, Sparkles, Layers, Terminal, GitFork, Cpu } from 'lucide-react';
+import {
+  SiDart,
+  SiTypescript,
+  SiJavascript,
+  SiPython,
+  SiGo,
+  SiCplusplus,
+  SiKotlin,
+  SiSwift,
+  SiHtml5,
+  SiCss3,
+  SiRuby,
+} from 'react-icons/si';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   ScrollRevealSection,
@@ -11,26 +24,123 @@ import {
   GSAPSectionHeader,
   SCROLL_VIEWPORT,
 } from '@/components/shared/scroll-reveal';
-import { springs } from '@/lib/motion';
+import { springs, use3DTilt } from '@/lib/motion';
 
 const GITHUB_USERNAME = 'kaiumallimon';
 
-const LANGUAGE_COLORS: Record<string, string> = {
-  Dart: 'bg-[#0175C2]',
-  JavaScript: 'bg-[#f1e05a]',
-  TypeScript: 'bg-[#3178c6]',
-  Python: 'bg-[#3572A5]',
-  Java: 'bg-[#b07219]',
-  Kotlin: 'bg-[#A97BFF]',
-  Swift: 'bg-[#F05138]',
-  C: 'bg-[#555555]',
-  'C++': 'bg-[#f34b7d]',
-  HTML: 'bg-[#e34c26]',
-  CSS: 'bg-[#563d7c]',
-  Shell: 'bg-[#89e051]',
-  Go: 'bg-[#00ADD8]',
-  Ruby: 'bg-[#701516]',
+const LANGUAGE_CONFIG: Record<
+  string,
+  {
+    color: string;
+    gradient: string;
+    icon: ComponentType<{ size?: number; className?: string }>;
+    textColor: string;
+    border: string;
+    bg: string;
+  }
+> = {
+  Dart: {
+    color: '#0175C2',
+    gradient: 'from-[#0175C2] to-[#02569B]',
+    icon: SiDart,
+    textColor: 'text-sky-400',
+    border: 'hover:border-sky-500/40',
+    bg: 'bg-sky-500/10',
+  },
+  TypeScript: {
+    color: '#3178c6',
+    gradient: 'from-[#3178c6] to-[#235a97]',
+    icon: SiTypescript,
+    textColor: 'text-blue-400',
+    border: 'hover:border-blue-500/40',
+    bg: 'bg-blue-500/10',
+  },
+  JavaScript: {
+    color: '#f1e05a',
+    gradient: 'from-[#f1e05a] to-[#d4c33d]',
+    icon: SiJavascript,
+    textColor: 'text-amber-400',
+    border: 'hover:border-amber-500/40',
+    bg: 'bg-amber-500/10',
+  },
+  Python: {
+    color: '#3572A5',
+    gradient: 'from-[#3572A5] to-[#ffd43b]',
+    icon: SiPython,
+    textColor: 'text-yellow-400',
+    border: 'hover:border-yellow-500/40',
+    bg: 'bg-yellow-500/10',
+  },
+  Go: {
+    color: '#00ADD8',
+    gradient: 'from-[#00ADD8] to-[#007d9c]',
+    icon: SiGo,
+    textColor: 'text-cyan-400',
+    border: 'hover:border-cyan-500/40',
+    bg: 'bg-cyan-500/10',
+  },
+  'C++': {
+    color: '#f34b7d',
+    gradient: 'from-[#f34b7d] to-[#c22d56]',
+    icon: SiCplusplus,
+    textColor: 'text-pink-400',
+    border: 'hover:border-pink-500/40',
+    bg: 'bg-pink-500/10',
+  },
+  Kotlin: {
+    color: '#A97BFF',
+    gradient: 'from-[#A97BFF] to-[#7f52ff]',
+    icon: SiKotlin,
+    textColor: 'text-purple-400',
+    border: 'hover:border-purple-500/40',
+    bg: 'bg-purple-500/10',
+  },
+  Swift: {
+    color: '#F05138',
+    gradient: 'from-[#F05138] to-[#c73922]',
+    icon: SiSwift,
+    textColor: 'text-orange-400',
+    border: 'hover:border-orange-500/40',
+    bg: 'bg-orange-500/10',
+  },
+  HTML: {
+    color: '#e34c26',
+    gradient: 'from-[#e34c26] to-[#b83818]',
+    icon: SiHtml5,
+    textColor: 'text-orange-500',
+    border: 'hover:border-orange-500/40',
+    bg: 'bg-orange-500/10',
+  },
+  CSS: {
+    color: '#563d7c',
+    gradient: 'from-[#563d7c] to-[#3d2b58]',
+    icon: SiCss3,
+    textColor: 'text-indigo-400',
+    border: 'hover:border-indigo-500/40',
+    bg: 'bg-indigo-500/10',
+  },
+  Ruby: {
+    color: '#701516',
+    gradient: 'from-[#701516] to-[#45090a]',
+    icon: SiRuby,
+    textColor: 'text-red-400',
+    border: 'hover:border-red-500/40',
+    bg: 'bg-red-500/10',
+  },
 };
+
+function getLanguageMeta(lang: string) {
+  return (
+    LANGUAGE_CONFIG[lang] ?? {
+      color: '#6366f1',
+      gradient: 'from-indigo-500 to-violet-600',
+      icon: Code2,
+      textColor: 'text-indigo-400',
+      border: 'hover:border-indigo-500/40',
+      bg: 'bg-indigo-500/10',
+    }
+  );
+}
 
 interface LanguageData {
   languageDistribution: Record<string, number>;
@@ -44,18 +154,16 @@ interface LanguageData {
 
 function BreakdownSkeleton() {
   return (
-    <div className="cursor-target border border-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-8 bg-slate-900/40 space-y-6">
+    <div className="border border-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-8 bg-slate-900/40 space-y-6 shadow-2xl">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 rounded-2xl bg-slate-800" />
+          <Skeleton key={i} className="h-20 rounded-2xl bg-slate-800/60" />
         ))}
       </div>
-      <div className="space-y-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="space-y-2">
-            <Skeleton className="h-4 w-24 bg-slate-800" />
-            <Skeleton className="h-2.5 w-full rounded-full bg-slate-800" />
-          </div>
+      <Skeleton className="h-4 w-full rounded-full bg-slate-800/60" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 rounded-2xl bg-slate-800/60" />
         ))}
       </div>
     </div>
@@ -66,6 +174,8 @@ export default function LanguageBreakdown() {
   const [data, setData] = useState<LanguageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const cardTilt = use3DTilt({ maxTilt: 3, scale: 1.002 });
 
   useEffect(() => {
     async function fetchData() {
@@ -89,106 +199,210 @@ export default function LanguageBreakdown() {
   const languages = data
     ? Object.entries(data.languageDistribution)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 6)
+        .slice(0, 8)
     : [];
 
-  const maxCount = languages[0]?.[1] ?? 1;
+  const totalRepoCount = languages.reduce((acc, [, count]) => acc + count, 0) || 1;
   const totalLanguages = Object.keys(data?.languageDistribution ?? {}).length;
 
-  const insightCards = data
-    ? [
-        { label: 'Primary Language', value: data.stats.topLanguage, icon: Code2, color: 'text-cyan-400' },
-        { label: 'Most Active Day', value: data.stats.mostActiveDay, icon: Calendar, color: 'text-indigo-400' },
-        { label: 'Peak Velocity Month', value: data.stats.mostActiveMonth, icon: BarChart3, color: 'text-emerald-400' },
-      ]
-    : [];
+  const topLanguage = data?.stats.topLanguage || 'Dart';
+  const TopIcon = getLanguageMeta(topLanguage).icon;
 
   return (
     <ScrollRevealSection id="languages" className="py-24 px-6 max-w-6xl mx-auto relative z-10">
       <div className="max-w-6xl mx-auto">
+        {/* GSAP Chronological Section Header */}
         <GSAPSectionHeader
           eyebrow="Codebase Composition"
           title="Technology Distribution & Rhythm"
-          subtitle={`Language breakdown across ${data?.stats.totalRepos ?? '—'} repositories and engineering cadence.`}
+          subtitle={`Language breakdown across ${data?.stats.totalRepos ?? '—'} public repositories and production commits.`}
+          className="mb-12 md:mb-14"
         />
 
         {loading ? (
           <BreakdownSkeleton />
         ) : error || !data ? (
-          <div className="cursor-target border border-white/10 backdrop-blur-xl rounded-3xl p-8 text-center bg-slate-900/40">
-            <p className="text-slate-400 text-sm">Unable to load language data right now.</p>
+          <div className="border border-white/10 backdrop-blur-xl rounded-3xl p-8 text-center bg-slate-900/40">
+            <p className="text-slate-400 text-sm">Unable to load language telemetry right now.</p>
           </div>
         ) : (
-          <div data-gsap-card className="relative cursor-target border border-white/10 backdrop-blur-xl rounded-3xl overflow-hidden bg-slate-900/40 hover:border-indigo-500/30 transition-colors shadow-2xl shadow-black/40">
-            <div className="absolute top-0 left-0 w-60 h-60 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div
+            data-gsap-card
+            ref={cardTilt.ref}
+            onMouseMove={cardTilt.handleMouseMove}
+            onMouseLeave={cardTilt.handleMouseLeave}
+            className="perspective-1000"
+          >
+            <motion.div
+              style={cardTilt.style}
+              className="relative border border-white/10 bg-slate-900/40 backdrop-blur-xl rounded-3xl overflow-hidden p-6 md:p-9 space-y-8 shadow-2xl shadow-black/40 hover:border-indigo-500/30 transition-all"
+            >
+              {/* Ambient Glows */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent pointer-events-none" />
 
-            <div className="p-6 md:p-9 space-y-8 relative z-10">
-              <ScrollRevealStagger delay={0.2} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {insightCards.map((insight) => {
-                  const Icon = insight.icon;
-                  return (
-                    <ScrollRevealStaggerItem key={insight.label}>
-                      <motion.div
-                        whileHover={{ y: -2, scale: 1.02 }}
-                        transition={springs.snappy}
-                        className="flex items-center gap-3.5 rounded-2xl border border-white/8 bg-white/4 p-4 hover:border-indigo-500/20 transition-all"
-                      >
-                        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                          <Icon size={18} className={insight.color} />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-base font-bold text-white truncate">{insight.value}</p>
-                          <p className="text-xs text-slate-400">{insight.label}</p>
-                        </div>
-                      </motion.div>
-                    </ScrollRevealStaggerItem>
-                  );
-                })}
+              {/* 3 Top Telemetry Metrics */}
+              <ScrollRevealStagger delay={0.15} className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
+                {/* Metric 1: Top Language Driver */}
+                <ScrollRevealStaggerItem>
+                  <motion.div
+                    whileHover={{ y: -2 }}
+                    transition={springs.snappy}
+                    className="flex items-center gap-3.5 rounded-2xl border border-white/8 bg-slate-950/50 p-4 backdrop-blur-md hover:border-indigo-500/30 transition-all group"
+                  >
+                    <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <TopIcon size={20} className="text-cyan-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm md:text-base font-bold text-white tracking-tight truncate">
+                          {data.stats.topLanguage}
+                        </p>
+                        <span className="px-1.5 py-0.2 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-mono font-semibold">
+                          #1
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400">Primary Core Driver</p>
+                    </div>
+                  </motion.div>
+                </ScrollRevealStaggerItem>
+
+                {/* Metric 2: Cadence Velocity */}
+                <ScrollRevealStaggerItem>
+                  <motion.div
+                    whileHover={{ y: -2 }}
+                    transition={springs.snappy}
+                    className="flex items-center gap-3.5 rounded-2xl border border-white/8 bg-slate-950/50 p-4 backdrop-blur-md hover:border-indigo-500/30 transition-all group"
+                  >
+                    <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Calendar size={18} className="text-indigo-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm md:text-base font-bold text-white tracking-tight truncate">
+                        {data.stats.mostActiveDay}
+                      </p>
+                      <p className="text-xs text-slate-400">Peak Coding Cadence</p>
+                    </div>
+                  </motion.div>
+                </ScrollRevealStaggerItem>
+
+                {/* Metric 3: Peak Velocity Month */}
+                <ScrollRevealStaggerItem>
+                  <motion.div
+                    whileHover={{ y: -2 }}
+                    transition={springs.snappy}
+                    className="flex items-center gap-3.5 rounded-2xl border border-white/8 bg-slate-950/50 p-4 backdrop-blur-md hover:border-indigo-500/30 transition-all group"
+                  >
+                    <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <BarChart3 size={18} className="text-emerald-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm md:text-base font-bold text-white tracking-tight truncate">
+                        {data.stats.mostActiveMonth}
+                      </p>
+                      <p className="text-xs text-slate-400">Velocity Surge Month</p>
+                    </div>
+                  </motion.div>
+                </ScrollRevealStaggerItem>
               </ScrollRevealStagger>
 
-              <div className="space-y-4">
+              {/* Continuous Multi-Segment Chromatic Spectrum Bar */}
+              <div className="space-y-3 relative z-10 pt-1">
                 <div className="flex items-center justify-between text-xs md:text-sm">
-                  <span className="text-slate-300 font-semibold">Repository languages</span>
-                  <span className="text-slate-500">{totalLanguages} languages detected</span>
+                  <span className="text-slate-200 font-semibold flex items-center gap-2">
+                    <Layers size={14} className="text-indigo-400" />
+                    <span>Language Spectrum Distribution</span>
+                  </span>
+                  <span className="text-slate-400 font-mono text-xs">
+                    {totalLanguages} distinct languages detected
+                  </span>
                 </div>
 
-                {languages.length > 0 ? (
-                  languages.map(([language, count], index) => {
-                    const percentage = Math.round((count / maxCount) * 100);
-                    const barColor = LANGUAGE_COLORS[language] ?? 'bg-indigo-500';
+                {/* Stacked Chromatic Ribbon */}
+                <div className="h-3.5 rounded-full bg-slate-950/80 p-0.5 border border-white/10 overflow-hidden flex gap-0.5 shadow-inner">
+                  {languages.map(([language, count], index) => {
+                    const meta = getLanguageMeta(language);
+                    const pct = Math.max(2, Math.round((count / totalRepoCount) * 100));
 
                     return (
                       <motion.div
                         key={language}
-                        initial={{ opacity: 0, x: -16 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
                         viewport={SCROLL_VIEWPORT}
-                        transition={{ ...springs.gentle, delay: index * 0.05 }}
-                        className="space-y-2"
-                      >
-                        <div className="flex items-center justify-between text-xs md:text-sm">
-                          <span className="text-slate-200 font-medium">{language}</span>
-                          <span className="text-slate-400 tabular-nums">
-                            {count} repo{count !== 1 ? 's' : ''}
-                          </span>
-                        </div>
-                        <div className="h-2.5 rounded-full bg-white/6 overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${percentage}%` }}
-                            viewport={SCROLL_VIEWPORT}
-                            transition={{ duration: 1.1, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                            className={`h-full rounded-full ${barColor}`}
-                          />
-                        </div>
-                      </motion.div>
+                        transition={{
+                          duration: 1.0,
+                          delay: index * 0.05,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                        style={{ width: `${pct}%`, backgroundColor: meta.color }}
+                        title={`${language}: ${pct}% (${count} repos)`}
+                        className="h-full rounded-sm first:rounded-l-full last:rounded-r-full transition-all hover:brightness-125 cursor-pointer origin-left"
+                      />
                     );
-                  })
-                ) : (
-                  <p className="text-sm text-slate-500">No language data available for public repositories.</p>
-                )}
+                  })}
+                </div>
               </div>
-            </div>
+
+              {/* 2-Column Responsive Language Bento Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 relative z-10">
+                {languages.map(([language, count], index) => {
+                  const meta = getLanguageMeta(language);
+                  const Icon = meta.icon;
+                  const pct = Math.round((count / totalRepoCount) * 100);
+
+                  return (
+                    <motion.div
+                      key={language}
+                      initial={{ opacity: 0, y: 14 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={SCROLL_VIEWPORT}
+                      transition={{ ...springs.gentle, delay: index * 0.04 }}
+                      whileHover={{ y: -2 }}
+                      className={`p-4 rounded-2xl border border-white/8 bg-slate-950/40 backdrop-blur-md flex flex-col justify-between gap-3 transition-all ${meta.border}`}
+                    >
+                      {/* Language Header */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-9 h-9 rounded-xl ${meta.bg} border border-white/10 flex items-center justify-center shrink-0`}>
+                            <Icon size={16} className={meta.textColor} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-white tracking-tight">{language}</p>
+                            <p className="text-[11px] text-slate-400 font-mono">
+                              {count} {count === 1 ? 'repository' : 'repositories'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Percentage Pill */}
+                        <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                          {pct}%
+                        </span>
+                      </div>
+
+                      {/* Smooth Progress Bar */}
+                      <div className="h-1.5 rounded-full bg-white/6 overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${pct}%` }}
+                          viewport={SCROLL_VIEWPORT}
+                          transition={{
+                            duration: 1.1,
+                            delay: index * 0.05,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
+                          style={{ backgroundColor: meta.color }}
+                          className="h-full rounded-full"
+                        />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+            </motion.div>
           </div>
         )}
       </div>
