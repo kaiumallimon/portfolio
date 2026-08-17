@@ -137,17 +137,20 @@ export default function FloatingHeader() {
 
     const pods = [leftPodRef.current, centerPodRef.current, rightPodRef.current].filter(Boolean);
 
-    // Start hidden, then animate in immediately
-    gsap.set(pods, { y: -35, opacity: 0, scale: 0.96 });
-    gsap.to(pods, {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      duration: 0.8,
-      stagger: 0.08,
-      ease: 'power4.out',
-      delay: 0.1,
-    });
+    // Pods start at opacity:0 in JSX — GSAP animates them in from below
+    gsap.fromTo(
+      pods,
+      { y: -28, opacity: 0, scale: 0.95 },
+      {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.75,
+        stagger: 0.08,
+        ease: 'power4.out',
+        delay: 0.05,
+      }
+    );
   }, []);
 
   // Scroll detection & Section spy
@@ -234,6 +237,7 @@ export default function FloatingHeader() {
         {/* Left Pod: Identity Badge */}
         <div
           ref={leftPodRef}
+          style={{ opacity: 0 }}
           className="pointer-events-auto flex items-center gap-2.5 py-1.5"
         >
           <a
@@ -263,6 +267,7 @@ export default function FloatingHeader() {
         <nav
           ref={centerPodRef}
           aria-label="Main Navigation"
+          style={{ opacity: 0 }}
           className="pointer-events-auto hidden lg:flex items-center gap-1 py-1"
         >
           {navItems.map((item) => (
@@ -279,6 +284,7 @@ export default function FloatingHeader() {
         {/* Right Pod: Action Command Dock */}
         <div
           ref={rightPodRef}
+          style={{ opacity: 0 }}
           className="pointer-events-auto flex items-center gap-2.5 py-1"
         >
           {/* Direct Magnetic Contact Button (Desktop/Tablet) */}
