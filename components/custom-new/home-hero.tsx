@@ -187,123 +187,114 @@ export default function HomeHero({
     "Specializing in fluid Flutter mobile applications, modern Next.js web platforms, and resilient, high-speed backends built with FastAPI and Node.js + Express.";
   const available = settings?.available_status ?? true;
 
-  // GSAP Kinetic Entrance Timeline (Sequenced after Preloader & Header complete entrance)
+  // GSAP Kinetic Entrance Timeline
   useEffect(() => {
-    let ctx: gsap.Context | null = null;
+    let tl: gsap.core.Timeline | null = null;
+    let scrollTriggerInstance: ScrollTrigger | null = null;
 
-    const runHeroTimeline = () => {
-      ctx = gsap.context(() => {
-        const tl = gsap.timeline({
-          delay: 0.65,
-          defaults: { ease: "power4.out" },
+    tl = gsap.timeline({
+      delay: 0.2,
+      defaults: { ease: "power4.out" },
+      onComplete: () => {
+        // Clear transform & filter props so hover/tap micro-interactions work seamlessly
+        gsap.set([avatarRef.current, badgeRef.current, subheadlineRef.current, marqueeRef.current].filter(Boolean), {
+          clearProps: "transform,filter,opacity",
         });
-
-        // 1. Avatar Pop
-        if (avatarRef.current) {
-          tl.fromTo(
-            avatarRef.current,
-            { scale: 0.65, opacity: 0, y: 18 },
-            { scale: 1, opacity: 1, y: 0, duration: 0.95, ease: "back.out(1.6)" }
-          );
+        if (ctaRef.current?.children) {
+          gsap.set(ctaRef.current.children, { clearProps: "transform,opacity" });
         }
+      },
+    });
 
-        // 2. Status Capsule
-        if (badgeRef.current) {
-          tl.fromTo(
-            badgeRef.current,
-            { y: -14, opacity: 0, scale: 0.92 },
-            { y: 0, opacity: 1, scale: 1, duration: 0.7, ease: "power3.out" },
-            "-=0.65"
-          );
-        }
-
-        // 3. Kinetic Word-by-Word Title Reveal
-        if (headlineRef.current) {
-          const words = headlineRef.current.querySelectorAll(".gsap-word");
-          tl.fromTo(
-            words,
-            {
-              yPercent: 120,
-              opacity: 0,
-              rotateX: 35,
-              transformOrigin: "0% 50% -30",
-            },
-            {
-              yPercent: 0,
-              opacity: 1,
-              rotateX: 0,
-              stagger: 0.035,
-              duration: 0.85,
-              ease: "power4.out",
-            },
-            "-=0.55"
-          );
-        }
-
-        // 4. Subheadline
-        if (subheadlineRef.current) {
-          tl.fromTo(
-            subheadlineRef.current,
-            { y: 16, opacity: 0, filter: "blur(4px)" },
-            { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.75, ease: "power3.out" },
-            "-=0.5"
-          );
-        }
-
-        // 5. CTA Buttons
-        if (ctaRef.current) {
-          tl.fromTo(
-            ctaRef.current.children,
-            { y: 18, opacity: 0, scale: 0.95 },
-            { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 0.75, ease: "back.out(1.5)" },
-            "-=0.45"
-          );
-        }
-
-        // 6. Marquee Fade In
-        if (marqueeRef.current) {
-          tl.fromTo(
-            marqueeRef.current,
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
-            "-=0.4"
-          );
-        }
-
-        // 7. Parallax scrub on scroll
-        if (contentRef.current && containerRef.current) {
-          gsap.to(contentRef.current, {
-            y: 70,
-            opacity: 0.2,
-            scale: 0.98,
-            ease: "none",
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: "top top",
-              end: "bottom top",
-              scrub: 1,
-            },
-          });
-        }
-      }, containerRef);
-    };
-
-    const isPreloaderActive =
-      typeof window !== "undefined" &&
-      !sessionStorage.getItem("preloaderShown") &&
-      !document.documentElement.classList.contains("preloader-done") &&
-      Boolean((window as any).__PRELOADER_ACTIVE__);
-
-    if (isPreloaderActive) {
-      window.addEventListener("preloader-exit", runHeroTimeline, { once: true });
-      return () => {
-        window.removeEventListener("preloader-exit", runHeroTimeline);
-        ctx?.revert();
-      };
-    } else {
-      runHeroTimeline();
-      return () => ctx?.revert();
+    // 1. Avatar Pop
+    if (avatarRef.current) {
+      tl.fromTo(
+        avatarRef.current,
+        { scale: 0.55, opacity: 0, y: 22 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.75, ease: "back.out(1.6)" }
+      );
     }
+
+    // 2. Status Capsule / Label
+    if (badgeRef.current) {
+      tl.fromTo(
+        badgeRef.current,
+        { y: -14, opacity: 0, scale: 0.9 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power3.out" },
+        "-=0.5"
+      );
+    }
+
+    // 3. Kinetic Word-by-Word Title Reveal
+    if (headlineRef.current) {
+      const words = headlineRef.current.querySelectorAll(".gsap-word");
+      if (words.length > 0) {
+        tl.fromTo(
+          words,
+          { yPercent: 120, opacity: 0, rotateX: 35, transformOrigin: "0% 50% -30" },
+          { yPercent: 0, opacity: 1, rotateX: 0, stagger: 0.035, duration: 0.8, ease: "power4.out" },
+          "-=0.35"
+        );
+      } else {
+        tl.fromTo(
+          headlineRef.current,
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.75, ease: "power4.out" },
+          "-=0.35"
+        );
+      }
+    }
+
+    // 4. Subheadline
+    if (subheadlineRef.current) {
+      tl.fromTo(
+        subheadlineRef.current,
+        { y: 16, opacity: 0, filter: "blur(4px)" },
+        { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.65, ease: "power3.out" },
+        "-=0.4"
+      );
+    }
+
+    // 5. CTA Buttons
+    if (ctaRef.current && ctaRef.current.children.length > 0) {
+      tl.fromTo(
+        ctaRef.current.children,
+        { y: 18, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 0.65, ease: "back.out(1.4)" },
+        "-=0.35"
+      );
+    }
+
+    // 6. Marquee Fade In
+    if (marqueeRef.current) {
+      tl.fromTo(
+        marqueeRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.75, ease: "power3.out" },
+        "-=0.3"
+      );
+    }
+
+    // 7. Parallax scrub on scroll (separate ScrollTrigger instance)
+    if (contentRef.current && containerRef.current) {
+      scrollTriggerInstance = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1,
+        animation: gsap.to(contentRef.current, {
+          y: 70,
+          opacity: 0.2,
+          scale: 0.98,
+          ease: "none",
+        }),
+      });
+    }
+
+    return () => {
+      tl?.kill();
+      scrollTriggerInstance?.kill();
+    };
   }, []);
 
   return (
@@ -362,6 +353,7 @@ export default function HomeHero({
             {/* Holographic Avatar with Glowing Indigo Halo Ring */}
             <div
               ref={avatarRef}
+              style={{ opacity: 0 }}
               className="relative p-[2.5px] rounded-full bg-gradient-to-b from-indigo-400 via-indigo-600 to-violet-700/40 shadow-[0_0_28px_rgba(99,102,241,0.45)] hover:shadow-[0_0_38px_rgba(99,102,241,0.7)] transition-all duration-500 cursor-pointer shrink-0"
             >
               <motion.div
@@ -387,6 +379,7 @@ export default function HomeHero({
             {/* Status Capsule (Consistent with Site Eyebrow Badges) */}
             <div
               ref={badgeRef}
+              style={{ opacity: 0 }}
               className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium tracking-wide backdrop-blur-xl shadow-lg hover:border-indigo-500/40 transition-colors"
             >
               <span className="text-white font-semibold">Kaium Al Limon</span>
@@ -406,7 +399,10 @@ export default function HomeHero({
             >
               {settings?.hero_headline ? (
                 <span className="inline-block overflow-hidden">
-                  <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-300 to-indigo-400">
+                  <span
+                    style={{ opacity: 0 }}
+                    className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-300 to-indigo-400"
+                  >
                     {settings.hero_headline}
                   </span>
                 </span>
@@ -415,30 +411,30 @@ export default function HomeHero({
                   {/* Mobile View: Multi-line Impactful Stack */}
                   <div className="flex flex-col items-center gap-1 sm:gap-1.5 md:hidden">
                     <span className="inline-block overflow-hidden">
-                      <span className="gsap-word inline-block text-white font-bold">Building</span>
+                      <span style={{ opacity: 0 }} className="gsap-word inline-block text-white font-bold">Building</span>
                     </span>
                     <span className="inline-block overflow-hidden">
-                      <span className="gsap-word inline-block text-white font-bold">high-performance</span>
+                      <span style={{ opacity: 0 }} className="gsap-word inline-block text-white font-bold">high-performance</span>
                     </span>
                     <span className="inline-block overflow-hidden">
-                      <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300 font-bold">
+                      <span style={{ opacity: 0 }} className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300 font-bold">
                         mobile & web
                       </span>
                     </span>
                     <span className="inline-block overflow-hidden">
-                      <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300 font-bold">
+                      <span style={{ opacity: 0 }} className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300 font-bold">
                         experiences
                       </span>
                     </span>
                     <span className="inline-block overflow-hidden">
-                      <span className="gsap-word inline-block text-white font-bold">engineered</span>
+                      <span style={{ opacity: 0 }} className="gsap-word inline-block text-white font-bold">engineered</span>
                     </span>
                     <div className="flex items-center justify-center">
                       <span className="inline-block overflow-hidden mr-1.5">
-                        <span className="gsap-word inline-block text-white font-bold">to</span>
+                        <span style={{ opacity: 0 }} className="gsap-word inline-block text-white font-bold">to</span>
                       </span>
                       <span className="inline-block overflow-hidden">
-                        <span className="gsap-word inline-block text-white font-bold">
+                        <span style={{ opacity: 0 }} className="gsap-word inline-block text-white font-bold">
                           scale<span className="text-indigo-400">.</span>
                         </span>
                       </span>
@@ -450,17 +446,17 @@ export default function HomeHero({
                     {/* Line 1 */}
                     <div className="flex flex-wrap items-center justify-center">
                       <span className="inline-block overflow-hidden mr-2.5">
-                        <span className="gsap-word inline-block text-white">Building</span>
+                        <span style={{ opacity: 0 }} className="gsap-word inline-block text-white">Building</span>
                       </span>
                       <span className="inline-block overflow-hidden">
-                        <span className="gsap-word inline-block text-white">high-performance</span>
+                        <span style={{ opacity: 0 }} className="gsap-word inline-block text-white">high-performance</span>
                       </span>
                     </div>
 
                     {/* Line 2 */}
                     <div className="flex flex-wrap items-center justify-center">
                       <span className="inline-block overflow-hidden">
-                        <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300">
+                        <span style={{ opacity: 0 }} className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300">
                           mobile & web experiences
                         </span>
                       </span>
@@ -469,13 +465,13 @@ export default function HomeHero({
                     {/* Line 3 */}
                     <div className="flex flex-wrap items-center justify-center">
                       <span className="inline-block overflow-hidden mr-2.5">
-                        <span className="gsap-word inline-block text-white">engineered</span>
+                        <span style={{ opacity: 0 }} className="gsap-word inline-block text-white">engineered</span>
                       </span>
                       <span className="inline-block overflow-hidden mr-2.5">
-                        <span className="gsap-word inline-block text-white">to</span>
+                        <span style={{ opacity: 0 }} className="gsap-word inline-block text-white">to</span>
                       </span>
                       <span className="inline-block overflow-hidden">
-                        <span className="gsap-word inline-block text-white">
+                        <span style={{ opacity: 0 }} className="gsap-word inline-block text-white">
                           scale<span className="text-indigo-400">.</span>
                         </span>
                       </span>
@@ -488,6 +484,7 @@ export default function HomeHero({
             {/* Subheadline */}
             <p
               ref={subheadlineRef}
+              style={{ opacity: 0 }}
               className="text-xs sm:text-sm md:text-[0.98rem] text-slate-300/90 max-w-sm sm:max-w-xl md:max-w-2xl mx-auto leading-relaxed font-normal text-center px-2 sm:px-0"
             >
               {subheadline}
@@ -501,6 +498,7 @@ export default function HomeHero({
           >
             {/* Primary Action: Download CV */}
             <motion.button
+              style={{ opacity: 0 }}
               whileTap={{ scale: 0.97 }}
               transition={springs.snappy}
               onClick={handleDownload}
@@ -521,6 +519,7 @@ export default function HomeHero({
 
             {/* Secondary Action: Explore Selected Work */}
             <motion.a
+              style={{ opacity: 0 }}
               whileTap={{ scale: 0.97 }}
               transition={springs.snappy}
               href="#projects"
@@ -534,7 +533,7 @@ export default function HomeHero({
           </div>
 
           {/* Skills Marquee (Site-Consistent Bento Chips) */}
-          <div ref={marqueeRef} className="w-full pt-4 sm:pt-6 md:pt-6">
+          <div ref={marqueeRef} style={{ opacity: 0 }} className="w-full pt-4 sm:pt-6 md:pt-6">
             <SiteConsistentSkillsMarquee skillNames={allSkillNames} />
           </div>
 

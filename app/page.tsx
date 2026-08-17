@@ -14,15 +14,6 @@ import FloatingHeader from "@/components/shared/header";
 import HomeBackground from "@/components/shared/home_bg";
 import TargetCursor from "@/components/TargetCursor";
 import {
-  AboutSkeleton,
-  AchievementsSkeleton,
-  HeroSkeleton,
-  ImpactSkeleton,
-  JourneySkeleton,
-  ProjectsSkeleton,
-  SkillsSkeleton,
-} from "@/components/custom-new/section-skeletons";
-import {
   getAchievements,
   getActivities,
   getEducation,
@@ -32,106 +23,60 @@ import {
   getSiteSettings,
   getSkills,
 } from "@/lib/data";
-import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
-async function HeroSection() {
-  const [settings, resumeUrl, skills] = await Promise.all([
+export default async function Home() {
+  const [
+    settings,
+    resumeUrl,
+    skills,
+    education,
+    metrics,
+    projects,
+    activities,
+    achievements,
+  ] = await Promise.all([
     getSiteSettings(),
     getResumeUrl(),
     getSkills(),
+    getEducation(),
+    getMetrics(),
+    getProjects(),
+    getActivities(),
+    getAchievements(),
   ]);
-  return <HomeHero settings={settings} resumeUrl={resumeUrl} skills={skills} />;
-}
 
-async function AboutSection() {
-  const [education, settings] = await Promise.all([getEducation(), getSiteSettings()]);
-  return <HomeAboutSection education={education} settings={settings} />;
-}
-
-async function SkillsSection() {
-  const skills = await getSkills();
-  return <TechToolsSection skills={skills} />;
-}
-
-async function ImpactSection() {
-  const metrics = await getMetrics();
-  return <PortfolioImpact metrics={metrics} />;
-}
-
-async function ProjectsPreviewSection() {
-  const projects = await getProjects();
-  return <HomeProjects projects={projects} />;
-}
-
-async function JourneyViewSection() {
-  const activities = await getActivities();
-  return <JourneySection activities={activities} />;
-}
-
-async function AchievementsViewSection() {
-  const achievements = await getAchievements();
-  return <AchievementsSection achievements={achievements} />;
-}
-
-async function ContactViewSection() {
-  const settings = await getSiteSettings();
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? null;
-  return <ContactForm settings={settings} recaptchaSiteKey={recaptchaSiteKey} />;
-}
 
-export default function Home() {
   return (
     <div className="min-h-screen w-full bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
       <TargetCursor spinDuration={2.5} hideDefaultCursor parallaxOn hoverDuration={0.2} />
 
       <HomeBackground />
       <FloatingHeader />
-      <HomeHeroWrapper />
+      <HomeHero settings={settings} resumeUrl={resumeUrl} skills={skills} />
       
       <div className="relative">
-        <Suspense fallback={<AboutSkeleton />}>
-          <AboutSection />
-        </Suspense>
+        <HomeAboutSection education={education} settings={settings} />
         <SectionSeparator />
-        <Suspense fallback={<SkillsSkeleton />}>
-          <SkillsSection />
-        </Suspense>
+        <TechToolsSection skills={skills} />
         <SectionSeparator />
-        <Suspense fallback={<ImpactSkeleton />}>
-          <ImpactSection />
-        </Suspense>
+        <PortfolioImpact metrics={metrics} />
         <SectionSeparator />
-        <Suspense fallback={<ProjectsSkeleton />}>
-          <ProjectsPreviewSection />
-        </Suspense>
+        <HomeProjects projects={projects} />
         <SectionSeparator />
         <GithubContributions />
         <SectionSeparator />
         <LanguageBreakdown />
         <SectionSeparator />
-        <Suspense fallback={<JourneySkeleton />}>
-          <JourneyViewSection />
-        </Suspense>
+        <JourneySection activities={activities} />
         <SectionSeparator />
-        <Suspense fallback={<AchievementsSkeleton />}>
-          <AchievementsViewSection />
-        </Suspense>
+        <AchievementsSection achievements={achievements} />
         <SectionSeparator />
-        <Suspense fallback={<AboutSkeleton />}>
-          <ContactViewSection />
-        </Suspense>
+        <ContactForm settings={settings} recaptchaSiteKey={recaptchaSiteKey} />
         <FlutterFooter />
       </div>
     </div>
-  );
-}
-
-function HomeHeroWrapper() {
-  return (
-    <Suspense fallback={<HeroSkeleton />}>
-      <HeroSection />
-    </Suspense>
   );
 }
