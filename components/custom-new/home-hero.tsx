@@ -288,22 +288,9 @@ export default function HomeHero({
       }, containerRef);
     };
 
-    const isPreloaderActive =
-      typeof window !== "undefined" &&
-      !sessionStorage.getItem("preloaderShown") &&
-      !document.documentElement.classList.contains("preloader-done") &&
-      Boolean((window as any).__PRELOADER_ACTIVE__);
-
-    if (isPreloaderActive) {
-      window.addEventListener("preloader-exit", runHeroTimeline, { once: true });
-      return () => {
-        window.removeEventListener("preloader-exit", runHeroTimeline);
-        ctx?.revert();
-      };
-    } else {
-      runHeroTimeline();
-      return () => ctx?.revert();
-    }
+    // Always run immediately — no preloader gate
+    runHeroTimeline();
+    return () => ctx?.revert();
   }, []);
 
   return (

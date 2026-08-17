@@ -5,7 +5,7 @@ import Script from "next/script";
 import { Suspense } from "react";
 
 import GAListener from "@/lib/ga-listener";
-import Preloader from "@/components/custom-new/preloader";
+
 import { ThemeProvider } from "@/components/theme-provider";
 import SmoothScrollProvider from "@/components/providers/smooth-scroll-provider";
 import { getSiteSettings } from "@/lib/data";
@@ -76,25 +76,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <head>
-        {/* Instant synchronous session check before any DOM / React render */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (sessionStorage.getItem('preloaderShown')) {
-                  document.documentElement.classList.add('preloader-done');
-                  window.__PRELOADER_ACTIVE__ = false;
-                } else {
-                  window.__PRELOADER_ACTIVE__ = true;
-                }
-              } catch (e) {
-                window.__PRELOADER_ACTIVE__ = false;
-              }
-            `,
-          }}
-        />
-      </head>
+      <head />
+
       <body className={`${inter.className} ${inter.variable} ${bricolage.variable} ${jetbrainsMono.variable} antialiased`}>
         {/* Google Analytics */}
         <Script
@@ -110,9 +93,7 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* SPA pageview listener */}
         <Suspense fallback={null}>
-          <Preloader />
           <GAListener />
         </Suspense>
 

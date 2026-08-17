@@ -131,41 +131,23 @@ export default function FloatingHeader() {
     };
   }, [mobileMenuOpen]);
 
-  // GSAP Staggered Tri-Dock Entrance Timeline (Synchronized with Preloader)
+  // GSAP Staggered Tri-Dock Entrance Timeline — always runs on mount
   useEffect(() => {
     if (!containerRef.current) return;
 
     const pods = [leftPodRef.current, centerPodRef.current, rightPodRef.current].filter(Boolean);
 
-    const isPreloaderActive =
-      typeof window !== 'undefined' &&
-      !sessionStorage.getItem('preloaderShown') &&
-      !document.documentElement.classList.contains('preloader-done') &&
-      Boolean((window as any).__PRELOADER_ACTIVE__);
-
-    if (!isPreloaderActive) {
-      // Immediate visible render as the first rendering item on all refreshes & subsequent visits
-      gsap.set(pods, { y: 0, opacity: 1, scale: 1 });
-      return;
-    }
-
-    // Initial hidden state off-top only during the initial first-time preloader sequence
+    // Start hidden, then animate in immediately
     gsap.set(pods, { y: -35, opacity: 0, scale: 0.96 });
-
-    const runEntrance = () => {
-      gsap.to(pods, {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        stagger: 0.08,
-        ease: 'power4.out',
-        delay: 0.15,
-      });
-    };
-
-    window.addEventListener('preloader-exit', runEntrance, { once: true });
-    return () => window.removeEventListener('preloader-exit', runEntrance);
+    gsap.to(pods, {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      stagger: 0.08,
+      ease: 'power4.out',
+      delay: 0.1,
+    });
   }, []);
 
   // Scroll detection & Section spy
