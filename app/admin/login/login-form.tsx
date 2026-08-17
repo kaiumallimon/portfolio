@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import GradientWaves from "@/components/reactbits/GradientWaves";
 import TargetCursor from "@/components/TargetCursor";
 import { springs } from "@/lib/motion";
+import { loginAdminAction } from "@/app/admin/actions";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -39,15 +40,19 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await browserSupabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      setError(error.message);
+
+    const formData = new FormData();
+    formData.set("email", email);
+    formData.set("password", password);
+
+    const res = await loginAdminAction(formData);
+
+    if (res.error) {
+      setError(res.error);
       setLoading(false);
       return;
     }
+
     const redirect = searchParams.get("redirect") || "/admin";
     router.push(redirect);
     router.refresh();
@@ -321,7 +326,7 @@ export default function LoginForm() {
 
             {mode === "login" && (
               <p className="text-[11px] text-slate-500 font-mono">
-                Protected by TLS 1.3 & Supabase Row Level Security
+                Protected by TLS 1.3 & RLS
               </p>
             )}
           </div>

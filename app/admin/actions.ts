@@ -3,6 +3,55 @@
 import { revalidatePath } from "next/cache";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth/guard";
+import { getAuthServerClient } from "@/lib/supabase/auth";
+import { logSystemActivity } from "@/lib/audit";
+
+// ---------------------------------------------------------------------------
+// Secure Server-Side Login & Telemetry Action
+// ---------------------------------------------------------------------------
+export async function loginAdminAction(
+  formData: FormData
+): Promise<{ error?: string; success?: boolean }> {
+  const email = str(formData, "email");
+  const password = str(formData, "password");
+
+  if (!email || !password) {
+    return { error: "Email and password are required." };
+  }
+
+  const supabase = await getAuthServerClient();
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    // Server-verified failed authentication attempt
+    await logSystemActivity({
+      type: "login_failed",
+      action: "Admin Login Failed",
+      entity: "auth",
+      status: "failure",
+      userEmail: email,
+      metadata: { reason: error.message },
+    });
+    return { error: error.message };
+  }
+
+  // Server-verified authentic login success
+  await logSystemActivity({
+    type: "login_success",
+    action: "Admin Login Succeeded",
+    entity: "auth",
+    status: "success",
+    userEmail: email,
+    metadata: { userId: data.user.id },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/system-activity");
+  return { success: true };
+}
 
 // Allowed MIME types and max size (5MB) for uploaded files
 const ALLOWED_MIME_TYPES = [
@@ -20,7 +69,7 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 // Storage upload (called from client ImageUploader)
 // ---------------------------------------------------------------------------
 export async function uploadImage(formData: FormData): Promise<{ url: string | null; error?: string }> {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
   const bucket = formData.get("bucket") as string;
   const file = formData.get("file") as File | null;
@@ -48,6 +97,16 @@ export async function uploadImage(formData: FormData): Promise<{ url: string | n
   if (error) return { url: null, error: error.message };
 
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+
+  // Track write activity
+  await logSystemActivity({
+    type: "upload",
+    action: `Uploaded asset to ${bucket}`,
+    entity: "storage",
+    userEmail: admin.email,
+    metadata: { bucket, path, fileName: file.name, fileSize: file.size, fileType: file.type },
+  });
+
   return { url: data.publicUrl };
 }
 
@@ -93,7 +152,7 @@ function revalidateAll() {
 // Projects
 // ---------------------------------------------------------------------------
 export async function saveProject(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
 
@@ -118,30 +177,60 @@ export async function saveProject(formData: FormData) {
     image: images?.[0] ?? null,
     images,
     order: num(formData, "order"),
+    featured: bool(formData, "featured"),
+    is_mobile: bool(formData, "is_mobile"),
   };
+
   if (id) {
     await supabase.from("projects").update(payload).eq("id", id);
+    await logSystemActivity({
+      type: "update",
+      action: `Updated Project: ${payload.name || id}`,
+      entity: "projects",
+      entityId: id,
+      userEmail: admin.email,
+      metadata: { name: payload.name, technologies: payload.technologies },
+    });
   } else {
-    await supabase.from("projects").insert(payload);
+    const { data } = await supabase.from("projects").insert(payload).select("id").single();
+    await logSystemActivity({
+      type: "create",
+      action: `Created Project: ${payload.name || "New"}`,
+      entity: "projects",
+      entityId: data?.id,
+      userEmail: admin.email,
+      metadata: { name: payload.name, technologies: payload.technologies },
+    });
   }
   revalidateAll();
   revalidatePath("/admin/projects");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function deleteProject(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
-  if (id) await supabase.from("projects").delete().eq("id", id);
+  if (id) {
+    await supabase.from("projects").delete().eq("id", id);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Project (ID: ${id})`,
+      entity: "projects",
+      entityId: id,
+      userEmail: admin.email,
+    });
+  }
   revalidateAll();
   revalidatePath("/admin/projects");
+  revalidatePath("/admin/system-activity");
 }
 
 // ---------------------------------------------------------------------------
 // Achievements
 // ---------------------------------------------------------------------------
 export async function saveAchievement(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -156,27 +245,54 @@ export async function saveAchievement(formData: FormData) {
   };
   if (id) {
     await supabase.from("achievements").update(payload).eq("id", id);
+    await logSystemActivity({
+      type: "update",
+      action: `Updated Achievement: ${payload.title}`,
+      entity: "achievements",
+      entityId: id,
+      userEmail: admin.email,
+      metadata: { title: payload.title, award: payload.award },
+    });
   } else {
-    await supabase.from("achievements").insert(payload);
+    const { data } = await supabase.from("achievements").insert(payload).select("id").single();
+    await logSystemActivity({
+      type: "create",
+      action: `Created Achievement: ${payload.title}`,
+      entity: "achievements",
+      entityId: data?.id,
+      userEmail: admin.email,
+      metadata: { title: payload.title, award: payload.award },
+    });
   }
   revalidateAll();
   revalidatePath("/admin/achievements");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function deleteAchievement(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
-  if (id) await supabase.from("achievements").delete().eq("id", id);
+  if (id) {
+    await supabase.from("achievements").delete().eq("id", id);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Achievement (ID: ${id})`,
+      entity: "achievements",
+      entityId: id,
+      userEmail: admin.email,
+    });
+  }
   revalidateAll();
   revalidatePath("/admin/achievements");
+  revalidatePath("/admin/system-activity");
 }
 
 // ---------------------------------------------------------------------------
 // Activities
 // ---------------------------------------------------------------------------
 export async function saveActivity(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -188,27 +304,54 @@ export async function saveActivity(formData: FormData) {
   };
   if (id) {
     await supabase.from("activities").update(payload).eq("id", id);
+    await logSystemActivity({
+      type: "update",
+      action: `Updated Activity: ${payload.title}`,
+      entity: "activities",
+      entityId: id,
+      userEmail: admin.email,
+      metadata: { title: payload.title, organization: payload.organization },
+    });
   } else {
-    await supabase.from("activities").insert(payload);
+    const { data } = await supabase.from("activities").insert(payload).select("id").single();
+    await logSystemActivity({
+      type: "create",
+      action: `Created Activity: ${payload.title}`,
+      entity: "activities",
+      entityId: data?.id,
+      userEmail: admin.email,
+      metadata: { title: payload.title, organization: payload.organization },
+    });
   }
   revalidateAll();
   revalidatePath("/admin/activities");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function deleteActivity(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
-  if (id) await supabase.from("activities").delete().eq("id", id);
+  if (id) {
+    await supabase.from("activities").delete().eq("id", id);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Activity (ID: ${id})`,
+      entity: "activities",
+      entityId: id,
+      userEmail: admin.email,
+    });
+  }
   revalidateAll();
   revalidatePath("/admin/activities");
+  revalidatePath("/admin/system-activity");
 }
 
 // ---------------------------------------------------------------------------
 // Education
 // ---------------------------------------------------------------------------
 export async function saveEducation(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -221,27 +364,54 @@ export async function saveEducation(formData: FormData) {
   };
   if (id) {
     await supabase.from("education").update(payload).eq("id", id);
+    await logSystemActivity({
+      type: "update",
+      action: `Updated Education: ${payload.degree}`,
+      entity: "education",
+      entityId: id,
+      userEmail: admin.email,
+      metadata: { degree: payload.degree, institution: payload.institution },
+    });
   } else {
-    await supabase.from("education").insert(payload);
+    const { data } = await supabase.from("education").insert(payload).select("id").single();
+    await logSystemActivity({
+      type: "create",
+      action: `Created Education: ${payload.degree}`,
+      entity: "education",
+      entityId: data?.id,
+      userEmail: admin.email,
+      metadata: { degree: payload.degree, institution: payload.institution },
+    });
   }
   revalidateAll();
   revalidatePath("/admin/education");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function deleteEducation(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
-  if (id) await supabase.from("education").delete().eq("id", id);
+  if (id) {
+    await supabase.from("education").delete().eq("id", id);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Education (ID: ${id})`,
+      entity: "education",
+      entityId: id,
+      userEmail: admin.email,
+    });
+  }
   revalidateAll();
   revalidatePath("/admin/education");
+  revalidatePath("/admin/system-activity");
 }
 
 // ---------------------------------------------------------------------------
 // Skills
 // ---------------------------------------------------------------------------
 export async function saveSkill(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const skillsJson = str(formData, "skills_json");
@@ -262,27 +432,54 @@ export async function saveSkill(formData: FormData) {
   };
   if (id) {
     await supabase.from("skills").update(payload).eq("id", id);
+    await logSystemActivity({
+      type: "update",
+      action: `Updated Skill Category: ${payload.category}`,
+      entity: "skills",
+      entityId: id,
+      userEmail: admin.email,
+      metadata: { category: payload.category, count: skills.length },
+    });
   } else {
-    await supabase.from("skills").insert(payload);
+    const { data } = await supabase.from("skills").insert(payload).select("id").single();
+    await logSystemActivity({
+      type: "create",
+      action: `Created Skill Category: ${payload.category}`,
+      entity: "skills",
+      entityId: data?.id,
+      userEmail: admin.email,
+      metadata: { category: payload.category, count: skills.length },
+    });
   }
   revalidateAll();
   revalidatePath("/admin/skills");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function deleteSkill(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
-  if (id) await supabase.from("skills").delete().eq("id", id);
+  if (id) {
+    await supabase.from("skills").delete().eq("id", id);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Skill Category (ID: ${id})`,
+      entity: "skills",
+      entityId: id,
+      userEmail: admin.email,
+    });
+  }
   revalidateAll();
   revalidatePath("/admin/skills");
+  revalidatePath("/admin/system-activity");
 }
 
 // ---------------------------------------------------------------------------
 // Hobbies
 // ---------------------------------------------------------------------------
 export async function saveHobby(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -293,27 +490,54 @@ export async function saveHobby(formData: FormData) {
   };
   if (id) {
     await supabase.from("hobbies").update(payload).eq("id", id);
+    await logSystemActivity({
+      type: "update",
+      action: `Updated Hobby: ${payload.title}`,
+      entity: "hobbies",
+      entityId: id,
+      userEmail: admin.email,
+      metadata: { title: payload.title },
+    });
   } else {
-    await supabase.from("hobbies").insert(payload);
+    const { data } = await supabase.from("hobbies").insert(payload).select("id").single();
+    await logSystemActivity({
+      type: "create",
+      action: `Created Hobby: ${payload.title}`,
+      entity: "hobbies",
+      entityId: data?.id,
+      userEmail: admin.email,
+      metadata: { title: payload.title },
+    });
   }
   revalidateAll();
   revalidatePath("/admin/hobbies");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function deleteHobby(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
-  if (id) await supabase.from("hobbies").delete().eq("id", id);
+  if (id) {
+    await supabase.from("hobbies").delete().eq("id", id);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Hobby (ID: ${id})`,
+      entity: "hobbies",
+      entityId: id,
+      userEmail: admin.email,
+    });
+  }
   revalidateAll();
   revalidatePath("/admin/hobbies");
+  revalidatePath("/admin/system-activity");
 }
 
 // ---------------------------------------------------------------------------
 // Metrics
 // ---------------------------------------------------------------------------
 export async function saveMetric(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -326,27 +550,54 @@ export async function saveMetric(formData: FormData) {
   };
   if (id) {
     await supabase.from("metrics").update(payload).eq("id", id);
+    await logSystemActivity({
+      type: "update",
+      action: `Updated Metric: ${payload.label}`,
+      entity: "metrics",
+      entityId: id,
+      userEmail: admin.email,
+      metadata: { label: payload.label, value: payload.value },
+    });
   } else {
-    await supabase.from("metrics").insert(payload);
+    const { data } = await supabase.from("metrics").insert(payload).select("id").single();
+    await logSystemActivity({
+      type: "create",
+      action: `Created Metric: ${payload.label}`,
+      entity: "metrics",
+      entityId: data?.id,
+      userEmail: admin.email,
+      metadata: { label: payload.label, value: payload.value },
+    });
   }
   revalidateAll();
   revalidatePath("/admin/metrics");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function deleteMetric(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
-  if (id) await supabase.from("metrics").delete().eq("id", id);
+  if (id) {
+    await supabase.from("metrics").delete().eq("id", id);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Metric (ID: ${id})`,
+      entity: "metrics",
+      entityId: id,
+      userEmail: admin.email,
+    });
+  }
   revalidateAll();
   revalidatePath("/admin/metrics");
+  revalidatePath("/admin/system-activity");
 }
 
 // ---------------------------------------------------------------------------
 // Settings (singleton)
 // ---------------------------------------------------------------------------
 export async function saveSettings(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const payload = {
     id: 1,
@@ -385,42 +636,97 @@ export async function saveSettings(formData: FormData) {
     await supabase.from("resume").insert({ resume_url: resumeUrl });
   }
 
+  await logSystemActivity({
+    type: "settings_update",
+    action: "Updated Portfolio Site Settings",
+    entity: "settings",
+    entityId: "1",
+    userEmail: admin.email,
+    metadata: {
+      display_name: payload.display_name,
+      available_status: payload.available_status,
+      hero_headline: payload.hero_headline,
+    },
+  });
+
   revalidateAll();
   revalidatePath("/admin/settings");
+  revalidatePath("/admin/system-activity");
 }
 
 // ---------------------------------------------------------------------------
 // Contact messages
 // ---------------------------------------------------------------------------
 export async function deleteMessage(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
-  if (id) await supabase.from("contact_messages").delete().eq("id", id);
+  if (id) {
+    await supabase.from("contact_messages").delete().eq("id", id);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Contact Message (ID: ${id})`,
+      entity: "messages",
+      entityId: id,
+      userEmail: admin.email,
+    });
+  }
   revalidatePath("/admin/messages");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function toggleMessageRead(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const read = bool(formData, "read");
-  if (id) await supabase.from("contact_messages").update({ read }).eq("id", id);
+  if (id) {
+    await supabase.from("contact_messages").update({ read }).eq("id", id);
+    await logSystemActivity({
+      type: "update",
+      action: `${read ? "Marked Read" : "Marked Unread"} Contact Message (ID: ${id})`,
+      entity: "messages",
+      entityId: id,
+      userEmail: admin.email,
+      metadata: { read },
+    });
+  }
   revalidatePath("/admin/messages");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function markThreadRead(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const email = str(formData, "email");
-  if (email) await supabase.from("contact_messages").update({ read: true }).eq("email", email);
+  if (email) {
+    await supabase.from("contact_messages").update({ read: true }).eq("email", email);
+    await logSystemActivity({
+      type: "update",
+      action: `Marked Thread Read for ${email}`,
+      entity: "messages",
+      userEmail: admin.email,
+      metadata: { senderEmail: email },
+    });
+  }
   revalidatePath("/admin/messages");
+  revalidatePath("/admin/system-activity");
 }
 
 export async function deleteThread(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const supabase = getServerSupabase();
   const email = str(formData, "email");
-  if (email) await supabase.from("contact_messages").delete().eq("email", email);
+  if (email) {
+    await supabase.from("contact_messages").delete().eq("email", email);
+    await logSystemActivity({
+      type: "delete",
+      action: `Deleted Message Thread for ${email}`,
+      entity: "messages",
+      userEmail: admin.email,
+      metadata: { senderEmail: email },
+    });
+  }
   revalidatePath("/admin/messages");
+  revalidatePath("/admin/system-activity");
 }

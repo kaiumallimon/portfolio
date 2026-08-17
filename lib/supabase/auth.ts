@@ -5,12 +5,10 @@ import type { User } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-// Server-side session reader using the anon key (reads auth cookies).
-// Use only inside Server Components / Route Handlers / Server Actions.
-export async function getSessionUser(): Promise<User | null> {
+export async function getAuthServerClient() {
   const cookieStore = await cookies();
 
-  const supabase = createServerClient(supabaseUrl, anonKey, {
+  return createServerClient(supabaseUrl, anonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -26,7 +24,12 @@ export async function getSessionUser(): Promise<User | null> {
       },
     },
   });
+}
 
+// Server-side session reader using the anon key (reads auth cookies).
+// Use only inside Server Components / Route Handlers / Server Actions.
+export async function getSessionUser(): Promise<User | null> {
+  const supabase = await getAuthServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

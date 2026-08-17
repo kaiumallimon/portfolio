@@ -16,6 +16,7 @@ import {
   BarChart3,
   Settings,
   Mail,
+  ShieldAlert,
   ExternalLink,
   LogOut,
   Sun,
@@ -45,6 +46,7 @@ interface NavGroup {
 
 const SUBTITLES: Record<string, string> = {
   "/admin": "Overview of your portfolio content",
+  "/admin/system-activity": "System telemetry, login attempts & audit logs",
   "/admin/projects": "Manage your showcased projects",
   "/admin/achievements": "Manage awards and competition results",
   "/admin/activities": "Manage co-curricular activities and roles",
@@ -59,7 +61,10 @@ const SUBTITLES: Record<string, string> = {
 const NAV: NavGroup[] = [
   {
     label: "Overview",
-    items: [{ href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true }],
+    items: [
+      { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+      { href: "/admin/system-activity", label: "System Activity", icon: ShieldAlert },
+    ],
   },
   {
     label: "Content Management",

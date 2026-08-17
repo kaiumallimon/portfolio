@@ -15,11 +15,13 @@ import {
   BarChart3,
   Settings,
   Mail,
+  ShieldAlert,
   LogOut,
 } from "lucide-react";
 
 const NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/system-activity", label: "System Activity", icon: ShieldAlert },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
   { href: "/admin/achievements", label: "Achievements", icon: Trophy },
   { href: "/admin/activities", label: "Activities", icon: Activity },

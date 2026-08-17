@@ -24,6 +24,7 @@ import {
   BarChart3,
   Settings,
   Mail,
+  ShieldAlert,
   ExternalLink,
 } from "lucide-react";
 
@@ -37,7 +38,10 @@ interface NavSearchItem {
 const SEARCH_NAV: { label: string; items: NavSearchItem[] }[] = [
   {
     label: "Overview",
-    items: [{ href: "/admin", label: "Dashboard", icon: LayoutDashboard, external: false }],
+    items: [
+      { href: "/admin", label: "Dashboard", icon: LayoutDashboard, external: false },
+      { href: "/admin/system-activity", label: "System Activity", icon: ShieldAlert, external: false },
+    ],
   },
   {
     label: "Content Management",

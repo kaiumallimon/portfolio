@@ -402,3 +402,69 @@ export async function getContactMessages(): Promise<ContactMessage[]> {
   }
   return (data as ContactMessage[]) ?? [];
 }
+
+export async function getSystemActivities(limit = 10): Promise<any[]> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const { data, error } = await supabase
+      .from("system_activities")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return data ?? [];
+  }, []);
+}
+
+export async function getSystemActivitiesPaginated({
+  page = 1,
+  size = 15,
+  q = "",
+  type = "all",
+  status = "all",
+}: {
+  page?: number;
+  size?: number;
+  q?: string;
+  type?: string;
+  status?: string;
+}): Promise<{ activities: any[]; total: number }> {
+  return safeQuery(async () => {
+    const supabase = getServerSupabase();
+    const from = (page - 1) * size;
+    const to = from + size - 1;
+
+    let query = supabase
+      .from("system_activities")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false });
+
+    if (type && type !== "all") {
+      if (type === "login") {
+        query = query.or("type.eq.login_success,type.eq.login_failed");
+      } else if (type === "writes") {
+        query = query.in("type", ["create", "update", "delete", "upload", "settings_update"]);
+      } else if (type === "security") {
+        query = query.or("type.eq.login_success,type.eq.login_failed,type.eq.password_reset_request,type.eq.password_reset_success");
+      } else {
+        query = query.eq("type", type);
+      }
+    }
+
+    if (status && status !== "all") {
+      query = query.eq("status", status);
+    }
+
+    const term = q.trim();
+    if (term) {
+      const like = `%${term}%`;
+      query = query.or(`action.ilike.${like},ip_address.ilike.${like},user_email.ilike.${like},browser.ilike.${like},os.ilike.${like},entity.ilike.${like}`);
+    }
+
+    const { data, error, count } = await query.range(from, to);
+    if (error) throw error;
+    return { activities: (data as any[]) ?? [], total: count ?? 0 };
+  }, { activities: [], total: 0 });
+}
+
+
