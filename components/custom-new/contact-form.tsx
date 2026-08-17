@@ -149,7 +149,7 @@ export default function ContactForm({
             <div className="space-y-8 flex flex-col justify-between">
               <div className="space-y-4">
                 {available && (
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
+                  <span className="gsap-eyebrow inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
@@ -157,18 +157,30 @@ export default function ContactForm({
                     Available for work
                   </span>
                 )}
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">
-                  Let&apos;s build something{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-300">
-                    exceptional.
+
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight perspective-1000">
+                  <span className="inline-block overflow-hidden mr-2.5">
+                    <span className="gsap-word inline-block">Let&apos;s</span>
+                  </span>
+                  <span className="inline-block overflow-hidden mr-2.5">
+                    <span className="gsap-word inline-block">build</span>
+                  </span>
+                  <span className="inline-block overflow-hidden mr-2.5">
+                    <span className="gsap-word inline-block">something</span>
+                  </span>
+                  <span className="inline-block overflow-hidden">
+                    <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-300">
+                      exceptional.
+                    </span>
                   </span>
                 </h2>
-                <p className="text-slate-400 text-sm md:text-base leading-relaxed">
+
+                <p className="gsap-subtitle text-slate-400 text-sm md:text-base leading-relaxed">
                   I am currently open to full-stack and mobile software engineering opportunities. Whether you have a project idea, proposal, or question, feel free to reach out!
                 </p>
               </div>
 
-              <div className="space-y-3">
+              <div data-gsap-card className="space-y-3">
                 <a
                   href={`mailto:${email}`}
                   className="group flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/4 hover:bg-indigo-500/10 hover:border-indigo-500/30 transition-all cursor-target"
@@ -194,8 +206,8 @@ export default function ContactForm({
               </div>
             </div>
 
-            {/* Right: Form */}
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            {/* Right: Form (renders AFTER headline & subtitle) */}
+            <form data-gsap-card className="space-y-4" onSubmit={handleSubmit}>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-300 ml-1">Your Name</label>
                 <input
