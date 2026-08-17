@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import type { ComponentType } from "react";
 import type { SkillCategory } from "@/types/content";
 import { springs, use3DTilt } from "@/lib/motion";
+import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
 
 const ICON_MAP: Record<string, ComponentType<{ size?: number; className?: string }>> = {
   FaMobile,
@@ -121,12 +122,8 @@ function BentoSkillCard({
 
 export default function TechToolsSection({ skills }: { skills: SkillCategory[] }) {
   return (
-    <motion.section
+    <ScrollRevealSection
       id="skills"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={springs.gentle}
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="mb-12">
@@ -156,6 +153,6 @@ export default function TechToolsSection({ skills }: { skills: SkillCategory[] }
           );
         })}
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

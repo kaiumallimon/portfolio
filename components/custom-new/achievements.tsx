@@ -2,10 +2,11 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Trophy, Calendar, Users, Code, X, Sparkles } from "lucide-react";
+import { Trophy, Calendar, Users, Code, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Achievement } from "@/types/content";
 import { springs, use3DTilt } from "@/lib/motion";
+import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
 
 function AchievementCardItem({ achievement, onSelectImage }: { achievement: Achievement; onSelectImage: (img: string) => void }) {
   const isChampion = achievement.award_rank === "champion";
@@ -110,12 +111,8 @@ export default function AchievementsSection({
   }, [fullscreenImage]);
 
   return (
-    <motion.section
+    <ScrollRevealSection
       id="achievements"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={springs.gentle}
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="max-w-6xl mx-auto">
@@ -181,6 +178,6 @@ export default function AchievementsSection({
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

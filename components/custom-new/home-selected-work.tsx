@@ -5,6 +5,7 @@ import type { Project } from "@/types/project";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { springs, use3DTilt } from "@/lib/motion";
+import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
 
 function ProjectCardItem({ project, index }: { project: Project; index: number }) {
   const isMobile = project.client === "mobile";
@@ -129,12 +130,8 @@ export default function HomeProjects({ projects }: { projects: Project[] }) {
   const preview = projects.slice(0, 3);
 
   return (
-    <motion.section
+    <ScrollRevealSection
       id="projects"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={springs.gentle}
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="max-w-6xl mx-auto">
@@ -179,6 +176,6 @@ export default function HomeProjects({ projects }: { projects: Project[] }) {
           </motion.div>
         </div>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

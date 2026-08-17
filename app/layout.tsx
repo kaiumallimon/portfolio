@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import GAListener from "@/lib/ga-listener";
 import Preloader from "@/components/custom-new/preloader";
 import { ThemeProvider } from "@/components/theme-provider";
+import SmoothScrollProvider from "@/components/providers/smooth-scroll-provider";
 import { getSiteSettings } from "@/lib/data";
 
 
@@ -101,7 +102,9 @@ export default function RootLayout({
         </Suspense>
 
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          {children}
+          <SmoothScrollProvider>
+            {children}
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>

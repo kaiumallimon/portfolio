@@ -6,6 +6,7 @@ import { MdEmail } from "react-icons/md";
 import { motion } from "framer-motion";
 import type { Education, SiteSettings } from "@/types/content";
 import { springs, use3DTilt, useMagnetic } from "@/lib/motion";
+import { ScrollRevealSection, ScrollReveal } from "@/components/shared/scroll-reveal";
 
 const ICONS: Record<string, typeof GraduationCap> = {
   GraduationCap,
@@ -56,12 +57,8 @@ export default function HomeAboutSection({
   const cardTilt = use3DTilt({ maxTilt: 6, scale: 1.01 });
 
   return (
-    <motion.section
+    <ScrollRevealSection
       id="about"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={springs.gentle}
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-start">
@@ -160,6 +157,6 @@ export default function HomeAboutSection({
           </motion.div>
         </div>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

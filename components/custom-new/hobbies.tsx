@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { MdSportsSoccer, MdVideogameAsset, MdMovie } from "react-icons/md";
 import type { Hobby } from "@/types/content";
 import { springs, use3DTilt } from "@/lib/motion";
+import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
 
 const ICON_MAP: Record<string, typeof MdSportsSoccer> = {
   MdSportsSoccer,
@@ -41,11 +42,7 @@ function HobbyCardItem({ hobby }: { hobby: Hobby }) {
 export default function HobbiesSection({ hobbies }: { hobbies: Hobby[] }) {
   if (hobbies.length === 0) return null;
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={springs.gentle}
+    <ScrollRevealSection
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="max-w-6xl mx-auto">
@@ -67,6 +64,6 @@ export default function HobbiesSection({ hobbies }: { hobbies: Hobby[] }) {
           ))}
         </div>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }

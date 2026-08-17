@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { SiteSettings } from "@/types/content";
 import { springs, useMagnetic } from "@/lib/motion";
+import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
 
 declare global {
   interface GrecaptchaParameters {
@@ -134,12 +135,8 @@ export default function ContactForm({
     "w-full bg-slate-950/60 border border-white/10 rounded-2xl px-4 py-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50";
 
   return (
-    <motion.section
+    <ScrollRevealSection
       id="contact"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={springs.gentle}
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="max-w-6xl mx-auto">
@@ -298,6 +295,6 @@ export default function ContactForm({
           </div>
         </div>
       </div>
-    </motion.section>
+    </ScrollRevealSection>
   );
 }
