@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowUpRight, Download, Loader2, Sparkles, Terminal, Activity, Zap, CheckCircle2 } from "lucide-react";
+import { ArrowDown, Download, Loader2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { SiFlutter, SiNextdotjs, SiTypescript, SiDart, SiPostgresql, SiDocker, SiGo } from "react-icons/si";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { SiFlutter, SiNextdotjs, SiTypescript, SiDart, SiPostgresql, SiDocker } from "react-icons/si";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import GradientWaves from "@/components/reactbits/GradientWaves";
 import type { SiteSettings } from "@/types/content";
 import { springs, useMagnetic } from "@/lib/motion";
 
@@ -15,13 +16,13 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const INTERACTIVE_SKILLS = [
-  { name: "Flutter", icon: SiFlutter, color: "text-cyan-400", border: "hover:border-cyan-500/50", glow: "rgba(6, 182, 212, 0.25)", tag: "Mobile Engine" },
-  { name: "Dart", icon: SiDart, color: "text-blue-400", border: "hover:border-blue-500/50", glow: "rgba(59, 130, 246, 0.25)", tag: "Language" },
-  { name: "TypeScript", icon: SiTypescript, color: "text-sky-400", border: "hover:border-sky-500/50", glow: "rgba(56, 189, 248, 0.25)", tag: "Core Stack" },
-  { name: "Next.js", icon: SiNextdotjs, color: "text-white", border: "hover:border-white/50", glow: "rgba(255, 255, 255, 0.2)", tag: "Full-Stack" },
-  { name: "PostgreSQL", icon: SiPostgresql, color: "text-indigo-400", border: "hover:border-indigo-500/50", glow: "rgba(99, 102, 241, 0.25)", tag: "Database" },
-  { name: "Docker", icon: SiDocker, color: "text-blue-400", border: "hover:border-blue-500/50", glow: "rgba(59, 130, 246, 0.25)", tag: "DevOps" },
+const TECH_PILLS = [
+  { name: "Flutter", icon: SiFlutter, color: "text-cyan-400", border: "hover:border-cyan-500/50" },
+  { name: "Dart", icon: SiDart, color: "text-blue-400", border: "hover:border-blue-500/50" },
+  { name: "TypeScript", icon: SiTypescript, color: "text-sky-400", border: "hover:border-sky-500/50" },
+  { name: "Next.js", icon: SiNextdotjs, color: "text-white", border: "hover:border-white/50" },
+  { name: "PostgreSQL", icon: SiPostgresql, color: "text-indigo-400", border: "hover:border-indigo-500/50" },
+  { name: "Docker", icon: SiDocker, color: "text-blue-400", border: "hover:border-blue-500/50" },
 ];
 
 export default function HomeHero({
@@ -32,34 +33,16 @@ export default function HomeHero({
   resumeUrl: string | null;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subheadlineRef = useRef<HTMLParagraphElement>(null);
-  const badgeRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const telemetryRef = useRef<HTMLDivElement>(null);
-  const skillsRef = useRef<HTMLDivElement>(null);
+  const techPillsRef = useRef<HTMLDivElement>(null);
 
   const [downloading, setDownloading] = useState(false);
-  const [activeSkill, setActiveSkill] = useState<string | null>(null);
-
-  // Mouse coordinate tracker for living stage lighting
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const smoothMouseX = useSpring(mouseX, { stiffness: 120, damping: 20 });
-  const smoothMouseY = useSpring(mouseY, { stiffness: 120, damping: 20 });
-
-  const spotlightBg = useTransform(
-    [smoothMouseX, smoothMouseY],
-    ([x, y]) => `radial-gradient(650px circle at ${x}px ${y}px, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.04) 40%, transparent 80%)`
-  );
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
-  };
-
   const downloadMagnetic = useMagnetic(0.25);
   const workMagnetic = useMagnetic(0.25);
 
@@ -87,7 +70,7 @@ export default function HomeHero({
   const profileImage = settings?.profile_image || "/bordered.png";
   const subheadline =
     settings?.hero_subheadline ||
-    "Software Engineer specialized in building production-grade mobile applications and resilient full-stack systems with 60–120 FPS fluid physics.";
+    "Flutter Specialist & Full-Stack Software Engineer crafting high-performance mobile apps, web platforms, and scalable backends.";
   const available = settings?.available_status ?? true;
 
   // GSAP Kinetic Entrance Timeline
@@ -95,16 +78,26 @@ export default function HomeHero({
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
-      // 1. Status Capsule
-      if (badgeRef.current) {
+      // 1. Avatar Pop
+      if (avatarRef.current) {
         tl.fromTo(
-          badgeRef.current,
-          { y: -16, opacity: 0, scale: 0.95 },
-          { y: 0, opacity: 1, scale: 1, duration: 0.7, ease: "power3.out" }
+          avatarRef.current,
+          { scale: 0.65, opacity: 0, y: 18 },
+          { scale: 1, opacity: 1, y: 0, duration: 0.95, ease: "back.out(1.6)" }
         );
       }
 
-      // 2. Kinetic Word-by-Word Title Reveal
+      // 2. Status Capsule
+      if (badgeRef.current) {
+        tl.fromTo(
+          badgeRef.current,
+          { y: -14, opacity: 0, scale: 0.92 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.7, ease: "power3.out" },
+          "-=0.65"
+        );
+      }
+
+      // 3. Kinetic Word-by-Word Title Reveal
       if (headlineRef.current) {
         const words = headlineRef.current.querySelectorAll(".gsap-word");
         tl.fromTo(
@@ -123,11 +116,11 @@ export default function HomeHero({
             duration: 0.85,
             ease: "power4.out",
           },
-          "-=0.5"
+          "-=0.55"
         );
       }
 
-      // 3. Subheadline
+      // 4. Subheadline
       if (subheadlineRef.current) {
         tl.fromTo(
           subheadlineRef.current,
@@ -137,7 +130,7 @@ export default function HomeHero({
         );
       }
 
-      // 4. CTA Buttons
+      // 5. CTA Buttons
       if (ctaRef.current) {
         tl.fromTo(
           ctaRef.current.children,
@@ -147,24 +140,40 @@ export default function HomeHero({
         );
       }
 
-      // 5. Telemetry Live Dock
+      // 6. Telemetry Dock
       if (telemetryRef.current) {
         tl.fromTo(
           telemetryRef.current,
           { y: 20, opacity: 0, scale: 0.96 },
           { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" },
-          "-=0.45"
+          "-=0.4"
         );
       }
 
-      // 6. Interactive Skill Nodes
-      if (skillsRef.current) {
+      // 7. Tech Pills
+      if (techPillsRef.current) {
         tl.fromTo(
-          skillsRef.current.children,
+          techPillsRef.current.children,
           { y: 16, opacity: 0, scale: 0.9 },
-          { y: 0, opacity: 1, scale: 1, stagger: 0.05, duration: 0.7, ease: "back.out(1.4)" },
-          "-=0.4"
+          { y: 0, opacity: 1, scale: 1, stagger: 0.04, duration: 0.65, ease: "back.out(1.4)" },
+          "-=0.35"
         );
+      }
+
+      // 8. Parallax scrub on scroll
+      if (contentRef.current && containerRef.current) {
+        gsap.to(contentRef.current, {
+          y: 70,
+          opacity: 0.2,
+          scale: 0.98,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
       }
     }, containerRef);
 
@@ -174,41 +183,67 @@ export default function HomeHero({
   return (
     <div
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className="relative overflow-hidden h-screen max-h-screen min-h-[660px] flex items-center justify-center"
+      className="relative overflow-hidden h-screen max-h-screen min-h-[660px] flex items-center justify-center bg-[#070712]"
     >
-      {/* Living Interactive Mouse Spotlight */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-        style={{ background: spotlightBg }}
+      {/* ReactBits GradientWaves WebGL Raymarched Background - Vivid & High Visibility */}
+      <GradientWaves
+        horizonColor="#312e81"
+        waveColor="#6366f1"
+        crestColor="#38bdf8"
+        speed={0.35}
+        amplitude={2.6}
+        waveScale={0.6}
+        waveRatio={0.9}
+        swell={32}
+        turbulence={18}
+        tilt={1.12}
+        height={5.0}
+        fogDepth={18}
+        brightness={1.25}
+        opacity={0.85}
+        mouseInteraction={true}
+        parallaxStrength={0.45}
+        grain={true}
+        grainIntensity={0.03}
+        className="opacity-100"
       />
 
-      {/* Geometric Matrix Lines */}
+      {/* Ambient Vignette for text contrast */}
+      <div className="absolute inset-0 bg-radial from-transparent via-[#070712]/40 to-[#070712]/90 pointer-events-none" />
+
+      {/* Subtle Matrix Lines */}
       <div
         className={cn(
           "absolute inset-0 z-[1]",
-          "bg-size-[44px_44px]",
-          "bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)]",
-          "opacity-50 pointer-events-none"
+          "bg-size-[40px_40px]",
+          "bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]",
+          "opacity-30 pointer-events-none"
         )}
       />
 
       {/* Top Specular Horizon Beam */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent pointer-events-none" />
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent pointer-events-none" />
 
-      {/* Hero Foreground Stage */}
-      <main className="relative z-10 pt-20 md:pt-24 pb-6 px-6 max-w-5xl mx-auto w-full flex flex-col items-center justify-center h-full will-change-transform">
+      {/* Foreground Hero Content Centered & Scaled for 100% Screen Fit */}
+      <main
+        ref={contentRef}
+        className="relative z-10 pt-20 md:pt-24 pb-6 px-6 max-w-5xl mx-auto w-full flex flex-col items-center justify-center h-full will-change-transform"
+      >
         <div className="flex flex-col items-center text-center space-y-4 md:space-y-5 w-full my-auto">
           
-          {/* Avatar & Realtime Telemetry Header - Vertically Aligned */}
-          <div className="flex flex-col items-center gap-3">
+          {/* Avatar & Status Header (Vertically Stacked) */}
+          <div className="flex flex-col items-center gap-2.5">
             {/* 3D Holographic Avatar */}
-            <motion.div
-              whileHover={{ scale: 1.08, rotate: 2 }}
-              transition={springs.snappy}
-              className="relative p-1 rounded-full bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 shadow-xl shadow-indigo-500/25 cursor-pointer shrink-0"
+            <div
+              ref={avatarRef}
+              className="relative p-1 rounded-full bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 shadow-2xl shadow-indigo-500/30 cursor-pointer shrink-0"
             >
-              <div className="relative w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-slate-950 bg-slate-900">
+              <motion.div
+                whileHover={{ scale: 1.08, rotate: 2 }}
+                whileTap={{ scale: 0.95 }}
+                transition={springs.snappy}
+                className="relative w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-slate-950 bg-slate-900"
+              >
                 <Image
                   src={profileImage}
                   alt="Kaium Al Limon"
@@ -216,17 +251,17 @@ export default function HomeHero({
                   priority
                   className="object-cover"
                 />
-              </div>
+              </motion.div>
               <span className="absolute bottom-0.5 right-0.5 flex h-3.5 w-3.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-slate-950" />
               </span>
-            </motion.div>
+            </div>
 
             {/* Status Capsule */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-300 text-xs font-medium tracking-wide backdrop-blur-xl shadow-sm hover:border-indigo-500/40 transition-colors"
+              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-950/70 border border-indigo-500/30 text-indigo-300 text-xs font-medium tracking-wide backdrop-blur-xl shadow-xl hover:border-indigo-500/50 transition-colors"
             >
               <span className="text-white font-semibold">Kaium Al Limon</span>
               <span className="text-white/20">|</span>
@@ -237,44 +272,57 @@ export default function HomeHero({
             </div>
           </div>
 
-          {/* Grand Headline with Split-Word Kinetic Reveal & Glowing Highlight */}
+          {/* Kinetic Headline with Masked Word Reveals */}
           <h1
             ref={headlineRef}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-white max-w-4xl leading-[1.08] perspective-1000"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold tracking-tight text-white max-w-4xl leading-[1.1] perspective-1000"
           >
-            <span className="inline-block overflow-hidden mr-2">
-              <span className="gsap-word inline-block">Building</span>
-            </span>
-            <span className="inline-block overflow-hidden mr-2">
-              <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-300 to-cyan-300">
-                high-velocity
+            {settings?.hero_headline ? (
+              <span className="inline-block overflow-hidden">
+                <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-300 to-indigo-400">
+                  {settings.hero_headline}
+                </span>
               </span>
-            </span>
-            <span className="inline-block overflow-hidden mr-2">
-              <span className="gsap-word inline-block text-white">
-                software
-              </span>
-            </span>
-            <br className="hidden sm:block" />
-            <span className="inline-block overflow-hidden mr-2">
-              <span className="gsap-word inline-block">with</span>
-            </span>
-            <span className="inline-block overflow-hidden mr-2">
-              <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-300 to-indigo-400">
-                precision & fluidity.
-              </span>
-            </span>
+            ) : (
+              <>
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
+                  <span className="gsap-word inline-block">Crafting</span>
+                </span>
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
+                  <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300">
+                    scalable,
+                  </span>
+                </span>
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
+                  <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300">
+                    high-performance
+                  </span>
+                </span>
+                <br className="hidden sm:block" />
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
+                  <span className="gsap-word inline-block">apps</span>
+                </span>
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
+                  <span className="gsap-word inline-block">across</span>
+                </span>
+                <span className="inline-block overflow-hidden">
+                  <span className="gsap-word inline-block bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 text-white px-3.5 py-0.5 rounded-xl -skew-x-3 shadow-xl shadow-indigo-500/35 border border-indigo-400/40">
+                    platforms
+                  </span>
+                </span>
+              </>
+            )}
           </h1>
 
           {/* Subheadline */}
           <p
             ref={subheadlineRef}
-            className="text-xs sm:text-sm md:text-[0.95rem] text-slate-300/90 max-w-2xl leading-relaxed font-normal"
+            className="text-xs sm:text-sm md:text-[0.95rem] text-slate-200/90 max-w-xl leading-relaxed font-normal"
           >
             {subheadline}
           </p>
 
-          {/* Living CTA Action Deck */}
+          {/* Magnetic CTA Action Buttons */}
           <div
             ref={ctaRef}
             className="flex flex-row gap-3 pt-1 w-full sm:w-auto items-center justify-center"
@@ -292,7 +340,7 @@ export default function HomeHero({
                 transition={springs.snappy}
                 onClick={handleDownload}
                 disabled={downloading || !resumeUrl}
-                className="px-6 sm:px-7 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-400 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-medium shadow-xl shadow-indigo-500/25 flex items-center justify-center gap-2 group cursor-target transition-all text-xs sm:text-sm"
+                className="px-6 sm:px-7 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-400 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-medium shadow-xl shadow-indigo-500/30 flex items-center justify-center gap-2 group cursor-target transition-all text-xs sm:text-sm"
               >
                 {downloading ? (
                   <>
@@ -320,7 +368,7 @@ export default function HomeHero({
                 whileTap={{ scale: 0.96 }}
                 transition={springs.snappy}
                 href="#projects"
-                className="px-6 sm:px-7 py-2.5 sm:py-3 border border-white/12 bg-white/5 hover:bg-white/10 text-white rounded-full font-medium backdrop-blur-xl flex items-center justify-center gap-2 group cursor-target transition-all shadow-md text-xs sm:text-sm"
+                className="px-6 sm:px-7 py-2.5 sm:py-3 border border-white/15 bg-slate-950/60 hover:bg-slate-900/80 text-white rounded-full font-medium backdrop-blur-xl flex items-center justify-center gap-2 group cursor-target transition-all shadow-md text-xs sm:text-sm"
               >
                 <span>Explore Selected Work</span>
                 <ArrowDown size={16} className="transform group-hover:translate-y-0.5 transition-transform" />
@@ -328,14 +376,14 @@ export default function HomeHero({
             </div>
           </div>
 
-          {/* Living Interactive Telemetry Dock */}
+          {/* 3-Panel Telemetry Dock */}
           <div
             ref={telemetryRef}
-            className="w-full max-w-2xl border border-white/10 bg-slate-900/40 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-xl shadow-black/20"
+            className="w-full max-w-2xl border border-white/12 bg-slate-950/60 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl shadow-black/30"
           >
-            <div className="grid grid-cols-3 gap-2 divide-x divide-white/8 text-center">
+            <div className="grid grid-cols-3 gap-2 divide-x divide-white/10 text-center">
               <div className="px-2">
-                <p className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
+                <p className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-cyan-400" />
                   Flutter & Dart
                 </p>
@@ -343,7 +391,7 @@ export default function HomeHero({
               </div>
 
               <div className="px-2">
-                <p className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
+                <p className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-indigo-400" />
                   Next.js & TS
                 </p>
@@ -351,7 +399,7 @@ export default function HomeHero({
               </div>
 
               <div className="px-2">
-                <p className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
+                <p className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   60–120 FPS
                 </p>
@@ -360,26 +408,19 @@ export default function HomeHero({
             </div>
           </div>
 
-          {/* Interactive Living Stack Nodes with Hover Tooltips */}
+          {/* Interactive Stack Badges */}
           <div
-            ref={skillsRef}
+            ref={techPillsRef}
             className="flex flex-wrap items-center justify-center gap-2 pt-1 max-w-xl"
           >
-            {INTERACTIVE_SKILLS.map((skill) => {
+            {TECH_PILLS.map((skill) => {
               const Icon = skill.icon;
-              const isHovered = activeSkill === skill.name;
-
               return (
                 <motion.div
                   key={skill.name}
-                  onMouseEnter={() => setActiveSkill(skill.name)}
-                  onMouseLeave={() => setActiveSkill(null)}
                   whileHover={{ scale: 1.08, y: -2 }}
                   transition={springs.snappy}
-                  className={`relative flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/8 bg-white/4 backdrop-blur-md cursor-pointer transition-all ${skill.border}`}
-                  style={{
-                    boxShadow: isHovered ? `0 0 16px ${skill.glow}` : undefined,
-                  }}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-slate-950/50 backdrop-blur-md cursor-pointer transition-all ${skill.border}`}
                 >
                   <Icon size={14} className={skill.color} />
                   <span className="text-xs font-medium text-slate-300">{skill.name}</span>
