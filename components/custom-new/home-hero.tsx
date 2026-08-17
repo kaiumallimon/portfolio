@@ -288,7 +288,11 @@ export default function HomeHero({
       }, containerRef);
     };
 
-    const isPreloaderActive = typeof window !== "undefined" && (window as any).__PRELOADER_ACTIVE__;
+    const isPreloaderActive =
+      typeof window !== "undefined" &&
+      !sessionStorage.getItem("preloaderShown") &&
+      !document.documentElement.classList.contains("preloader-done") &&
+      Boolean((window as any).__PRELOADER_ACTIVE__);
 
     if (isPreloaderActive) {
       window.addEventListener("preloader-exit", runHeroTimeline, { once: true });

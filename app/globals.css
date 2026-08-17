@@ -376,3 +376,8 @@ input:-webkit-autofill:active {
     display: none !important;
   }
 }
+
+/* Zero-flash guarantee for preloader on subsequent session visits */
+html.preloader-done .preloader-root {
+  display: none !important;
+}

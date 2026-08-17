@@ -138,7 +138,19 @@ export default function FloatingHeader() {
 
     const pods = [leftPodRef.current, centerPodRef.current, rightPodRef.current].filter(Boolean);
 
-    // Initial hidden state off-top
+    const isPreloaderActive =
+      typeof window !== 'undefined' &&
+      !sessionStorage.getItem('preloaderShown') &&
+      !document.documentElement.classList.contains('preloader-done') &&
+      Boolean((window as any).__PRELOADER_ACTIVE__);
+
+    if (!isPreloaderActive) {
+      // Immediate visible render as the first rendering item on all refreshes & subsequent visits
+      gsap.set(pods, { y: 0, opacity: 1, scale: 1 });
+      return;
+    }
+
+    // Initial hidden state off-top only during the initial first-time preloader sequence
     gsap.set(pods, { y: -35, opacity: 0, scale: 0.96 });
 
     const runEntrance = () => {
@@ -153,14 +165,8 @@ export default function FloatingHeader() {
       });
     };
 
-    const isPreloaderActive = typeof window !== 'undefined' && (window as any).__PRELOADER_ACTIVE__;
-
-    if (isPreloaderActive) {
-      window.addEventListener('preloader-exit', runEntrance, { once: true });
-      return () => window.removeEventListener('preloader-exit', runEntrance);
-    } else {
-      runEntrance();
-    }
+    window.addEventListener('preloader-exit', runEntrance, { once: true });
+    return () => window.removeEventListener('preloader-exit', runEntrance);
   }, []);
 
   // Scroll detection & Section spy

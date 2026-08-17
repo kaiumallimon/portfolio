@@ -12,7 +12,7 @@ const KINETIC_WORDS = [
 ];
 
 export default function Preloader() {
-  const [complete, setComplete] = useState(false);
+  const [complete, setComplete] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -21,14 +21,14 @@ export default function Preloader() {
   const bottomBarRef = useRef<HTMLDivElement>(null);
   const ambientGlowRef = useRef<HTMLDivElement>(null);
 
+  // Synchronous session check on mount
   useEffect(() => {
-    // Check if preloader has already run this session
     const hasShown =
       typeof window !== "undefined" &&
-      sessionStorage.getItem("preloaderShown");
+      (sessionStorage.getItem("preloaderShown") === "true" ||
+        document.documentElement.classList.contains("preloader-done"));
 
     if (hasShown) {
-      setComplete(true);
       if (typeof window !== "undefined") {
         (window as any).__PRELOADER_ACTIVE__ = false;
       }
@@ -38,6 +38,12 @@ export default function Preloader() {
     if (typeof window !== "undefined") {
       (window as any).__PRELOADER_ACTIVE__ = true;
     }
+    setComplete(false);
+  }, []);
+
+  // GSAP Animation Timeline
+  useEffect(() => {
+    if (complete) return;
 
     const container = containerRef.current;
     const counter = counterRef.current;
@@ -88,12 +94,16 @@ export default function Preloader() {
           stagger: 0.1,
         })
         // Reveal first word
-        .to(word, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power3.out",
-        }, "-=0.3")
+        .to(
+          word,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power3.out",
+          },
+          "-=0.3"
+        )
         // Numerical count up & progress bar fill
         .to(
           counterObj,
@@ -104,7 +114,8 @@ export default function Preloader() {
             onUpdate: () => {
               const currentVal = Math.round(counterObj.value);
               if (counter) {
-                counter.innerText = currentVal < 10 ? `0${currentVal}%` : `${currentVal}%`;
+                counter.innerText =
+                  currentVal < 10 ? `0${currentVal}%` : `${currentVal}%`;
               }
               // Cycle kinetic words based on percentage
               if (word) {
@@ -164,14 +175,14 @@ export default function Preloader() {
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [complete]);
 
   if (complete) return null;
 
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[9999] bg-[#05050e] text-white flex flex-col justify-between p-6 sm:p-10 md:p-14 select-none overflow-hidden will-change-transform font-sans"
+      className="preloader-root fixed inset-0 z-[9999] bg-[#05050e] text-white flex flex-col justify-between p-6 sm:p-10 md:p-14 select-none overflow-hidden will-change-transform font-sans"
     >
       {/* Background Matrix & Ambient Specular Glow */}
       <div
