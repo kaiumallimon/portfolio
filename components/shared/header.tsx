@@ -120,6 +120,18 @@ export default function FloatingHeader() {
     };
   }, []);
 
+  // Prevent background scroll when mobile sheet is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   // GSAP Staggered Tri-Dock Entrance Timeline (Synchronized with Preloader)
   useEffect(() => {
     if (!containerRef.current) return;
@@ -295,45 +307,125 @@ export default function FloatingHeader() {
           </button>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile Navigation Sheet (Right-side slide-in) */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -12, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12, scale: 0.96 }}
-              transition={springs.bouncy}
-              className="pointer-events-auto absolute top-14 left-4 right-4 bg-slate-950/95 border border-white/10 backdrop-blur-3xl rounded-3xl p-4 flex flex-col gap-1 shadow-2xl shadow-black/90 lg:hidden"
-            >
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => {
-                    handleNavClick(e, item.href);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`p-3 rounded-2xl text-xs sm:text-sm cursor-target transition-all ${
-                    isActive(item.href)
-                      ? 'bg-indigo-500/20 border border-indigo-500/30 text-indigo-200 font-semibold'
-                      : 'text-slate-300 hover:bg-white/5'
-                  }`}
-                >
-                  {item.label}
-                </a>
-              ))}
-              <a
-                href="#contact"
-                onClick={(e) => {
-                  handleNavClick(e, '#contact');
-                  setMobileMenuOpen(false);
-                }}
-                className="p-3 mt-1 rounded-2xl text-xs sm:text-sm cursor-target text-center bg-indigo-500 hover:bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-1.5"
+            <>
+              {/* Frosted Backdrop Veil */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                onClick={() => setMobileMenuOpen(false)}
+                className="pointer-events-auto fixed inset-0 z-[99] bg-black/60 backdrop-blur-sm lg:hidden"
+              />
+
+              {/* Slide-in Sheet Panel */}
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                className="pointer-events-auto fixed inset-y-0 right-0 z-[100] w-full max-w-[320px] sm:max-w-[360px] bg-slate-950/95 border-l border-white/10 backdrop-blur-2xl p-6 flex flex-col justify-between shadow-2xl shadow-black/90 lg:hidden"
               >
-                <span>Get in Touch</span>
-                <ArrowUpRight size={14} />
-              </a>
-            </motion.div>
+                {/* Sheet Top: Logo / Brand Identity & Close Trigger */}
+                <div className="flex items-center justify-between pb-5 border-b border-white/10">
+                  <a
+                    href="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="cursor-target flex items-center gap-2 text-white font-bold text-sm tracking-tight group"
+                  >
+                    <span className="truncate text-slate-200 group-hover:text-white transition-colors font-semibold">
+                      {displayName}
+                    </span>
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                    </span>
+                  </a>
+
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    aria-label="Close Navigation Sheet"
+                    className="cursor-target w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                  >
+                    <X size={17} />
+                  </button>
+                </div>
+
+                {/* Sheet Middle: Navigation Links */}
+                <nav className="flex flex-col gap-1.5 py-6 overflow-y-auto">
+                  {navItems.map((item, idx) => (
+                    <motion.a
+                      key={item.href}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 + idx * 0.035, duration: 0.2 }}
+                      href={item.href}
+                      onClick={(e) => {
+                        handleNavClick(e, item.href);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`group cursor-target flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
+                        isActive(item.href)
+                          ? 'bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 font-semibold shadow-sm'
+                          : 'text-slate-300 hover:text-white hover:bg-white/5 border border-transparent'
+                      }`}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                            isActive(item.href)
+                              ? 'bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.8)]'
+                              : 'bg-white/20 group-hover:bg-indigo-400/60'
+                          }`}
+                        />
+                        {item.label}
+                      </span>
+                      <ArrowUpRight
+                        size={14}
+                        className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-slate-400 group-hover:text-indigo-400"
+                      />
+                    </motion.a>
+                  ))}
+                </nav>
+
+                {/* Sheet Bottom: Telemetry & Signature Header CTA Button */}
+                <div className="pt-5 border-t border-white/10 flex flex-col gap-4">
+                  <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+                    <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                      </span>
+                      <span>{available ? "Open for Work" : "Busy"}</span>
+                    </span>
+                    <span className="text-slate-500 font-mono text-[11px]">UTC+6 Dhaka</span>
+                  </div>
+
+                  {/* Header CTA Button (Same sliding badge architecture) */}
+                  <motion.a
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={springs.snappy}
+                    href="#contact"
+                    onClick={(e) => {
+                      handleNavClick(e, '#contact');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="cursor-target group relative flex items-center justify-center h-12 w-full overflow-hidden rounded-full p-1 ps-5 pe-12 text-sm font-semibold text-white transition-all duration-500 hover:ps-12 hover:pe-5 bg-indigo-600 hover:bg-indigo-500 border border-indigo-400/40 shadow-xl shadow-indigo-600/30 select-none"
+                  >
+                    <span className="relative z-10 transition-all duration-500 leading-none whitespace-nowrap">
+                      Let's Talk
+                    </span>
+                    <div className="absolute right-1 flex h-10 w-10 items-center justify-center rounded-full bg-white text-indigo-700 shadow-md transition-all duration-500 group-hover:right-[calc(100%-44px)] shrink-0">
+                      <ArrowUpRight size={16} className="transition-transform duration-500" />
+                    </div>
+                  </motion.a>
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </header>

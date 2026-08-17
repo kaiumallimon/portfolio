@@ -77,7 +77,7 @@ function MagneticSocialLink({
         target={href.startsWith("mailto:") ? undefined : "_blank"}
         rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
         aria-label={label}
-        className="cursor-target flex items-center justify-center w-10 h-10 md:w-11 md:h-11 border border-white/10 rounded-2xl bg-slate-900/60 hover:bg-indigo-500/20 hover:border-indigo-500/40 text-slate-300 hover:text-white transition-all shadow-md backdrop-blur-xl group"
+        className="cursor-target flex items-center justify-center w-10 h-10 md:w-11 md:h-11 border border-white/10 rounded-full bg-slate-900/60 hover:bg-indigo-500/20 hover:border-indigo-500/40 text-slate-300 hover:text-white transition-all shadow-md backdrop-blur-xl group"
       >
         <Icon size={18} className="group-hover:scale-110 transition-transform" />
       </motion.a>

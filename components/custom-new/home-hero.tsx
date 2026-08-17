@@ -305,7 +305,7 @@ export default function HomeHero({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden min-h-screen md:h-screen md:max-h-screen md:min-h-[660px] flex items-center justify-center bg-[#070712] py-14 sm:py-16 md:py-0"
+      className="relative overflow-hidden min-h-screen md:h-screen md:max-h-screen md:min-h-[660px] flex items-center justify-center bg-[#070712]"
     >
       {/* ReactBits GradientWaves WebGL Background - Exact Site Primary Brand Palette */}
       <GradientWaves
@@ -349,7 +349,7 @@ export default function HomeHero({
       {/* Foreground Hero Content Centered & Scaled for 100% Screen Fit */}
       <main
         ref={contentRef}
-        className="relative z-10 pt-16 sm:pt-20 md:pt-24 pb-6 sm:pb-8 md:pb-8 px-4 sm:px-6 max-w-5xl mx-auto w-full flex flex-col items-center justify-center min-h-screen md:min-h-0 md:h-full will-change-transform"
+        className="relative z-10 pt-12 sm:pt-14 md:pt-20 pb-4 sm:pb-6 md:pb-8 px-4 sm:px-6 max-w-5xl mx-auto w-full flex flex-col items-center justify-center min-h-screen md:min-h-0 md:h-full will-change-transform"
       >
         <div className="flex flex-col items-center text-center space-y-4 sm:space-y-5 md:space-y-6 w-full my-auto">
           

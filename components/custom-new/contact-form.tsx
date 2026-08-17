@@ -318,39 +318,48 @@ export default function ContactForm({
                 <p className="text-[11px] uppercase tracking-widest text-slate-500 font-semibold">
                   Connect Directly
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  <a
+                <div className="flex items-center gap-2.5">
+                  <motion.a
+                    whileHover={{ scale: 1.12, y: -2 }}
+                    whileTap={{ scale: 0.92 }}
+                    transition={springs.snappy}
                     href={github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="cursor-target flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-medium transition-all group/soc"
+                    aria-label="GitHub Profile"
+                    title="GitHub"
+                    className="cursor-target w-10 h-10 rounded-full bg-white/5 hover:bg-indigo-500/20 border border-white/10 hover:border-indigo-500/40 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-sm group/soc"
                   >
-                    <FaGithub size={14} />
-                    <span>GitHub</span>
-                    <ArrowUpRight size={11} className="text-slate-500 group-hover/soc:text-white transition-colors" />
-                  </a>
+                    <FaGithub size={16} />
+                  </motion.a>
 
-                  <a
+                  <motion.a
+                    whileHover={{ scale: 1.12, y: -2 }}
+                    whileTap={{ scale: 0.92 }}
+                    transition={springs.snappy}
                     href={linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="cursor-target flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-medium transition-all group/soc"
+                    aria-label="LinkedIn Profile"
+                    title="LinkedIn"
+                    className="cursor-target w-10 h-10 rounded-full bg-white/5 hover:bg-indigo-500/20 border border-white/10 hover:border-indigo-500/40 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-sm group/soc"
                   >
-                    <FaLinkedin size={14} className="text-sky-400" />
-                    <span>LinkedIn</span>
-                    <ArrowUpRight size={11} className="text-slate-500 group-hover/soc:text-white transition-colors" />
-                  </a>
+                    <FaLinkedin size={16} className="text-sky-400" />
+                  </motion.a>
 
-                  <a
+                  <motion.a
+                    whileHover={{ scale: 1.12, y: -2 }}
+                    whileTap={{ scale: 0.92 }}
+                    transition={springs.snappy}
                     href={facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="cursor-target flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-medium transition-all group/soc"
+                    aria-label="Facebook Profile"
+                    title="Facebook"
+                    className="cursor-target w-10 h-10 rounded-full bg-white/5 hover:bg-indigo-500/20 border border-white/10 hover:border-indigo-500/40 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-sm group/soc"
                   >
-                    <FaFacebook size={14} className="text-blue-400" />
-                    <span>Facebook</span>
-                    <ArrowUpRight size={11} className="text-slate-500 group-hover/soc:text-white transition-colors" />
-                  </a>
+                    <FaFacebook size={16} className="text-blue-400" />
+                  </motion.a>
                 </div>
               </div>
             </motion.div>

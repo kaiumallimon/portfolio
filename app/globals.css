@@ -321,38 +321,7 @@ body {
   animation: shimmer 2s infinite;
 }
 
-/* Preloader */
-@keyframes preloader-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
 
-.preloader-cursor {
-  animation: preloader-blink 1s step-end infinite;
-}
-
-.preloader-grid {
-  background-image:
-    linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-}
-
-.preloader-scanline {
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 2px,
-    rgba(255, 255, 255, 0.35) 3px,
-    transparent 4px
-  );
-}
 
 /* Keep native autofill consistent with the dark glass theme */
 input:-webkit-autofill,
