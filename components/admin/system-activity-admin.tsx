@@ -250,28 +250,24 @@ export default function SystemActivityAdmin({
           value={total.toLocaleString()}
           description="Total audit entries logged"
           icon={ShieldAlert}
-          color="#6366f1"
         />
         <StatsCard
           title="Successful Logins"
           value={successfulLogins.toLocaleString()}
           description="Verified admin sessions"
           icon={UserCheck}
-          color="#10b981"
         />
         <StatsCard
           title="Failed / Blocked"
           value={failedEvents.toLocaleString()}
           description="Failed access attempts"
           icon={ShieldX}
-          color="#f43f5e"
         />
         <StatsCard
           title="Data Mutations (Writes)"
           value={totalWrites.toLocaleString()}
           description="Creates, updates & deletes"
           icon={FileEdit}
-          color="#0ea5e9"
         />
       </div>
 
