@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Inter, JetBrains_Mono, Outfit, Poppins, Ubuntu } from "next/font/google";
+import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -9,7 +9,6 @@ import Preloader from "@/components/custom-new/preloader";
 import { ThemeProvider } from "@/components/theme-provider";
 import SmoothScrollProvider from "@/components/providers/smooth-scroll-provider";
 import { getSiteSettings } from "@/lib/data";
-
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
@@ -27,7 +26,6 @@ const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   display: "swap",
 });
-
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -76,8 +74,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
@@ -128,5 +124,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-
 }

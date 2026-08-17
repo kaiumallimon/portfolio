@@ -313,6 +313,17 @@ export default function AdminShell({
     </aside>
   );
 
+  const [scrolled, setScrolled] = useState(false);
+
+  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    const top = e.currentTarget.scrollTop;
+    if (top > 10) {
+      if (!scrolled) setScrolled(true);
+    } else {
+      if (scrolled) setScrolled(false);
+    }
+  };
+
   return (
     <div className="flex h-screen flex-col bg-background p-3">
       <header className="flex h-14 items-center justify-between rounded-4xl border border-border bg-card px-4">
@@ -368,7 +379,42 @@ export default function AdminShell({
           {renderSidebar({})}
         </div>
 
-        <main className="admin-scroll flex-1 min-w-0 overflow-x-hidden overflow-y-auto rounded-4xl border border-border bg-card">
+        <main
+          onScroll={handleScroll}
+          className="admin-scroll relative flex-1 min-w-0 overflow-x-hidden overflow-y-auto rounded-4xl border border-border bg-card"
+        >
+          {/* Top border gradual blur veil - active ONLY when scroll position > 10 */}
+          <div
+            aria-hidden="true"
+            className={cn(
+              "sticky top-0 inset-x-0 z-30 -mb-16 h-16 pointer-events-none transition-opacity duration-300 select-none overflow-hidden",
+              scrolled ? "opacity-100" : "opacity-0"
+            )}
+          >
+            {/* Background tint overlay matching card theme */}
+            <div className="absolute inset-0 bg-gradient-to-b from-card/95 via-card/50 to-transparent pointer-events-none" />
+
+            {/* Progressive multi-layered optical backdrop blur */}
+            <div
+              style={{
+                backdropFilter: "blur(14px)",
+                WebkitBackdropFilter: "blur(14px)",
+                maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)",
+                WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)",
+              }}
+              className="absolute inset-0 pointer-events-none"
+            />
+            <div
+              style={{
+                backdropFilter: "blur(28px)",
+                WebkitBackdropFilter: "blur(28px)",
+                maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,0) 65%)",
+                WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,0) 65%)",
+              }}
+              className="absolute inset-0 pointer-events-none"
+            />
+          </div>
+
           <div className="px-6 py-8">
             <div className="-mx-6 border-b border-border pb-6">
               <div className="flex items-center justify-between gap-4 px-6">

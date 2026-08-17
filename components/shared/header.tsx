@@ -6,7 +6,6 @@ import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { springs, useMagnetic } from '@/lib/motion';
-import GradualBlur from './gradual-blur';
 
 function MagneticNavButton({
   href,
@@ -235,16 +234,7 @@ export default function FloatingHeader() {
 
   return (
     <>
-      {/* React Bits Gradual Blur Veil (Expanded Surface Area) */}
-      <GradualBlur
-        position="top"
-        height="8.5rem"
-        layers={10}
-        maxBlur={36}
-        tint="from-slate-950/70 via-slate-950/25 to-transparent"
-      />
-
-      {/* Floating Header Bar (Clean Minimalist Overlay with Gradual Blur) */}
+      {/* Floating Header Bar (Clean Minimalist Overlay) */}
       <header
         ref={containerRef}
         className="fixed top-3 sm:top-4 inset-x-0 z-50 pointer-events-none px-4 sm:px-6 max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4"
