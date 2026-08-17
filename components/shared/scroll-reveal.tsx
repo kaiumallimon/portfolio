@@ -2,13 +2,13 @@
 
 import { motion, type HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { springs } from '@/lib/motion';
 
-export const SCROLL_VIEWPORT = { once: true, margin: '-80px' } as const;
+export const SCROLL_VIEWPORT = { once: true, margin: '-60px' } as const;
 export const SCROLL_EASE = [0.22, 1, 0.36, 1] as const;
 
 export const scrollTransition = (delay = 0) => ({
-  duration: 0.65,
-  ease: SCROLL_EASE,
+  ...springs.gentle,
   delay,
 });
 
@@ -30,8 +30,8 @@ export function ScrollRevealSection({
   return (
     <Component
       id={id}
-      initial={{ opacity: 0, y: 36 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 32, scale: 0.99 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={SCROLL_VIEWPORT}
       transition={scrollTransition()}
       className={className}
@@ -80,21 +80,19 @@ export const staggerContainer = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.05,
+      staggerChildren: 0.08,
+      delayChildren: 0.04,
     },
   },
 };
 
 export const staggerItem = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 20, scale: 0.97 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: SCROLL_EASE,
-    },
+    scale: 1,
+    transition: springs.gentle,
   },
 };
 

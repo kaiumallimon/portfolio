@@ -12,12 +12,14 @@ import {
 } from 'react-icons/si';
 import { usePathname } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
+import { motion } from 'framer-motion';
 import {
   ScrollReveal,
   ScrollRevealSection,
   ScrollRevealStagger,
   ScrollRevealStaggerItem,
 } from '@/components/shared/scroll-reveal';
+import { springs } from '@/lib/motion';
 
 const GITHUB_USERNAME = 'kaiumallimon';
 
@@ -69,19 +71,23 @@ interface FooterStats {
 
 function StatPill({ label, value, loading }: { label: string; value: string; loading?: boolean }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+    <motion.div
+      whileHover={{ y: -2, scale: 1.02 }}
+      transition={springs.snappy}
+      className="rounded-2xl border border-white/8 bg-white/4 px-4 py-3 hover:border-indigo-500/20 transition-all"
+    >
       {loading ? (
         <>
-          <Skeleton className="h-5 w-12 mb-1.5 bg-slate-700" />
-          <Skeleton className="h-3 w-20 bg-slate-700" />
+          <Skeleton className="h-5 w-12 mb-1.5 bg-slate-800" />
+          <Skeleton className="h-3 w-20 bg-slate-800" />
         </>
       ) : (
         <>
-          <p className="text-lg font-semibold text-white tabular-nums">{value}</p>
-          <p className="text-xs text-slate-500">{label}</p>
+          <p className="text-lg font-bold text-white tabular-nums">{value}</p>
+          <p className="text-[11px] text-slate-400 font-medium">{label}</p>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -148,183 +154,192 @@ export default function FlutterFooter() {
   };
 
   return (
-    <ScrollRevealSection as="footer" className="relative px-6 pb-8 pt-4 max-w-6xl mx-auto">
+    <ScrollRevealSection as="footer" className="relative px-6 pb-10 pt-6 max-w-6xl mx-auto z-10">
       <div className="max-w-6xl mx-auto">
         <ScrollReveal>
-        <div className="relative border border-slate-700/30 backdrop-blur-md rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
-          <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-indigo-500/40 to-transparent pointer-events-none" />
+          <div className="relative border border-white/10 bg-slate-900/40 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/50 overflow-hidden">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent pointer-events-none" />
 
-          <div className="p-6 md:p-8 lg:p-10">
-            <ScrollRevealStagger className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
-              <ScrollRevealStaggerItem className="lg:col-span-4 space-y-5">
-                <div>
-                  <a
-                    href="/"
-                    className="text-xl font-semibold text-white hover:text-indigo-400 transition-colors cursor-target"
-                  >
-                    {displayName}
-                  </a>
-                  <p className="text-sm text-slate-400 leading-relaxed mt-3">
-                    {footerDescription}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
-                    </span>
-                    {available ? "Available for work" : "Unavailable"}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400 text-xs">
-                    <MapPin size={12} />
-                    {location}
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-2 text-slate-500">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <SiFlutter size={18} className="text-blue-400" />
-                    <SiDart size={16} className="text-cyan-400" />
-                    <SiNextdotjs size={16} className="text-white" />
-
-                    <SiTypescript size={16} className="text-blue-500" />
-                    <SiNodedotjs size={16} className="text-green-500" />
+            <div className="p-7 md:p-10 lg:p-12">
+              <ScrollRevealStagger className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
+                {/* Brand Column */}
+                <ScrollRevealStaggerItem className="lg:col-span-4 space-y-6">
+                  <div>
+                    <a
+                      href="/"
+                      className="text-2xl font-bold text-white hover:text-indigo-400 transition-colors cursor-target tracking-tight"
+                    >
+                      {displayName}
+                    </a>
+                    <p className="text-sm text-slate-400 leading-relaxed mt-3">
+                      {footerDescription}
+                    </p>
                   </div>
-                  <span className="text-xs">Flutter · Next.js · TypeScript · Node.js</span>
-                </div>
 
-                <div className="flex gap-2">
-                  {socials.map((social) => {
-                    const Icon = social.icon;
-                    return (
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
+                      </span>
+                      {available ? "Available for work" : "Unavailable"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/8 text-slate-400 text-xs font-medium">
+                      <MapPin size={12} className="text-indigo-400" />
+                      {location}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-2.5 text-slate-500">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <SiFlutter size={20} className="text-cyan-400" />
+                      <SiDart size={18} className="text-blue-400" />
+                      <SiNextdotjs size={18} className="text-white" />
+                      <SiTypescript size={18} className="text-blue-500" />
+                      <SiNodedotjs size={18} className="text-emerald-500" />
+                    </div>
+                    <span className="text-xs text-slate-500 font-mono">Flutter · Next.js · TypeScript · Node.js</span>
+                  </div>
+
+                  <div className="flex gap-2.5 pt-1">
+                    {socials.map((social) => {
+                      const Icon = social.icon;
+                      return (
+                        <motion.a
+                          key={social.label}
+                          whileHover={{ scale: 1.12, y: -2 }}
+                          whileTap={{ scale: 0.92 }}
+                          transition={springs.snappy}
+                          href={social.href}
+                          target={social.href.startsWith('mailto:') ? undefined : '_blank'}
+                          rel={social.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                          aria-label={social.label}
+                          className="w-10 h-10 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center text-slate-300 hover:text-indigo-400 hover:border-indigo-500/30 hover:bg-indigo-500/10 transition-all cursor-target"
+                        >
+                          <Icon size={18} />
+                        </motion.a>
+                      );
+                    })}
+                  </div>
+                </ScrollRevealStaggerItem>
+
+                {/* Navigation Column */}
+                <ScrollRevealStaggerItem className="lg:col-span-3 space-y-4">
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Navigation</h4>
+                  <nav className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+                    {navItems.map((item) => (
                       <a
-                        key={social.label}
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={social.label}
-                        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-indigo-400 hover:border-indigo-500/30 hover:bg-indigo-500/10 transition-all cursor-target"
+                        key={item.href}
+                        href={item.href}
+                        onClick={(e) => handleNavClick(e, item.href)}
+                        className="text-sm text-slate-400 hover:text-indigo-300 transition-colors cursor-target"
                       >
-                        <Icon size={18} />
+                        {item.label}
                       </a>
-                    );
-                  })}
-                </div>
-              </ScrollRevealStaggerItem>
-
-              <ScrollRevealStaggerItem className="lg:col-span-3 space-y-4">
-                <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Navigate</h4>
-                <nav className="grid grid-cols-2 gap-x-4 gap-y-2">
-                  {navItems.map((item) => (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      onClick={(e) => handleNavClick(e, item.href)}
-                      className="text-sm text-slate-400 hover:text-indigo-400 transition-colors cursor-target"
-                    >
-                      {item.label}
-                    </a>
-                  ))}
-                </nav>
-                <a
-                  href="#contact"
-                  onClick={(e) => handleNavClick(e, '#contact')}
-                  className="inline-flex mt-2 px-5 py-2 text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded-full transition-all font-medium cursor-target"
-                >
-                  Contact
-                </a>
-              </ScrollRevealStaggerItem>
-
-              <ScrollRevealStaggerItem className="lg:col-span-2 space-y-4">
-                <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Tools</h4>
-                <nav className="space-y-2">
-                  {toolLinks.map((link) => (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-400 transition-colors cursor-target group"
-                    >
-                      {link.label}
-                      <ArrowUpRight size={14} className="opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
-                    </a>
-                  ))}
-                </nav>
-              </ScrollRevealStaggerItem>
-
-              <ScrollRevealStaggerItem className="lg:col-span-3 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Live Snapshot</h4>
-                  <a
-                    href={`https://github.com/${GITHUB_USERNAME}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors cursor-target"
+                    ))}
+                  </nav>
+                  <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={springs.snappy}
+                    href="#contact"
+                    onClick={(e) => handleNavClick(e, '#contact')}
+                    className="inline-flex mt-3 px-6 py-2.5 text-xs font-semibold uppercase tracking-wider bg-indigo-500 hover:bg-indigo-600 text-white rounded-full transition-all shadow-md shadow-indigo-500/20 cursor-target"
                   >
-                    @{GITHUB_USERNAME}
-                    <ArrowUpRight size={12} />
-                  </a>
-                </div>
+                    Get in Touch
+                  </motion.a>
+                </ScrollRevealStaggerItem>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <StatPill
-                    label="Contributions"
-                    value={stats?.totalContributions.toLocaleString() ?? '—'}
-                    loading={statsLoading}
-                  />
-                  <StatPill
-                    label="GitHub Stars"
-                    value={stats?.totalStars.toLocaleString() ?? '—'}
-                    loading={statsLoading}
-                  />
-                  <StatPill
-                    label="Public Repos"
-                    value={stats?.totalRepos.toLocaleString() ?? '—'}
-                    loading={statsLoading}
-                  />
-                  <StatPill
-                    label="Top Language"
-                    value={stats?.topLanguage ?? '—'}
-                    loading={statsLoading}
-                  />
-                </div>
+                {/* Tools Column */}
+                <ScrollRevealStaggerItem className="lg:col-span-2 space-y-4">
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Tools Hub</h4>
+                  <nav className="space-y-2.5">
+                    {toolLinks.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-indigo-300 transition-colors cursor-target group"
+                      >
+                        <span>{link.label}</span>
+                        <ArrowUpRight size={14} className="opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all text-indigo-400" />
+                      </a>
+                    ))}
+                  </nav>
+                </ScrollRevealStaggerItem>
 
-                {!statsLoading && stats && (
-                  <div className="flex items-center gap-4 pt-1 text-xs text-slate-500">
-                    <span className="flex items-center gap-1.5">
-                      <GitCommitHorizontal size={12} className="text-indigo-400" />
-                      Last 12 months
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Star size={12} className="text-yellow-400" />
-                      Open source
-                    </span>
+                {/* Telemetry Column */}
+                <ScrollRevealStaggerItem className="lg:col-span-3 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Live Metrics</h4>
+                    <a
+                      href={`https://github.com/${GITHUB_USERNAME}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors cursor-target font-medium"
+                    >
+                      @{GITHUB_USERNAME}
+                      <ArrowUpRight size={12} />
+                    </a>
                   </div>
-                )}
-              </ScrollRevealStaggerItem>
-            </ScrollRevealStagger>
-          </div>
 
-          {/* Bottom bar */}
-          <div className="border-t border-white/10 px-6 md:px-8 lg:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-slate-500">
-            <p>© {currentYear} Kaium Al Limon. All rights reserved.</p>
-            <div className="flex items-center gap-4">
-              <a
-                href={`mailto:${email}`}
-                className="hover:text-indigo-400 transition-colors cursor-target"
-              >
-                {email}
-              </a>
-              <button
-                onClick={scrollToTop}
-                className="hover:text-indigo-400 transition-colors cursor-target"
-              >
-                Back to top ↑
-              </button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <StatPill
+                      label="Contributions"
+                      value={stats?.totalContributions.toLocaleString() ?? '—'}
+                      loading={statsLoading}
+                    />
+                    <StatPill
+                      label="GitHub Stars"
+                      value={stats?.totalStars.toLocaleString() ?? '—'}
+                      loading={statsLoading}
+                    />
+                    <StatPill
+                      label="Public Repos"
+                      value={stats?.totalRepos.toLocaleString() ?? '—'}
+                      loading={statsLoading}
+                    />
+                    <StatPill
+                      label="Top Language"
+                      value={stats?.topLanguage ?? '—'}
+                      loading={statsLoading}
+                    />
+                  </div>
+
+                  {!statsLoading && stats && (
+                    <div className="flex items-center gap-4 pt-1 text-xs text-slate-500">
+                      <span className="flex items-center gap-1.5">
+                        <GitCommitHorizontal size={13} className="text-indigo-400" />
+                        Last 12 months
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Star size={13} className="text-amber-400" />
+                        Open Source
+                      </span>
+                    </div>
+                  )}
+                </ScrollRevealStaggerItem>
+              </ScrollRevealStagger>
+            </div>
+
+            {/* Bottom Bar */}
+            <div className="border-t border-white/8 px-7 md:px-10 lg:px-12 py-4.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+              <p>© {currentYear} {displayName}. All rights reserved.</p>
+              <div className="flex items-center gap-5">
+                <a
+                  href={`mailto:${email}`}
+                  className="hover:text-indigo-400 transition-colors cursor-target"
+                >
+                  {email}
+                </a>
+                <button
+                  onClick={scrollToTop}
+                  className="hover:text-indigo-400 transition-colors cursor-target flex items-center gap-1 font-medium"
+                >
+                  Back to top ↑
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </ScrollReveal>
       </div>
     </ScrollRevealSection>

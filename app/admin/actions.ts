@@ -2,14 +2,37 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerSupabase } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/auth/guard";
+
+// Allowed MIME types and max size (5MB) for uploaded files
+const ALLOWED_MIME_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif",
+  "image/svg+xml",
+  "application/pdf",
+];
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
 // ---------------------------------------------------------------------------
 // Storage upload (called from client ImageUploader)
 // ---------------------------------------------------------------------------
 export async function uploadImage(formData: FormData): Promise<{ url: string | null; error?: string }> {
+  await requireAdmin();
+
   const bucket = formData.get("bucket") as string;
   const file = formData.get("file") as File | null;
   if (!bucket || !file) return { url: null, error: "Missing bucket or file" };
+
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    return { url: null, error: "File exceeds 5MB maximum limit." };
+  }
+
+  if (file.type && !ALLOWED_MIME_TYPES.includes(file.type.toLowerCase())) {
+    return { url: null, error: "Unsupported file format." };
+  }
 
   const supabase = getServerSupabase();
   const ext = (file.name.split(".").pop() || "png").split("?")[0];
@@ -70,6 +93,7 @@ function revalidateAll() {
 // Projects
 // ---------------------------------------------------------------------------
 export async function saveProject(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
 
@@ -105,6 +129,7 @@ export async function saveProject(formData: FormData) {
 }
 
 export async function deleteProject(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   if (id) await supabase.from("projects").delete().eq("id", id);
@@ -116,6 +141,7 @@ export async function deleteProject(formData: FormData) {
 // Achievements
 // ---------------------------------------------------------------------------
 export async function saveAchievement(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -138,6 +164,7 @@ export async function saveAchievement(formData: FormData) {
 }
 
 export async function deleteAchievement(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   if (id) await supabase.from("achievements").delete().eq("id", id);
@@ -149,6 +176,7 @@ export async function deleteAchievement(formData: FormData) {
 // Activities
 // ---------------------------------------------------------------------------
 export async function saveActivity(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -168,6 +196,7 @@ export async function saveActivity(formData: FormData) {
 }
 
 export async function deleteActivity(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   if (id) await supabase.from("activities").delete().eq("id", id);
@@ -179,6 +208,7 @@ export async function deleteActivity(formData: FormData) {
 // Education
 // ---------------------------------------------------------------------------
 export async function saveEducation(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -199,6 +229,7 @@ export async function saveEducation(formData: FormData) {
 }
 
 export async function deleteEducation(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   if (id) await supabase.from("education").delete().eq("id", id);
@@ -210,6 +241,7 @@ export async function deleteEducation(formData: FormData) {
 // Skills
 // ---------------------------------------------------------------------------
 export async function saveSkill(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const skillsJson = str(formData, "skills_json");
@@ -238,6 +270,7 @@ export async function saveSkill(formData: FormData) {
 }
 
 export async function deleteSkill(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   if (id) await supabase.from("skills").delete().eq("id", id);
@@ -249,6 +282,7 @@ export async function deleteSkill(formData: FormData) {
 // Hobbies
 // ---------------------------------------------------------------------------
 export async function saveHobby(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -267,6 +301,7 @@ export async function saveHobby(formData: FormData) {
 }
 
 export async function deleteHobby(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   if (id) await supabase.from("hobbies").delete().eq("id", id);
@@ -278,6 +313,7 @@ export async function deleteHobby(formData: FormData) {
 // Metrics
 // ---------------------------------------------------------------------------
 export async function saveMetric(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const payload = {
@@ -298,6 +334,7 @@ export async function saveMetric(formData: FormData) {
 }
 
 export async function deleteMetric(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   if (id) await supabase.from("metrics").delete().eq("id", id);
@@ -309,6 +346,7 @@ export async function deleteMetric(formData: FormData) {
 // Settings (singleton)
 // ---------------------------------------------------------------------------
 export async function saveSettings(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const payload = {
     id: 1,
@@ -355,6 +393,7 @@ export async function saveSettings(formData: FormData) {
 // Contact messages
 // ---------------------------------------------------------------------------
 export async function deleteMessage(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   if (id) await supabase.from("contact_messages").delete().eq("id", id);
@@ -362,6 +401,7 @@ export async function deleteMessage(formData: FormData) {
 }
 
 export async function toggleMessageRead(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const id = str(formData, "id");
   const read = bool(formData, "read");
@@ -370,6 +410,7 @@ export async function toggleMessageRead(formData: FormData) {
 }
 
 export async function markThreadRead(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const email = str(formData, "email");
   if (email) await supabase.from("contact_messages").update({ read: true }).eq("email", email);
@@ -377,6 +418,7 @@ export async function markThreadRead(formData: FormData) {
 }
 
 export async function deleteThread(formData: FormData) {
+  await requireAdmin();
   const supabase = getServerSupabase();
   const email = str(formData, "email");
   if (email) await supabase.from("contact_messages").delete().eq("email", email);

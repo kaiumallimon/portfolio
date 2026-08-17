@@ -88,13 +88,13 @@ async function ContactViewSection() {
 export default function Home() {
   return (
     <div className="min-h-screen w-full bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
-      <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn hoverDuration={0.2} />
+      <TargetCursor spinDuration={2.5} hideDefaultCursor parallaxOn hoverDuration={0.2} />
 
       <HomeBackground />
       <FloatingHeader />
       <HomeHeroWrapper />
       
-      <div className="relative bg-[#0b001a]">
+      <div className="relative">
         <Suspense fallback={<AboutSkeleton />}>
           <AboutSection />
         </Suspense>
