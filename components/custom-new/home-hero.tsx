@@ -187,10 +187,13 @@ export default function HomeHero({
     "Specializing in fluid Flutter mobile applications, modern Next.js web platforms, and resilient, high-speed backends built with FastAPI and Node.js + Express.";
   const available = settings?.available_status ?? true;
 
-  // GSAP Kinetic Entrance Timeline
+  // GSAP Kinetic Entrance Timeline (Sequenced after Header completes entrance)
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      const tl = gsap.timeline({
+        delay: 0.6,
+        defaults: { ease: "power4.out" },
+      });
 
       // 1. Avatar Pop
       if (avatarRef.current) {

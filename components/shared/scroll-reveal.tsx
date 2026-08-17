@@ -31,7 +31,7 @@ export function ScrollRevealSection({
   className,
   children,
   as: Component = "section",
-  startThreshold = "top 82%",
+  startThreshold = "top 85%",
 }: GSAPSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
 

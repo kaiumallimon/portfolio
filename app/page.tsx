@@ -6,7 +6,6 @@ import HomeHero from "@/components/custom-new/home-hero";
 import HomeProjects from "@/components/custom-new/home-selected-work";
 import TechToolsSection from "@/components/custom-new/home-tech-tools";
 import JourneySection from "@/components/custom-new/journey";
-import HobbiesSection from "@/components/custom-new/hobbies";
 import SectionSeparator from "@/components/custom-new/section-separator";
 import GithubContributions from "@/components/Github-Contributions";
 import PortfolioImpact from "@/components/Impacts";
@@ -18,7 +17,6 @@ import {
   AboutSkeleton,
   AchievementsSkeleton,
   HeroSkeleton,
-  HobbiesSkeleton,
   ImpactSkeleton,
   JourneySkeleton,
   ProjectsSkeleton,
@@ -28,7 +26,6 @@ import {
   getAchievements,
   getActivities,
   getEducation,
-  getHobbies,
   getMetrics,
   getProjects,
   getResumeUrl,
@@ -78,11 +75,6 @@ async function AchievementsViewSection() {
   return <AchievementsSection achievements={achievements} />;
 }
 
-async function HobbiesViewSection() {
-  const hobbies = await getHobbies();
-  return <HobbiesSection hobbies={hobbies} />;
-}
-
 async function ContactViewSection() {
   const settings = await getSiteSettings();
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? null;
@@ -125,10 +117,6 @@ export default function Home() {
         <SectionSeparator />
         <Suspense fallback={<AchievementsSkeleton />}>
           <AchievementsViewSection />
-        </Suspense>
-        <SectionSeparator />
-        <Suspense fallback={<HobbiesSkeleton />}>
-          <HobbiesViewSection />
         </Suspense>
         <SectionSeparator />
         <Suspense fallback={<AboutSkeleton />}>
