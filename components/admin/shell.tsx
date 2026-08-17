@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import {
   LayoutDashboard,
@@ -331,15 +332,33 @@ export default function AdminShell({
           {renderBrand()}
 
           <nav className="hidden items-center gap-1 md:flex">
-            {HEADER_NAV.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="rounded-4xl px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                {item.name}
-              </Link>
-            ))}
+            {HEADER_NAV.map((item) => {
+              const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href.split("#")[0]) && !item.href.startsWith("/#"));
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "relative px-3.5 py-1.5 text-xs rounded-full transition-all select-none",
+                    active
+                      ? "text-foreground font-semibold shadow-sm"
+                      : "text-muted-foreground hover:text-foreground font-medium"
+                  )}
+                >
+                  {active && (
+                    <motion.div
+                      layoutId="admin-header-nav-indicator"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      className="absolute inset-0 rounded-full bg-muted border border-[#6366f1]/40 shadow-md shadow-[#6366f1]/20 backdrop-blur-xl z-0 overflow-hidden"
+                    >
+                      <div className="absolute top-0 inset-x-2 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+                      <div className="absolute -bottom-px inset-x-2 h-[1.5px] bg-gradient-to-r from-transparent via-[#6366f1] to-transparent shadow-[0_0_8px_#6366f1] pointer-events-none" />
+                    </motion.div>
+                  )}
+                  <span className="relative z-10">{item.name}</span>
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
