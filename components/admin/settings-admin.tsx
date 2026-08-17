@@ -36,6 +36,7 @@ import {
   ImageUploader,
   FileUploader,
 } from "@/components/admin/fields";
+import TiptapBioEditor from "@/components/admin/tiptap-bio-editor";
 import {
   User,
   Sparkles,
@@ -251,11 +252,22 @@ export default function SettingsAdmin({
 
               <div className="space-y-1 rounded-lg border border-border/40 bg-muted/20 p-3">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-                  About Bio Preview
+                  About Bio Preview (Rich Content)
                 </span>
-                <p className="text-xs text-muted-foreground/90 line-clamp-3 leading-relaxed">
-                  {settings?.about_bio || "—"}
-                </p>
+                {settings?.about_bio ? (
+                  settings.about_bio.includes("<") ? (
+                    <div
+                      className="text-xs text-muted-foreground/90 line-clamp-3 leading-relaxed [&_p]:mb-1 [&_strong]:text-foreground [&_strong]:font-semibold [&_em]:text-indigo-400 [&_code]:text-indigo-300 [&_a]:text-indigo-400 [&_a]:underline"
+                      dangerouslySetInnerHTML={{ __html: settings.about_bio }}
+                    />
+                  ) : (
+                    <p className="text-xs text-muted-foreground/90 line-clamp-3 leading-relaxed">
+                      {settings.about_bio}
+                    </p>
+                  )
+                ) : (
+                  <p className="text-xs text-muted-foreground/60">—</p>
+                )}
               </div>
             </CardContent>
           </div>
@@ -601,12 +613,11 @@ export default function SettingsAdmin({
               placeholder="e.g. Full-Stack Engineer specializing in Flutter & Next.js"
               rows={2}
             />
-            <TextAreaField
-              label="About Bio (separate paragraphs with blank lines)"
+            <TiptapBioEditor
+              label="About Bio (Rich Editor with 250 Char Limit)"
               name="about_bio"
               defaultValue={settings?.about_bio}
-              placeholder="Write your personal story, technical passions, and background..."
-              rows={6}
+              limit={1000}
             />
             <DialogFooter className="pt-2">
               <Button type="button" variant="outline" onClick={() => setActiveModal(null)} disabled={saving}>
