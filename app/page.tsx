@@ -40,8 +40,12 @@ import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 
 async function HeroSection() {
-  const [settings, resumeUrl] = await Promise.all([getSiteSettings(), getResumeUrl()]);
-  return <HomeHero settings={settings} resumeUrl={resumeUrl} />;
+  const [settings, resumeUrl, skills] = await Promise.all([
+    getSiteSettings(),
+    getResumeUrl(),
+    getSkills(),
+  ]);
+  return <HomeHero settings={settings} resumeUrl={resumeUrl} skills={skills} />;
 }
 
 async function AboutSection() {

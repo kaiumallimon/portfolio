@@ -1,36 +1,147 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ArrowDown, Download, Loader2, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
+import { ArrowDown, Download, Loader2, Sparkles, Code2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { SiFlutter, SiNextdotjs, SiTypescript, SiDart, SiPostgresql, SiDocker } from "react-icons/si";
+import {
+  SiFlutter,
+  SiDart,
+  SiTypescript,
+  SiJavascript,
+  SiReact,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiGo,
+  SiPython,
+  SiPostgresql,
+  SiMongodb,
+  SiSupabase,
+  SiFirebase,
+  SiDocker,
+  SiGit,
+  SiGithub,
+  SiGraphql,
+  SiTailwindcss,
+  SiFigma,
+  SiCplusplus,
+  SiSwift,
+  SiKotlin,
+} from "react-icons/si";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GradientWaves from "@/components/reactbits/GradientWaves";
-import type { SiteSettings } from "@/types/content";
+import type { SiteSettings, SkillCategory } from "@/types/content";
 import { springs, useMagnetic } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const TECH_PILLS = [
-  { name: "Flutter", icon: SiFlutter, color: "text-cyan-400", border: "hover:border-cyan-500/50" },
-  { name: "Dart", icon: SiDart, color: "text-blue-400", border: "hover:border-blue-500/50" },
-  { name: "TypeScript", icon: SiTypescript, color: "text-sky-400", border: "hover:border-sky-500/50" },
-  { name: "Next.js", icon: SiNextdotjs, color: "text-white", border: "hover:border-white/50" },
-  { name: "PostgreSQL", icon: SiPostgresql, color: "text-indigo-400", border: "hover:border-indigo-500/50" },
-  { name: "Docker", icon: SiDocker, color: "text-blue-400", border: "hover:border-blue-500/50" },
+const TECH_ICONS: Record<string, { icon: ComponentType<{ size?: number; className?: string }>; color: string }> = {
+  flutter: { icon: SiFlutter, color: "text-cyan-400" },
+  dart: { icon: SiDart, color: "text-blue-400" },
+  typescript: { icon: SiTypescript, color: "text-sky-400" },
+  javascript: { icon: SiJavascript, color: "text-amber-400" },
+  react: { icon: SiReact, color: "text-cyan-400" },
+  "next.js": { icon: SiNextdotjs, color: "text-white" },
+  "node.js": { icon: SiNodedotjs, color: "text-emerald-400" },
+  go: { icon: SiGo, color: "text-cyan-400" },
+  python: { icon: SiPython, color: "text-yellow-400" },
+  postgresql: { icon: SiPostgresql, color: "text-indigo-400" },
+  mongodb: { icon: SiMongodb, color: "text-emerald-400" },
+  supabase: { icon: SiSupabase, color: "text-emerald-400" },
+  firebase: { icon: SiFirebase, color: "text-amber-400" },
+  docker: { icon: SiDocker, color: "text-blue-400" },
+  git: { icon: SiGit, color: "text-orange-400" },
+  github: { icon: SiGithub, color: "text-white" },
+  graphql: { icon: SiGraphql, color: "text-pink-400" },
+  "tailwind css": { icon: SiTailwindcss, color: "text-cyan-400" },
+  figma: { icon: SiFigma, color: "text-purple-400" },
+  "c++": { icon: SiCplusplus, color: "text-blue-400" },
+  swift: { icon: SiSwift, color: "text-orange-400" },
+  kotlin: { icon: SiKotlin, color: "text-purple-400" },
+};
+
+const DEFAULT_SKILLS = [
+  "Flutter",
+  "Dart",
+  "TypeScript",
+  "Next.js",
+  "React",
+  "Node.js",
+  "Go",
+  "PostgreSQL",
+  "Supabase",
+  "Firebase",
+  "Docker",
+  "GraphQL",
+  "Git",
+  "Tailwind CSS",
+  "Python",
 ];
+
+function getSkillMeta(name: string) {
+  const normalized = name.toLowerCase().trim();
+  const matched = TECH_ICONS[normalized];
+  if (matched) return matched;
+
+  for (const [key, meta] of Object.entries(TECH_ICONS)) {
+    if (normalized.includes(key)) {
+      return meta;
+    }
+  }
+
+  return { icon: Code2, color: "text-indigo-400" };
+}
+
+/**
+ * Site-Consistent Skills Marquee (Aligned with bento chips across portfolio)
+ */
+function SiteConsistentSkillsMarquee({ skillNames }: { skillNames: string[] }) {
+  const list = [...skillNames, ...skillNames, ...skillNames];
+
+  return (
+    <div className="w-full max-w-4xl overflow-hidden relative py-1 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      <motion.div
+        animate={{ x: ["0%", "-33.333%"] }}
+        transition={{
+          duration: 30,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        whileHover={{ animationPlayState: "paused" }}
+        className="flex items-center gap-2.5 w-max select-none"
+      >
+        {list.map((skill, idx) => {
+          const { icon: Icon, color } = getSkillMeta(skill);
+
+          return (
+            <motion.div
+              key={idx}
+              whileHover={{ scale: 1.05, y: -1 }}
+              transition={springs.snappy}
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-900/60 hover:bg-slate-800/90 text-xs text-slate-300 hover:text-white backdrop-blur-xl transition-all shrink-0 cursor-pointer shadow-md"
+            >
+              <Icon size={14} className={color} />
+              <span className="font-medium tracking-tight">{skill}</span>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+    </div>
+  );
+}
 
 export default function HomeHero({
   settings,
   resumeUrl,
+  skills,
 }: {
   settings: SiteSettings | null;
   resumeUrl: string | null;
+  skills?: SkillCategory[];
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -39,12 +150,15 @@ export default function HomeHero({
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subheadlineRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const telemetryRef = useRef<HTMLDivElement>(null);
-  const techPillsRef = useRef<HTMLDivElement>(null);
+  const marqueeRef = useRef<HTMLDivElement>(null);
 
   const [downloading, setDownloading] = useState(false);
   const downloadMagnetic = useMagnetic(0.25);
   const workMagnetic = useMagnetic(0.25);
+
+  const allSkillNames = skills && skills.length > 0
+    ? Array.from(new Set(skills.flatMap((cat) => cat.skills.map((s) => s.name))))
+    : DEFAULT_SKILLS;
 
   const handleDownload = async () => {
     if (!resumeUrl) return;
@@ -70,7 +184,7 @@ export default function HomeHero({
   const profileImage = settings?.profile_image || "/bordered.png";
   const subheadline =
     settings?.hero_subheadline ||
-    "Flutter Specialist & Full-Stack Software Engineer crafting high-performance mobile apps, web platforms, and scalable backends.";
+    "Specializing in fluid Flutter mobile applications, modern Next.js web platforms, and resilient, high-speed backends built with FastAPI and Node.js + Express.";
   const available = settings?.available_status ?? true;
 
   // GSAP Kinetic Entrance Timeline
@@ -140,27 +254,17 @@ export default function HomeHero({
         );
       }
 
-      // 6. Telemetry Dock
-      if (telemetryRef.current) {
+      // 6. Marquee Fade In
+      if (marqueeRef.current) {
         tl.fromTo(
-          telemetryRef.current,
-          { y: 20, opacity: 0, scale: 0.96 },
-          { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" },
+          marqueeRef.current,
+          { y: 18, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
           "-=0.4"
         );
       }
 
-      // 7. Tech Pills
-      if (techPillsRef.current) {
-        tl.fromTo(
-          techPillsRef.current.children,
-          { y: 16, opacity: 0, scale: 0.9 },
-          { y: 0, opacity: 1, scale: 1, stagger: 0.04, duration: 0.65, ease: "back.out(1.4)" },
-          "-=0.35"
-        );
-      }
-
-      // 8. Parallax scrub on scroll
+      // 7. Parallax scrub on scroll
       if (contentRef.current && containerRef.current) {
         gsap.to(contentRef.current, {
           y: 70,
@@ -185,21 +289,21 @@ export default function HomeHero({
       ref={containerRef}
       className="relative overflow-hidden h-screen max-h-screen min-h-[660px] flex items-center justify-center bg-[#070712]"
     >
-      {/* ReactBits GradientWaves WebGL Raymarched Background - Vivid & High Visibility */}
+      {/* ReactBits GradientWaves WebGL Background - Exact Site Primary Brand Palette */}
       <GradientWaves
-        horizonColor="#312e81"
-        waveColor="#6366f1"
-        crestColor="#38bdf8"
-        speed={0.35}
-        amplitude={2.6}
-        waveScale={0.6}
+        horizonColor="#06060c"
+        waveColor="#4f46e5"
+        crestColor="#818cf8"
+        speed={0.32}
+        amplitude={2.5}
+        waveScale={0.62}
         waveRatio={0.9}
-        swell={32}
+        swell={30}
         turbulence={18}
         tilt={1.12}
-        height={5.0}
+        height={5.2}
         fogDepth={18}
-        brightness={1.25}
+        brightness={1.2}
         opacity={0.85}
         mouseInteraction={true}
         parallaxStrength={0.45}
@@ -208,8 +312,8 @@ export default function HomeHero({
         className="opacity-100"
       />
 
-      {/* Ambient Vignette for text contrast */}
-      <div className="absolute inset-0 bg-radial from-transparent via-[#070712]/40 to-[#070712]/90 pointer-events-none" />
+      {/* Ambient Radial Vignette */}
+      <div className="absolute inset-0 bg-radial from-transparent via-[#070712]/35 to-[#070712]/85 pointer-events-none" />
 
       {/* Subtle Matrix Lines */}
       <div
@@ -227,12 +331,12 @@ export default function HomeHero({
       {/* Foreground Hero Content Centered & Scaled for 100% Screen Fit */}
       <main
         ref={contentRef}
-        className="relative z-10 pt-20 md:pt-24 pb-6 px-6 max-w-5xl mx-auto w-full flex flex-col items-center justify-center h-full will-change-transform"
+        className="relative z-10 pt-20 md:pt-24 pb-8 px-6 max-w-5xl mx-auto w-full flex flex-col items-center justify-center h-full will-change-transform"
       >
-        <div className="flex flex-col items-center text-center space-y-4 md:space-y-5 w-full my-auto">
+        <div className="flex flex-col items-center text-center space-y-5 md:space-y-6 w-full my-auto">
           
-          {/* Avatar & Status Header (Vertically Stacked) */}
-          <div className="flex flex-col items-center gap-2.5">
+          {/* Avatar & Status Header (Vertically Stacked with Generous Gap) */}
+          <div className="flex flex-col items-center gap-3">
             {/* 3D Holographic Avatar */}
             <div
               ref={avatarRef}
@@ -258,10 +362,10 @@ export default function HomeHero({
               </span>
             </div>
 
-            {/* Status Capsule */}
+            {/* Status Capsule (Consistent with Site Eyebrow Badges) */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-950/70 border border-indigo-500/30 text-indigo-300 text-xs font-medium tracking-wide backdrop-blur-xl shadow-xl hover:border-indigo-500/50 transition-colors"
+              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium tracking-wide backdrop-blur-xl shadow-lg hover:border-indigo-500/40 transition-colors"
             >
               <span className="text-white font-semibold">Kaium Al Limon</span>
               <span className="text-white/20">|</span>
@@ -272,60 +376,70 @@ export default function HomeHero({
             </div>
           </div>
 
-          {/* Kinetic Headline with Masked Word Reveals */}
-          <h1
-            ref={headlineRef}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold tracking-tight text-white max-w-4xl leading-[1.1] perspective-1000"
-          >
-            {settings?.hero_headline ? (
-              <span className="inline-block overflow-hidden">
-                <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-300 to-indigo-400">
-                  {settings.hero_headline}
-                </span>
-              </span>
-            ) : (
-              <>
-                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
-                  <span className="gsap-word inline-block">Crafting</span>
-                </span>
-                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
-                  <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300">
-                    scalable,
-                  </span>
-                </span>
-                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
-                  <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300">
-                    high-performance
-                  </span>
-                </span>
-                <br className="hidden sm:block" />
-                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
-                  <span className="gsap-word inline-block">apps</span>
-                </span>
-                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
-                  <span className="gsap-word inline-block">across</span>
-                </span>
+          {/* Kinetic Headline with 3-Line Symmetrical Alignment */}
+          <div className="space-y-3 md:space-y-4 max-w-4xl mx-auto">
+            <h1
+              ref={headlineRef}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold tracking-tight text-white leading-[1.14] perspective-1000 text-center"
+            >
+              {settings?.hero_headline ? (
                 <span className="inline-block overflow-hidden">
-                  <span className="gsap-word inline-block bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 text-white px-3.5 py-0.5 rounded-xl -skew-x-3 shadow-xl shadow-indigo-500/35 border border-indigo-400/40">
-                    platforms
+                  <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-300 to-indigo-400">
+                    {settings.hero_headline}
                   </span>
                 </span>
-              </>
-            )}
-          </h1>
+              ) : (
+                <div className="flex flex-col items-center gap-1 sm:gap-1.5">
+                  {/* Line 1 */}
+                  <div className="flex flex-wrap items-center justify-center">
+                    <span className="inline-block overflow-hidden mr-2 sm:mr-2.5">
+                      <span className="gsap-word inline-block text-white">Building</span>
+                    </span>
+                    <span className="inline-block overflow-hidden">
+                      <span className="gsap-word inline-block text-white">high-performance</span>
+                    </span>
+                  </div>
 
-          {/* Subheadline */}
-          <p
-            ref={subheadlineRef}
-            className="text-xs sm:text-sm md:text-[0.95rem] text-slate-200/90 max-w-xl leading-relaxed font-normal"
-          >
-            {subheadline}
-          </p>
+                  {/* Line 2 */}
+                  <div className="flex flex-wrap items-center justify-center">
+                    <span className="inline-block overflow-hidden">
+                      <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-200 to-cyan-300">
+                        mobile & web experiences
+                      </span>
+                    </span>
+                  </div>
 
-          {/* Magnetic CTA Action Buttons */}
+                  {/* Line 3 */}
+                  <div className="flex flex-wrap items-center justify-center">
+                    <span className="inline-block overflow-hidden mr-2 sm:mr-2.5">
+                      <span className="gsap-word inline-block text-white">engineered</span>
+                    </span>
+                    <span className="inline-block overflow-hidden mr-2 sm:mr-2.5">
+                      <span className="gsap-word inline-block text-white">to</span>
+                    </span>
+                    <span className="inline-block overflow-hidden">
+                      <span className="gsap-word inline-block text-white">
+                        scale<span className="text-indigo-400">.</span>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              )}
+            </h1>
+
+            {/* Subheadline with Relaxed Spacing */}
+            <p
+              ref={subheadlineRef}
+              className="text-xs sm:text-sm md:text-[0.98rem] text-slate-300/90 max-w-2xl mx-auto leading-relaxed font-normal text-center"
+            >
+              {subheadline}
+            </p>
+          </div>
+
+          {/* Magnetic CTA Action Buttons (Unified with Site System) */}
           <div
             ref={ctaRef}
-            className="flex flex-row gap-3 pt-1 w-full sm:w-auto items-center justify-center"
+            className="flex flex-row gap-4 sm:gap-5 pt-1 w-full sm:w-auto items-center justify-center"
           >
             <div
               ref={downloadMagnetic.ref}
@@ -340,7 +454,7 @@ export default function HomeHero({
                 transition={springs.snappy}
                 onClick={handleDownload}
                 disabled={downloading || !resumeUrl}
-                className="px-6 sm:px-7 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-400 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-medium shadow-xl shadow-indigo-500/30 flex items-center justify-center gap-2 group cursor-target transition-all text-xs sm:text-sm"
+                className="px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-400 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-medium shadow-xl shadow-indigo-500/30 flex items-center justify-center gap-2 group cursor-target transition-all text-xs sm:text-sm"
               >
                 {downloading ? (
                   <>
@@ -368,7 +482,7 @@ export default function HomeHero({
                 whileTap={{ scale: 0.96 }}
                 transition={springs.snappy}
                 href="#projects"
-                className="px-6 sm:px-7 py-2.5 sm:py-3 border border-white/15 bg-slate-950/60 hover:bg-slate-900/80 text-white rounded-full font-medium backdrop-blur-xl flex items-center justify-center gap-2 group cursor-target transition-all shadow-md text-xs sm:text-sm"
+                className="px-6 sm:px-8 py-3 sm:py-3.5 border border-white/10 bg-slate-900/60 hover:bg-slate-800/80 text-white rounded-full font-medium backdrop-blur-xl flex items-center justify-center gap-2 group cursor-target transition-all shadow-md text-xs sm:text-sm"
               >
                 <span>Explore Selected Work</span>
                 <ArrowDown size={16} className="transform group-hover:translate-y-0.5 transition-transform" />
@@ -376,57 +490,9 @@ export default function HomeHero({
             </div>
           </div>
 
-          {/* 3-Panel Telemetry Dock */}
-          <div
-            ref={telemetryRef}
-            className="w-full max-w-2xl border border-white/12 bg-slate-950/60 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl shadow-black/30"
-          >
-            <div className="grid grid-cols-3 gap-2 divide-x divide-white/10 text-center">
-              <div className="px-2">
-                <p className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                  Flutter & Dart
-                </p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Mobile Specialist</p>
-              </div>
-
-              <div className="px-2">
-                <p className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-indigo-400" />
-                  Next.js & TS
-                </p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Full-Stack Architect</p>
-              </div>
-
-              <div className="px-2">
-                <p className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight flex items-center justify-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  60–120 FPS
-                </p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Physics Animations</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Interactive Stack Badges */}
-          <div
-            ref={techPillsRef}
-            className="flex flex-wrap items-center justify-center gap-2 pt-1 max-w-xl"
-          >
-            {TECH_PILLS.map((skill) => {
-              const Icon = skill.icon;
-              return (
-                <motion.div
-                  key={skill.name}
-                  whileHover={{ scale: 1.08, y: -2 }}
-                  transition={springs.snappy}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-slate-950/50 backdrop-blur-md cursor-pointer transition-all ${skill.border}`}
-                >
-                  <Icon size={14} className={skill.color} />
-                  <span className="text-xs font-medium text-slate-300">{skill.name}</span>
-                </motion.div>
-              );
-            })}
+          {/* Skills Marquee (Site-Consistent Bento Chips) */}
+          <div ref={marqueeRef} className="w-full pt-5 md:pt-6">
+            <SiteConsistentSkillsMarquee skillNames={allSkillNames} />
           </div>
 
         </div>
