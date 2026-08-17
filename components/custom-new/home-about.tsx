@@ -6,7 +6,7 @@ import { MdEmail } from "react-icons/md";
 import { motion } from "framer-motion";
 import type { Education, SiteSettings } from "@/types/content";
 import { springs, use3DTilt, useMagnetic } from "@/lib/motion";
-import { ScrollRevealSection, ScrollReveal } from "@/components/shared/scroll-reveal";
+import { ScrollRevealSection, GSAPSectionHeader } from "@/components/shared/scroll-reveal";
 
 const ICONS: Record<string, typeof GraduationCap> = {
   GraduationCap,
@@ -64,14 +64,11 @@ export default function HomeAboutSection({
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-start">
         {/* Left: Bio and Vision */}
         <div className="space-y-8">
-          <div>
-            <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-2">
-              About Me
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Engineering beyond the framework.
-            </h2>
-          </div>
+          <GSAPSectionHeader
+            eyebrow="About Me"
+            title="Engineering beyond the framework."
+            className="mb-0"
+          />
 
           <div className="text-sm md:text-base space-y-4 text-slate-300/90 leading-relaxed font-normal">
             {bioParagraphs.length > 0 ? (
@@ -93,6 +90,7 @@ export default function HomeAboutSection({
 
         {/* Right: 3D Tilt Education Glass Card */}
         <div
+          data-gsap-card
           ref={cardTilt.ref}
           onMouseMove={cardTilt.handleMouseMove}
           onMouseLeave={cardTilt.handleMouseLeave}

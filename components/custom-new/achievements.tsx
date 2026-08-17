@@ -6,7 +6,7 @@ import { Trophy, Calendar, Users, Code, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Achievement } from "@/types/content";
 import { springs, use3DTilt } from "@/lib/motion";
-import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
+import { ScrollRevealSection, GSAPSectionHeader } from "@/components/shared/scroll-reveal";
 
 function AchievementCardItem({ achievement, onSelectImage }: { achievement: Achievement; onSelectImage: (img: string) => void }) {
   const isChampion = achievement.award_rank === "champion";
@@ -19,6 +19,7 @@ function AchievementCardItem({ achievement, onSelectImage }: { achievement: Achi
 
   return (
     <div
+      data-gsap-card
       ref={tilt.ref}
       onMouseMove={tilt.handleMouseMove}
       onMouseLeave={tilt.handleMouseLeave}
@@ -116,17 +117,11 @@ export default function AchievementsSection({
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="max-w-6xl mx-auto">
-        <div className="mb-14">
-          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-2">
-            Recognition & Honors
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
-            Achievements & Awards
-          </h2>
-          <p className="text-slate-400 text-sm md:text-base">
-            Competition awards and honors earned across software exhibitions and hackathons.
-          </p>
-        </div>
+        <GSAPSectionHeader
+          eyebrow="Recognition & Honors"
+          title="Achievements & Competition Honors"
+          subtitle="Competition awards and honors earned across software exhibitions, hackathons, and symposiums."
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {achievements.map((achievement) => (

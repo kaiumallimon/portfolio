@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  ScrollReveal,
   ScrollRevealSection,
   ScrollRevealStagger,
   ScrollRevealStaggerItem,
+  GSAPSectionHeader,
 } from "@/components/shared/scroll-reveal";
 import type { Activity } from "@/types/content";
 import { motion } from "framer-motion";
@@ -18,22 +18,16 @@ export default function FlutterJourneySection({
   return (
     <ScrollRevealSection id="activities" className="py-24 px-6 max-w-6xl mx-auto relative z-10">
       <div className="max-w-6xl mx-auto">
-        <ScrollReveal className="mb-14">
-          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-2">
-            Leadership & Community
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
-            Co-Curricular Activities
-          </h2>
-          <p className="text-slate-400 text-sm md:text-base">
-            Leading software development initiatives and student engagement beyond the classroom.
-          </p>
-        </ScrollReveal>
+        <GSAPSectionHeader
+          eyebrow="Leadership & Community"
+          title="Co-Curricular & Engineering Leadership"
+          subtitle="Leading software development initiatives and student engagement beyond the classroom."
+        />
 
         <div className="relative">
           <div className="absolute left-[17px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-indigo-500 via-indigo-500/30 to-transparent" />
 
-          <ScrollRevealStagger className="space-y-6">
+          <ScrollRevealStagger delay={0.2} className="space-y-6">
             {activities.map((milestone) => (
               <ScrollRevealStaggerItem key={milestone.id}>
                 <div className="relative pl-12 group">

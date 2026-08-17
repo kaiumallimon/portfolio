@@ -5,7 +5,7 @@ import type { Project } from "@/types/project";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { springs, use3DTilt } from "@/lib/motion";
-import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
+import { ScrollRevealSection, GSAPSectionHeader } from "@/components/shared/scroll-reveal";
 
 function ProjectCardItem({ project, index }: { project: Project; index: number }) {
   const isMobile = project.client === "mobile";
@@ -25,6 +25,7 @@ function ProjectCardItem({ project, index }: { project: Project; index: number }
 
   return (
     <div
+      data-gsap-card
       ref={tilt.ref}
       onMouseMove={tilt.handleMouseMove}
       onMouseLeave={tilt.handleMouseLeave}
@@ -135,28 +136,22 @@ export default function HomeProjects({ projects }: { projects: Project[] }) {
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
-          <div>
-            <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-2">
-              Featured Work
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
-              Selected Projects
-            </h2>
-            <p className="text-slate-400 text-sm md:text-base">
-              Highlighting architecture, performance, and user-centric software design.
-            </p>
-          </div>
-          <a
-            href="https://github.com/kaiumallimon"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-target text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 transition-colors font-medium"
-          >
-            <span>View complete portfolio on GitHub</span>
-            <ArrowUpRight size={16} />
-          </a>
-        </div>
+        <GSAPSectionHeader
+          eyebrow="Featured Work"
+          title="Selected Software Projects"
+          subtitle="Highlighting architecture, performance, and user-centric software design."
+          rightAction={
+            <a
+              href="https://github.com/kaiumallimon"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-target text-sm text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 transition-colors font-medium"
+            >
+              <span>View complete portfolio on GitHub</span>
+              <ArrowUpRight size={16} />
+            </a>
+          }
+        />
 
         <div className="space-y-7">
           {preview.map((project, index) => (

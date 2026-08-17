@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { MdSportsSoccer, MdVideogameAsset, MdMovie } from "react-icons/md";
 import type { Hobby } from "@/types/content";
 import { springs, use3DTilt } from "@/lib/motion";
-import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
+import { ScrollRevealSection, GSAPSectionHeader } from "@/components/shared/scroll-reveal";
 
 const ICON_MAP: Record<string, typeof MdSportsSoccer> = {
   MdSportsSoccer,
@@ -18,6 +18,7 @@ function HobbyCardItem({ hobby }: { hobby: Hobby }) {
 
   return (
     <div
+      data-gsap-card
       ref={tilt.ref}
       onMouseMove={tilt.handleMouseMove}
       onMouseLeave={tilt.handleMouseLeave}
@@ -46,17 +47,12 @@ export default function HobbiesSection({ hobbies }: { hobbies: Hobby[] }) {
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
       <div className="max-w-6xl mx-auto">
-        <div className="mb-14 text-center max-w-xl mx-auto">
-          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-2">
-            Life Outside Work
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
-            Hobbies & Interests
-          </h2>
-          <p className="text-slate-400 text-sm md:text-base">
-            What keeps me inspired, curious, and energized outside the code editor.
-          </p>
-        </div>
+        <GSAPSectionHeader
+          eyebrow="Life Outside Work"
+          title="Hobbies & Creative Interests"
+          subtitle="What keeps me inspired, curious, and energized outside the code editor."
+          align="center"
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {hobbies.map((hobby) => (

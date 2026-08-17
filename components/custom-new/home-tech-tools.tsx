@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import type { ComponentType } from "react";
 import type { SkillCategory } from "@/types/content";
 import { springs, use3DTilt } from "@/lib/motion";
-import { ScrollRevealSection } from "@/components/shared/scroll-reveal";
+import { ScrollRevealSection, GSAPSectionHeader } from "@/components/shared/scroll-reveal";
 
 const ICON_MAP: Record<string, ComponentType<{ size?: number; className?: string }>> = {
   FaMobile,
@@ -74,6 +74,7 @@ function BentoSkillCard({
 
   return (
     <div
+      data-gsap-card
       ref={tilt.ref}
       onMouseMove={tilt.handleMouseMove}
       onMouseLeave={tilt.handleMouseLeave}
@@ -126,17 +127,11 @@ export default function TechToolsSection({ skills }: { skills: SkillCategory[] }
       id="skills"
       className="py-24 px-6 max-w-6xl mx-auto relative z-10"
     >
-      <div className="mb-12">
-        <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-2">
-          Skills & Stack
-        </span>
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">
-          Engineering Toolkit
-        </h2>
-        <p className="text-slate-400 max-w-xl text-sm md:text-base leading-relaxed">
-          A full-stack approach with a mobile-first mindset. My stack is chosen for speed, scalability, and robust architecture.
-        </p>
-      </div>
+      <GSAPSectionHeader
+        eyebrow="Skills & Stack"
+        title="Engineering Toolkit & Stack"
+        subtitle="A full-stack approach with a mobile-first mindset. My stack is chosen for speed, scalability, and robust architecture."
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-6 md:auto-rows-[minmax(190px,auto)] gap-5">
         {skills.map((tech, index) => {

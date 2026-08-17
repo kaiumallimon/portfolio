@@ -6,13 +6,13 @@ import { Crown, Smartphone, Star, Trophy, Users, ComputerIcon } from "lucide-rea
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
-  ScrollReveal,
   ScrollRevealSection,
   ScrollRevealStagger,
   ScrollRevealStaggerItem,
+  GSAPSectionHeader,
 } from "@/components/shared/scroll-reveal";
 import type { Metric } from "@/types/content";
-import { springs, use3DTilt } from "@/lib/motion";
+import { use3DTilt } from "@/lib/motion";
 
 const GITHUB_USERNAME = "kaiumallimon";
 
@@ -55,7 +55,6 @@ function AnimatedValue({ value, suffix = "" }: { value: number; suffix?: string 
     const start = performance.now();
     const animate = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
-      // Spring-like ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3.5);
       setDisplay(Math.round(eased * value));
       if (progress < 1) requestAnimationFrame(animate);
@@ -196,19 +195,13 @@ export default function PortfolioImpact({ metrics }: { metrics: Metric[] }) {
   return (
     <ScrollRevealSection id="impact" className="py-24 px-6 max-w-6xl mx-auto relative z-10">
       <div className="max-w-6xl mx-auto">
-        <ScrollReveal className="mb-12">
-          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-2">
-            Metrics & Achievements
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
-            Impact at a Glance
-          </h2>
-          <p className="text-slate-400 text-sm md:text-base">
-            Quantifying software engineering delivery, leadership, and competition results.
-          </p>
-        </ScrollReveal>
+        <GSAPSectionHeader
+          eyebrow="Metrics & Achievements"
+          title="Impact at a Glance"
+          subtitle="Quantifying software engineering delivery, leadership, and competition results."
+        />
 
-        <ScrollRevealStagger className="grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-4 md:gap-5">
+        <ScrollRevealStagger delay={0.2} className="grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-4 md:gap-5">
           {loading ? (
             <>
               <BentoSkeleton featured />

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Download, Loader2, Sparkles, Terminal, Code2 } from "lucide-react";
+import { ArrowRight, Download, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { SiFlutter, SiNextdotjs, SiTypescript, SiPostgresql } from "react-icons/si";
+import { SiFlutter, SiNextdotjs } from "react-icons/si";
 import { IoServer } from "react-icons/io5";
 import { FiSmartphone } from "react-icons/fi";
 import { GiElectric } from "react-icons/gi";
@@ -63,7 +63,7 @@ export default function HomeHero({
   const profileImage = settings?.profile_image || "/bordered.png";
   const subheadline =
     settings?.hero_subheadline ||
-    "Flutter Specialist & Full-Stack Software Engineer crafting high-performance cross-platform mobile apps and resilient cloud architectures.";
+    "Flutter Specialist & Full-Stack Software Engineer crafting high-performance mobile apps and scalable backends.";
   const available = settings?.available_status ?? true;
 
   // GSAP Kinetic Triggered Typography & Entrance Timeline
@@ -75,8 +75,8 @@ export default function HomeHero({
       if (avatarRef.current) {
         tl.fromTo(
           avatarRef.current,
-          { scale: 0.6, opacity: 0, y: 30, rotation: -8 },
-          { scale: 1, opacity: 1, y: 0, rotation: 0, duration: 1.1, ease: "back.out(1.8)" }
+          { scale: 0.6, opacity: 0, y: 20, rotation: -8 },
+          { scale: 1, opacity: 1, y: 0, rotation: 0, duration: 1, ease: "back.out(1.8)" }
         );
       }
 
@@ -84,8 +84,8 @@ export default function HomeHero({
       if (badgeRef.current) {
         tl.fromTo(
           badgeRef.current,
-          { y: -20, opacity: 0, scale: 0.9 },
-          { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" },
+          { y: -16, opacity: 0, scale: 0.9 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.75, ease: "power3.out" },
           "-=0.7"
         );
       }
@@ -105,8 +105,8 @@ export default function HomeHero({
             yPercent: 0,
             opacity: 1,
             rotateX: 0,
-            stagger: 0.045,
-            duration: 0.95,
+            stagger: 0.04,
+            duration: 0.9,
             ease: "power4.out",
           },
           "-=0.6"
@@ -117,8 +117,8 @@ export default function HomeHero({
       if (subheadlineRef.current) {
         tl.fromTo(
           subheadlineRef.current,
-          { y: 24, opacity: 0, filter: "blur(6px)" },
-          { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.85, ease: "power3.out" },
+          { y: 18, opacity: 0, filter: "blur(5px)" },
+          { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "power3.out" },
           "-=0.5"
         );
       }
@@ -127,8 +127,8 @@ export default function HomeHero({
       if (ctaRef.current) {
         tl.fromTo(
           ctaRef.current.children,
-          { y: 24, opacity: 0, scale: 0.92 },
-          { y: 0, opacity: 1, scale: 1, stagger: 0.1, duration: 0.8, ease: "back.out(1.6)" },
+          { y: 20, opacity: 0, scale: 0.94 },
+          { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 0.75, ease: "back.out(1.5)" },
           "-=0.5"
         );
       }
@@ -137,8 +137,8 @@ export default function HomeHero({
       if (techCardsRef.current) {
         tl.fromTo(
           techCardsRef.current.children,
-          { y: 30, opacity: 0, scale: 0.95 },
-          { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 0.85, ease: "power3.out" },
+          { y: 25, opacity: 0, scale: 0.96 },
+          { y: 0, opacity: 1, scale: 1, stagger: 0.06, duration: 0.8, ease: "power3.out" },
           "-=0.5"
         );
       }
@@ -146,15 +146,15 @@ export default function HomeHero({
       // 7. GSAP Scroll Parallax Scrub as user scrolls past Hero
       if (contentRef.current && containerRef.current) {
         gsap.to(contentRef.current, {
-          y: 90,
+          y: 70,
           opacity: 0.2,
-          scale: 0.97,
+          scale: 0.98,
           ease: "none",
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top top",
             end: "bottom top",
-            scrub: 1.2,
+            scrub: 1,
           },
         });
       }
@@ -166,10 +166,10 @@ export default function HomeHero({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden min-h-screen flex items-center justify-center"
+      className="relative overflow-hidden h-screen max-h-screen min-h-[640px] flex items-center justify-center"
     >
       {/* Background WebGL Shader */}
-      <div className="absolute inset-0 z-0 opacity-60">
+      <div className="absolute inset-0 z-0 opacity-60 pointer-events-none">
         <ColorBends
           colors={["#06060c", "#6366f1", "#4f46e5"]}
           speed={0.18}
@@ -189,28 +189,28 @@ export default function HomeHero({
       <div
         className={cn(
           "absolute inset-0 z-[1]",
-          "bg-size-[44px_44px]",
+          "bg-size-[40px_40px]",
           "bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]",
           "opacity-40 pointer-events-none"
         )}
       />
 
-      {/* Foreground Interactive Content */}
+      {/* Foreground Hero Content Scaled for 100% Screen Fit */}
       <main
         ref={contentRef}
-        className="relative z-10 pt-36 md:pt-44 pb-20 md:pb-28 px-6 max-w-5xl mx-auto w-full will-change-transform"
+        className="relative z-10 pt-20 md:pt-24 pb-6 px-6 max-w-5xl mx-auto w-full flex flex-col items-center justify-center h-full will-change-transform"
       >
-        <div className="flex flex-col items-center text-center space-y-8">
+        <div className="flex flex-col items-center text-center space-y-4 md:space-y-5 w-full my-auto">
           {/* Avatar with Specular Aura Ring */}
           <div
             ref={avatarRef}
-            className="relative p-1.5 rounded-full bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 shadow-2xl shadow-indigo-500/25 cursor-pointer group"
+            className="relative p-1 rounded-full bg-gradient-to-tr from-indigo-500 via-violet-500 to-cyan-400 shadow-xl shadow-indigo-500/20 cursor-pointer group shrink-0"
           >
             <motion.div
               whileHover={{ scale: 1.08, rotate: 2 }}
               whileTap={{ scale: 0.95 }}
               transition={springs.snappy}
-              className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-slate-950 bg-slate-900"
+              className="relative w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-slate-950 bg-slate-900"
             >
               <Image
                 src={profileImage}
@@ -221,22 +221,22 @@ export default function HomeHero({
               />
             </motion.div>
             {/* Pulsing online indicator */}
-            <span className="absolute bottom-1 right-1 flex h-4 w-4">
+            <span className="absolute bottom-0.5 right-0.5 flex h-3.5 w-3.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-slate-950" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-slate-950" />
             </span>
           </div>
 
           {/* Status Capsule */}
           <div
             ref={badgeRef}
-            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium tracking-wide backdrop-blur-xl shadow-lg shadow-indigo-500/10"
+            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium tracking-wide backdrop-blur-xl shadow-sm"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
             </span>
-            <span>{available ? "Available for new opportunities" : "Currently occupied"}</span>
+            <span>{available ? "Available for opportunities" : "Currently occupied"}</span>
             <span className="text-white/20">|</span>
             <span className="text-indigo-400/90 font-mono text-[11px]">Full-Stack & Mobile</span>
           </div>
@@ -244,7 +244,7 @@ export default function HomeHero({
           {/* GSAP Kinetic Split-Word Headline */}
           <h1
             ref={headlineRef}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white max-w-4xl leading-[1.08] perspective-1000"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold tracking-tight text-white max-w-4xl leading-[1.1] perspective-1000"
           >
             {settings?.hero_headline ? (
               <span className="inline-block overflow-hidden">
@@ -254,28 +254,28 @@ export default function HomeHero({
               </span>
             ) : (
               <>
-                <span className="inline-block overflow-hidden mr-3">
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
                   <span className="gsap-word inline-block">Crafting</span>
                 </span>
-                <span className="inline-block overflow-hidden mr-3">
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
                   <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-300 to-cyan-300">
                     scalable,
                   </span>
                 </span>
-                <span className="inline-block overflow-hidden mr-3">
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
                   <span className="gsap-word inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-300 to-cyan-300">
                     high-performance
                   </span>
                 </span>
                 <br className="hidden sm:block" />
-                <span className="inline-block overflow-hidden mr-3">
-                  <span className="gsap-word inline-block">applications</span>
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
+                  <span className="gsap-word inline-block">apps</span>
                 </span>
-                <span className="inline-block overflow-hidden mr-3">
+                <span className="inline-block overflow-hidden mr-2 md:mr-2.5">
                   <span className="gsap-word inline-block">across</span>
                 </span>
                 <span className="inline-block overflow-hidden">
-                  <span className="gsap-word inline-block bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 text-white px-3.5 py-0.5 rounded-2xl -skew-x-3 shadow-xl shadow-indigo-500/30 border border-indigo-400/30">
+                  <span className="gsap-word inline-block bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 text-white px-3 py-0.5 rounded-xl -skew-x-3 shadow-lg shadow-indigo-500/30 border border-indigo-400/30">
                     platforms
                   </span>
                 </span>
@@ -286,7 +286,7 @@ export default function HomeHero({
           {/* Subheadline */}
           <p
             ref={subheadlineRef}
-            className="text-sm md:text-base text-slate-400 max-w-2xl leading-relaxed"
+            className="text-xs sm:text-sm md:text-[0.95rem] text-slate-400 max-w-xl leading-relaxed"
           >
             {subheadline}
           </p>
@@ -294,13 +294,13 @@ export default function HomeHero({
           {/* Magnetic CTA Action Buttons */}
           <div
             ref={ctaRef}
-            className="flex flex-col sm:flex-row gap-4 pt-2 w-full sm:w-auto items-center justify-center"
+            className="flex flex-row gap-3 pt-1 w-full sm:w-auto items-center justify-center"
           >
             <div
               ref={downloadMagnetic.ref}
               onMouseMove={downloadMagnetic.handleMouseMove}
               onMouseLeave={downloadMagnetic.handleMouseLeave}
-              className="inline-block w-full sm:w-auto"
+              className="inline-block"
             >
               <motion.button
                 style={{ x: downloadMagnetic.x, y: downloadMagnetic.y }}
@@ -309,17 +309,17 @@ export default function HomeHero({
                 transition={springs.snappy}
                 onClick={handleDownload}
                 disabled={downloading || !resumeUrl}
-                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-400 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-medium shadow-xl shadow-indigo-500/25 flex items-center justify-center gap-2 group cursor-target transition-all"
+                className="px-6 sm:px-7 py-2.5 sm:py-3 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-400 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full font-medium shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group cursor-target transition-all text-xs sm:text-sm"
               >
                 {downloading ? (
                   <>
                     <span>Downloading...</span>
-                    <Loader2 size={18} className="animate-spin" />
+                    <Loader2 size={16} className="animate-spin" />
                   </>
                 ) : (
                   <>
                     <span>Download CV</span>
-                    <Download size={18} className="transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+                    <Download size={16} className="transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
                   </>
                 )}
               </motion.button>
@@ -329,7 +329,7 @@ export default function HomeHero({
               ref={talkMagnetic.ref}
               onMouseMove={talkMagnetic.handleMouseMove}
               onMouseLeave={talkMagnetic.handleMouseLeave}
-              className="inline-block w-full sm:w-auto"
+              className="inline-block"
             >
               <motion.a
                 style={{ x: talkMagnetic.x, y: talkMagnetic.y }}
@@ -337,10 +337,10 @@ export default function HomeHero({
                 whileTap={{ scale: 0.96 }}
                 transition={springs.snappy}
                 href="#contact"
-                className="w-full sm:w-auto px-8 py-3.5 border border-white/12 bg-white/5 hover:bg-white/10 text-white rounded-full font-medium backdrop-blur-xl flex items-center justify-center gap-2 group cursor-target transition-all shadow-lg shadow-black/20"
+                className="px-6 sm:px-7 py-2.5 sm:py-3 border border-white/12 bg-white/5 hover:bg-white/10 text-white rounded-full font-medium backdrop-blur-xl flex items-center justify-center gap-2 group cursor-target transition-all shadow-md text-xs sm:text-sm"
               >
                 <span>Let&apos;s Talk</span>
-                <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
               </motion.a>
             </div>
           </div>
@@ -348,28 +348,28 @@ export default function HomeHero({
           {/* Floating Technology Feature Strip */}
           <div
             ref={techCardsRef}
-            className="pt-12 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 w-full max-w-4xl"
+            className="pt-4 md:pt-5 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 w-full max-w-3xl"
           >
             {[
               { icon: SiFlutter, label: "Flutter & Dart", detail: "Multiplatform UI", color: "text-cyan-400", border: "hover:border-cyan-500/40" },
               { icon: IoServer, label: "Backend Systems", detail: "Node, Go & APIs", color: "text-emerald-400", border: "hover:border-emerald-500/40" },
-              { icon: FiSmartphone, label: "iOS & Android", detail: "Native Performance", color: "text-pink-400", border: "hover:border-pink-500/40" },
+              { icon: FiSmartphone, label: "iOS & Android", detail: "Native Speed", color: "text-pink-400", border: "hover:border-pink-500/40" },
               { icon: GiElectric, label: "Next.js Web", detail: "Server Components", color: "text-amber-400", border: "hover:border-amber-500/40" },
             ].map((item, idx) => {
               const Icon = item.icon;
               return (
                 <motion.div
                   key={idx}
-                  whileHover={{ y: -4, scale: 1.02 }}
+                  whileHover={{ y: -3, scale: 1.02 }}
                   transition={springs.snappy}
-                  className={`flex items-center gap-3.5 p-3.5 rounded-2xl border border-white/8 bg-slate-900/40 backdrop-blur-xl ${item.border} transition-all cursor-target shadow-lg shadow-black/20`}
+                  className={`flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl border border-white/8 bg-slate-900/40 backdrop-blur-xl ${item.border} transition-all cursor-target shadow-md`}
                 >
-                  <div className={`p-2.5 rounded-xl bg-white/5 ${item.color} shrink-0`}>
-                    <Icon size={20} />
+                  <div className={`p-1.5 sm:p-2 rounded-lg bg-white/5 ${item.color} shrink-0`}>
+                    <Icon size={16} />
                   </div>
                   <div className="text-left min-w-0">
-                    <p className="text-xs md:text-sm font-semibold text-white truncate">{item.label}</p>
-                    <p className="text-[11px] text-slate-500 truncate">{item.detail}</p>
+                    <p className="text-[11px] sm:text-xs font-semibold text-white truncate">{item.label}</p>
+                    <p className="text-[10px] text-slate-500 truncate">{item.detail}</p>
                   </div>
                 </motion.div>
               );
