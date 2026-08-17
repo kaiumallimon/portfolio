@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/admin/loading-skeletons";
 
 export default function Loading() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Breadcrumb */}
       <Skeleton className="h-4 w-40" />
 

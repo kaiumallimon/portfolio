@@ -3,9 +3,25 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Smooth scrolling and overflow control */
-html {
-  scroll-behavior: smooth;
+/* Lenis Smooth Scrolling Styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
@@ -17,8 +33,8 @@ body {
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
   --font-bricolage: var(--font-bricolage);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -64,7 +80,7 @@ body {
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.511 0.262 264);
+  --primary: #625fff;
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -75,7 +91,7 @@ body {
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.93 0 0);
   --input: oklch(0.93 0 0);
-  --ring: oklch(0.585 0.233 264);
+  --ring: #625fff;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -84,12 +100,12 @@ body {
   --page: oklch(0.97 0 0);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.205 0 0);
-  --sidebar-primary: oklch(0.511 0.262 264);
+  --sidebar-primary: #625fff;
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.96 0.02 264);
-  --sidebar-accent-foreground: oklch(0.511 0.262 264);
+  --sidebar-accent: oklch(0.96 0.02 276.966);
+  --sidebar-accent-foreground: oklch(0.511 0.262 276.966);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.585 0.233 264);
+  --sidebar-ring: #625fff;
 }
 
 .dark {
@@ -99,7 +115,7 @@ body {
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.585 0.233 264);
+  --primary: #625fff;
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -110,7 +126,7 @@ body {
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.585 0.233 264);
+  --ring: #625fff;
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -119,12 +135,12 @@ body {
   --page: oklch(0.105 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.585 0.233 264);
+  --sidebar-primary: #625fff;
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.30 0.06 264);
-  --sidebar-accent-foreground: oklch(0.785 0.115 264);
+  --sidebar-accent: oklch(0.30 0.06 276.966);
+  --sidebar-accent-foreground: oklch(0.785 0.15 276.966);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.585 0.233 264);
+  --sidebar-ring: #625fff;
 }
 
 @layer base {
@@ -233,6 +249,64 @@ body {
   scrollbar-width: none;
 }
 
+/* Admin dashboard scroll container (rounded-corner shell) */
+.admin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #6366f1 transparent;
+}
+
+.admin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.admin-scroll::-webkit-scrollbar-button {
+  display: none;
+}
+
+.admin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-scroll::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 9999px;
+}
+
+.admin-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+  opacity: 0.8;
+}
+
+/* Admin sidebar scroll container (transparent track, muted thumb) */
+.admin-sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #6366f1 transparent;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-button {
+  display: none;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 9999px;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+  opacity: 0.8;
+}
+
 /* Shimmer animation for skeleton loading */
 @keyframes shimmer {
   0% {
@@ -247,38 +321,7 @@ body {
   animation: shimmer 2s infinite;
 }
 
-/* Preloader */
-@keyframes preloader-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
 
-.preloader-cursor {
-  animation: preloader-blink 1s step-end infinite;
-}
-
-.preloader-grid {
-  background-image:
-    linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-}
-
-.preloader-scanline {
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 2px,
-    rgba(255, 255, 255, 0.35) 3px,
-    transparent 4px
-  );
-}
 
 /* Keep native autofill consistent with the dark glass theme */
 input:-webkit-autofill,
@@ -289,4 +332,52 @@ input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 1000px rgba(2, 6, 23, 0.5) inset !important;
   caret-color: #fff !important;
   transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Elastic Lerp Pointer Cursor */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+  transition: width 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+              height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+              background-color 0.28s ease,
+              border 0.28s ease,
+              box-shadow 0.28s ease,
+              opacity 0.25s ease,
+              transform 0.15s ease;
+  opacity: 0;
+  will-change: left, top, width, height, transform;
+}
+
+.custom-cursor.hovering {
+  width: 48px;
+  height: 48px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
+}
+
+.custom-cursor.active {
+  transform: translate(-50%, -50%) scale(0.88);
+}
+
+@media (max-width: 768px), (pointer: coarse) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
+/* Zero-flash guarantee for preloader on subsequent session visits */
+html.preloader-done .preloader-root {
+  display: none !important;
 }

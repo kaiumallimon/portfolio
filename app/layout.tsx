@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Inter, JetBrains_Mono, Outfit, Poppins, Ubuntu } from "next/font/google";
+import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -7,18 +7,18 @@ import { Suspense } from "react";
 import GAListener from "@/lib/ga-listener";
 import Preloader from "@/components/custom-new/preloader";
 import { ThemeProvider } from "@/components/theme-provider";
+import SmoothScrollProvider from "@/components/providers/smooth-scroll-provider";
 import { getSiteSettings } from "@/lib/data";
-
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
-const ubuntu = Ubuntu({
-  variable: "--font-ubuntu",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 const bricolage = Bricolage_Grotesque({
@@ -26,7 +26,6 @@ const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   display: "swap",
 });
-
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -45,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: "https://kaiumallimon.vercel.app",
+      url: "https://kaiumallimon.tech",
       title,
       description,
       siteName: "Kaium Al Limon Portfolio",
@@ -75,11 +74,28 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${ubuntu.className} ${bricolage.variable}`}>
+      <head>
+        {/* Instant synchronous session check before any DOM / React render */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (sessionStorage.getItem('preloaderShown')) {
+                  document.documentElement.classList.add('preloader-done');
+                  window.__PRELOADER_ACTIVE__ = false;
+                } else {
+                  window.__PRELOADER_ACTIVE__ = true;
+                }
+              } catch (e) {
+                window.__PRELOADER_ACTIVE__ = false;
+              }
+            `,
+          }}
+        />
+      </head>
+      <body className={`${inter.className} ${inter.variable} ${bricolage.variable} ${jetbrainsMono.variable} antialiased`}>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
@@ -101,10 +117,11 @@ export default function RootLayout({
         </Suspense>
 
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          {children}
+          <SmoothScrollProvider>
+            {children}
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>
   );
-
 }

@@ -9,6 +9,7 @@ import {
   getMetrics,
   getContactMessages,
   getSiteSettings,
+  getSystemActivities,
 } from "@/lib/data";
 import {
   Card,
@@ -39,6 +40,9 @@ import {
   Gamepad2,
   BarChart3,
   MessagesSquare,
+  ShieldAlert,
+  Globe,
+  Laptop,
 } from "lucide-react";
 import { DonutChart } from "@/components/admin/charts/donut";
 import { BarChart } from "@/components/admin/charts/bar-chart";
@@ -61,7 +65,7 @@ const C = {
 };
 
 export default async function AdminOverview() {
-  const [settings, projects, achievements, activities, education, skills, hobbies, metrics, messages] =
+  const [settings, projects, achievements, activities, education, skills, hobbies, metrics, messages, systemActivities] =
     await Promise.all([
       getSiteSettings(),
       getProjects(),
@@ -72,6 +76,7 @@ export default async function AdminOverview() {
       getHobbies(),
       getMetrics(),
       getContactMessages(),
+      getSystemActivities(6),
     ]);
 
   const unread = messages.filter((m) => !m.read).length;
@@ -155,7 +160,7 @@ export default async function AdminOverview() {
   const recentMessages = messages.slice(0, 5);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Breadcrumb */}
       <Breadcrumb>
         <BreadcrumbList>
@@ -389,6 +394,70 @@ export default async function AdminOverview() {
           </CardContent>
         </Card>
       </div>
+
+      {/* System Activity & Security Audit Section */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-indigo-400" />
+              <span>Recent System Activity & Security Audit</span>
+            </CardTitle>
+            <CardDescription>
+              Live stream of login attempts, IP telemetry, and admin write mutations.
+            </CardDescription>
+          </div>
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/admin/system-activity">
+              View full audit log
+              <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
+            </Link>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {systemActivities.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              No system activities recorded yet.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {systemActivities.map((act: any) => (
+                <div
+                  key={act.id}
+                  className="p-3 rounded-xl border border-border/40 bg-muted/20 hover:bg-muted/40 transition-colors space-y-2 text-xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`px-2 py-0.5 rounded-full font-mono text-[10px] font-semibold uppercase ${
+                        act.status === "success"
+                          ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                          : act.status === "failure"
+                          ? "bg-red-500/15 text-red-300 border border-red-500/30"
+                          : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                      }`}
+                    >
+                      {act.status}
+                    </span>
+                    <span className="text-[11px] font-mono text-muted-foreground">
+                      {new Date(act.created_at).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+
+                  <p className="font-semibold text-foreground truncate">{act.action}</p>
+
+                  <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground pt-1 border-t border-border/20">
+                    <span className="truncate">{act.user_email || "Anonymous"}</span>
+                    <span>{act.ip_address || "Unknown IP"}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

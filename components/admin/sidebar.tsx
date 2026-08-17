@@ -15,11 +15,13 @@ import {
   BarChart3,
   Settings,
   Mail,
+  ShieldAlert,
   LogOut,
 } from "lucide-react";
 
 const NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/system-activity", label: "System Activity", icon: ShieldAlert },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
   { href: "/admin/achievements", label: "Achievements", icon: Trophy },
   { href: "/admin/activities", label: "Activities", icon: Activity },
@@ -42,13 +44,13 @@ export default function AdminSidebar({ email }: { email: string }) {
   };
 
   return (
-    <aside className="w-60 shrink-0 border-r border-white/10 bg-slate-900/40 backdrop-blur-md h-screen sticky top-0 flex flex-col">
+    <aside data-lenis-prevent="true" className="w-60 shrink-0 border-r border-white/10 bg-slate-900/40 backdrop-blur-md h-screen sticky top-0 flex flex-col overscroll-contain">
       <div className="p-5 border-b border-white/10">
         <p className="text-sm font-semibold text-white">Portfolio Admin</p>
         <p className="text-xs text-slate-500 truncate mt-1">{email}</p>
       </div>
 
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+      <nav data-lenis-prevent="true" className="flex-1 p-3 space-y-1 overflow-y-auto overscroll-contain">
         {NAV.map((item) => {
           const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
           const Icon = item.icon;

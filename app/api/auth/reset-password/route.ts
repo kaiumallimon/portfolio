@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { findUserByEmail } from "@/lib/auth/admin-user";
 import { hashResetToken } from "@/lib/auth/reset-tokens";
+import { logSystemActivity } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -50,6 +51,18 @@ export async function POST(req: Request) {
       .from("password_resets")
       .update({ used_at: new Date().toISOString() })
       .eq("id", record.id);
+
+    // Log password reset success
+    await logSystemActivity({
+      type: "password_reset_success",
+      action: "Password Reset Completed",
+      entity: "auth",
+      status: "success",
+      userEmail: record.email,
+      metadata: {
+        userId: found.id,
+      },
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error: any) {

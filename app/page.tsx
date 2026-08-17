@@ -6,7 +6,6 @@ import HomeHero from "@/components/custom-new/home-hero";
 import HomeProjects from "@/components/custom-new/home-selected-work";
 import TechToolsSection from "@/components/custom-new/home-tech-tools";
 import JourneySection from "@/components/custom-new/journey";
-import HobbiesSection from "@/components/custom-new/hobbies";
 import SectionSeparator from "@/components/custom-new/section-separator";
 import GithubContributions from "@/components/Github-Contributions";
 import PortfolioImpact from "@/components/Impacts";
@@ -18,7 +17,6 @@ import {
   AboutSkeleton,
   AchievementsSkeleton,
   HeroSkeleton,
-  HobbiesSkeleton,
   ImpactSkeleton,
   JourneySkeleton,
   ProjectsSkeleton,
@@ -28,7 +26,6 @@ import {
   getAchievements,
   getActivities,
   getEducation,
-  getHobbies,
   getMetrics,
   getProjects,
   getResumeUrl,
@@ -40,8 +37,12 @@ import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 
 async function HeroSection() {
-  const [settings, resumeUrl] = await Promise.all([getSiteSettings(), getResumeUrl()]);
-  return <HomeHero settings={settings} resumeUrl={resumeUrl} />;
+  const [settings, resumeUrl, skills] = await Promise.all([
+    getSiteSettings(),
+    getResumeUrl(),
+    getSkills(),
+  ]);
+  return <HomeHero settings={settings} resumeUrl={resumeUrl} skills={skills} />;
 }
 
 async function AboutSection() {
@@ -74,11 +75,6 @@ async function AchievementsViewSection() {
   return <AchievementsSection achievements={achievements} />;
 }
 
-async function HobbiesViewSection() {
-  const hobbies = await getHobbies();
-  return <HobbiesSection hobbies={hobbies} />;
-}
-
 async function ContactViewSection() {
   const settings = await getSiteSettings();
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? null;
@@ -88,13 +84,13 @@ async function ContactViewSection() {
 export default function Home() {
   return (
     <div className="min-h-screen w-full bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
-      <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn hoverDuration={0.2} />
+      <TargetCursor spinDuration={2.5} hideDefaultCursor parallaxOn hoverDuration={0.2} />
 
       <HomeBackground />
       <FloatingHeader />
       <HomeHeroWrapper />
       
-      <div className="relative bg-[#0b001a]">
+      <div className="relative">
         <Suspense fallback={<AboutSkeleton />}>
           <AboutSection />
         </Suspense>
@@ -121,10 +117,6 @@ export default function Home() {
         <SectionSeparator />
         <Suspense fallback={<AchievementsSkeleton />}>
           <AchievementsViewSection />
-        </Suspense>
-        <SectionSeparator />
-        <Suspense fallback={<HobbiesSkeleton />}>
-          <HobbiesViewSection />
         </Suspense>
         <SectionSeparator />
         <Suspense fallback={<AboutSkeleton />}>

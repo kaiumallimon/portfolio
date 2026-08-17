@@ -7,6 +7,7 @@ import {
   hashResetToken,
   resetTokenExpiry,
 } from "@/lib/auth/reset-tokens";
+import { logSystemActivity } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -40,6 +41,18 @@ export async function POST(req: Request) {
 
       await sendResetEmail(normalized, token, req);
     }
+
+    // Log password reset request event
+    await logSystemActivity({
+      type: "password_reset_request",
+      action: "Password Reset Requested",
+      entity: "auth",
+      status: "warning",
+      userEmail: normalized,
+      metadata: {
+        registeredUser: Boolean(userId),
+      },
+    });
 
     // Always succeed to avoid email enumeration.
     return NextResponse.json({ ok: true });

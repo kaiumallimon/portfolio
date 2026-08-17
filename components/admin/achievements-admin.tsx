@@ -178,7 +178,7 @@ export default function AchievementsAdmin({
   };
 
   return (
-    <div className="p-6">
+    <div>
       {/* Breadcrumbs */}
       <Breadcrumb>
         <BreadcrumbList>

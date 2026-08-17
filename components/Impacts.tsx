@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { useInView, motion } from "framer-motion";
 import { Crown, Smartphone, Star, Trophy, Users, ComputerIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
-  ScrollReveal,
   ScrollRevealSection,
   ScrollRevealStagger,
   ScrollRevealStaggerItem,
+  GSAPSectionHeader,
 } from "@/components/shared/scroll-reveal";
 import type { Metric } from "@/types/content";
+import { use3DTilt } from "@/lib/motion";
 
 const GITHUB_USERNAME = "kaiumallimon";
 
@@ -50,11 +51,11 @@ function AnimatedValue({ value, suffix = "" }: { value: number; suffix?: string 
 
   useEffect(() => {
     if (!isInView) return;
-    const duration = 1200;
+    const duration = 1400;
     const start = performance.now();
     const animate = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 1 - Math.pow(1 - progress, 3.5);
       setDisplay(Math.round(eased * value));
       if (progress < 1) requestAnimationFrame(animate);
     };
@@ -62,7 +63,7 @@ function AnimatedValue({ value, suffix = "" }: { value: number; suffix?: string 
   }, [isInView, value]);
 
   return (
-    <span ref={ref}>
+    <span ref={ref} className="tabular-nums">
       {display}
       {suffix}
     </span>
@@ -73,41 +74,65 @@ function BentoSkeleton({ featured }: { featured?: boolean }) {
   return (
     <div
       className={cn(
-        "border border-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 bg-slate-900/30",
-        featured && "col-span-2 row-span-2 min-h-[200px] md:min-h-0"
+        "border border-white/10 backdrop-blur-xl rounded-3xl p-6 bg-slate-900/40",
+        featured && "col-span-2 row-span-2 min-h-[220px] md:min-h-0"
       )}
     >
-      <Skeleton className={cn("rounded-xl mb-4 bg-slate-700", featured ? "w-12 h-12" : "w-10 h-10")} />
-      <Skeleton className={cn("mb-2 bg-slate-700", featured ? "h-10 w-20" : "h-8 w-16")} />
-      <Skeleton className="h-4 w-28 bg-slate-700" />
+      <Skeleton className={cn("rounded-2xl mb-4 bg-slate-800", featured ? "w-12 h-12" : "w-10 h-10")} />
+      <Skeleton className={cn("mb-2 bg-slate-800", featured ? "h-10 w-24" : "h-8 w-16")} />
+      <Skeleton className="h-4 w-28 bg-slate-800" />
     </div>
   );
 }
 
 function MetricBentoCard({ metric }: { metric: MetricCard }) {
   const Icon = metric.icon;
+  const tilt = use3DTilt({ maxTilt: metric.featured ? 6 : 10, scale: 1.02 });
+
   return (
     <ScrollRevealStaggerItem className={cn(metric.bento, "h-full")}>
       <div
-        className={cn(
-          "cursor-target group relative overflow-hidden border border-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 bg-slate-900/30 hover:border-white/20 transition-all duration-300 h-full",
-          metric.featured && "bg-gradient-to-br from-blue-500/10 via-slate-900/30 to-slate-900/30 min-h-[160px] md:min-h-0"
-        )}
+        ref={tilt.ref}
+        onMouseMove={tilt.handleMouseMove}
+        onMouseLeave={tilt.handleMouseLeave}
+        className="h-full perspective-1000"
       >
-        {metric.featured && (
-          <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        )}
-        <div className={cn("relative flex flex-col h-full", metric.featured && "justify-between")}>
-          <div className={cn("rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300", metric.iconBg, metric.featured ? "w-12 h-12" : "w-10 h-10")}>
-            <Icon size={metric.featured ? 22 : 18} className={metric.color} />
+        <motion.div
+          style={tilt.style}
+          className={cn(
+            "cursor-target group relative overflow-hidden border border-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-7 bg-slate-900/40 hover:border-indigo-500/40 transition-colors duration-300 h-full shadow-xl shadow-black/30",
+            metric.featured && "bg-gradient-to-br from-indigo-950/40 via-slate-900/50 to-slate-950/80 min-h-[180px] md:min-h-0"
+          )}
+        >
+          {metric.featured && (
+            <div className="absolute top-0 right-0 w-44 h-44 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+          )}
+
+          <div className={cn("relative flex flex-col h-full", metric.featured && "justify-between")}>
+            <div
+              className={cn(
+                "rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 border border-white/10",
+                metric.iconBg,
+                metric.featured ? "w-14 h-14" : "w-11 h-11"
+              )}
+            >
+              <Icon size={metric.featured ? 24 : 18} className={metric.color} />
+            </div>
+            <div className={metric.featured ? "mt-auto" : undefined}>
+              <p
+                className={cn(
+                  "font-bold text-white tracking-tight leading-none",
+                  metric.featured ? "text-4xl md:text-5xl lg:text-6xl" : "text-2xl md:text-3xl"
+                )}
+              >
+                <AnimatedValue value={metric.value} suffix={metric.suffix} />
+              </p>
+              <p className={cn("text-slate-400 mt-2 font-medium", metric.featured ? "text-sm md:text-base" : "text-xs md:text-sm")}>
+                {metric.label}
+              </p>
+            </div>
           </div>
-          <div className={metric.featured ? "mt-auto" : undefined}>
-            <p className={cn("font-semibold text-white tracking-tight", metric.featured ? "text-4xl md:text-5xl" : "text-2xl md:text-3xl")}>
-              <AnimatedValue value={metric.value} suffix={metric.suffix} />
-            </p>
-            <p className={cn("text-slate-500 mt-1", metric.featured ? "text-sm md:text-base" : "text-xs md:text-sm")}>{metric.label}</p>
-          </div>
-        </div>
+        </motion.div>
       </div>
     </ScrollRevealStaggerItem>
   );
@@ -168,14 +193,15 @@ export default function PortfolioImpact({ metrics }: { metrics: Metric[] }) {
   ];
 
   return (
-    <ScrollRevealSection id="impact" className="py-24 px-6 max-w-6xl mx-auto relative">
+    <ScrollRevealSection id="impact" className="py-24 px-6 max-w-6xl mx-auto relative z-10">
       <div className="max-w-6xl mx-auto">
-        <ScrollReveal className="mb-12">
-          <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">Impact at a Glance</h2>
-          <p className="text-slate-400">Quantifying years of software development, leadership, and competition results.</p>
-        </ScrollReveal>
+        <GSAPSectionHeader
+          eyebrow="Metrics & Achievements"
+          title="Impact at a Glance"
+          subtitle="Quantifying software engineering delivery, leadership, and competition results."
+        />
 
-        <ScrollRevealStagger className="grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-3 md:gap-4">
+        <ScrollRevealStagger delay={0.2} className="grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-4 md:gap-5">
           {loading ? (
             <>
               <BentoSkeleton featured />
