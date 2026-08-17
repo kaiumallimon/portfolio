@@ -364,3 +364,46 @@ input:-webkit-autofill:active {
   caret-color: #fff !important;
   transition: background-color 9999s ease-in-out 0s;
 }
+
+/* Elastic Lerp Pointer Cursor */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+  transition: width 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+              height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+              background-color 0.28s ease,
+              border 0.28s ease,
+              box-shadow 0.28s ease,
+              opacity 0.25s ease,
+              transform 0.15s ease;
+  opacity: 0;
+  will-change: left, top, width, height, transform;
+}
+
+.custom-cursor.hovering {
+  width: 48px;
+  height: 48px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
+}
+
+.custom-cursor.active {
+  transform: translate(-50%, -50%) scale(0.88);
+}
+
+@media (max-width: 768px), (pointer: coarse) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
