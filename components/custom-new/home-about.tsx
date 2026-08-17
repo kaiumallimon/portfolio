@@ -144,7 +144,7 @@ export default function HomeAboutSection({
               </div>
 
               {/* Bio Narrative Text */}
-              <div className="text-sm md:text-[0.95rem] text-slate-300/90 leading-relaxed font-normal [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:text-white [&_strong]:font-semibold [&_em]:text-indigo-200 [&_code]:text-indigo-300 [&_code]:bg-indigo-950/50 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:font-mono [&_a]:text-indigo-400 [&_a]:underline hover:[&_a]:text-indigo-300 transition-colors">
+              <div className="text-sm md:text-[0.95rem] text-slate-300/90 leading-relaxed font-normal [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:text-primary [&_strong]:font-semibold [&_em]:text-indigo-200 [&_code]:text-indigo-300 [&_code]:bg-indigo-950/50 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:font-mono [&_a]:text-primary [&_a]:no-underline hover:[&_a]:text-primary/80 transition-colors">
                 {settings?.about_bio ? (
                   settings.about_bio.includes("<") ? (
                     <div dangerouslySetInnerHTML={{ __html: settings.about_bio }} />
