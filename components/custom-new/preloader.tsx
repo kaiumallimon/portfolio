@@ -69,15 +69,18 @@ export default function Preloader() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const hasShown = sessionStorage.getItem("preloaderShown");
+    const hasShown = typeof window !== "undefined" && sessionStorage.getItem("preloaderShown");
     if (hasShown) {
       setComplete(true);
+      if (typeof window !== "undefined") {
+        (window as any).__PRELOADER_ACTIVE__ = false;
+      }
       return;
     }
 
-    // Mark as shown up front so a reload mid-animation still counts as
-    // "already shown" for this session and won't replay the intro.
-    sessionStorage.setItem("preloaderShown", "true");
+    if (typeof window !== "undefined") {
+      (window as any).__PRELOADER_ACTIVE__ = true;
+    }
 
     const timer = setInterval(() => {
       setProgress((prev) => {
@@ -85,10 +88,10 @@ export default function Preloader() {
           clearInterval(timer);
           return 100;
         }
-        const increment = 2 + Math.random() * 5;
+        const increment = 2.5 + Math.random() * 6;
         return Math.min(prev + increment, 100);
       });
-    }, 200);
+    }, 120);
 
     return () => clearInterval(timer);
   }, []);
@@ -96,10 +99,21 @@ export default function Preloader() {
   useEffect(() => {
     if (progress !== 100) return;
 
-    const exitTimer = setTimeout(() => setExiting(true), 1800);
+    const exitTimer = setTimeout(() => {
+      setExiting(true);
+      if (typeof window !== "undefined") {
+        (window as any).__PRELOADER_ACTIVE__ = false;
+        sessionStorage.setItem("preloaderShown", "true");
+        window.dispatchEvent(new CustomEvent("preloader-exit"));
+      }
+    }, 800);
+
     const completeTimer = setTimeout(() => {
       setComplete(true);
-    }, 3200);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("preloader-complete"));
+      }
+    }, 1800);
 
     return () => {
       clearTimeout(exitTimer);

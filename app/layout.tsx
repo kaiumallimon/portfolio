@@ -16,10 +16,10 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const ubuntu = Ubuntu({
-  variable: "--font-ubuntu",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 const bricolage = Bricolage_Grotesque({
@@ -80,7 +80,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${ubuntu.className} ${bricolage.variable}`}>
+      <body className={`${inter.className} ${inter.variable} ${bricolage.variable} ${jetbrainsMono.variable} antialiased`}>
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"

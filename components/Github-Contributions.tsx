@@ -116,7 +116,7 @@ export default function GithubContributions() {
     <ScrollRevealSection id="contributions" className="py-24 px-6 max-w-6xl mx-auto relative z-10">
       <div className="max-w-6xl mx-auto">
         <GSAPSectionHeader
-          eyebrow="Open Source"
+          eyebrow="Contributions"
           title="Engineering Velocity & Consistency"
           subtitle="Consistent shipping habits reflected in my real-time GitHub activity graph."
           rightAction={

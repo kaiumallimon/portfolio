@@ -120,29 +120,35 @@ export default function FloatingHeader() {
     };
   }, []);
 
-  // GSAP Staggered Tri-Dock Entrance Timeline
+  // GSAP Staggered Tri-Dock Entrance Timeline (Synchronized with Preloader)
   useEffect(() => {
     if (!containerRef.current) return;
 
     const pods = [leftPodRef.current, centerPodRef.current, rightPodRef.current].filter(Boolean);
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        pods,
-        { y: -32, opacity: 0, scale: 0.96 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.65,
-          stagger: 0.06,
-          ease: 'power4.out',
-          delay: 0.05,
-        }
-      );
-    }, containerRef);
+    // Initial hidden state off-top
+    gsap.set(pods, { y: -35, opacity: 0, scale: 0.96 });
 
-    return () => ctx.revert();
+    const runEntrance = () => {
+      gsap.to(pods, {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power4.out',
+        delay: 0.15,
+      });
+    };
+
+    const isPreloaderActive = typeof window !== 'undefined' && (window as any).__PRELOADER_ACTIVE__;
+
+    if (isPreloaderActive) {
+      window.addEventListener('preloader-exit', runEntrance, { once: true });
+      return () => window.removeEventListener('preloader-exit', runEntrance);
+    } else {
+      runEntrance();
+    }
   }, []);
 
   // Scroll detection & Section spy
@@ -183,7 +189,11 @@ export default function FloatingHeader() {
 
   const isActive = (href: string) => {
     if (href.startsWith('#')) {
-      return activeSection === href.slice(1);
+      const section = href.slice(1);
+      if (section === 'contributions') {
+        return activeSection === 'contributions' || activeSection === 'languages';
+      }
+      return activeSection === section;
     }
     return pathname.startsWith(href);
   };
@@ -200,8 +210,7 @@ export default function FloatingHeader() {
     { href: '#skills', label: 'Skills' },
     { href: '#impact', label: 'Impact' },
     { href: '#projects', label: 'Projects' },
-    { href: '#contributions', label: 'Open Source' },
-    { href: '#languages', label: 'Distribution' },
+    { href: '#contributions', label: 'GitHub' },
     { href: '#activities', label: 'Activities' },
     { href: '#achievements', label: 'Achievements' },
   ];
@@ -220,7 +229,7 @@ export default function FloatingHeader() {
       {/* Floating Header Bar (Clean Minimalist Overlay with Gradual Blur) */}
       <header
         ref={containerRef}
-        className="fixed top-3.5 sm:top-4 inset-x-0 z-50 pointer-events-none px-6 max-w-7xl mx-auto flex items-center justify-between gap-4"
+        className="fixed top-3 sm:top-4 inset-x-0 z-50 pointer-events-none px-4 sm:px-6 max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4"
       >
         {/* Left Pod: Identity Badge */}
         <div
@@ -238,7 +247,7 @@ export default function FloatingHeader() {
 
           {/* Availability Pulse Light */}
           <div
-            title={available ? 'Available for Projects' : 'Currently Engaged'}
+            title={available ? 'Open for Work' : 'Currently Engaged'}
             className="flex items-center gap-1.5 pl-2 border-l border-white/10 text-[11px] text-emerald-400 font-medium hidden sm:flex"
           >
             <span className="relative flex h-2 w-2">
@@ -271,8 +280,10 @@ export default function FloatingHeader() {
           ref={rightPodRef}
           className="pointer-events-auto flex items-center gap-2.5 py-1"
         >
-          {/* Direct Magnetic Contact Button */}
-          <MagneticContactButton onClick={(e) => handleNavClick(e, '#contact')} />
+          {/* Direct Magnetic Contact Button (Desktop/Tablet) */}
+          <div className="hidden sm:inline-flex">
+            <MagneticContactButton onClick={(e) => handleNavClick(e, '#contact')} />
+          </div>
 
           {/* Mobile Drawer Trigger */}
           <button
