@@ -599,24 +599,32 @@ export async function deleteMetric(formData: FormData) {
 export async function saveSettings(formData: FormData) {
   const admin = await requireAdmin();
   const supabase = getServerSupabase();
-  const payload = {
+
+  // Fetch current settings first so card-specific partial updates preserve untouched fields!
+  const { data: existing } = await supabase.from("site_settings").select("*").eq("id", 1).maybeSingle();
+
+  const payload: Record<string, any> = {
     id: 1,
-    display_name: str(formData, "display_name"),
-    hero_headline: str(formData, "hero_headline"),
-    hero_subheadline: str(formData, "hero_subheadline"),
-    about_bio: str(formData, "about_bio"),
-    available_status: bool(formData, "available_status"),
-    profile_image: str(formData, "profile_image"),
-    github_url: str(formData, "github_url"),
-    linkedin_url: str(formData, "linkedin_url"),
-    email: str(formData, "email"),
-    location: str(formData, "location"),
-    github_username: str(formData, "github_username"),
-    resume_url: str(formData, "resume_url"),
-    seo_title: str(formData, "seo_title"),
-    seo_description: str(formData, "seo_description"),
-    footer_description: str(formData, "footer_description"),
-    facebook_url: str(formData, "facebook_url"),
+    display_name: formData.has("display_name") ? str(formData, "display_name") : existing?.display_name,
+    hero_headline: formData.has("hero_headline") ? str(formData, "hero_headline") : existing?.hero_headline,
+    hero_subheadline: formData.has("hero_subheadline") ? str(formData, "hero_subheadline") : existing?.hero_subheadline,
+    about_bio: formData.has("about_bio") ? str(formData, "about_bio") : existing?.about_bio,
+    available_status: formData.has("available_status_present")
+      ? bool(formData, "available_status")
+      : formData.has("available_status")
+      ? bool(formData, "available_status")
+      : (existing?.available_status ?? true),
+    profile_image: formData.has("profile_image") ? str(formData, "profile_image") : existing?.profile_image,
+    github_url: formData.has("github_url") ? str(formData, "github_url") : existing?.github_url,
+    linkedin_url: formData.has("linkedin_url") ? str(formData, "linkedin_url") : existing?.linkedin_url,
+    facebook_url: formData.has("facebook_url") ? str(formData, "facebook_url") : existing?.facebook_url,
+    email: formData.has("email") ? str(formData, "email") : existing?.email,
+    location: formData.has("location") ? str(formData, "location") : existing?.location,
+    github_username: formData.has("github_username") ? str(formData, "github_username") : existing?.github_username,
+    resume_url: formData.has("resume_url") ? str(formData, "resume_url") : existing?.resume_url,
+    seo_title: formData.has("seo_title") ? str(formData, "seo_title") : existing?.seo_title,
+    seo_description: formData.has("seo_description") ? str(formData, "seo_description") : existing?.seo_description,
+    footer_description: formData.has("footer_description") ? str(formData, "footer_description") : existing?.footer_description,
   };
   await supabase.from("site_settings").upsert(payload);
 

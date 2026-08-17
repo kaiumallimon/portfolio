@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: "https://kaiumallimon.vercel.app",
+      url: "https://kaiumallimon.tech",
       title,
       description,
       siteName: "Kaium Al Limon Portfolio",
