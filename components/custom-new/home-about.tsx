@@ -119,7 +119,7 @@ export default function HomeAboutSection({
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        
+
         {/* Left Column (7 cols): Editorial Narrative & Core Engineering Pillars */}
         <div
           data-gsap-card
@@ -144,7 +144,7 @@ export default function HomeAboutSection({
               </div>
 
               {/* Bio Narrative Text */}
-              <div className="text-sm md:text-[0.95rem] text-slate-300/90 leading-relaxed font-normal [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:text-primary [&_strong]:font-semibold [&_em]:text-indigo-200 [&_code]:text-indigo-300 [&_code]:bg-indigo-950/50 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:font-mono [&_a]:text-primary [&_a]:no-underline hover:[&_a]:text-primary/80 transition-colors">
+              <div className="text-sm md:text-[0.95rem] text-slate-300/90 leading-relaxed font-normal [&_p]:mb-3 [&_p:last-child]:mb-0 [&_strong]:text-white [&_strong]:font-semibold [&_em]:text-indigo-200 [&_code]:text-indigo-300 [&_code]:bg-indigo-950/50 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:font-mono [&_a]:text-primary [&_a]:no-underline hover:[&_a]:text-primary/80 transition-colors">
                 {settings?.about_bio ? (
                   settings.about_bio.includes("<") ? (
                     <div dangerouslySetInnerHTML={{ __html: settings.about_bio }} />
@@ -215,7 +215,7 @@ export default function HomeAboutSection({
 
         {/* Right Column (5 cols): Academic Pedigree & Location Telemetry */}
         <div className="lg:col-span-5 flex flex-col gap-6 justify-between">
-          
+
           {/* Education Glass Card */}
           <div
             data-gsap-card
@@ -250,11 +250,10 @@ export default function HomeAboutSection({
                   return (
                     <div key={edu.id} className="relative pl-11 py-1 group/item">
                       <div
-                        className={`absolute left-0 top-3.5 w-7 h-7 rounded-full ring-4 ring-slate-950 flex items-center justify-center transition-all ${
-                          isCurrent
+                        className={`absolute left-0 top-3.5 w-7 h-7 rounded-full ring-4 ring-slate-950 flex items-center justify-center transition-all ${isCurrent
                             ? "bg-indigo-500 shadow-md shadow-indigo-500/50"
                             : "bg-slate-800 border border-slate-700"
-                        }`}
+                          }`}
                       >
                         <IconComponent size={13} className="text-white" />
                       </div>

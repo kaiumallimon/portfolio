@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { springs, useMagnetic } from '@/lib/motion';
+import GradualBlur from '@/components/shared/gradual-blur';
 
 function MagneticNavButton({
   href,
@@ -31,11 +32,10 @@ function MagneticNavButton({
         style={{ x, y }}
         href={href}
         onClick={onClick}
-        className={`cursor-target px-3.5 py-1.5 text-xs rounded-full transition-all relative block select-none ${
-          active
+        className={`cursor-target px-3.5 py-1.5 text-xs rounded-full transition-all relative block select-none ${active
             ? 'text-white font-semibold shadow-sm'
             : 'text-slate-400 hover:text-slate-200 font-medium'
-        }`}
+          }`}
       >
         {active && (
           <motion.div
@@ -113,7 +113,7 @@ export default function FloatingHeader() {
           if (typeof d.available_status === 'boolean') setAvailable(d.available_status);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
     return () => {
       cancelled = true;
     };
@@ -234,6 +234,16 @@ export default function FloatingHeader() {
 
   return (
     <>
+      {/* Full-width scroll-activated gradual blur veil */}
+      <GradualBlur
+        position="top"
+        height="7rem"
+        layers={10}
+        maxBlur={28}
+        opacity={scrolled ? 1 : 0}
+        className="transition-opacity duration-500"
+      />
+
       {/* Floating Header Bar (Clean Minimalist Overlay) */}
       <header
         ref={containerRef}
@@ -246,7 +256,7 @@ export default function FloatingHeader() {
         >
           <a
             href="/"
-            className="cursor-target flex items-center gap-2 text-white font-bold text-xs sm:text-sm tracking-tight group"
+            className="cursor-target flex items-center gap-2 text-white font-bold text-xs sm:text-sm tracking-widest uppercase group"
           >
             <span className="truncate max-w-[130px] sm:max-w-none text-slate-200 group-hover:text-white transition-colors">
               {displayName}
@@ -254,6 +264,7 @@ export default function FloatingHeader() {
           </a>
 
           {/* Availability Pulse Light */}
+
           <div
             title={available ? 'Open for Work' : 'Currently Engaged'}
             className="flex items-center gap-1.5 pl-2 border-l border-white/10 text-[11px] text-emerald-400 font-medium hidden sm:flex"
@@ -363,19 +374,17 @@ export default function FloatingHeader() {
                         handleNavClick(e, item.href);
                         setMobileMenuOpen(false);
                       }}
-                      className={`group cursor-target flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
-                        isActive(item.href)
+                      className={`group cursor-target flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all ${isActive(item.href)
                           ? 'bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 font-semibold shadow-sm'
                           : 'text-slate-300 hover:text-white hover:bg-white/5 border border-transparent'
-                      }`}
+                        }`}
                     >
                       <span className="flex items-center gap-3">
                         <span
-                          className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                            isActive(item.href)
+                          className={`w-1.5 h-1.5 rounded-full transition-colors ${isActive(item.href)
                               ? 'bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.8)]'
                               : 'bg-white/20 group-hover:bg-indigo-400/60'
-                          }`}
+                            }`}
                         />
                         {item.label}
                       </span>
