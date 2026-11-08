@@ -330,7 +330,7 @@ export const fallbackEducation: IEducationItem[] = [
     period: "2022 — 2026",
     description:
       "Specializing in full-stack mobile & web development, system architecture, and cloud technologies.",
-    status: "current",
+    status: "completed",
   },
   {
     id: "safiuddin-hsc",

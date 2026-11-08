@@ -56,7 +56,6 @@ export function MonochromeEducation({
         >
           {items.map((item, idx) => {
             const isLast = idx === items.length - 1;
-            const isCurrent = item.status === "current";
 
             return (
               <li
@@ -76,13 +75,7 @@ export function MonochromeEducation({
                   className="absolute left-[2px] sm:left-[6px] top-1 size-3.5 rounded-full border border-zinc-400 dark:border-zinc-500 bg-white dark:bg-zinc-950 flex items-center justify-center group-hover:border-zinc-900 dark:group-hover:border-zinc-100 transition-colors"
                   aria-hidden="true"
                 >
-                  <div
-                    className={`size-1.5 rounded-full ${
-                      isCurrent
-                        ? "bg-emerald-500 animate-pulse"
-                        : "bg-zinc-900 dark:bg-zinc-100"
-                    }`}
-                  />
+                  <div className="size-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100" />
                 </div>
 
                 {/* Entry Content */}
@@ -102,11 +95,6 @@ export function MonochromeEducation({
                       <span className="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
                         {item.institution}
                       </span>
-                      {isCurrent && (
-                        <span className="px-1.5 py-0.2 rounded-xs text-[10px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                          In Progress
-                        </span>
-                      )}
                     </div>
 
                     {/* Dates: Right-aligned on desktop, stacked on mobile */}
