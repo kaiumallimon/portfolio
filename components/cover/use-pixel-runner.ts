@@ -814,24 +814,9 @@ export function usePixelRunner(theme: ThemeMode) {
       // 3. GAME OVER OVERLAY
       // -------------------------------------------------------------
       else if (e.mode === 'gameover') {
-        // Red dim overlay
-        ctx.fillStyle = isDark ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.75)';
+        // Dim overlay on canvas
+        ctx.fillStyle = isDark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.75)';
         ctx.fillRect(0, 0, e.width, e.height);
-
-        // "BUILD FAILED" in retro red font
-        ctx.fillStyle = '#ef4444';
-        ctx.font = 'bold 13px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('BUILD FAILED', e.width / 2, e.height / 2 - 12);
-
-        // Final score
-        ctx.fillStyle = isDark ? '#f4f4f5' : '#18181b';
-        ctx.font = '9px monospace';
-        ctx.fillText(`${e.score} commits · best: ${Math.max(e.score, e.highScore)}`, e.width / 2, e.height / 2 + 2);
-
-        ctx.fillStyle = isDark ? '#a1a1aa' : '#71717a';
-        ctx.font = '8px monospace';
-        ctx.fillText('press space or tap to git revert', e.width / 2, e.height / 2 + 15);
       }
 
       animationFrameId = requestAnimationFrame(tick);

@@ -140,31 +140,45 @@ export function PixelRunner({ onGameModeChange }: PixelRunnerProps) {
         </button>
       </div>
 
-      {/* Game Over "Git Revert" Actions */}
+      {/* Game Over UI Overlay — clean flex column with zero overlapping text */}
       {gameMode === "gameover" && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-auto gap-2">
-          <div className="mt-6 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                restartRunnerGame();
-              }}
-              className="px-3 py-1.5 rounded-md bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-transform cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              git revert
-            </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                returnToIdle();
-              }}
-              className="px-2.5 py-1.5 rounded-md bg-zinc-700 hover:bg-zinc-600 text-white font-mono text-xs font-medium active:scale-95 transition-transform cursor-pointer"
-            >
-              idle
-            </button>
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-auto bg-black/60 dark:bg-black/75 backdrop-blur-[2px] transition-all animate-in fade-in duration-200">
+          <div className="text-center flex flex-col items-center gap-1.5 p-3">
+            <span className="font-mono text-base sm:text-lg font-bold tracking-wider text-red-500 uppercase select-none">
+              BUILD FAILED
+            </span>
+
+            <span className="font-mono text-xs text-zinc-300 dark:text-zinc-200 select-none">
+              {currentScore} commits · best: {Math.max(currentScore, highScore)}
+            </span>
+
+            <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500 select-none">
+              press space or tap to git revert
+            </span>
+
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  restartRunnerGame();
+                }}
+                className="px-3 py-1.5 rounded bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                git revert
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  returnToIdle();
+                }}
+                className="px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-mono text-xs font-medium border border-zinc-700 active:scale-95 transition-all cursor-pointer"
+              >
+                idle
+              </button>
+            </div>
           </div>
         </div>
       )}
