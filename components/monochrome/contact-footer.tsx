@@ -298,20 +298,9 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
               </button>
             </div>
 
-            {/* Subtle Sub-bar with Colophon & Agent Info */}
-            <div className="relative z-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-6 text-[10px] sm:text-[11px] font-mono text-zinc-400 dark:text-zinc-600">
+            {/* Copyright Notice */}
+            <div className="relative z-10 flex items-center justify-center mt-6 text-[10px] sm:text-[11px] font-mono text-zinc-400 dark:text-zinc-600">
               <span>© {new Date().getFullYear()} Kaium Al Limon</span>
-              <span>·</span>
-              <span>Geist</span>
-              <span>·</span>
-              <a
-                href="/llms.txt"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors"
-              >
-                llms.txt
-              </a>
             </div>
 
             {/* Massive Faded Half-Visible Initials "KAL" in Geist Font */}
