@@ -64,6 +64,7 @@ export function MonochromeHeader({
         <div className="overflow-hidden h-8 flex items-center">
           <Link
             href="/"
+            prefetch={false}
             aria-label="Home"
             style={{
               opacity: isHomePage ? progress : 1,
@@ -82,6 +83,7 @@ export function MonochromeHeader({
         <nav className="flex items-center gap-3 sm:gap-4 text-xs font-medium text-zinc-600 dark:text-zinc-400">
           <Link
             href="/"
+            prefetch={false}
             className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
           >
             Home

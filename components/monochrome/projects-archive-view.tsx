@@ -2,12 +2,21 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowLeft } from "lucide-react";
 import { RiSearchLine, RiCloseLine } from "@remixicon/react";
 import { IProject, ISiteSettings } from "@/lib/models";
 import { MonochromeHeader } from "./header";
-import { MonochromeContactFooter } from "./contact-footer";
 import { ProjectCard } from "./project-card";
+
+const MonochromeContactFooter = dynamic(
+  () => import("./contact-footer").then((m) => m.MonochromeContactFooter),
+  {
+    loading: () => (
+      <div className="w-full h-72 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
 
 interface ProjectsArchiveViewProps {
   projects: Partial<IProject>[];
@@ -75,6 +84,7 @@ export function ProjectsArchiveView({
             <div className="space-y-4">
               <Link
                 href="/"
+                prefetch={false}
                 className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors group"
               >
                 <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />

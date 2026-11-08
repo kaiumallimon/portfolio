@@ -45,6 +45,7 @@ export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
 
         <Link
           href="/projects"
+          prefetch={false}
           className="text-xs font-mono text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100 flex items-center gap-1 transition-colors group"
         >
           <span>All works</span>
@@ -75,6 +76,7 @@ export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
 
         <Link
           href="/projects"
+          prefetch={false}
           className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono font-medium rounded-xs border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 hover:border-zinc-900 dark:hover:border-zinc-100 hover:shadow-xs transition-all cursor-pointer group shrink-0"
         >
           <span>See all projects ({projects.length})</span>

@@ -95,7 +95,7 @@ export function MonochromeHero({
                 fill
                 sizes="160px"
                 className="object-cover select-none"
-                priority
+                loading="lazy"
               />
             </div>
           </div>

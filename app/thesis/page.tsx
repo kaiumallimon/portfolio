@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import dynamicImport from "next/dynamic";
 import { MonochromeHeader } from "@/components/monochrome/header";
-import { MonochromeContactFooter } from "@/components/monochrome/contact-footer";
 import { getSiteSettings } from "@/lib/data-service";
 import { SITE_URL } from "@/lib/site";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
@@ -11,6 +11,15 @@ import {
   RiExternalLinkLine,
   RiGithubLine,
 } from "@remixicon/react";
+
+const MonochromeContactFooter = dynamicImport(
+  () => import("@/components/monochrome/contact-footer").then((m) => m.MonochromeContactFooter),
+  {
+    loading: () => (
+      <div className="w-full h-72 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +52,7 @@ export default async function ThesisPage() {
           <section className="px-4 sm:px-6 py-8 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 space-y-4">
             <Link
               href="/"
+              prefetch={false}
               className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors group"
             >
               <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />

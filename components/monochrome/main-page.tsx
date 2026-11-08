@@ -1,23 +1,108 @@
 "use client";
 
 import { useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { MonochromeHeader } from "./header";
 import { MonochromeHero } from "./hero";
-import { MonochromeGitHubTelemetry } from "./github-telemetry";
-import { MonochromeAbout } from "./about";
-import { MonochromeCommunityStats } from "./community-stats";
-import { MonochromeSkills } from "./skills";
-import { MonochromeExperience } from "./experience";
-import { MonochromeEducation } from "./education";
-import { MonochromeProjects } from "./projects-grid";
-import { MonochromeThesis } from "./thesis";
-import { MonochromeRecognition } from "./recognition";
-import { MonochromeContactFooter } from "./contact-footer";
-import { MonochromeCommandDialog } from "./command-dialog";
 import type { ISiteSettings, IProject, IExperience } from "@/lib/models";
 import type { IEducationItem, IAchievementItem } from "@/lib/data-service";
 import type { GitHubStats } from "@/lib/github";
 import { Toaster } from "sonner";
+
+// Lazy-loaded below-the-fold sections for instant initial page rendering
+const MonochromeGitHubTelemetry = dynamic(
+  () => import("./github-telemetry").then((m) => m.MonochromeGitHubTelemetry),
+  {
+    loading: () => (
+      <div className="w-full h-44 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeAbout = dynamic(
+  () => import("./about").then((m) => m.MonochromeAbout),
+  {
+    loading: () => (
+      <div className="w-full h-32 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeCommunityStats = dynamic(
+  () => import("./community-stats").then((m) => m.MonochromeCommunityStats),
+  {
+    loading: () => (
+      <div className="w-full h-36 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeSkills = dynamic(
+  () => import("./skills").then((m) => m.MonochromeSkills),
+  {
+    loading: () => (
+      <div className="w-full h-56 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeEducation = dynamic(
+  () => import("./education").then((m) => m.MonochromeEducation),
+  {
+    loading: () => (
+      <div className="w-full h-48 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeExperience = dynamic(
+  () => import("./experience").then((m) => m.MonochromeExperience),
+  {
+    loading: () => (
+      <div className="w-full h-56 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeProjects = dynamic(
+  () => import("./projects-grid").then((m) => m.MonochromeProjects),
+  {
+    loading: () => (
+      <div className="w-full h-80 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeThesis = dynamic(
+  () => import("./thesis").then((m) => m.MonochromeThesis),
+  {
+    loading: () => (
+      <div className="w-full h-64 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeRecognition = dynamic(
+  () => import("./recognition").then((m) => m.MonochromeRecognition),
+  {
+    loading: () => (
+      <div className="w-full h-80 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeContactFooter = dynamic(
+  () => import("./contact-footer").then((m) => m.MonochromeContactFooter),
+  {
+    loading: () => (
+      <div className="w-full h-72 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeCommandDialog = dynamic(
+  () => import("./command-dialog").then((m) => m.MonochromeCommandDialog)
+);
 
 interface MainPageProps {
   settings: ISiteSettings;

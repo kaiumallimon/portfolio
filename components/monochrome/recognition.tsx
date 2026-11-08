@@ -217,7 +217,7 @@ function RecognitionCard({ item, onOpenPreview }: RecognitionCardProps) {
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-102"
-                priority={item.awardRank === "champion"}
+                loading="lazy"
                 onError={() =>
                   setFailedImages((prev) => ({ ...prev, [currentImage]: true }))
                 }
@@ -228,6 +228,7 @@ function RecognitionCard({ item, onOpenPreview }: RecognitionCardProps) {
               <img
                 src={currentImage}
                 alt={`${item.award} — Photo ${currentIdx + 1}`}
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
               />
             )
