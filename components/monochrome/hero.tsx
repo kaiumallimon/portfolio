@@ -15,6 +15,7 @@ import {
 } from "@remixicon/react";
 import { toast } from "sonner";
 import { CadIsometricCover } from "./cad-isometric-cover";
+import RotatingText from "@/components/RotatingText";
 import { ISiteSettings } from "@/lib/models";
 
 // Synthesized name pronunciation chime
@@ -134,11 +135,24 @@ export function MonochromeHero({
             </button>
           </div>
 
-          {/* Lower line: Designation */}
-          <div className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800">
-            <p className="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-              Full-Stack Software Engineer.
-            </p>
+          {/* Lower line: Rotating Tagline / Sentences */}
+          <div className="px-4 py-2 sm:py-2.5 border-t border-zinc-200 dark:border-zinc-800 min-h-[2.75rem] sm:min-h-[2.25rem] flex items-center">
+            <RotatingText
+              texts={[
+                "Building high-performance mobile & web experiences engineered to scale.",
+                "Turning ideas and complex problems into practical, well-engineered software.",
+                "Specializing in Flutter cross-platform apps, Next.js, and backend engineering.",
+                "Full-Stack Software Engineer crafting resilient, production-ready products.",
+              ]}
+              mainClassName="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400"
+              staggerDuration={0.03}
+              staggerFrom="first"
+              splitBy="words"
+              rotationInterval={3600}
+              auto={true}
+              loop={true}
+              pauseOnHover={true}
+            />
           </div>
         </div>
       </div>
