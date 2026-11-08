@@ -44,11 +44,11 @@ export function ThreeKalCover() {
     // 1. Scene setup
     const scene = new THREE.Scene();
 
-    // 2. Camera setup - Orthographic Camera for true 30° Isometric Projection
+    // 2. Camera setup - Orthographic Camera for true architectural projection
     const width = container.clientWidth || 800;
     const height = container.clientHeight || 340;
     const aspect = width / height;
-    const frustumSize = 13;
+    const frustumSize = width < 640 ? 14 : 11.5;
 
     const camera = new THREE.OrthographicCamera(
       (-frustumSize * aspect) / 2,
@@ -59,9 +59,8 @@ export function ThreeKalCover() {
       1000
     );
 
-    // Standard Isometric Camera Position
-    // Position at equal coordinates (x=y=z) gives 35.264° / 30° isometric view
-    camera.position.set(20, 20, 20);
+    // Front-centered camera looking along -Z
+    camera.position.set(0, 0, 30);
     camera.lookAt(0, 0, 0);
 
     // 3. Renderer setup
@@ -83,7 +82,7 @@ export function ThreeKalCover() {
       ctx.fillStyle = dark ? "#18181b" : "#ffffff";
       ctx.fillRect(0, 0, 64, 64);
 
-      ctx.strokeStyle = dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.18)";
+      ctx.strokeStyle = dark ? "rgba(255,255,255,0.24)" : "rgba(0,0,0,0.22)";
       ctx.lineWidth = 1.5;
       for (let i = -64; i < 128; i += 8) {
         ctx.beginPath();
@@ -94,18 +93,24 @@ export function ThreeKalCover() {
       const tex = new THREE.CanvasTexture(canvas);
       tex.wrapS = THREE.RepeatWrapping;
       tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(1.5, 1.5);
+      tex.repeat.set(2, 2);
       return tex;
     }
 
     const hatchTexture = createHatchTexture(isDark);
 
     // Materials
-    const edgeColor = isDark ? 0xffffff : 0x18181b;
-    const faceColor = isDark ? 0x18181b : 0xfcfcfd;
+    const edgeColor = isDark ? 0xf4f4f5 : 0x18181b;
+    const faceColor = isDark ? 0x18181b : 0xfbfbfb;
+    const frontFaceColor = isDark ? 0x202024 : 0xffffff;
 
     const topMaterial = new THREE.MeshBasicMaterial({
       map: hatchTexture,
+      side: THREE.DoubleSide,
+    });
+
+    const frontMaterial = new THREE.MeshBasicMaterial({
+      color: frontFaceColor,
       side: THREE.DoubleSide,
     });
 
@@ -114,13 +119,14 @@ export function ThreeKalCover() {
       side: THREE.DoubleSide,
     });
 
+    // BoxGeometry material faces order: [+X, -X, +Y (top), -Y, +Z (front), -Z]
     const materials = [
-      sideMaterial, // right
-      sideMaterial, // left
-      topMaterial,  // top (hatched!)
-      sideMaterial, // bottom
-      sideMaterial, // front
-      sideMaterial, // back
+      sideMaterial,  // right (+X)
+      sideMaterial,  // left (-X)
+      topMaterial,   // top (+Y hatched)
+      sideMaterial,  // bottom (-Y)
+      frontMaterial, // front (+Z)
+      sideMaterial,  // back (-Z)
     ];
 
     const lineMaterial = new THREE.LineBasicMaterial({
@@ -147,39 +153,43 @@ export function ThreeKalCover() {
 
     // --- LETTER K ---
     // Spine
-    kalGroup.add(createBlock(0.85, 4.0, 1.2, -4.2, 0, 0));
+    kalGroup.add(createBlock(0.85, 4.0, 1.2, -4.0, 0, 0));
     // Upper diagonal
-    kalGroup.add(createBlock(2.2, 0.85, 1.2, -3.0, 1.0, 0, Math.PI / 4));
+    kalGroup.add(createBlock(2.2, 0.85, 1.2, -2.8, 1.05, 0, Math.PI / 4));
     // Lower diagonal
-    kalGroup.add(createBlock(2.2, 0.85, 1.2, -3.0, -1.0, 0, -Math.PI / 4));
+    kalGroup.add(createBlock(2.2, 0.85, 1.2, -2.8, -1.05, 0, -Math.PI / 4));
 
     // --- LETTER A ---
-    // Left column
-    kalGroup.add(createBlock(0.85, 4.0, 1.2, -1.2, 0, 0));
-    // Right column
-    kalGroup.add(createBlock(0.85, 4.0, 1.2, 1.2, 0, 0));
+    // Left upright
+    kalGroup.add(createBlock(0.85, 4.0, 1.2, -1.1, 0, 0));
+    // Right upright
+    kalGroup.add(createBlock(0.85, 4.0, 1.2, 1.1, 0, 0));
     // Top bar
-    kalGroup.add(createBlock(2.4, 0.85, 1.2, 0, 1.575, 0));
+    kalGroup.add(createBlock(2.2, 0.85, 1.2, 0, 1.575, 0));
     // Middle crossbar
-    kalGroup.add(createBlock(1.8, 0.65, 1.2, 0, -0.2, 0));
+    kalGroup.add(createBlock(1.4, 0.65, 1.2, 0, -0.2, 0));
 
     // --- LETTER L ---
     // Vertical spine
-    kalGroup.add(createBlock(0.85, 4.0, 1.2, 3.2, 0, 0));
+    kalGroup.add(createBlock(0.85, 4.0, 1.2, 2.9, 0, 0));
     // Bottom base
-    kalGroup.add(createBlock(2.6, 0.85, 1.2, 4.05, -1.575, 0));
+    kalGroup.add(createBlock(2.4, 0.85, 1.2, 3.7, -1.575, 0));
 
     scene.add(kalGroup);
 
-    // Initial orientation: align KAL with isometric view
-    kalGroup.rotation.y = 0;
+    // Initial base orientation: calibrated for optimal architectural readability and ~30° isometric slant
+    const baseRotX = 0.44; // ~25° downward tilt to show top hatched surfaces clearly
+    const baseRotY = -0.48; // ~-27.5° azimuth angle for 3D depth and readability
+    const baseRotZ = 0.05;  // subtle dynamic axis alignment
+
+    kalGroup.rotation.set(baseRotX, baseRotY, baseRotZ);
     kalGroup.position.set(0, 0, 0);
 
     // Mouse tracking state
-    let targetRotationX = 0;
-    let targetRotationY = 0;
-    let currentRotationX = 0;
-    let currentRotationY = 0;
+    let targetRotationX = baseRotX;
+    let targetRotationY = baseRotY;
+    let currentRotationX = baseRotX;
+    let currentRotationY = baseRotY;
     let scaleMultiplier = 1.0;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -190,20 +200,21 @@ export function ThreeKalCover() {
       const normX = (clientX / rect.width) * 2 - 1;
       const normY = -(clientY / rect.height) * 2 + 1;
 
-      targetRotationY = normX * 0.45;
-      targetRotationX = -normY * 0.35;
+      // Gentle interactive tilt around base orientation
+      targetRotationY = baseRotY + normX * 0.28;
+      targetRotationX = baseRotX - normY * 0.2;
     };
 
     const handleMouseLeave = () => {
-      targetRotationX = 0;
-      targetRotationY = 0;
+      targetRotationX = baseRotX;
+      targetRotationY = baseRotY;
     };
 
     const handleClick = () => {
       playTactileClickSound();
-      scaleMultiplier = 0.88; // subtle recoil/bounce
+      scaleMultiplier = 0.91; // subtle recoil/bounce spring
       setClicked(true);
-      setTimeout(() => setClicked(false), 300);
+      setTimeout(() => setClicked(false), 250);
     };
 
     container.addEventListener("mousemove", handleMouseMove);
@@ -216,11 +227,12 @@ export function ThreeKalCover() {
       const w = container.clientWidth || 800;
       const h = container.clientHeight || 340;
       const asp = w / h;
+      const fSize = w < 640 ? 14 : 11.5;
 
-      camera.left = (-frustumSize * asp) / 2;
-      camera.right = (frustumSize * asp) / 2;
-      camera.top = frustumSize / 2;
-      camera.bottom = -frustumSize / 2;
+      camera.left = (-fSize * asp) / 2;
+      camera.right = (fSize * asp) / 2;
+      camera.top = fSize / 2;
+      camera.bottom = -fSize / 2;
       camera.updateProjectionMatrix();
 
       renderer.setSize(w, h);
@@ -231,8 +243,9 @@ export function ThreeKalCover() {
     // Listen for theme mutations to update material colors
     const observer = new MutationObserver(() => {
       const darkNow = document.documentElement.classList.contains("dark");
-      lineMaterial.color.setHex(darkNow ? 0xffffff : 0x18181b);
-      sideMaterial.color.setHex(darkNow ? 0x18181b : 0xfcfcfd);
+      lineMaterial.color.setHex(darkNow ? 0xf4f4f5 : 0x18181b);
+      frontMaterial.color.setHex(darkNow ? 0x202024 : 0xffffff);
+      sideMaterial.color.setHex(darkNow ? 0x18181b : 0xfbfbfb);
       topMaterial.map = createHatchTexture(darkNow);
       topMaterial.needsUpdate = true;
     });
@@ -253,9 +266,10 @@ export function ThreeKalCover() {
 
       kalGroup.rotation.x = currentRotationX;
       kalGroup.rotation.y = currentRotationY;
+      kalGroup.rotation.z = baseRotZ;
 
       // Spring physics on scale
-      scaleMultiplier += (1.0 - scaleMultiplier) * 0.12;
+      scaleMultiplier += (1.0 - scaleMultiplier) * 0.14;
       kalGroup.scale.set(scaleMultiplier, scaleMultiplier, scaleMultiplier);
 
       renderer.render(scene, camera);
@@ -277,6 +291,7 @@ export function ThreeKalCover() {
       renderer.dispose();
       lineMaterial.dispose();
       topMaterial.dispose();
+      frontMaterial.dispose();
       sideMaterial.dispose();
       hatchTexture.dispose();
     };
@@ -314,7 +329,7 @@ export function ThreeKalCover() {
 
       {/* Handwritten Annotation with arrow pointing to the 3D model */}
       <div
-        className="pointer-events-none absolute font-mono text-xs text-zinc-500 dark:text-zinc-400 select-none bottom-8 right-4 hidden md:flex items-center gap-2"
+        className="pointer-events-none absolute font-mono text-xs text-zinc-500 dark:text-zinc-400 select-none bottom-6 right-4 hidden md:flex items-center gap-2"
         aria-hidden="true"
       >
         <div className="text-right leading-tight italic font-serif">
@@ -330,7 +345,6 @@ export function ThreeKalCover() {
           stroke="currentColor"
           className="text-zinc-400 dark:text-zinc-600 -rotate-12"
         >
-          {/* Curved hand-drawn style arrow */}
           <path
             d="M 6 6 Q 22 8 20 24 M 14 20 L 20 24 L 24 18"
             strokeWidth="1.2"
