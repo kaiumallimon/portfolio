@@ -1,23 +1,34 @@
 "use client";
 
+import React from "react";
 import { IExperience } from "@/lib/models";
-import { RiLink } from "@remixicon/react";
+import { RiLink, RiBuildingLine, RiMapPinLine } from "@remixicon/react";
 import { toast } from "sonner";
+import { motion, useReducedMotion } from "framer-motion";
+import { EXPERIENCE_DATA } from "@/data/experience";
+import { ExperienceItem } from "./experience/experience-item";
 
-export function MonochromeExperience({
-  experiences,
-}: {
-  experiences: Partial<IExperience>[];
-}) {
+interface MonochromeExperienceProps {
+  experiences?: Partial<IExperience>[];
+}
+
+export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
+  const shouldReduceMotion = useReducedMotion();
+
   const copyLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}#experience`);
-    toast.success("Section link copied");
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(`${window.location.origin}#experience`);
+      toast.success("Section link copied");
+    }
   };
 
   return (
-    <section id="experience" className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
-      {/* Header bar */}
-      <div className="px-4 sm:px-6 py-4 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
+    <section
+      id="experience"
+      className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800"
+    >
+      {/* Section Header */}
+      <div className="px-4 sm:px-6 py-4 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
             Experience
@@ -29,52 +40,63 @@ export function MonochromeExperience({
           >
             <RiLink className="w-3.5 h-3.5" />
           </button>
+          <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider ml-1 px-1.5 py-0.5 border border-zinc-200 dark:border-zinc-800 rounded-xs">
+            Leadership &amp; Engineering
+          </span>
         </div>
+
+        <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 tabular-nums">
+          {EXPERIENCE_DATA.roles.length} roles · Single Track
+        </span>
       </div>
 
-      <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
-        {experiences.map((exp, idx) => (
-          <div
-            key={idx}
-            className="p-4 sm:p-6 space-y-2 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 transition-colors"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 font-sans">
-                  {exp.role}
-                </h3>
-                <span className="text-zinc-400 text-xs">@</span>
-                <span className="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
-                  {exp.company}
-                </span>
-                {exp.current && (
-                  <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    Active
-                  </span>
-                )}
-              </div>
-
-              <div className="text-xs font-mono text-zinc-400 tabular-nums">
-                {exp.period}
-              </div>
+      <div className="p-4 sm:p-6 space-y-6">
+        {/* Unified Organization Header Card */}
+        <div className="border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="size-9 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex items-center justify-center text-zinc-700 dark:text-zinc-300 shrink-0">
+              <RiBuildingLine className="w-4 h-4" />
             </div>
 
-            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 font-sans leading-relaxed">
-              {exp.description}
-            </p>
-
-            {exp.highlights && exp.highlights.length > 0 && (
-              <ul className="space-y-1 pt-1.5 text-xs text-zinc-500 font-sans">
-                {exp.highlights.map((h, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-zinc-400 font-mono select-none">—</span>
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-sm sm:text-base font-semibold text-zinc-950 dark:text-zinc-50 font-sans">
+                  {EXPERIENCE_DATA.organization}
+                </h3>
+                <span className="px-1.5 py-0.2 rounded-xs text-[10px] font-mono bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700">
+                  Engineering Club
+                </span>
+              </div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans mt-0.5">
+                {EXPERIENCE_DATA.tagline} · {EXPERIENCE_DATA.institution}
+              </p>
+            </div>
           </div>
-        ))}
+
+          <div className="flex items-center gap-1.5 text-[11px] font-mono text-zinc-400 dark:text-zinc-500 shrink-0">
+            <RiMapPinLine className="w-3.5 h-3.5" />
+            <span>{EXPERIENCE_DATA.location}</span>
+          </div>
+        </div>
+
+        {/* Vertical Promotion Timeline */}
+        <motion.ol
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          aria-label="Promotion path at UIU App Forum"
+          className="relative pt-2"
+        >
+          {EXPERIENCE_DATA.roles.map((role, idx) => (
+            <ExperienceItem
+              key={role.id}
+              role={role}
+              isLast={idx === EXPERIENCE_DATA.roles.length - 1}
+              initialExpanded={idx === 0} // First (newest) role expanded by default
+            />
+          ))}
+        </motion.ol>
       </div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />

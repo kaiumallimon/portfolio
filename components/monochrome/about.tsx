@@ -1,16 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+
+const subscribe = () => () => {};
+const getGreetingSnapshot = () => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "Good morning";
+  if (hour >= 12 && hour < 17) return "Good afternoon";
+  return "Good evening";
+};
+const getGreetingServerSnapshot = () => "Hello";
 
 export function MonochromeAbout() {
-  const [greeting, setGreeting] = useState("Hello");
-
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) setGreeting("Good morning");
-    else if (hour >= 12 && hour < 17) setGreeting("Good afternoon");
-    else setGreeting("Good evening");
-  }, []);
+  const greeting = useSyncExternalStore(
+    subscribe,
+    getGreetingSnapshot,
+    getGreetingServerSnapshot
+  );
 
   return (
     <section id="about" className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">

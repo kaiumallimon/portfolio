@@ -61,6 +61,7 @@ export function usePixelRunner(theme: ThemeMode) {
   );
   const [milestoneMsg, setMilestoneMsg] = useState<string | null>(null);
   const [speechBubble, setSpeechBubble] = useState<{ text: string; x: number; y: number } | null>(null);
+  const gameOverTimeoutRef = useRef<number | null>(null);
 
   // Internal game engine references (mutable without re-rendering every frame)
   const engineRef = useRef({
@@ -164,6 +165,11 @@ export function usePixelRunner(theme: ThemeMode) {
     const e = engineRef.current;
     if (e.mode === 'running') return;
 
+    if (gameOverTimeoutRef.current) {
+      clearTimeout(gameOverTimeoutRef.current);
+      gameOverTimeoutRef.current = null;
+    }
+
     e.mode = 'running';
     setGameMode('running');
     e.score = 0;
@@ -177,9 +183,10 @@ export function usePixelRunner(theme: ThemeMode) {
     setMilestoneMsg(null);
     setSpeechBubble(null);
 
-    // Reposition player at running starting spot
+    // Reposition player at running starting spot at ground baseline
+    const floorY = e.height > 0 ? e.height - 20 : 80;
     e.char.x = 28;
-    e.char.y = e.height - 24;
+    e.char.y = floorY - 16;
     e.char.vy = 0;
     e.char.isGrounded = true;
     e.char.isDucking = false;
@@ -192,15 +199,28 @@ export function usePixelRunner(theme: ThemeMode) {
 
   // Restart after game over
   const restartRunnerGame = useCallback(() => {
+    if (gameOverTimeoutRef.current) {
+      clearTimeout(gameOverTimeoutRef.current);
+      gameOverTimeoutRef.current = null;
+    }
+    const e = engineRef.current;
+    e.mode = 'idle'; // Reset from gameover so startRunnerGame initiates fresh run
     startRunnerGame();
   }, [startRunnerGame]);
 
   // Return to Idle mode
   const returnToIdle = useCallback(() => {
     const e = engineRef.current;
+
+    if (gameOverTimeoutRef.current) {
+      clearTimeout(gameOverTimeoutRef.current);
+      gameOverTimeoutRef.current = null;
+    }
+
     e.mode = 'idle';
     setGameMode('idle');
-    e.char.y = e.height - 24;
+    const floorY = e.height > 0 ? e.height - 20 : 80;
+    e.char.y = floorY - 16;
     e.char.vy = 0;
     e.char.isGrounded = true;
     e.char.isDucking = false;
@@ -232,6 +252,11 @@ export function usePixelRunner(theme: ThemeMode) {
   // Character Click / Interact
   const handleCharacterClick = useCallback((clientX: number, clientY: number) => {
     const e = engineRef.current;
+
+    if (e.mode === 'gameover') {
+      restartRunnerGame();
+      return;
+    }
 
     if (e.mode === 'idle') {
       // Check if click was on or near the tiny character
@@ -271,7 +296,7 @@ export function usePixelRunner(theme: ThemeMode) {
         retroAudio.playJump();
       }
     }
-  }, [startRunnerGame, triggerSpeechBubble]);
+  }, [startRunnerGame, restartRunnerGame, triggerSpeechBubble]);
 
   // Jump Action
   const triggerJump = useCallback(() => {
@@ -311,7 +336,6 @@ export function usePixelRunner(theme: ThemeMode) {
 
     const e = engineRef.current;
     let animationFrameId = 0;
-    let gameOverTimeout = 0;
 
     // Responsive Canvas Resize Observer
     const resizeObserver = new ResizeObserver(entries => {
@@ -350,6 +374,14 @@ export function usePixelRunner(theme: ThemeMode) {
 
     // Keyboard handlers (Strictly scoped: Space/Arrow keys only hijack when focused or running)
     const handleKeyDown = (ev: KeyboardEvent) => {
+      if (e.mode === 'gameover') {
+        if (ev.key === ' ' || ev.key === 'ArrowUp' || ev.key === 'Enter' || ev.key === 'w' || ev.key === 'W') {
+          ev.preventDefault();
+          restartRunnerGame();
+          return;
+        }
+      }
+
       if (ev.key === ' ' || ev.key === 'ArrowUp' || ev.key === 'w' || ev.key === 'W') {
         if (e.mode === 'running' || e.isFocused || e.isHovered) {
           ev.preventDefault();
@@ -369,8 +401,17 @@ export function usePixelRunner(theme: ThemeMode) {
       }
     };
 
+    const handleRemoteStart = () => {
+      if (e.mode === 'gameover') {
+        restartRunnerGame();
+      } else if (e.mode === 'idle') {
+        startRunnerGame();
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('kal:start-runner', handleRemoteStart);
 
     // Game loop tick
     const tick = () => {
@@ -710,8 +751,8 @@ export function usePixelRunner(theme: ThemeMode) {
                 spr = OBSTACLES.semicolon;
                 obsH = 11;
                 obsW = 5;
-                // Randomize: 30% chance to hover slightly in air
-                const hover = Math.random() < 0.3 ? Math.floor(Math.random() * 8 + 4) : 0;
+                // Randomize: 25% chance to hover slightly in air (requires jump)
+                const hover = Math.random() < 0.25 ? Math.floor(Math.random() * 5 + 2) : 0;
                 obsY = floorY - 11 - hover;
                 isFlying = hover > 0;
                 break;
@@ -720,8 +761,8 @@ export function usePixelRunner(theme: ThemeMode) {
                 spr = OBSTACLES.block404;
                 obsH = 9;
                 obsW = 14;
-                // Randomize: 25% chance to float as an airborne block
-                const hover = Math.random() < 0.25 ? Math.floor(Math.random() * 10 + 5) : 0;
+                // Randomize: 25% chance to float as an airborne block (requires jump)
+                const hover = Math.random() < 0.25 ? Math.floor(Math.random() * 5 + 2) : 0;
                 obsY = floorY - 9 - hover;
                 isFlying = hover > 0;
                 break;
@@ -745,17 +786,17 @@ export function usePixelRunner(theme: ThemeMode) {
                 obsH = 8;
                 obsW = 12;
                 isFlying = true;
-                // Randomized altitude: low (must duck), mid, or high flyby
+                // Randomized altitude:
+                // 1) Low tier (40%): head height (obsY = floorY - 17, oBottom = floorY - 9). Standing player (pTop = floorY - 14) HITS. Ducking player (pTop = floorY - 8) DUCKS UNDER safely.
+                // 2) Mid tier (30%): jump height (obsY = floorY - 12, oBottom = floorY - 4). Hits standing and ducking player, requires jump!
+                // 3) High tier (30%): soaring overhead (obsY = floorY - 34 to 38). Runs under safely; jumping into it collides.
                 const tier = Math.random();
-                if (tier < 0.45) {
-                  // Low: head level, player must duck!
-                  obsY = floorY - 21 - Math.floor(Math.random() * 4);
-                } else if (tier < 0.75) {
-                  // Mid: duck or jump with precision
-                  obsY = floorY - 29 - Math.floor(Math.random() * 5);
+                if (tier < 0.4) {
+                  obsY = floorY - 17;
+                } else if (tier < 0.7) {
+                  obsY = floorY - 12;
                 } else {
-                  // High: soaring overhead flyby
-                  obsY = floorY - 39 - Math.floor(Math.random() * 6);
+                  obsY = floorY - 34 - Math.floor(Math.random() * 5);
                 }
                 break;
               }
@@ -764,12 +805,14 @@ export function usePixelRunner(theme: ThemeMode) {
                 obsH = 8;
                 obsW = 18;
                 isFlying = true;
-                // Randomized floating altitude
+                // Randomized floating altitude:
+                // 50% duck-only obstacle at floorY - 17
+                // 50% high airborne float at floorY - 35
                 const tier = Math.random();
                 if (tier < 0.5) {
-                  obsY = floorY - 22 - Math.floor(Math.random() * 4);
+                  obsY = floorY - 17;
                 } else {
-                  obsY = floorY - 32 - Math.floor(Math.random() * 8);
+                  obsY = floorY - 35 - Math.floor(Math.random() * 5);
                 }
                 break;
               }
@@ -778,8 +821,8 @@ export function usePixelRunner(theme: ThemeMode) {
                 spr = OBSTACLES.bug;
                 obsH = 6;
                 obsW = 8;
-                // 20% chance to be an airborne drone bug
-                const hover = Math.random() < 0.2 ? Math.floor(Math.random() * 10 + 6) : 0;
+                // 25% chance drone bug hover at mid height (requires jump)
+                const hover = Math.random() < 0.25 ? 6 : 0;
                 obsY = floorY - 6 - hover;
                 isFlying = hover > 0;
                 break;
@@ -800,17 +843,17 @@ export function usePixelRunner(theme: ThemeMode) {
 
           e.obstacles.push(buildObstacle(chosen, spawnX));
 
-          // 20% chance to spawn a combo pair with randomized stagger
-          if (Math.random() < 0.2 && chosen !== 'mergeConflict' && chosen !== 'deployFriday') {
+          // 22% chance to spawn a combo pair with randomized stagger
+          if (Math.random() < 0.22 && chosen !== 'mergeConflict' && chosen !== 'deployFriday') {
             const secondTypes: ObstacleEntity['type'][] = ['bug', 'semicolon', 'slackBird'];
             const secondType = secondTypes[Math.floor(Math.random() * secondTypes.length)];
-            const pairOffset = Math.floor(Math.random() * 18 + 26);
+            const pairOffset = Math.floor(Math.random() * 24 + 32);
             e.obstacles.push(buildObstacle(secondType, spawnX + pairOffset));
           }
 
           // Dynamic randomized gap distance between waves
-          const baseGap = Math.max(65, 100 - e.speed * 3.5);
-          const randomJitter = Math.random() * 110 + Math.random() * 50;
+          const baseGap = Math.max(60, 95 - e.speed * 3.5);
+          const randomJitter = Math.floor(Math.random() * 110 + Math.random() * 50);
           e.nextObstacleDist = baseGap + randomJitter;
         }
 
@@ -841,6 +884,7 @@ export function usePixelRunner(theme: ThemeMode) {
           if (collides) {
             // GAME OVER!
             e.mode = 'gameover';
+            setCurrentScore(e.score);
             setGameMode('gameover');
             retroAudio.playGameOver();
 
@@ -853,11 +897,11 @@ export function usePixelRunner(theme: ThemeMode) {
               } catch {}
             }
 
-            // Return to idle automatically after 6 seconds if not restarted
-            clearTimeout(gameOverTimeout);
-            gameOverTimeout = window.setTimeout(() => {
-              returnToIdle();
-            }, 6000);
+            // End screen stays until user restarts or returns to idle (does not disappear automatically)
+            if (gameOverTimeoutRef.current) {
+              clearTimeout(gameOverTimeoutRef.current);
+              gameOverTimeoutRef.current = null;
+            }
             break;
           }
 
@@ -884,14 +928,18 @@ export function usePixelRunner(theme: ThemeMode) {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      clearTimeout(gameOverTimeout);
+      if (gameOverTimeoutRef.current) {
+        clearTimeout(gameOverTimeoutRef.current);
+        gameOverTimeoutRef.current = null;
+      }
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('kal:start-runner', handleRemoteStart);
     };
-  }, [theme, triggerJump, setDucking, isDhakaNight, returnToIdle, triggerSpeechBubble]);
+  }, [theme, triggerJump, startRunnerGame, restartRunnerGame, setDucking, isDhakaNight, returnToIdle, triggerSpeechBubble]);
 
   return {
     canvasRef,

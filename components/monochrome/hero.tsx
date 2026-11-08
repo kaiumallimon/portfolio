@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { CadIsometricCover } from "./cad-isometric-cover";
 import RotatingText from "@/components/RotatingText";
 import { ISiteSettings } from "@/lib/models";
+import { GameMode } from "@/components/cover/use-pixel-runner";
 
 // Synthesized name pronunciation chime
 function playAudioChime() {
@@ -50,6 +51,7 @@ export function MonochromeHero({
 }) {
   const [timeString, setTimeString] = useState<string>("");
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
+  const [coverGameMode, setCoverGameMode] = useState<GameMode>("idle");
 
   useEffect(() => {
     const updateTime = () => {
@@ -102,36 +104,119 @@ export function MonochromeHero({
 
         {/* Right Column, Row 1: KAL cover with cover-grid-bg */}
         <div ref={coverRef} className="relative cover-grid-bg overflow-hidden flex items-center justify-center">
-          <CadIsometricCover />
+          <CadIsometricCover onGameModeChange={setCoverGameMode} />
         </div>
 
         {/* Right Column, Row 2: Name & Designation — plain solid background */}
         <div className="flex flex-col justify-end bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
-          {/* Upper line: Name + verified badge + sound chime */}
-          <div className="px-4 py-2.5 sm:py-3 flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
-              {settings.name}
-            </h1>
+          {/* Upper line: Name + verified badge + sound chime + Tech Humor Game Hint */}
+          <div className="px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
+                {settings.name}
+              </h1>
 
-            {/* Verified Badge */}
-            <span
-              className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
-              title="Verified Engineer"
-            >
-              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
-            </span>
+              {/* Verified Badge */}
+              <span
+                className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
+                title="Verified Engineer"
+              >
+                <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
+              </span>
 
-            {/* Audio Pronunciation Button */}
+              {/* Audio Pronunciation Button */}
+              <button
+                onClick={() => {
+                  playAudioChime();
+                  toast.success("Name pronunciation chime played");
+                }}
+                className="p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                title="Pronounce my name"
+                aria-label="Pronounce my name"
+              >
+                <Volume2 className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Tech humor instruction outside cover indicating it is an endless runner game */}
             <button
+              type="button"
               onClick={() => {
-                playAudioChime();
-                toast.success("Name pronunciation chime played");
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent("kal:start-runner"));
+                }
               }}
-              className="p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
-              title="Pronounce my name"
-              aria-label="Pronounce my name"
+              className="inline-flex items-center gap-1.5 sm:gap-2 text-left group select-none cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+              title="Click or press Space to play Chrome-dino developer runner"
             >
-              <Volume2 className="w-4 h-4" />
+              {/* Sketched / doodle curved arrow pointing up-left towards cover character */}
+              <svg
+                width="34"
+                height="32"
+                viewBox="0 0 34 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-zinc-400 dark:stroke-zinc-500 group-hover:stroke-blue-500 dark:group-hover:stroke-blue-400 transition-colors shrink-0 -mt-1"
+              >
+                <path
+                  d="M29 27 C 24 14, 15 8, 7 7"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M13 3 L6 7 L11 14"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+
+              {coverGameMode === "running" ? (
+                <div className="flex flex-col leading-tight">
+                  <span className="font-mono text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                    <span>deploying in prod</span>
+                    <kbd className="text-[9px] px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-mono">
+                      Space
+                    </kbd>
+                    <span className="text-[9px] text-zinc-500">jump</span>
+                    <kbd className="text-[9px] px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-mono">
+                      ↓
+                    </kbd>
+                    <span className="text-[9px] text-zinc-500">duck</span>
+                  </span>
+                  <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
+                    dodge bugs &amp; merge conflicts!
+                  </span>
+                </div>
+              ) : coverGameMode === "gameover" ? (
+                <div className="flex flex-col leading-tight">
+                  <span className="font-mono text-[11px] font-semibold text-red-500 dark:text-red-400 flex items-center gap-1.5">
+                    <span>✖ build failed</span>
+                    <kbd className="text-[9px] px-1 py-0.5 rounded bg-red-100 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 font-mono">
+                      Space
+                    </kbd>
+                    <span className="text-[9px]">revert</span>
+                  </span>
+                  <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
+                    click or tap to git revert
+                  </span>
+                </div>
+              ) : (
+                <div className="flex flex-col leading-tight">
+                  <span className="font-mono text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex items-center gap-1.5">
+                    <span>{"//"} yes, he&apos;s playable!</span>
+                    <kbd className="text-[9px] px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 font-mono shadow-xs text-zinc-600 dark:text-zinc-400">
+                      Space
+                    </kbd>
+                  </span>
+                  <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
+                    click or press space to run (mini-game 🎮)
+                  </span>
+                </div>
+              )}
             </button>
           </div>
 
@@ -220,7 +305,7 @@ export function MonochromeHero({
               <RiTimeLine className="w-3.5 h-3.5" />
             </div>
             <span className="text-zinc-700 dark:text-zinc-300 tabular-nums">
-              {timeString || "06:12 PM"} <span className="text-zinc-400">// Dhaka (GMT+6)</span>
+              {timeString || "06:12 PM"} <span className="text-zinc-400">{"//"} Dhaka (GMT+6)</span>
             </span>
           </div>
 
