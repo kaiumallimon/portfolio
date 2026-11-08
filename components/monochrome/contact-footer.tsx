@@ -56,7 +56,7 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
   return (
     <>
       <section id="contact" className="py-8">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 space-y-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 space-y-4">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
               Contact
@@ -128,7 +128,7 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
 
       {/* Footer */}
       <footer className="py-6 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-950">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 flex items-center justify-between text-xs font-mono text-zinc-500">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 flex items-center justify-between text-xs font-mono text-zinc-500">
           <div className="flex items-center gap-2">
             <span className="font-bold text-zinc-900 dark:text-zinc-100">
               kaium.dev

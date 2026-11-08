@@ -16,7 +16,7 @@ export function MonochromeProjects({ projects }: { projects: Partial<IProject>[]
 
   return (
     <section id="projects" className="py-8">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -46,8 +46,8 @@ export function MonochromeProjects({ projects }: { projects: Partial<IProject>[]
           </div>
         </div>
 
-        {/* List of cards */}
-        <div className="space-y-3">
+        {/* 2-column bento grid on wider canvas */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           {filteredProjects.map((p, index) => (
             <div
               key={p.slug || index}

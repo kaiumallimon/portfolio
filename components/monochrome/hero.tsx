@@ -108,7 +108,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
 
   return (
     <section className="pt-8 pb-10">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 space-y-8">
         {/* 1. Large Pixel Logo [KL] matching chanhdai.com [CD] */}
         <PixelLogo size={42} />
 

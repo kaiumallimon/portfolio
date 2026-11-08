@@ -3,7 +3,7 @@
 export function MonochromeAbout() {
   return (
     <section className="py-8 border-t border-zinc-200/80 dark:border-zinc-800/80">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 space-y-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 space-y-4">
         <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
           About
         </h2>
