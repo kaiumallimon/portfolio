@@ -292,9 +292,9 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
               <span>© {new Date().getFullYear()} Kaium Al Limon</span>
             </div>
 
-            {/* Massive Faded Half-Visible Initials "KAL" in Geist Font */}
+            {/* Massive Faded Half-Visible Name in Tiny5 Font */}
             <div className="relative z-10 w-full overflow-hidden flex justify-center pointer-events-none select-none mt-2 sm:mt-4">
-              <span className="font-sans text-[100px] sm:text-[160px] md:text-[230px] lg:text-[300px] xl:text-[360px] font-extrabold leading-[0.72] tracking-tight text-zinc-900/[0.07] dark:text-zinc-100/[0.08] uppercase whitespace-nowrap translate-y-[33%] transition-all">
+              <span className="font-tiny5 text-[110px] sm:text-[180px] md:text-[260px] lg:text-[340px] xl:text-[400px] font-normal leading-[0.72] tracking-wider text-zinc-900/[0.08] dark:text-zinc-100/[0.08] uppercase whitespace-nowrap translate-y-[33%] transition-all">
                 KAL
               </span>
             </div>
