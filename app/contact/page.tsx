@@ -79,7 +79,7 @@ export default function ContactAgentPage() {
     {
       id: "msg-0",
       sender: "agent",
-      text: "Hello! I am Kaium's autonomous intake assistant.\n\nI can help explore project ideas, calibrate architecture specifications, and route your brief directly to Kaium's inbox.\n\nTo begin, who do I have the pleasure of speaking with today?",
+      text: "Hello! I am Kaium's autonomous assistant.\n\nI can help explore project ideas, calibrate architecture specifications, and route your brief directly to Kaium's inbox.\n\nTo begin, who do I have the pleasure of speaking with today?",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       chips: INITIAL_SUGGESTIONS,
     },
