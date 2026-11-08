@@ -105,7 +105,7 @@ function FooterBotanicalFlowers() {
   );
 }
 
-export function MonochromeFooter({ settings }: { settings: ISiteSettings }) {
+export function MonochromeFooter({ settings }: { settings: Partial<ISiteSettings> }) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
