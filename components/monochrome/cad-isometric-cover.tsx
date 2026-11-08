@@ -10,11 +10,12 @@ const springTransition = {
   type: "spring",
   mass: 0.5,
   damping: 18,
-  stiffness: 200,
+  stiffness: 220,
 } as const;
 
 export function CadIsometricCover() {
   const uid = useId().replace(/:/g, "_");
+  const gridPatternId = `cad-grid-pattern-${uid}`;
   const facePatternId = `cad-face-pattern-${uid}`;
   const faceFillId = `cad-face-fill-${uid}`;
   const strokeId = `cad-stroke-${uid}`;
@@ -76,6 +77,22 @@ export function CadIsometricCover() {
         onTap={playClickSound}
       >
         <defs>
+          {/* Subtle Fine CAD Grid Background */}
+          <pattern
+            id={gridPatternId}
+            width="14"
+            height="14"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M 14 0 L 0 0 0 14"
+              fill="none"
+              stroke="currentColor"
+              className="text-zinc-200/40 dark:text-zinc-800/40"
+              strokeWidth="0.5"
+            />
+          </pattern>
+
           {/* Diagonal 30° CAD Hatching Pattern */}
           <pattern
             id={facePatternId}
@@ -93,34 +110,28 @@ export function CadIsometricCover() {
             />
           </pattern>
 
-          {/* Top Faces with Framer Motion spring sink on tap */}
-          <motion.g
-            id={faceFillId}
-            variants={{
-              normal: { y: 0 },
-              pressed: { y: 16 },
-            }}
-            transition={springTransition}
-          >
-            <path d="M333.05 256.58L222.20 320.58L166.78 288.58L277.63 224.58L333.05 256.58Z" />
-            <path d="M388.48 32.58L277.63 96.58L388.48 160.58L499.33 96.58L554.76 128.58L388.48 224.58L166.78 96.58L333.05 0.58L388.48 32.58Z" />
-            <path d="M166.78 288.58L111.35 320.58L0.50 256.58L55.93 224.58L166.78 288.58Z" />
-            <path d="M554.76 64.58L499.33 96.58L388.48 32.58L443.90 0.58L554.76 64.58Z" />
-            <path d="M166.78 160.58L55.93 224.58L0.50 192.58L111.35 128.58L166.78 160.58Z" />
-          </motion.g>
+          {/* Top Faces of K, A, L */}
+          <g id={faceFillId}>
+            {/* Letter K */}
+            <path d="M111.29 103.94L141.6 121.44L232.53 68.94L202.22 51.44Z" />
+            <path d="M194.65 90.81L240.11 117.06L278 95.19L232.53 68.94Z" />
+            <path d="M141.6 121.44L187.07 147.69L224.96 125.81L179.49 99.56Z" />
 
-          {/* Perimeter Stroke with morphing on press */}
-          <motion.path
+            {/* Letter A */}
+            <path d="M209.8 160.81L240.11 178.31L331.04 125.81L300.73 108.31Z" />
+            <path d="M270.42 195.81L300.73 213.31L391.67 160.81L361.35 143.31Z" />
+            <path d="M308.31 138.94L338.62 156.44L361.35 143.31L331.04 125.81Z" />
+            <path d="M270.42 160.81L300.73 178.31L323.47 165.19L293.16 147.69Z" />
+
+            {/* Letter L */}
+            <path d="M323.47 226.44L353.78 243.94L444.71 191.44L414.4 173.94Z" />
+            <path d="M353.78 243.94L406.82 274.56L437.13 257.06L384.09 226.44Z" />
+          </g>
+
+          {/* Perimeter Stroke Lines for K, A, L */}
+          <path
             id={strokeId}
-            variants={{
-              normal: {
-                d: "M28.21 240.58 L0.50 224.58 V192.58 L111.35 128.58 L166.78 160.58 V192.58 L83.64 240.58M166.78 160.58 L0.50 256.58 V288.58 L111.35 352.58 L166.78 320.58 L222.20 352.58 L333.05 288.58 V256.58 L277.63 224.58 L166.78 288.58 L0.50 192.58M0.50 256.58 L111.35 320.58 L166.78 288.58 L222.20 320.58 L333.05 256.58M111.35 320.58 V352.58M166.78 288.58 V320.58M222.20 320.58 V352.58M499.33 96.58 L554.76 128.58 V160.58 L388.48 256.58 L166.78 128.58 V96.58 L333.05 0.58 L499.33 96.58M166.78 96.58 L388.48 224.58 L554.76 128.58M527.04 112.58 L554.76 96.58 V64.58 L443.90 0.58 L277.63 96.58 L388.48 160.58 L554.76 64.58M305.34 112.58 L388.48 64.58 L471.62 112.58M388.48 224.58 V256.58M388.48 32.58 V64.58",
-              },
-              pressed: {
-                d: "M42.07 248.58 L0.50 224.58 V208.58 L111.35 144.58 L166.78 176.58 V192.58 L69.78 248.58M166.78 176.58 L0.5 272.58 V288.58 L111.35 352.58 L166.78 320.58 L222.20 352.58 L333.05 288.58 V272.58 L277.63 240.58 L166.78 304.58 L0.5 208.58M0.5 272.58 L111.35 336.58 L166.78 304.58 L222.20 336.58 L333.05 272.58M111.35 336.58 V352.58M166.78 304.58 V320.58M222.20 336.58 V352.58M499.33 112.58 L554.76 144.58 V160.58 L388.48 256.58 L166.78 128.58 V112.58 L333.05 16.58 L499.33 112.58M166.78 112.58 L388.48 240.58 L554.76 144.58M513.19 120.58 L554.76 96.58 V80.58 L443.90 16.58 L277.63 112.58 L388.48 176.58 L554.76 80.58M291.48 120.58 L388.48 64.58 L485.47 120.58M388.48 240.58 V256.58M388.48 48.58 V64.58",
-              },
-            }}
-            transition={springTransition}
+            d="M111.29 103.94L141.6 121.44L232.53 68.94L202.22 51.44Z M111.29 103.94L111.29 131.94 M141.6 121.44L141.6 149.44 M111.29 131.94L141.6 149.44 M232.53 68.94L232.53 96.94 M141.6 149.44L232.53 96.94 M194.65 90.81L240.11 117.06L278 95.19L232.53 68.94Z M194.65 90.81L194.65 118.81 M240.11 117.06L240.11 145.06 M194.65 118.81L240.11 145.06 M278 95.19L278 123.19 M240.11 145.06L278 123.19 M141.6 121.44L187.07 147.69L224.96 125.81L179.49 99.56Z M187.07 147.69L187.07 175.69 M141.6 149.44L187.07 175.69 M224.96 125.81L224.96 153.81 M187.07 175.69L224.96 153.81 M209.8 160.81L240.11 178.31L331.04 125.81L300.73 108.31Z M209.8 160.81L209.8 188.81 M240.11 178.31L240.11 206.31 M209.8 188.81L240.11 206.31 M331.04 125.81L331.04 153.81 M240.11 206.31L331.04 153.81 M270.42 195.81L300.73 213.31L391.67 160.81L361.35 143.31Z M270.42 195.81L270.42 223.81 M300.73 213.31L300.73 241.31 M270.42 223.81L300.73 241.31 M391.67 160.81L391.67 188.81 M300.73 241.31L391.67 188.81 M308.31 138.94L338.62 156.44L361.35 143.31L331.04 125.81Z M308.31 138.94L308.31 166.94 M338.62 156.44L338.62 184.44 M308.31 166.94L338.62 184.44 M361.35 143.31L361.35 171.31 M338.62 184.44L361.35 171.31 M270.42 160.81L300.73 178.31L323.47 165.19L293.16 147.69Z M270.42 160.81L270.42 188.81 M300.73 178.31L300.73 206.31 M270.42 188.81L300.73 206.31 M323.47 165.19L323.47 193.19 M300.73 206.31L323.47 193.19 M323.47 226.44L353.78 243.94L444.71 191.44L414.4 173.94Z M323.47 226.44L323.47 254.44 M353.78 243.94L353.78 271.94 M323.47 254.44L353.78 271.94 M444.71 191.44L444.71 219.44 M353.78 271.94L444.71 219.44 M353.78 243.94L406.82 274.56L437.13 257.06L384.09 226.44Z M406.82 274.56L406.82 302.56 M353.78 271.94L406.82 302.56 M437.13 257.06L437.13 285.06 M406.82 302.56L437.13 285.06"
           />
 
           {/* Smooth Cursor Tracking Radial Gradient */}
@@ -141,6 +152,9 @@ export function CadIsometricCover() {
           </motion.radialGradient>
         </defs>
 
+        {/* Background Fine CAD Grid */}
+        <rect width="100%" height="100%" fill={`url(#${gridPatternId})`} />
+
         {/* 3 Infinite Dashed Projection Lines */}
         <g
           className="text-zinc-300/80 dark:text-zinc-800"
@@ -153,74 +167,62 @@ export function CadIsometricCover() {
           <path d="M1143.65 692.58L-588.39 -307.42" />
         </g>
 
-        {/* Side Walls Solid Fill (Background Matched) */}
-        <g
-          className="fill-white dark:fill-zinc-950"
-          fillRule="evenodd"
-          clipRule="evenodd"
+        {/* 3D Motion Container: sinks on click with spring animation */}
+        <motion.g
+          variants={{
+            normal: { y: 0 },
+            pressed: { y: 12 },
+          }}
+          transition={springTransition}
         >
-          <motion.path
-            variants={{
-              normal: {
-                d: "M166.78 160.58L55.93 224.58L0.50 192.58V224.58L55.93 256.58L166.78 192.58V160.58Z",
-              },
-              pressed: {
-                d: "M166.78 176.58L55.93 240.58L0.50 208.58V224.58L55.93 256.58L166.78 192.58V176.58Z",
-              },
-            }}
-            transition={springTransition}
-          />
-          <motion.path
-            variants={{
-              normal: {
-                d: "M166.78 288.58L111.35 320.58L0.50 256.58V288.58L111.35 352.58L166.78 320.58L222.20 352.58L333.05 288.58V256.58L222.20 320.58L166.78 288.58Z",
-              },
-              pressed: {
-                d: "M166.78 304.58L111.35 336.58L0.50 272.58V288.58L111.35 352.58L166.78 320.58L222.20 352.58L333.05 288.58V272.58L222.20 336.58L166.78 304.58Z",
-              },
-            }}
-            transition={springTransition}
-          />
-          <motion.path
-            variants={{
-              normal: {
-                d: "M388.48 224.58L166.78 96.58V128.58L388.48 256.58L554.76 160.58V128.58L388.48 224.58Z",
-              },
-              pressed: {
-                d: "M388.48 240.58L166.78 112.58V128.58L388.48 256.58L554.76 160.58V144.58L388.48 240.58Z",
-              },
-            }}
-            transition={springTransition}
-          />
-          <motion.path
-            variants={{
-              normal: {
-                d: "M388.48 32.58L277.63 96.58V128.58L388.48 64.58L499.33 128.58L554.75 96.58V64.58L499.33 96.58L388.48 32.58Z",
-              },
-              pressed: {
-                d: "M388.48 48.58L277.63 112.58V128.58L388.48 64.58L499.33 128.58L554.75 96.58V80.58L499.33 112.58L388.48 48.58Z",
-              },
-            }}
-            transition={springTransition}
-          />
-        </g>
+          {/* Solid Side Walls (Background Matched) */}
+          <g
+            className="fill-white dark:fill-zinc-950"
+            fillRule="evenodd"
+            clipRule="evenodd"
+          >
+            {/* Letter K side walls */}
+            <path d="M111.29 103.94L141.6 121.44L141.6 149.44L111.29 131.94Z" />
+            <path d="M141.6 121.44L232.53 68.94L232.53 96.94L141.6 149.44Z" />
+            <path d="M194.65 90.81L240.11 117.06L240.11 145.06L194.65 118.81Z" />
+            <path d="M240.11 117.06L278 95.19L278 123.19L240.11 145.06Z" />
+            <path d="M141.6 121.44L187.07 147.69L187.07 175.69L141.6 149.44Z" />
+            <path d="M187.07 147.69L224.96 125.81L224.96 153.81L187.07 175.69Z" />
 
-        {/* Render Top Faces: Background mask then diagonal hatching */}
-        <use href={`#${faceFillId}`} className="fill-white dark:fill-zinc-950" />
-        <use href={`#${faceFillId}`} fill={`url(#${facePatternId})`} />
+            {/* Letter A side walls */}
+            <path d="M209.8 160.81L240.11 178.31L240.11 206.31L209.8 188.81Z" />
+            <path d="M240.11 178.31L331.04 125.81L331.04 153.81L240.11 206.31Z" />
+            <path d="M270.42 195.81L300.73 213.31L300.73 241.31L270.42 223.81Z" />
+            <path d="M300.73 213.31L391.67 160.81L391.67 188.81L300.73 241.31Z" />
+            <path d="M308.31 138.94L338.62 156.44L338.62 184.44L308.31 166.94Z" />
+            <path d="M338.62 156.44L361.35 143.31L361.35 171.31L338.62 184.44Z" />
+            <path d="M270.42 160.81L300.73 178.31L300.73 206.31L270.42 188.81Z" />
+            <path d="M300.73 178.31L323.47 165.19L323.47 193.19L300.73 206.31Z" />
 
-        {/* Render Perimeter Borders: Base subtle outline + interactive radial glow highlight */}
-        <use
-          href={`#${strokeId}`}
-          stroke="currentColor"
-          className="text-zinc-300 dark:text-zinc-800"
-          strokeWidth="1"
-        />
-        <use
-          href={`#${strokeId}`}
-          stroke={`url(#${radialGradientId})`}
-          strokeWidth="1.5"
-        />
+            {/* Letter L side walls */}
+            <path d="M323.47 226.44L353.78 243.94L353.78 271.94L323.47 254.44Z" />
+            <path d="M353.78 243.94L444.71 191.44L444.71 219.44L353.78 271.94Z" />
+            <path d="M353.78 243.94L406.82 274.56L406.82 302.56L353.78 271.94Z" />
+            <path d="M406.82 274.56L437.13 257.06L437.13 285.06L406.82 302.56Z" />
+          </g>
+
+          {/* Render Top Faces of K, A, L */}
+          <use href={`#${faceFillId}`} className="fill-white dark:fill-zinc-950" />
+          <use href={`#${faceFillId}`} fill={`url(#${facePatternId})`} />
+
+          {/* Render Perimeter Borders: Subtle base line + dynamic radial gradient highlight */}
+          <use
+            href={`#${strokeId}`}
+            stroke="currentColor"
+            className="text-zinc-300 dark:text-zinc-800"
+            strokeWidth="1"
+          />
+          <use
+            href={`#${strokeId}`}
+            stroke={`url(#${radialGradientId})`}
+            strokeWidth="1.5"
+          />
+        </motion.g>
 
         {/* 30° Dimension Arc Guide */}
         <g
