@@ -1,7 +1,8 @@
 "use client";
 
+import React from "react";
 import { GitHubStats } from "@/lib/github";
-import { Star, GitFork, BookOpen, Users } from "lucide-react";
+import { Star, GitFork, BookOpen } from "lucide-react";
 import { RiGithubLine } from "@remixicon/react";
 import { GitHubCalendar } from "react-github-calendar";
 
@@ -16,13 +17,25 @@ export function MonochromeGitHubTelemetry({
     <section className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
       {/* Calendar Area directly below socials matching blueprint */}
       <div className="p-4 sm:p-6 overflow-hidden">
-        <div className="overflow-x-auto py-2 flex justify-center">
+        <div className="overflow-x-auto py-2 flex justify-center [&_rect]:rx-0 [&_rect]:ry-0">
           <GitHubCalendar
             username={username}
             blockSize={11.5}
             blockMargin={3}
             fontSize={11}
+            blockRadius={0}
             colorScheme="dark"
+            tooltips={{
+              activity: {
+                text: (activity) =>
+                  `${activity.count} contributions on ${activity.date}`,
+              },
+            }}
+            renderBlock={(block, activity) =>
+              React.cloneElement(block, {
+                title: `${activity.count} contributions on ${activity.date}`,
+              })
+            }
             theme={{
               light: ["#f4f4f5", "#d4d4d8", "#a1a1aa", "#71717a", "#18181b"],
               dark: ["#18181b", "#27272a", "#3f3f46", "#71717a", "#fafafa"],
