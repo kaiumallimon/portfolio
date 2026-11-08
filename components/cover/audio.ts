@@ -6,6 +6,7 @@ const STORAGE_KEY = 'kal_runner_muted';
 class RetroAudioSystem {
   private ctx: AudioContext | null = null;
   private isMuted: boolean = true;
+  private listeners: Set<() => void> = new Set();
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -18,6 +19,19 @@ class RetroAudioSystem {
       }
     }
   }
+
+  public subscribe = (listener: () => void) => {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  };
+
+  public getSnapshot = (): boolean => {
+    return this.isMuted;
+  };
+
+  public getServerSnapshot = (): boolean => {
+    return true;
+  };
 
   private initContext() {
     if (!this.ctx && typeof window !== 'undefined') {
@@ -42,6 +56,7 @@ class RetroAudioSystem {
     try {
       localStorage.setItem(STORAGE_KEY, String(this.isMuted));
     } catch {}
+    this.listeners.forEach((fn) => fn());
     if (!this.isMuted) {
       this.initContext();
       this.playMilestone();

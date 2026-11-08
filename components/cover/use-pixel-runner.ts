@@ -2,7 +2,7 @@
 // Features idle walking, climbing/sitting on the 'L' with laptop, random Dhaka-timezone jokes/events,
 // and Chrome-dino-style endless runner with commit scoring and retro audio.
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from 'react';
 import {
   CHARACTER_SPRITES,
   OBSTACLES,
@@ -54,7 +54,11 @@ export function usePixelRunner(theme: ThemeMode) {
   });
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [gameMode, setGameMode] = useState<GameMode>('idle');
-  const [isMuted, setIsMuted] = useState<boolean>(() => retroAudio.getMuted());
+  const isMuted = useSyncExternalStore(
+    retroAudio.subscribe,
+    retroAudio.getSnapshot,
+    retroAudio.getServerSnapshot
+  );
   const [milestoneMsg, setMilestoneMsg] = useState<string | null>(null);
   const [speechBubble, setSpeechBubble] = useState<{ text: string; x: number; y: number } | null>(null);
 
@@ -209,8 +213,7 @@ export function usePixelRunner(theme: ThemeMode) {
 
   // Sound toggle
   const toggleSound = useCallback(() => {
-    const muted = retroAudio.toggleMute();
-    setIsMuted(muted);
+    retroAudio.toggleMute();
   }, []);
 
   // Show a speech bubble over character
@@ -677,7 +680,7 @@ export function usePixelRunner(theme: ThemeMode) {
         // Draw Player
         drawSprite(ctx, playerSprite, e.char.x, playerY, palette, 1, false);
 
-        // Spawn obstacles
+        // Spawn obstacles with randomized positions, altitudes, and cadences
         e.nextObstacleDist -= e.speed;
         if (e.nextObstacleDist <= 0) {
           const types: ObstacleEntity['type'][] = [
@@ -690,58 +693,125 @@ export function usePixelRunner(theme: ThemeMode) {
             'flyingUndefined',
           ];
           const chosen = types[Math.floor(Math.random() * types.length)];
-          const isFlying = chosen === 'slackBird' || chosen === 'flyingUndefined';
+          const spawnX = e.width + 10 + Math.floor(Math.random() * 14);
 
-          let spr: PixelSprite = OBSTACLES.bug;
-          let obsH = 6;
-          let obsW = 8;
-          let obsY = floorY - 6;
+          const buildObstacle = (
+            t: ObstacleEntity['type'],
+            ox: number
+          ): ObstacleEntity => {
+            let spr: PixelSprite = OBSTACLES.bug;
+            let obsH = 6;
+            let obsW = 8;
+            let obsY = floorY - 6;
+            let isFlying = false;
 
-          if (chosen === 'semicolon') {
-            spr = OBSTACLES.semicolon;
-            obsH = 11;
-            obsW = 5;
-            obsY = floorY - 11;
-          } else if (chosen === 'block404') {
-            spr = OBSTACLES.block404;
-            obsH = 9;
-            obsW = 14;
-            obsY = floorY - 9;
-          } else if (chosen === 'mergeConflict') {
-            spr = OBSTACLES.mergeConflict;
-            obsH = 18;
-            obsW = 16;
-            obsY = floorY - 18;
-          } else if (chosen === 'deployFriday') {
-            spr = OBSTACLES.deployFriday;
-            obsH = 18;
-            obsW = 14;
-            obsY = floorY - 18;
-          } else if (chosen === 'slackBird') {
-            spr = OBSTACLES.slackBird;
-            obsH = 8;
-            obsW = 12;
-            obsY = floorY - 24; // Flying obstacle (must duck!)
-          } else if (chosen === 'flyingUndefined') {
-            spr = OBSTACLES.flyingUndefined;
-            obsH = 8;
-            obsW = 18;
-            obsY = floorY - 23; // Flying obstacle (must duck!)
+            switch (t) {
+              case 'semicolon': {
+                spr = OBSTACLES.semicolon;
+                obsH = 11;
+                obsW = 5;
+                // Randomize: 30% chance to hover slightly in air
+                const hover = Math.random() < 0.3 ? Math.floor(Math.random() * 8 + 4) : 0;
+                obsY = floorY - 11 - hover;
+                isFlying = hover > 0;
+                break;
+              }
+              case 'block404': {
+                spr = OBSTACLES.block404;
+                obsH = 9;
+                obsW = 14;
+                // Randomize: 25% chance to float as an airborne block
+                const hover = Math.random() < 0.25 ? Math.floor(Math.random() * 10 + 5) : 0;
+                obsY = floorY - 9 - hover;
+                isFlying = hover > 0;
+                break;
+              }
+              case 'mergeConflict': {
+                spr = OBSTACLES.mergeConflict;
+                obsH = 18;
+                obsW = 16;
+                obsY = floorY - 18;
+                break;
+              }
+              case 'deployFriday': {
+                spr = OBSTACLES.deployFriday;
+                obsH = 18;
+                obsW = 14;
+                obsY = floorY - 18;
+                break;
+              }
+              case 'slackBird': {
+                spr = OBSTACLES.slackBird;
+                obsH = 8;
+                obsW = 12;
+                isFlying = true;
+                // Randomized altitude: low (must duck), mid, or high flyby
+                const tier = Math.random();
+                if (tier < 0.45) {
+                  // Low: head level, player must duck!
+                  obsY = floorY - 21 - Math.floor(Math.random() * 4);
+                } else if (tier < 0.75) {
+                  // Mid: duck or jump with precision
+                  obsY = floorY - 29 - Math.floor(Math.random() * 5);
+                } else {
+                  // High: soaring overhead flyby
+                  obsY = floorY - 39 - Math.floor(Math.random() * 6);
+                }
+                break;
+              }
+              case 'flyingUndefined': {
+                spr = OBSTACLES.flyingUndefined;
+                obsH = 8;
+                obsW = 18;
+                isFlying = true;
+                // Randomized floating altitude
+                const tier = Math.random();
+                if (tier < 0.5) {
+                  obsY = floorY - 22 - Math.floor(Math.random() * 4);
+                } else {
+                  obsY = floorY - 32 - Math.floor(Math.random() * 8);
+                }
+                break;
+              }
+              case 'bug':
+              default: {
+                spr = OBSTACLES.bug;
+                obsH = 6;
+                obsW = 8;
+                // 20% chance to be an airborne drone bug
+                const hover = Math.random() < 0.2 ? Math.floor(Math.random() * 10 + 6) : 0;
+                obsY = floorY - 6 - hover;
+                isFlying = hover > 0;
+                break;
+              }
+            }
+
+            return {
+              id: e.nextObstacleId++,
+              type: t,
+              x: ox,
+              y: obsY,
+              width: obsW,
+              height: obsH,
+              sprite: spr,
+              isFlying,
+            };
+          };
+
+          e.obstacles.push(buildObstacle(chosen, spawnX));
+
+          // 20% chance to spawn a combo pair with randomized stagger
+          if (Math.random() < 0.2 && chosen !== 'mergeConflict' && chosen !== 'deployFriday') {
+            const secondTypes: ObstacleEntity['type'][] = ['bug', 'semicolon', 'slackBird'];
+            const secondType = secondTypes[Math.floor(Math.random() * secondTypes.length)];
+            const pairOffset = Math.floor(Math.random() * 18 + 26);
+            e.obstacles.push(buildObstacle(secondType, spawnX + pairOffset));
           }
 
-          e.obstacles.push({
-            id: e.nextObstacleId++,
-            type: chosen,
-            x: e.width + 10,
-            y: obsY,
-            width: obsW,
-            height: obsH,
-            sprite: spr,
-            isFlying,
-          });
-
-          // Next obstacle gap (scales with speed)
-          e.nextObstacleDist = Math.max(75, 120 + Math.random() * 80 - e.speed * 4);
+          // Dynamic randomized gap distance between waves
+          const baseGap = Math.max(65, 100 - e.speed * 3.5);
+          const randomJitter = Math.random() * 110 + Math.random() * 50;
+          e.nextObstacleDist = baseGap + randomJitter;
         }
 
         // Draw and test collision for obstacles
@@ -795,18 +865,6 @@ export function usePixelRunner(theme: ThemeMode) {
           if (obs.x + obs.width < -10) {
             e.obstacles.splice(i, 1);
           }
-        }
-
-        // HUD: Commits score in pixel style
-        ctx.fillStyle = isDark ? '#ffffff' : '#09090b';
-        ctx.font = '10px monospace';
-        ctx.textAlign = 'right';
-        ctx.fillText(`${e.score} commits`, e.width - 12, 16);
-
-        if (e.highScore > 0) {
-          ctx.fillStyle = isDark ? '#71717a' : '#a1a1aa';
-          ctx.font = '8px monospace';
-          ctx.fillText(`best: ${e.highScore}`, e.width - 12, 26);
         }
       }
 
