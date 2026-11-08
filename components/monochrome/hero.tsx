@@ -88,7 +88,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
           </svg>
           <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
           <span className="font-mono text-[10px] tabular-nums px-2 text-zinc-400 dark:text-zinc-500">
-            768
+            1024
           </span>
           <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
           <svg className="shrink-0 size-2 -scale-x-100" viewBox="0 0 9 7" fill="none" stroke="currentColor" strokeWidth="1">
