@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Bot, ArrowRight, Copy, Check } from "lucide-react";
+import { MessageSquare, ArrowRight, Copy, Check } from "lucide-react";
 import { ISiteSettings } from "@/lib/models";
 import { toast } from "sonner";
 
@@ -47,7 +47,7 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
             prefetch={false}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-950 text-white dark:bg-zinc-50 dark:text-zinc-950 font-mono text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-sm group cursor-pointer"
           >
-            <Bot className="size-4 text-emerald-400 dark:text-emerald-600 group-hover:rotate-6 transition-transform" />
+            <MessageSquare className="size-3.5 text-emerald-400 dark:text-emerald-600 group-hover:scale-110 transition-transform" />
             <span>Let&apos;s Talk</span>
             <ArrowRight className="size-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Link>
