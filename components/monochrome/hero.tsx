@@ -74,31 +74,32 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
 
   return (
     <section className="w-full bg-white dark:bg-zinc-950">
-      {/* Cover + Profile Hero: cover-grid-bg spans the full area (cover row + right profile column) */}
-      {/* Row 1: Full-width KAL cover with cover-grid-bg */}
-      <div className="relative w-full border-b border-zinc-200 dark:border-zinc-800 cover-grid-bg overflow-hidden flex items-center justify-center">
-        <CadIsometricCover />
-      </div>
+      {/* Hero: single grid — avatar spans 2 rows on left, cover+name on right with cover-grid-bg */}
+      <div className="relative grid grid-cols-1 sm:grid-cols-[auto_1fr] sm:grid-rows-[1fr_auto] border-b border-zinc-200 dark:border-zinc-800 overflow-hidden">
 
-      {/* Row 2: Profile Section — left=avatar (solid bg), right=cover-grid-bg continuing */}
-      <div className="relative grid grid-cols-1 sm:grid-cols-[auto_1fr] border-b border-zinc-200 dark:border-zinc-800 overflow-visible cover-grid-bg">
-        {/* Left Column: Avatar — solid background to contrast with grid */}
-        <div className="p-4 sm:p-6 flex items-center justify-center shrink-0 relative border-b sm:border-b-0 sm:border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-          {/* 160px Circular Profile Picture */}
-          <div className="relative size-28 min-[24rem]:size-32 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
-            <Image
-              src="/bordered.png"
-              alt={settings.name}
-              fill
-              sizes="160px"
-              className="object-cover select-none"
-              priority
-            />
+        {/* Left Column: avatar spans both rows, no top border cutting across */}
+        <div className="sm:row-span-2 sm:row-start-1 flex flex-col border-b sm:border-b-0 sm:border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+          <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
+            <div className="relative size-28 min-[24rem]:size-32 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+              <Image
+                src="/bordered.png"
+                alt={settings.name}
+                fill
+                sizes="160px"
+                className="object-cover select-none"
+                priority
+              />
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Name & Designation — no background override, grid shows through */}
-        <div className="flex flex-col justify-end">
+        {/* Right Column, Row 1: KAL cover with cover-grid-bg */}
+        <div className="relative cover-grid-bg overflow-hidden flex items-center justify-center">
+          <CadIsometricCover />
+        </div>
+
+        {/* Right Column, Row 2: Name & Designation — cover-grid-bg continues */}
+        <div className="flex flex-col justify-end cover-grid-bg border-t border-zinc-200 dark:border-zinc-800">
           {/* Upper line: Name + verified badge + sound chime */}
           <div className="px-4 py-2.5 sm:py-3 flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
@@ -127,7 +128,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
             </button>
           </div>
 
-          {/* Lower line: Designation in monospace font */}
+          {/* Lower line: Designation */}
           <div className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800">
             <p className="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
               Full-Stack Software Engineer.
