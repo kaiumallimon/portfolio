@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
-import { manrope, ubuntuMono, tiny5 } from "@/lib/fonts";
+import { geistSans, geistMono, tiny5 } from "@/lib/fonts";
 import { getSiteSettings } from "@/lib/data-service";
 import { SITE_URL } from "@/lib/site";
 import GAListener from "@/lib/ga-listener";
@@ -63,7 +63,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${ubuntuMono.variable} ${tiny5.variable} dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${tiny5.variable} dark`}
       suppressHydrationWarning
     >
       <head>
@@ -87,7 +87,7 @@ export default async function RootLayout({
       </head>
 
       <body
-        className={`${manrope.className} font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen`}
+        className={`${geistSans.className} font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen`}
       >
         {/* Google Analytics */}
         <Script

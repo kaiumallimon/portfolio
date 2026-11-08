@@ -39,13 +39,13 @@ export function ThreeKalCover() {
     if (!container) return;
 
     // Detect dark mode
-    const isDark = document.documentElement.classList.contains("dark");
+    let isDark = document.documentElement.classList.contains("dark");
 
     // 1. Scene setup
     const scene = new THREE.Scene();
 
     // 2. Camera setup - Orthographic Camera for true 30° Isometric Projection
-    // Looking down from (-22, 11.5, -22) produces exact 30° slants along Z and X axes
+    // Looking down from (-22, 11.5, -22) produces clean 30° slants along Z and X axes
     const width = container.clientWidth || 800;
     const height = container.clientHeight || 360;
     const aspect = width / height;
@@ -60,11 +60,7 @@ export function ThreeKalCover() {
       1000
     );
 
-    const baseCamX = -22;
-    const baseCamY = 11.5;
-    const baseCamZ = -22;
-
-    camera.position.set(baseCamX, baseCamY, baseCamZ);
+    camera.position.set(-22, 11.5, -22);
     camera.lookAt(0, 0, 0);
 
     // 3. Renderer setup
@@ -103,8 +99,16 @@ export function ThreeKalCover() {
 
     const hatchTexture = createHatchTexture(isDark);
 
-    // Materials
-    const edgeColor = isDark ? 0xf4f4f5 : 0x18181b;
+    // Colors: Default vs Highlighted on Hover
+    let defaultBorderColor = new THREE.Color(isDark ? 0x52525b : 0xa1a1aa);
+    let highlightBorderColor = new THREE.Color(isDark ? 0xffffff : 0x09090b);
+
+    let defaultGridColor = new THREE.Color(isDark ? 0x27272a : 0xe4e4e7);
+    let highlightGridColor = new THREE.Color(isDark ? 0x71717a : 0x71717a);
+
+    let defaultAxisColor = new THREE.Color(isDark ? 0x52525b : 0xa1a1aa);
+    let highlightAxisColor = new THREE.Color(isDark ? 0xe4e4e7 : 0x18181b);
+
     const sideColor = isDark ? 0x141416 : 0xf4f4f5;
 
     const topMaterial = new THREE.MeshBasicMaterial({
@@ -127,14 +131,24 @@ export function ThreeKalCover() {
       sideMaterial, // back
     ];
 
+    // Border line material with dynamic highlight color
     const lineMaterial = new THREE.LineBasicMaterial({
-      color: edgeColor,
+      color: defaultBorderColor.clone(),
       linewidth: 1.5,
     });
 
+    // Ground dashed grid line material
     const dashedLineMat = new THREE.LineDashedMaterial({
-      color: isDark ? 0x3f3f46 : 0xd4d4d8,
+      color: defaultGridColor.clone(),
       dashSize: 0.35,
+      gapSize: 0.25,
+      linewidth: 1,
+    });
+
+    // Main 30° axis projection line material
+    const axisLineMat = new THREE.LineDashedMaterial({
+      color: defaultAxisColor.clone(),
+      dashSize: 0.45,
       gapSize: 0.25,
       linewidth: 1,
     });
@@ -146,7 +160,6 @@ export function ThreeKalCover() {
     const gridGroup = new THREE.Group();
     mainGroup.add(gridGroup);
 
-    // Longitudinal and transversal dashed lines across floor
     for (let x = -10; x <= 10; x += 2.5) {
       const pts = [new THREE.Vector3(x, 0, -12), new THREE.Vector3(x, 0, 12)];
       const geom = new THREE.BufferGeometry().setFromPoints(pts);
@@ -164,14 +177,8 @@ export function ThreeKalCover() {
     }
 
     // Prominent dashed projection line extending along the 30° axis through the back edges
-    const axisPts = [new THREE.Vector3(-3.5, 0, -14), new THREE.Vector3(-3.5, 0, 14)];
+    const axisPts = [new THREE.Vector3(-2.0, 0, -14), new THREE.Vector3(-2.0, 0, 14)];
     const axisGeom = new THREE.BufferGeometry().setFromPoints(axisPts);
-    const axisLineMat = new THREE.LineDashedMaterial({
-      color: isDark ? 0x71717a : 0x71717a,
-      dashSize: 0.45,
-      gapSize: 0.25,
-      linewidth: 1,
-    });
     const axisLine = new THREE.Line(axisGeom, axisLineMat);
     axisLine.computeLineDistances();
     gridGroup.add(axisLine);
@@ -181,7 +188,6 @@ export function ThreeKalCover() {
     function createFlooredSlab(w: number, d: number, x: number, z: number, rotY = 0) {
       const geom = new THREE.BoxGeometry(w, slabHeight, d);
       const mesh = new THREE.Mesh(geom, materials);
-      // Position centered at y = slabHeight / 2 so the bottom rests on y = 0
       mesh.position.set(x, slabHeight / 2, z);
       mesh.rotation.y = rotY;
 
@@ -192,59 +198,42 @@ export function ThreeKalCover() {
       return mesh;
     }
 
-    // 7. Build floored architectural letters KAL stepped along the 30° diagonal
+    // 7. Build floored architectural letters KAL angled diagonal from bottom-left to top-right
     const kalLetters = new THREE.Group();
     mainGroup.add(kalLetters);
 
-    // --- LETTER K (Lower-left at z = -4.2) ---
-    const zK = -4.2;
-    // Main vertical spine on floor (running along X)
-    kalLetters.add(createFlooredSlab(3.4, 0.85, -2.5, zK));
-    // Upper arm angled out
-    kalLetters.add(createFlooredSlab(2.0, 0.85, -1.2, zK + 1.1, Math.PI / 4));
-    // Lower arm angled out
-    kalLetters.add(createFlooredSlab(2.0, 0.85, -1.2, zK - 1.1, -Math.PI / 4));
+    // --- LETTER K (Bottom-left at z = -4.5, x = -1.8) ---
+    const zK = -4.5;
+    const xK = -1.8;
+    kalLetters.add(createFlooredSlab(3.4, 0.85, xK - 1.0, zK));
+    kalLetters.add(createFlooredSlab(2.0, 0.85, xK + 0.3, zK + 1.1, Math.PI / 4));
+    kalLetters.add(createFlooredSlab(2.0, 0.85, xK + 0.3, zK - 1.1, -Math.PI / 4));
 
-    // --- LETTER A (Center at z = 0) ---
+    // --- LETTER A (Center at z = 0, x = 0) ---
     const zA = 0;
-    // Left column
-    kalLetters.add(createFlooredSlab(3.4, 0.85, -1.2, zA));
-    // Right column
-    kalLetters.add(createFlooredSlab(3.4, 0.85, 1.2, zA));
-    // Top crossbar (running along Z)
-    kalLetters.add(createFlooredSlab(0.85, 2.0, 0.45, zA));
-    // Middle crossbar
-    kalLetters.add(createFlooredSlab(0.7, 1.55, -0.4, zA));
+    const xA = 0;
+    kalLetters.add(createFlooredSlab(3.4, 0.85, xA - 1.2, zA));
+    kalLetters.add(createFlooredSlab(3.4, 0.85, xA + 1.2, zA));
+    kalLetters.add(createFlooredSlab(0.85, 2.0, xA + 0.45, zA));
+    kalLetters.add(createFlooredSlab(0.7, 1.55, xA - 0.4, zA));
 
-    // --- LETTER L (Upper-right at z = +4.5) ---
+    // --- LETTER L (Top-right at z = 4.5, x = 1.8) ---
     const zL = 4.5;
-    // Main spine on floor
-    kalLetters.add(createFlooredSlab(3.4, 0.85, 0.2, zL));
-    // Base slab extending along Z
-    kalLetters.add(createFlooredSlab(0.85, 2.4, 1.45, zL + 0.8));
+    const xL = 1.8;
+    kalLetters.add(createFlooredSlab(3.4, 0.85, xL - 0.5, zL));
+    kalLetters.add(createFlooredSlab(0.85, 2.4, xL + 0.75, zL + 0.8));
 
-    // 8. Mouse interaction state
-    let targetTiltX = 0;
-    let targetTiltZ = 0;
-    let currentTiltX = 0;
-    let currentTiltZ = 0;
+    // 8. Hover detection & Border Highlighting (no mouse rotation, static angle)
+    let isHovered = false;
+    let hoverProgress = 0.0;
     let scaleMultiplier = 1.0;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const clientX = e.clientX - rect.left;
-      const clientY = e.clientY - rect.top;
-
-      const normX = (clientX / rect.width) * 2 - 1;
-      const normY = -(clientY / rect.height) * 2 + 1;
-
-      targetTiltX = -normY * 0.12;
-      targetTiltZ = normX * 0.14;
+    const handlePointerEnter = () => {
+      isHovered = true;
     };
 
-    const handleMouseLeave = () => {
-      targetTiltX = 0;
-      targetTiltZ = 0;
+    const handlePointerLeave = () => {
+      isHovered = false;
     };
 
     const handleClick = () => {
@@ -254,8 +243,8 @@ export function ThreeKalCover() {
       setTimeout(() => setClicked(false), 240);
     };
 
-    container.addEventListener("mousemove", handleMouseMove);
-    container.addEventListener("mouseleave", handleMouseLeave);
+    container.addEventListener("pointerenter", handlePointerEnter);
+    container.addEventListener("pointerleave", handlePointerLeave);
     container.addEventListener("click", handleClick);
 
     // Resize handler
@@ -279,11 +268,18 @@ export function ThreeKalCover() {
 
     // Theme mutation observer
     const observer = new MutationObserver(() => {
-      const darkNow = document.documentElement.classList.contains("dark");
-      lineMaterial.color.setHex(darkNow ? 0xf4f4f5 : 0x18181b);
-      sideMaterial.color.setHex(darkNow ? 0x141416 : 0xf4f4f5);
-      dashedLineMat.color.setHex(darkNow ? 0x3f3f46 : 0xd4d4d8);
-      topMaterial.map = createHatchTexture(darkNow);
+      isDark = document.documentElement.classList.contains("dark");
+      defaultBorderColor = new THREE.Color(isDark ? 0x52525b : 0xa1a1aa);
+      highlightBorderColor = new THREE.Color(isDark ? 0xffffff : 0x09090b);
+
+      defaultGridColor = new THREE.Color(isDark ? 0x27272a : 0xe4e4e7);
+      highlightGridColor = new THREE.Color(isDark ? 0x71717a : 0x71717a);
+
+      defaultAxisColor = new THREE.Color(isDark ? 0x52525b : 0xa1a1aa);
+      highlightAxisColor = new THREE.Color(isDark ? 0xe4e4e7 : 0x18181b);
+
+      sideMaterial.color.setHex(isDark ? 0x141416 : 0xf4f4f5);
+      topMaterial.map = createHatchTexture(isDark);
       topMaterial.needsUpdate = true;
     });
 
@@ -292,17 +288,19 @@ export function ThreeKalCover() {
       attributeFilter: ["class"],
     });
 
-    // 9. Animation loop
+    // 9. Animation loop (smooth border highlighting on hover + click spring)
     let animId: number;
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      // Smooth lerping to mouse tilt
-      currentTiltX += (targetTiltX - currentTiltX) * 0.08;
-      currentTiltZ += (targetTiltZ - currentTiltZ) * 0.08;
+      // Smooth lerp for border highlighting transition
+      const targetHover = isHovered ? 1.0 : 0.0;
+      hoverProgress += (targetHover - hoverProgress) * 0.14;
 
-      mainGroup.rotation.x = currentTiltX;
-      mainGroup.rotation.z = currentTiltZ;
+      // Highlight line edges
+      lineMaterial.color.lerpColors(defaultBorderColor, highlightBorderColor, hoverProgress);
+      dashedLineMat.color.lerpColors(defaultGridColor, highlightGridColor, hoverProgress);
+      axisLineMat.color.lerpColors(defaultAxisColor, highlightAxisColor, hoverProgress);
 
       // Spring physics on click scale
       scaleMultiplier += (1.0 - scaleMultiplier) * 0.14;
@@ -315,8 +313,8 @@ export function ThreeKalCover() {
 
     return () => {
       cancelAnimationFrame(animId);
-      container.removeEventListener("mousemove", handleMouseMove);
-      container.removeEventListener("mouseleave", handleMouseLeave);
+      container.removeEventListener("pointerenter", handlePointerEnter);
+      container.removeEventListener("pointerleave", handlePointerLeave);
       container.removeEventListener("click", handleClick);
       window.removeEventListener("resize", handleResize);
       observer.disconnect();
@@ -337,11 +335,11 @@ export function ThreeKalCover() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full cursor-pointer select-none flex items-center justify-center overflow-hidden"
-      title="Click for a sound"
+      className="relative w-full h-full cursor-pointer select-none flex items-center justify-center overflow-hidden transition-colors"
+      title="Hover to highlight borders · Click for sound"
       role="button"
       tabIndex={0}
-      aria-label="Interactive 3D isometric KAL monogram floored and angled with foreground grid. Click for sound."
+      aria-label="Interactive 3D isometric KAL monogram floored diagonal from bottom to top with border highlighting on hover. Click for sound."
     >
       {/* 30° Isometric Angle Arc Annotation on the top right */}
       <div
@@ -370,7 +368,7 @@ export function ThreeKalCover() {
         aria-hidden="true"
       >
         <div className="text-right leading-tight italic font-serif">
-          <span>follows your cursor</span>
+          <span>hover to highlight borders</span>
           <br />
           <span className="text-[11px] text-zinc-400">click for a sound</span>
         </div>
