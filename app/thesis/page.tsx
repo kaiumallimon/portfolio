@@ -4,7 +4,7 @@ import { MonochromeHeader } from "@/components/monochrome/header";
 import { MonochromeContactFooter } from "@/components/monochrome/contact-footer";
 import { getSiteSettings } from "@/lib/data-service";
 import { SITE_URL } from "@/lib/site";
-import { ArrowLeft, ArrowUpRight, Layers } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import {
   RiFilePdf2Line,
   RiDownloadLine,
@@ -27,17 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const PDF_URL = "/documents/thesis-project-report-team-bcrypt.pdf";
-
-const ARCHITECTURE_TAGS = [
-  "Multi-Agent Architecture",
-  "Semantic Vector Search",
-  "Supervised Query Classifier",
-  "Adaptive Learning Loop",
-  "FastAPI",
-  "ChromaDB",
-  "Manim",
-  "Python",
-];
 
 export default async function ThesisPage() {
   const settings = await getSiteSettings();
@@ -103,7 +92,7 @@ export default async function ThesisPage() {
                 custom academic agents that include tools for content retrieval
                 and explanation, and a continuous AI feedback loop with
                 adaptive learning. The development was modular and iterative,
-                relying on tools such as FastAPI, ChromaDB, and Manim.
+                relying on tools such as FastAPI and Pinecone.
               </p>
               <p>
                 Evaluation shows COSMOS-ITS can successfully identify and
@@ -115,24 +104,6 @@ export default async function ThesisPage() {
                 experiences of students as well as increase success in the
                 classroom.
               </p>
-            </div>
-
-            {/* Architecture tags */}
-            <div className="space-y-2 pt-2 border-t border-zinc-100 dark:border-zinc-900">
-              <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-500 dark:text-zinc-400">
-                <Layers className="w-3.5 h-3.5" />
-                <span>Architecture &amp; Core Components:</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {ARCHITECTURE_TAGS.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 text-[11px] font-mono bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xs"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
             </div>
 
             {/* Actions */}

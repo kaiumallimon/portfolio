@@ -11,28 +11,17 @@ import {
   RiGithubLine,
   RiArrowRightLine,
 } from "@remixicon/react";
-import { ArrowUpRight, BookOpen, Layers } from "lucide-react";
+import { ArrowUpRight, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 
 const PDF_URL = "/documents/thesis-project-report-team-bcrypt.pdf";
-
-const ARCHITECTURE_TAGS = [
-  "Multi-Agent Architecture",
-  "Semantic Vector Search",
-  "Supervised Query Classifier",
-  "Adaptive Learning Loop",
-  "FastAPI",
-  "ChromaDB",
-  "Manim",
-  "Python",
-];
 
 const TRUNCATED_TEXT =
   "COSMOS-ITS is personalized academic support for university students provided by an AI-powered intelligent tutoring system. With traditional educational methods, it is not easy to develop scalable and adaptable learning material which fits divergent university curricula. To address these limitations, COSMOS-ITS leverages a multi-agent architecture that incorporates state-of-the-art machine learning models, semantic vector search, and domain-specific AI agents to provide context-aware real-time tutoring...";
 
 const FULL_ABSTRACT = `COSMOS-ITS is personalized academic support for university students provided by an AI-powered intelligent tutoring system. With traditional educational methods, it is not easy to develop scalable and adaptable learning material which fits divergent university curricula. To address these limitations, COSMOS-ITS leverages a multi-agent architecture that incorporates state-of-the-art machine learning models, semantic vector search, and domain-specific AI agents to provide context-aware real-time tutoring.
 
-The system is organized in layers from low-level text processing to end-user interaction, including a guided chat interface, a supervised query classifier for domain routing, custom academic agents that include tools for content retrieval and explanation, and a continuous AI feedback loop with adaptive learning. The development was modular and iterative, relying on tools such as FastAPI, ChromaDB, and Manim.
+The system is organized in layers from low-level text processing to end-user interaction, including a guided chat interface, a supervised query classifier for domain routing, custom academic agents that include tools for content retrieval and explanation, and a continuous AI feedback loop with adaptive learning. The development was modular and iterative, relying on tools such as FastAPI and Pinecone.
 
 Evaluation shows COSMOS-ITS can successfully identify and classify queries, ensure relevant multi-modal responses, and personalise help based on user history both known (profile) and unknown (feedback). This innovation provides an adaptive and personalized platform to simulate individual academic guidance, improving the learning experience of students and increasing success in the classroom.`;
 
@@ -230,24 +219,6 @@ export function MonochromeThesis() {
             >
               {showFullAbstract ? "[Collapse abstract]" : "[Read expanded abstract]"}
             </button>
-          </div>
-
-          {/* Architecture & Stack Tags */}
-          <div className="space-y-2 pt-1">
-            <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-500 dark:text-zinc-400">
-              <Layers className="w-3.5 h-3.5" />
-              <span>Core Architecture &amp; Technologies:</span>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {ARCHITECTURE_TAGS.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2 py-0.5 text-[11px] font-mono bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xs"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
           </div>
 
           {/* Call to Actions & Links Bar */}

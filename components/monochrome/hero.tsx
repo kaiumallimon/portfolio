@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, Check, Copy, CheckCheck } from "lucide-react";
 import {
   RiTwitterXLine,
@@ -18,6 +19,172 @@ import { CadIsometricCover } from "./cad-isometric-cover";
 import RotatingText from "@/components/RotatingText";
 import { ISiteSettings } from "@/lib/models";
 import { GameMode } from "@/components/cover/use-pixel-runner";
+import { cn } from "@/lib/utils";
+
+interface TimeParts {
+  h: string;
+  m: string;
+  s: string;
+  p: string;
+}
+
+function getDhakaTimeParts(timezone: string = "Asia/Dhaka"): TimeParts {
+  try {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+    const parts = formatter.formatToParts(new Date());
+    let h = "12",
+      m = "00",
+      s = "00",
+      p = "AM";
+    for (const part of parts) {
+      if (part.type === "hour") h = part.value;
+      else if (part.type === "minute") m = part.value;
+      else if (part.type === "second") s = part.value;
+      else if (part.type === "dayPeriod") p = part.value.toUpperCase();
+    }
+    return {
+      h: h.padStart(2, "0"),
+      m: m.padStart(2, "0"),
+      s: s.padStart(2, "0"),
+      p: p || "AM",
+    };
+  } catch {
+    const d = new Date();
+    let hours = d.getHours();
+    const p = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    return {
+      h: String(hours).padStart(2, "0"),
+      m: String(d.getMinutes()).padStart(2, "0"),
+      s: String(d.getSeconds()).padStart(2, "0"),
+      p,
+    };
+  }
+}
+
+function CounterDigit({
+  digit,
+  className,
+}: {
+  digit: string;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "relative inline-flex h-[1.35em] w-[0.62em] overflow-hidden items-center justify-center tabular-nums font-mono leading-none",
+        className
+      )}
+    >
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.span
+          key={digit}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{ type: "spring", stiffness: 320, damping: 28 }}
+          className="absolute inset-0 flex items-center justify-center tabular-nums font-mono leading-none"
+        >
+          {digit}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
+function CounterPeriod({ period }: { period: string }) {
+  return (
+    <span className="relative inline-flex h-[1.35em] w-[1.7em] overflow-hidden items-center justify-center tabular-nums font-mono leading-none text-zinc-500 dark:text-zinc-400 text-xs sm:text-[13px] ml-1">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.span
+          key={period}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{ type: "spring", stiffness: 320, damping: 28 }}
+          className="absolute inset-0 flex items-center justify-center font-mono font-medium leading-none"
+        >
+          {period}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
+function ColonSeparator() {
+  return (
+    <span className="text-zinc-400 dark:text-zinc-500 font-mono select-none px-[1px] leading-none">
+      :
+    </span>
+  );
+}
+
+export function RealtimeCounterClock({ timezone = "Asia/Dhaka" }: { timezone?: string }) {
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+  const [time, setTime] = useState<TimeParts>(() => getDhakaTimeParts(timezone));
+
+  useEffect(() => {
+    const update = () => {
+      setTime(getDhakaTimeParts(timezone));
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [timezone]);
+
+  if (!isMounted) {
+    return (
+      <span className="text-zinc-700 dark:text-zinc-300 tabular-nums font-mono text-xs sm:text-sm">
+        {time.h}:{time.m}:{time.s} {time.p}{" "}
+        <span className="text-zinc-400 dark:text-zinc-500 ml-1">{"//"} Dhaka (GMT+6)</span>
+      </span>
+    );
+  }
+
+  return (
+    <div className="inline-flex items-center text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm tabular-nums leading-none select-none">
+      {/* Hours in 12-hour format */}
+      <CounterDigit digit={time.h[0]} />
+      <CounterDigit digit={time.h[1]} />
+
+      <ColonSeparator />
+
+      {/* Minutes */}
+      <CounterDigit digit={time.m[0]} />
+      <CounterDigit digit={time.m[1]} />
+
+      <ColonSeparator />
+
+      {/* Seconds with live counter animation */}
+      <CounterDigit
+        digit={time.s[0]}
+        className="text-zinc-950 dark:text-zinc-100 font-medium"
+      />
+      <CounterDigit
+        digit={time.s[1]}
+        className="text-zinc-950 dark:text-zinc-100 font-medium"
+      />
+
+      {/* AM / PM */}
+      <CounterPeriod period={time.p} />
+
+      {/* Timezone Label */}
+      <span className="text-zinc-400 dark:text-zinc-500 ml-2 font-mono text-xs sm:text-sm">
+        {"//"} Dhaka (GMT+6)
+      </span>
+    </div>
+  );
+}
 
 // Synthesized name pronunciation chime
 function playAudioChime() {
@@ -49,30 +216,8 @@ export function MonochromeHero({
   settings: ISiteSettings;
   coverRef?: React.RefObject<HTMLDivElement | null>;
 }) {
-  const [timeString, setTimeString] = useState<string>("");
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
   const [coverGameMode, setCoverGameMode] = useState<GameMode>("idle");
-
-  useEffect(() => {
-    const updateTime = () => {
-      try {
-        const now = new Date();
-        const formatted = new Intl.DateTimeFormat("en-US", {
-          timeZone: settings.timezone || "Asia/Dhaka",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }).format(now);
-        setTimeString(formatted);
-      } catch {
-        setTimeString(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-      }
-    };
-
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, [settings.timezone]);
 
   const copyEmail = () => {
     navigator.clipboard.writeText(settings.email);
@@ -304,9 +449,7 @@ export function MonochromeHero({
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiTimeLine className="w-3.5 h-3.5" />
             </div>
-            <span className="text-zinc-700 dark:text-zinc-300 tabular-nums">
-              {timeString || "06:12 PM"} <span className="text-zinc-400">{"//"} Dhaka (GMT+6)</span>
-            </span>
+            <RealtimeCounterClock timezone={settings.timezone || "Asia/Dhaka"} />
           </div>
 
           <div className="px-4 py-2.5 flex items-center gap-3">
