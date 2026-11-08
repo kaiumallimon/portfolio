@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
 import { RiSearchLine, RiGithubLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
@@ -16,15 +17,24 @@ export function MonochromeHeader({
   starsCount = 147,
   coverRef,
 }: HeaderProps) {
-  // 0 = cover fully visible → KAL hidden in header
-  // 1 = cover scrolled out → KAL fully visible in header
-  const [progress, setProgress] = useState(0);
+  const pathname = usePathname();
+  // Hero cover only exists on the home page
+  const isHomePage = pathname === "/";
+
+  // On other pages (without hero cover), KAL is always visible (1)
+  // On home page (with hero cover), KAL starts hidden (0) until scrolled past the cover
+  const [progress, setProgress] = useState(isHomePage ? 0 : 1);
 
   useEffect(() => {
+    // If not on home page or coverRef is not passed, no scroll tracking needed
+    if (!isHomePage || !coverRef) {
+      return;
+    }
+
     const updateProgress = () => {
-      const el = coverRef?.current;
+      const el = coverRef.current;
       if (!el) {
-        setProgress(window.scrollY > 10 ? 1 : 0);
+        setProgress(window.scrollY > 40 ? 1 : 0);
         return;
       }
       const rect = el.getBoundingClientRect();
@@ -45,20 +55,22 @@ export function MonochromeHeader({
     window.addEventListener("scroll", updateProgress, { passive: true });
     updateProgress();
     return () => window.removeEventListener("scroll", updateProgress);
-  }, [coverRef]);
+  }, [coverRef, isHomePage]);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
-        {/* Left: KAL rises from cover as it scrolls out */}
+        {/* Left: KAL monogram — hidden only on hero cover, always visible on all other pages */}
         <div className="overflow-hidden h-8 flex items-center">
           <Link
             href="/"
             aria-label="Home"
             style={{
-              opacity: progress,
-              transform: `translateY(${(1 - progress) * 16}px)`,
-              willChange: "opacity, transform",
+              opacity: isHomePage ? progress : 1,
+              transform: isHomePage
+                ? `translateY(${(1 - progress) * 16}px)`
+                : "none",
+              willChange: isHomePage ? "opacity, transform" : "auto",
             }}
             className="font-tiny5 text-xl tracking-[0.2em] pl-[0.2em] text-zinc-950 dark:text-zinc-50 select-none transition-[opacity,transform] duration-75 ease-out"
           >
@@ -75,13 +87,13 @@ export function MonochromeHeader({
             Home
           </Link>
           <a
-            href="#projects"
+            href={isHomePage ? "#projects" : "/#projects"}
             className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
           >
             UI
           </a>
           <a
-            href="#tools"
+            href={isHomePage ? "#tools" : "/#tools"}
             className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
           >
             Tools
