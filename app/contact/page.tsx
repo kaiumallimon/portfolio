@@ -4,17 +4,20 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import {
   ArrowLeft,
-  Send,
-  User,
+  ArrowUp,
+  Plus,
+  Mic,
+  GitBranch,
+  Folder,
+  Infinity,
+  ChevronDown,
+  Sparkles,
   CheckCheck,
   RotateCcw,
   Home,
   FolderGit2,
-  Sparkles,
-  CornerDownLeft,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/application/theme/theme-toggle";
-import { AgentThinking } from "@/components/application/agent-thinking/agent-thinking";
+import { MonochromeHeader } from "@/components/monochrome/header";
 import { toast } from "sonner";
 
 interface ChatMessage {
@@ -60,8 +63,7 @@ export default function ContactAgentPage() {
   const [step, setStep] = useState<number>(0);
   const [inputVal, setInputVal] = useState("");
   const [isThinking, setIsThinking] = useState(false);
-  const [thinkingLabel, setThinkingLabel] = useState("Calibrating intake parameters...");
-  const [thinkingVariant, setThinkingVariant] = useState<"wave" | "spin" | "infinity">("wave");
+  const [thinkingSeconds, setThinkingSeconds] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const [receiptTimestamp, setReceiptTimestamp] = useState("");
 
@@ -85,9 +87,25 @@ export default function ContactAgentPage() {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Auto-scroll messages container
+  // Live thinking timer (matches "✨ Thinking 3.4s" from design reference)
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isThinking) {
+      const start = Date.now();
+      interval = setInterval(() => {
+        setThinkingSeconds((Date.now() - start) / 1000);
+      }, 100);
+    } else {
+      setThinkingSeconds(0);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isThinking]);
+
+  // Auto-scroll inside chat body
   useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({
@@ -97,18 +115,10 @@ export default function ContactAgentPage() {
     }
   }, [messages, isThinking]);
 
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
-    }
-  }, [inputVal]);
-
   // Auto-focus input
   useEffect(() => {
     if (!isThinking && !isCompleted) {
-      textareaRef.current?.focus();
+      inputRef.current?.focus();
     }
   }, [isThinking, isCompleted, step]);
 
@@ -131,8 +141,6 @@ export default function ContactAgentPage() {
     if (step === 0) {
       const name = trimmed;
       setIntakeData((prev) => ({ ...prev, name }));
-      setThinkingLabel("Validating identity tokens...");
-      setThinkingVariant("wave");
 
       setTimeout(() => {
         setIsThinking(false);
@@ -146,12 +154,10 @@ export default function ContactAgentPage() {
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           },
         ]);
-      }, 950);
+      }, 1100);
     } else if (step === 1) {
       const email = trimmed;
       setIntakeData((prev) => ({ ...prev, email }));
-      setThinkingLabel("Calibrating domain routing...");
-      setThinkingVariant("spin");
 
       setTimeout(() => {
         setIsThinking(false);
@@ -166,12 +172,10 @@ export default function ContactAgentPage() {
             chips: CATEGORY_SUGGESTIONS,
           },
         ]);
-      }, 1000);
+      }, 1200);
     } else if (step === 2) {
       const category = trimmed;
       setIntakeData((prev) => ({ ...prev, category }));
-      setThinkingLabel("Analyzing domain specifications...");
-      setThinkingVariant("wave");
 
       setTimeout(() => {
         setIsThinking(false);
@@ -185,12 +189,10 @@ export default function ContactAgentPage() {
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           },
         ]);
-      }, 1000);
+      }, 1100);
     } else if (step === 3) {
       const brief = trimmed;
       setIntakeData((prev) => ({ ...prev, brief }));
-      setThinkingLabel("Estimating scope & milestones...");
-      setThinkingVariant("wave");
 
       setTimeout(() => {
         setIsThinking(false);
@@ -205,14 +207,11 @@ export default function ContactAgentPage() {
             chips: TIMELINE_SUGGESTIONS,
           },
         ]);
-      }, 1000);
+      }, 1100);
     } else if (step === 4) {
       const timeline = trimmed;
       const finalData = { ...intakeData, timeline };
       setIntakeData(finalData);
-
-      setThinkingLabel("Synthesizing telemetry & transmitting via secure SMTP (Port 465)...");
-      setThinkingVariant("infinity");
 
       try {
         const res = await fetch("/api/contact", {
@@ -230,7 +229,7 @@ export default function ContactAgentPage() {
           throw new Error("SMTP dispatch transmission failed");
         }
       } catch (err) {
-        console.warn("[Contact Agent] Transmission warning (logging transcript anyway):", err);
+        console.warn("[Contact Agent] Transmission warning:", err);
       }
 
       setTimeout(() => {
@@ -249,7 +248,7 @@ export default function ContactAgentPage() {
           },
         ]);
         toast.success("Dispatch successfully transmitted via SMTP 465!");
-      }, 1500);
+      }, 1600);
     }
   };
 
@@ -276,93 +275,98 @@ export default function ContactAgentPage() {
     ]);
   };
 
+  const toggleListening = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRec) {
+      toast.info("Speech recognition not supported in this browser. Please type your message.");
+      return;
+    }
+    try {
+      const recognition = new SpeechRec();
+      recognition.lang = "en-US";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInputVal((prev) => (prev ? `${prev} ${transcript}` : transcript));
+      };
+      recognition.onerror = () => {
+        toast.error("Audio capture failed. Please type your input.");
+      };
+      recognition.start();
+      toast.info("Listening... speak your response");
+    } catch {
+      toast.info("Voice input unavailable.");
+    }
+  };
+
+  // Progress percentage (matches circular progress ring in screenshot)
+  const progressPercent = isCompleted ? 100 : Math.min(100, Math.round(((step + 1) / 5) * 100));
+
   return (
-    <div className="fixed inset-0 h-[100dvh] w-full overflow-hidden flex flex-col bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 select-text antialiased">
-      {/* 1. Standalone Minimal Claude-like Top Navigation Bar */}
-      <header className="h-13 sm:h-14 shrink-0 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between z-20">
-        {/* Left: Back to Portfolio Link */}
-        <div className="flex items-center gap-2 sm:gap-3">
+    <div className="h-[100dvh] w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden flex flex-col antialiased">
+      {/* Centered max-w-5xl canvas matching site architecture */}
+      <div className="mx-auto max-w-5xl w-full bg-white dark:bg-zinc-950 border-x border-zinc-200 dark:border-zinc-800 h-full flex flex-col overflow-hidden">
+        {/* 1. Website Header at the top */}
+        <div className="shrink-0">
+          <MonochromeHeader />
+        </div>
+
+        {/* 2. Return to Portfolio Sub-Header */}
+        <section className="shrink-0 px-4 sm:px-6 py-2.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 flex items-center justify-between">
           <Link
             href="/"
             prefetch={false}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50 font-mono text-xs transition-all group"
-            title="Return to portfolio"
+            className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors group"
           >
-            <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="hidden xs:inline">Portfolio</span>
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+            <span>Return to portfolio</span>
           </Link>
 
-          <span className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
-
-          {/* Model / Assistant Pill */}
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60 shadow-2xs">
-            <span className="font-tiny5 text-sm tracking-wider text-zinc-950 dark:text-zinc-50 pl-0.5">
-              KAL
+          {/* Right Status */}
+          <div className="flex items-center gap-2.5 font-mono text-xs text-zinc-500">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
             </span>
-            <span className="text-zinc-300 dark:text-zinc-700 text-xs">/</span>
-            <span className="font-mono text-xs text-zinc-700 dark:text-zinc-300 font-medium">
-              Intake Assistant
-            </span>
-            <span className="size-1.5 rounded-full bg-zinc-950 dark:bg-zinc-100" />
+            <span className="hidden sm:inline">Dispatch Agent Online</span>
+            <span className="text-zinc-300 dark:text-zinc-700">·</span>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 text-[11px] transition-colors cursor-pointer"
+              title="Reset conversation"
+            >
+              <RotateCcw className="size-3" />
+              <span>Reset</span>
+            </button>
           </div>
-        </div>
+        </section>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white font-mono text-xs transition-colors cursor-pointer shadow-2xs hover:bg-zinc-100 dark:hover:bg-zinc-800"
-            title="Start fresh conversation"
-          >
-            <RotateCcw className="size-3" />
-            <span className="hidden sm:inline">New Session</span>
-          </button>
-
-          <ThemeToggle appearance="segmented" size="small" />
-        </div>
-      </header>
-
-      {/* 2. Messages Scroll Container (Page does not scroll, only messages container) */}
-      <main
-        ref={scrollContainerRef}
-        className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-6 sm:py-8"
-      >
-        <div className="max-w-3xl mx-auto w-full space-y-6">
-          {messages.map((msg) => (
-            <div key={msg.id} className="space-y-3">
-              {msg.sender === "agent" ? (
-                /* Assistant Message Turn (Claude Style) */
-                <div className="flex items-start gap-3 sm:gap-4">
-                  {/* Assistant Monogram Box */}
-                  <div className="size-7 sm:size-8 shrink-0 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 flex items-center justify-center font-tiny5 text-xs sm:text-sm shadow-xs select-none mt-0.5">
-                    KAL
-                  </div>
-
-                  {/* Body */}
-                  <div className="flex-1 min-w-0 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-semibold text-zinc-950 dark:text-zinc-100">
-                        KAL Assistant
-                      </span>
-                      <span className="font-mono text-[10px] text-zinc-400">
-                        {msg.timestamp}
-                      </span>
-                    </div>
-
-                    <div className="text-sm sm:text-[15px] font-sans leading-relaxed text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap">
+        {/* 3. Chat Body (Scrolls independently; page does not scroll) */}
+        <main
+          ref={scrollContainerRef}
+          className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-8 py-6 space-y-6"
+        >
+          <div className="max-w-3xl mx-auto w-full space-y-6">
+            {messages.map((msg) => (
+              <div key={msg.id} className="space-y-3">
+                {msg.sender === "agent" ? (
+                  /* Assistant Message Turn */
+                  <div className="space-y-3">
+                    <div className="text-sm sm:text-[15px] font-sans leading-relaxed text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap max-w-2xl">
                       {msg.text}
                     </div>
 
                     {/* Suggestion Chips */}
                     {msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
-                      <div className="flex flex-wrap gap-2 pt-2 animate-in fade-in duration-200">
+                      <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-200">
                         {msg.chips.map((chipText) => (
                           <button
                             key={chipText}
                             type="button"
                             onClick={() => handleUserInput(chipText)}
-                            className="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 text-zinc-800 dark:text-zinc-200 font-mono text-xs transition-all shadow-2xs active:scale-95 cursor-pointer text-left"
+                            className="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 text-zinc-800 dark:text-zinc-200 font-mono text-xs transition-all shadow-2xs active:scale-95 cursor-pointer text-left"
                           >
                             {chipText}
                           </button>
@@ -370,11 +374,10 @@ export default function ContactAgentPage() {
                       </div>
                     )}
 
-                    {/* Claude-Artifacts Style Confirmed Receipt */}
+                    {/* Ending Receipt Card */}
                     {msg.isEndReceipt && (
                       <div className="pt-3 animate-in fade-in zoom-in-95 duration-300">
-                        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4 shadow-xs">
-                          {/* Card Header Bar */}
+                        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4 shadow-xs">
                           <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
                             <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 font-mono text-xs font-semibold">
                               <CheckCheck className="size-4 text-zinc-950 dark:text-zinc-100" />
@@ -385,7 +388,6 @@ export default function ContactAgentPage() {
                             </span>
                           </div>
 
-                          {/* Metadata Grid */}
                           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
                             <div className="space-y-0.5">
                               <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
@@ -429,7 +431,6 @@ export default function ContactAgentPage() {
                             </div>
                           </dl>
 
-                          {/* Post-Chat Navigation Actions */}
                           <div className="pt-3 flex flex-wrap items-center gap-2.5 border-t border-zinc-200 dark:border-zinc-800">
                             <Link
                               href="/"
@@ -462,119 +463,164 @@ export default function ContactAgentPage() {
                       </div>
                     )}
                   </div>
-                </div>
-              ) : (
-                /* User Message Turn (Claude Style) */
-                <div className="flex justify-end pl-10">
-                  <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl bg-zinc-100 dark:bg-zinc-850 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-sm sm:text-[15px] leading-relaxed shadow-2xs border border-zinc-200/60 dark:border-zinc-800">
-                    <div className="whitespace-pre-wrap font-sans">{msg.text}</div>
-                    <div className="text-[10px] font-mono text-zinc-400 text-right mt-1.5">
-                      {msg.timestamp}
+                ) : (
+                  /* User Message Turn (Matches reference image right-aligned card) */
+                  <div className="flex justify-end pl-10">
+                    <div className="max-w-lg rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-sm sm:text-[15px] leading-relaxed shadow-xs">
+                      <div className="whitespace-pre-wrap font-sans">{msg.text}</div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Thinking State */}
-          {isThinking && (
-            <div className="flex items-start gap-3 sm:gap-4 animate-in fade-in duration-200">
-              <div className="size-7 sm:size-8 shrink-0 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 flex items-center justify-center font-tiny5 text-xs sm:text-sm shadow-xs select-none mt-0.5">
-                KAL
+                )}
               </div>
-              <div className="px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 shadow-xs">
-                <AgentThinking
-                  variant={thinkingVariant}
-                  label={thinkingLabel}
-                  showTimer={true}
-                  className="font-mono text-xs text-zinc-600 dark:text-zinc-300"
-                />
+            ))}
+
+            {/* Thinking Indicator (Matches "✨ Thinking 3.4s" from reference image) */}
+            {isThinking && (
+              <div className="flex items-center gap-2 text-zinc-400 dark:text-zinc-500 font-sans text-xs sm:text-sm animate-in fade-in duration-200 select-none py-1">
+                <Sparkles className="size-3.5 text-zinc-400 animate-pulse" />
+                <span className="font-medium text-zinc-500 dark:text-zinc-400">
+                  Thinking
+                </span>
+                <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 tabular-nums">
+                  {thinkingSeconds.toFixed(1)}s
+                </span>
               </div>
-            </div>
-          )}
+            )}
 
-          <div ref={messagesEndRef} className="h-4" />
-        </div>
-      </main>
+            <div ref={messagesEndRef} className="h-2" />
+          </div>
+        </main>
 
-      {/* 3. Docked Claude-style Input Composer */}
-      <footer className="shrink-0 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md px-4 py-3 sm:py-4 z-20">
-        <div className="max-w-3xl mx-auto w-full space-y-2">
-          {!isCompleted ? (
+        {/* 4. Pinned Bottom Area (Exact Match to Reference Image) */}
+        <footer className="shrink-0 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 sm:p-4 z-20">
+          <div className="max-w-3xl mx-auto w-full space-y-2.5">
+            {/* Pill-shaped Input Bar */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleUserInput(inputVal);
               }}
-              className="relative"
+              className="relative flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/70 shadow-xs focus-within:border-zinc-400 dark:focus-within:border-zinc-600 focus-within:bg-white dark:focus-within:bg-zinc-900 transition-all"
             >
-              <div className="relative rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60 focus-within:border-zinc-400 dark:focus-within:border-zinc-600 focus-within:bg-white dark:focus-within:bg-zinc-900 p-2 sm:p-2.5 transition-all shadow-xs">
-                <textarea
-                  ref={textareaRef}
-                  value={inputVal}
-                  onChange={(e) => setInputVal(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleUserInput(inputVal);
-                    }
-                  }}
-                  rows={1}
-                  placeholder={
-                    step === 0
-                      ? "Type your name or select an option above..."
-                      : step === 1
-                      ? "Type your email address..."
-                      : step === 2
-                      ? "Select or type project category..."
-                      : step === 3
-                      ? "Describe your project outline, proposal or inquiry..."
-                      : "Type timeline or select an option above..."
-                  }
-                  disabled={isThinking}
-                  className="w-full bg-transparent px-2.5 py-1.5 text-sm sm:text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none resize-none font-sans min-h-[38px] max-h-36 disabled:opacity-50"
-                />
-
-                <div className="flex items-center justify-between pt-1 px-1">
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-zinc-400">
-                    <span>Step {step + 1} of 5</span>
-                    <span>·</span>
-                    <span className="hidden sm:inline">Press Enter ↵ to send</span>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={!inputVal.trim() || isThinking}
-                    className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 hover:opacity-90 disabled:opacity-20 transition-all cursor-pointer shadow-2xs"
-                    title="Send message"
-                    aria-label="Send message"
-                  >
-                    <Send className="size-3.5" />
-                  </button>
-                </div>
-              </div>
-            </form>
-          ) : (
-            <div className="flex items-center justify-between rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60 px-4 py-2.5 text-xs font-mono text-zinc-500">
-              <span>Session concluded · All telemetry transmitted</span>
+              {/* Circular + button */}
               <button
                 type="button"
-                onClick={handleReset}
-                className="inline-flex items-center gap-1 text-zinc-900 dark:text-zinc-100 font-medium hover:underline cursor-pointer"
+                onClick={() => {
+                  if (step === 0) handleUserInput(INITIAL_SUGGESTIONS[0]);
+                  else if (step === 1) handleUserInput("kalimon291@gmail.com");
+                  else if (step === 2) handleUserInput(CATEGORY_SUGGESTIONS[0]);
+                  else if (step === 4) handleUserInput(TIMELINE_SUGGESTIONS[0]);
+                  else toast.info("Please describe your brief or idea");
+                }}
+                className="size-7 sm:size-8 shrink-0 rounded-full bg-zinc-200/70 dark:bg-zinc-800 hover:bg-zinc-300/80 dark:hover:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+                title="Quick insert suggestion"
               >
-                <RotateCcw className="size-3" />
-                <span>Start New Session</span>
+                <Plus className="size-4" />
               </button>
-            </div>
-          )}
 
-          {/* Discreet Monospace Footnote */}
-          <div className="text-center text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
-            Autonomous Intake · Direct SMTP Dispatch to Kaium Al Limon (Dhaka GMT+6)
+              {/* Text Input */}
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputVal}
+                onChange={(e) => setInputVal(e.target.value)}
+                placeholder={
+                  step === 0
+                    ? "Ask me anything or enter your name..."
+                    : step === 1
+                    ? "Enter your email coordinate..."
+                    : step === 2
+                    ? "Select or enter project category..."
+                    : step === 3
+                    ? "Enter project brief outline or inquiry..."
+                    : "Enter project timeline or urgency..."
+                }
+                disabled={isThinking || isCompleted}
+                className="flex-1 bg-transparent px-1 sm:px-2 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none disabled:opacity-50 font-sans"
+              />
+
+              {/* Model / Assistant Dropdown Pill */}
+              <div className="hidden xs:inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-mono text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 cursor-default select-none">
+                <span>KAL 2.4</span>
+                <ChevronDown className="size-3 opacity-60" />
+              </div>
+
+              {/* Mic Icon Button */}
+              <button
+                type="button"
+                onClick={toggleListening}
+                className="size-7 sm:size-8 shrink-0 rounded-full hover:bg-zinc-200/60 dark:hover:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors cursor-pointer"
+                title="Voice input"
+              >
+                <Mic className="size-4" />
+              </button>
+
+              {/* Circular Vibrant Up Arrow Send Button */}
+              <button
+                type="submit"
+                disabled={!inputVal.trim() || isThinking || isCompleted}
+                className="size-7 sm:size-8 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 active:scale-95 disabled:opacity-30 disabled:hover:bg-blue-600 text-white flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                title="Send message"
+                aria-label="Send message"
+              >
+                <ArrowUp className="size-4 stroke-[2.5]" />
+              </button>
+            </form>
+
+            {/* Bottom Status / Telemetry Footer Line */}
+            <div className="flex items-center justify-between px-2 text-[11px] font-mono text-zinc-400 dark:text-zinc-500 select-none">
+              {/* Left: Branch & Project Dropdown */}
+              <div className="flex items-center gap-3">
+                <div className="inline-flex items-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
+                  <GitBranch className="size-3" />
+                  <span>v2</span>
+                </div>
+                <div className="inline-flex items-center gap-1 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
+                  <Folder className="size-3" />
+                  <span>portfolio</span>
+                  <ChevronDown className="size-2.5 opacity-60" />
+                </div>
+              </div>
+
+              {/* Right: Agent mode & Circular Progress Ring */}
+              <div className="flex items-center gap-3">
+                <div className="inline-flex items-center gap-1 text-zinc-600 dark:text-zinc-400">
+                  <Infinity className="size-3.5" />
+                  <span>Agent</span>
+                  <ChevronDown className="size-2.5 opacity-60" />
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 tabular-nums text-zinc-700 dark:text-zinc-300 font-mono">
+                  <svg className="size-3.5 -rotate-90" viewBox="0 0 24 24">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="none"
+                      className="text-zinc-200 dark:text-zinc-800"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="none"
+                      strokeDasharray={62.8}
+                      strokeDashoffset={62.8 - (62.8 * progressPercent) / 100}
+                      strokeLinecap="round"
+                      className="text-blue-600 dark:text-blue-400 transition-all duration-300"
+                    />
+                  </svg>
+                  <span>{progressPercent}%</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
