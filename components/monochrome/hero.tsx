@@ -149,7 +149,7 @@ export function MonochromeHero({
       {/* 4. Contacts: 2-Column Hairline Table */}
       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono">
         {/* Left Column */}
-        <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
+        <div className="flex flex-col">
           <div className="px-4 py-2.5 flex items-center gap-3">
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiCodeSSlashLine className="w-3.5 h-3.5" />
@@ -200,7 +200,7 @@ export function MonochromeHero({
         </div>
 
         {/* Right Column */}
-        <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
+        <div className="flex flex-col">
           <div className="px-4 py-2.5 flex items-center gap-3">
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiTimeLine className="w-3.5 h-3.5" />
