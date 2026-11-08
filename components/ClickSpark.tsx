@@ -2,11 +2,14 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, type CSSProperties, type ReactNode } from 'react';
 
-export type ClickSparkShape = 'line' | 'streak' | 'dot' | 'star';
+export type ClickSparkShape = 'line' | 'streak' | 'comet' | 'dot' | 'star';
+
+export type ClickSparkPreset = 'dashes' | 'comet' | 'dots' | 'stars';
 
 export type ClickSparkEasing = 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'spring';
 
 export interface ClickSparkProps {
+  preset?: ClickSparkPreset;
   sparkColor?: string | string[];
   sparkSize?: number;
   sparkRadius?: number;
@@ -174,36 +177,87 @@ const isInteractiveTarget = (target: EventTarget | null): boolean => {
   return false;
 };
 
+const PRESET_CONFIGS: Record<ClickSparkPreset, Partial<ClickSparkProps>> = {
+  comet: {
+    shape: 'streak',
+    sparkSize: 18,
+    sparkRadius: 38,
+    sparkCount: 8,
+    sparkWidth: 2.5,
+    duration: 550,
+    glow: 0.8,
+    easing: 'ease-out'
+  },
+  dashes: {
+    shape: 'line',
+    sparkSize: 14,
+    sparkRadius: 30,
+    sparkCount: 8,
+    sparkWidth: 2,
+    duration: 500,
+    glow: 0,
+    easing: 'ease-out'
+  },
+  dots: {
+    shape: 'dot',
+    sparkSize: 10,
+    sparkRadius: 28,
+    sparkCount: 10,
+    sparkWidth: 3,
+    duration: 450,
+    glow: 0.5,
+    easing: 'ease-out'
+  },
+  stars: {
+    shape: 'star',
+    sparkSize: 16,
+    sparkRadius: 32,
+    sparkCount: 6,
+    sparkWidth: 2,
+    duration: 600,
+    glow: 0.7,
+    easing: 'ease-out'
+  }
+};
+
+const normalizeShape = (s?: ClickSparkShape): 'line' | 'streak' | 'dot' | 'star' => {
+  if (s === 'comet' || s === 'streak') return 'streak';
+  if (s === 'dot') return 'dot';
+  if (s === 'star') return 'star';
+  return 'line';
+};
+
 const ClickSpark = forwardRef<ClickSparkHandle, ClickSparkProps>(
-  (
-    {
-      sparkColor = 'auto',
-      sparkSize = 14,
-      sparkRadius = 30,
-      sparkCount = 8,
-      sparkWidth = 2,
-      duration = 500,
-      easing = 'ease-out',
-      extraScale = 1,
-      shape = 'line',
-      randomness = 0.2,
-      gravity = 0,
-      spread = 360,
-      direction = 0,
-      glow = 0,
-      ring = false,
-      layer = 'front',
+  (props, ref) => {
+    const preset = props.preset ? PRESET_CONFIGS[props.preset] : undefined;
+    const {
+      sparkColor = preset?.sparkColor ?? 'auto',
+      sparkSize = preset?.sparkSize ?? 14,
+      sparkRadius = preset?.sparkRadius ?? 30,
+      sparkCount = preset?.sparkCount ?? 8,
+      sparkWidth = preset?.sparkWidth ?? 2,
+      duration = preset?.duration ?? 500,
+      easing = preset?.easing ?? 'ease-out',
+      extraScale = preset?.extraScale ?? 1,
+      shape = preset?.shape ?? 'line',
+      randomness = preset?.randomness ?? 0.2,
+      gravity = preset?.gravity ?? 0,
+      spread = preset?.spread ?? 360,
+      direction = preset?.direction ?? 0,
+      glow = preset?.glow ?? 0,
+      ring = preset?.ring ?? false,
+      layer = preset?.layer ?? 'front',
       disabled = false,
       ignoreClickable = true,
       className = '',
       style,
       children
-    },
-    ref
-  ) => {
+    } = props;
+
     const rootRef = useRef<HTMLDivElement>(null);
     const layerRef = useRef<HTMLSpanElement>(null);
     const engineRef = useRef<ClickSparkHandle | null>(null);
+    const resolvedShape = normalizeShape(shape);
     const settings: Settings = {
       colors: toColors(sparkColor),
       size: Math.max(0, sparkSize),
@@ -212,7 +266,7 @@ const ClickSpark = forwardRef<ClickSparkHandle, ClickSparkProps>(
       width: Math.max(0.5, sparkWidth),
       duration: Math.max(60, duration),
       ease: EASINGS[easing] ?? EASINGS['ease-out'],
-      shape: SHAPES.includes(shape) ? shape : 'line',
+      shape: resolvedShape,
       randomness: clamp(randomness, 0, 1),
       gravity: Math.max(0, gravity),
       spread: clamp(spread, 0, 360),

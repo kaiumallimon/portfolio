@@ -108,12 +108,7 @@ export default async function RootLayout({
           <GAListener />
         </Suspense>
 
-        <ClickSpark
-          sparkSize={12}
-          sparkRadius={26}
-          sparkCount={8}
-          duration={450}
-        >
+        <ClickSpark preset="comet">
           {children}
         </ClickSpark>
       </body>
