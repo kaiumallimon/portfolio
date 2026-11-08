@@ -27,13 +27,18 @@ export function ProjectsArchiveView({
     const q = searchQuery.trim().toLowerCase();
 
     return projects.filter((p) => {
+      const cat =
+        p.category ||
+        (p.client === "mobile" ? "Mobile" : p.client === "web" ? "Web" : "Web");
+      const tags = (p.tags && p.tags.length > 0) ? p.tags : (p.technologies || []);
+
       // Category filter check
       if (selectedCategory !== "All") {
         if (selectedCategory === "Tools") {
           const isTool =
-            p.category === "Tools" || p.category === "Full-Stack";
+            cat === "Tools" || cat === "Full-Stack";
           if (!isTool) return false;
-        } else if (p.category !== selectedCategory) {
+        } else if (cat !== selectedCategory) {
           return false;
         }
       }
@@ -41,11 +46,11 @@ export function ProjectsArchiveView({
       // Search query check
       if (!q) return true;
 
-      const titleMatch = p.title?.toLowerCase().includes(q);
-      const summaryMatch = p.summary?.toLowerCase().includes(q);
-      const descMatch = p.description?.toLowerCase().includes(q);
-      const categoryMatch = p.category?.toLowerCase().includes(q);
-      const tagMatch = p.tags?.some((t) => t.toLowerCase().includes(q));
+      const titleMatch = (p.title || p.name)?.toLowerCase().includes(q);
+      const summaryMatch = (p.summary || p.short_details)?.toLowerCase().includes(q);
+      const descMatch = (p.description || p.short_details)?.toLowerCase().includes(q);
+      const categoryMatch = cat.toLowerCase().includes(q);
+      const tagMatch = tags.some((t) => t.toLowerCase().includes(q));
 
       return (
         titleMatch ||

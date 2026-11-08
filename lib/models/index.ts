@@ -23,17 +23,23 @@ const UserSchema = new Schema<IUser>(
 // 2. Project Model
 export interface IProject extends Document {
   title: string;
+  name?: string;
   slug: string;
   summary: string;
+  short_details?: string;
   description?: string;
   coverImage?: string;
   tags: string[];
+  technologies?: string[];
   demoUrl?: string;
+  live_url?: string;
   githubUrl?: string;
+  github_url?: string;
   stars?: number;
   forks?: number;
   featured: boolean;
   order: number;
+  client?: "web" | "mobile" | string;
   category: "Full-Stack" | "Mobile" | "Tools" | "Open Source" | "Web";
   createdAt: Date;
 }
@@ -41,18 +47,24 @@ export interface IProject extends Document {
 const ProjectSchema = new Schema<IProject>(
   {
     title: { type: String, required: true, trim: true },
+    name: { type: String, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     summary: { type: String, required: true },
+    short_details: { type: String },
     description: { type: String },
     coverImage: { type: String },
     tags: { type: [String], default: [] },
+    technologies: { type: [String], default: [] },
     demoUrl: { type: String },
+    live_url: { type: String },
     githubUrl: { type: String },
+    github_url: { type: String },
     stars: { type: Number, default: 0 },
     forks: { type: Number, default: 0 },
     featured: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
-    category: { type: String, default: "Full-Stack" },
+    client: { type: String },
+    category: { type: String, default: "Web" },
   },
   { timestamps: true }
 );
