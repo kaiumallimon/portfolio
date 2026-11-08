@@ -4,10 +4,11 @@ import React from "react";
 
 export function MonochromeCommunityStats() {
   const stats = [
-    { label: "Annual GitHub contributions", value: "3,553" },
-    { label: "Public repositories", value: "100" },
-    { label: "UIU CSE Project Show honors", value: "4 podiums" },
-    { label: "UIU App Forum leadership tenure", value: "3+ years" },
+    { label: "Years in Software Development", value: "3+" },
+    { label: "Competitions", value: "4" },
+    { label: "Wins & Top 3s", value: "4" },
+    { label: "App Forum Tenure", value: "3+ yrs" },
+    { label: "GitHub Stars", value: "22" },
   ];
 
   return (
