@@ -128,9 +128,32 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
         <div className="flex-1 bg-zinc-200 dark:bg-zinc-800 h-px" />
       </div>
 
-      {/* 2. Large Pixel Monogram [KL] Centered */}
-      <div className="py-8 sm:py-10 flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800">
-        <PixelLogo size={44} />
+      {/* 2. Elevated Cover Area with Small Grid Pattern & Tiny5 KAL Monogram */}
+      <div className="relative w-full h-60 sm:h-72 md:h-80 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-center overflow-hidden bg-white dark:bg-zinc-950 select-none cover-grid-bg">
+        {/* Subtle, thin fine-grid overlay (14px x 14px small squares) */}
+        <svg
+          className="absolute inset-0 w-full h-full text-zinc-950/[0.045] dark:text-white/[0.04] pointer-events-none select-none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <defs>
+            <pattern id="cover-small-grid" width="14" height="14" patternUnits="userSpaceOnUse">
+              <path d="M 14 0 L 0 0 0 14" fill="none" stroke="currentColor" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#cover-small-grid)" />
+        </svg>
+
+        {/* Technical Corner Crosshairs */}
+        <span className="absolute top-2.5 left-3 font-mono text-[11px] text-zinc-400/70 dark:text-zinc-600 select-none" aria-hidden="true">+</span>
+        <span className="absolute top-2.5 right-3 font-mono text-[11px] text-zinc-400/70 dark:text-zinc-600 select-none" aria-hidden="true">+</span>
+        <span className="absolute bottom-2.5 left-3 font-mono text-[11px] text-zinc-400/70 dark:text-zinc-600 select-none" aria-hidden="true">+</span>
+        <span className="absolute bottom-2.5 right-3 font-mono text-[11px] text-zinc-400/70 dark:text-zinc-600 select-none" aria-hidden="true">+</span>
+
+        {/* Centered Monogram KAL in Fully Tiny5 font */}
+        <div className="relative z-10 flex items-center justify-center">
+          <PixelLogo />
+        </div>
       </div>
 
       {/* 3. Profile Avatar & Name Block matching chanhdai.com */}
