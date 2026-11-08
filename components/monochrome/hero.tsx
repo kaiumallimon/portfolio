@@ -131,8 +131,8 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
           </div>
         </div>
 
-        {/* Right Column, Row 1: CAD Isometric Cover Artwork */}
-        <div className="relative p-2 sm:p-4 overflow-visible flex items-center justify-center">
+        {/* Right Column, Row 1: Typed Tiny5 KAL Cover */}
+        <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
           <CadIsometricCover />
         </div>
 
