@@ -19,20 +19,8 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
 
   return (
     <section id="contact" className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
-      {/* Section Header Bar */}
-      <div className="px-4 sm:px-6 py-4 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
-            Let&apos;s Talk
-          </h2>
-          <p className="text-xs text-zinc-500 font-mono mt-0.5">
-            Direct routing &amp; interactive intake
-          </p>
-        </div>
-      </div>
-
       {/* Clean Centered CTA Stage */}
-      <div className="px-4 sm:px-6 py-12 sm:py-16 text-center max-w-2xl mx-auto space-y-6">
+      <div className="px-4 sm:px-6 py-14 sm:py-20 text-center max-w-2xl mx-auto space-y-6">
         {/* Subtle Online Indicator */}
         <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono text-xs">
           <span className="relative flex size-2">
