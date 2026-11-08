@@ -29,34 +29,26 @@ interface ChatMessage {
   isEndReceipt?: boolean;
 }
 
-interface IntakeData {
+interface ContactData {
   name: string;
   email: string;
-  category: string;
-  brief: string;
-  timeline: string;
+  subject: string;
+  message: string;
 }
 
-const INITIAL_SUGGESTIONS = [
-  "Guest Explorer",
+const INITIAL_NAME_SUGGESTIONS = [
   "Engineering Lead",
   "Founder / CTO",
   "Product Manager",
+  "Fellow Developer",
 ];
 
-const CATEGORY_SUGGESTIONS = [
-  "🚀 Full-Stack / Mobile Product",
-  "🤖 AI & Multi-Agent Architecture",
-  "💼 Full-Time / Contract Position",
-  "🎓 Thesis / Research Collaboration",
-  "💬 General Inquiries & Coffee",
-];
-
-const TIMELINE_SUGGESTIONS = [
-  "⚡ Urgent (< 2 weeks)",
-  "📅 Within 1–2 Months",
-  "🔭 Exploratory / Future",
-  "⏭️ Skip Timeline",
+const SUBJECT_SUGGESTIONS = [
+  "Project Collaboration",
+  "Full-Stack Development",
+  "Consulting & Architecture",
+  "Job Opportunity",
+  "General Inquiry",
 ];
 
 export default function ContactAgentPage() {
@@ -65,23 +57,21 @@ export default function ContactAgentPage() {
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingSeconds, setThinkingSeconds] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [receiptTimestamp, setReceiptTimestamp] = useState("");
 
-  const [intakeData, setIntakeData] = useState<IntakeData>({
+  const [contactData, setContactData] = useState<ContactData>({
     name: "",
     email: "",
-    category: "",
-    brief: "",
-    timeline: "",
+    subject: "",
+    message: "",
   });
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "msg-0",
       sender: "agent",
-      text: "Hello! I am Kaium's autonomous assistant.\n\nI can help explore project ideas, calibrate architecture specifications, and route your brief directly to Kaium's inbox.\n\nTo begin, who do I have the pleasure of speaking with today?",
+      text: "Hello! I am Kaium's autonomous assistant.\n\nI can help outline your inquiry and route your message directly to Kaium's inbox.\n\nTo begin, may I know your name?",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      chips: INITIAL_SUGGESTIONS,
+      chips: INITIAL_NAME_SUGGESTIONS,
     },
   ]);
 
@@ -89,7 +79,7 @@ export default function ContactAgentPage() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Live thinking timer (matches "✨ Thinking 3.4s" from design reference)
+  // Live thinking timer (matches "Thinking 3.4s")
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isThinking) {
@@ -105,7 +95,7 @@ export default function ContactAgentPage() {
     };
   }, [isThinking]);
 
-  // Auto-scroll inside chat body
+  // Auto-scroll chat body
   useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({
@@ -139,8 +129,9 @@ export default function ContactAgentPage() {
     setIsThinking(true);
 
     if (step === 0) {
+      // Step 0: Name received -> Ask for Email
       const name = trimmed;
-      setIntakeData((prev) => ({ ...prev, name }));
+      setContactData((prev) => ({ ...prev, name }));
 
       setTimeout(() => {
         setIsThinking(false);
@@ -150,14 +141,15 @@ export default function ContactAgentPage() {
           {
             id: `agent-${Date.now()}`,
             sender: "agent",
-            text: `Pleasure to meet you, ${name}! What is your email address so Kaium can follow up with you directly?`,
+            text: `Thank you, ${name}. What is your email address so Kaium can follow up with you?`,
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           },
         ]);
-      }, 1100);
+      }, 900);
     } else if (step === 1) {
+      // Step 1: Email received -> Ask for Subject
       const email = trimmed;
-      setIntakeData((prev) => ({ ...prev, email }));
+      setContactData((prev) => ({ ...prev, email }));
 
       setTimeout(() => {
         setIsThinking(false);
@@ -167,15 +159,16 @@ export default function ContactAgentPage() {
           {
             id: `agent-${Date.now()}`,
             sender: "agent",
-            text: "Got your coordinates. What type of collaboration or project domain are you exploring?",
+            text: "Received. What is the subject or primary topic of your message?",
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            chips: CATEGORY_SUGGESTIONS,
+            chips: SUBJECT_SUGGESTIONS,
           },
         ]);
-      }, 1200);
+      }, 900);
     } else if (step === 2) {
-      const category = trimmed;
-      setIntakeData((prev) => ({ ...prev, category }));
+      // Step 2: Subject received -> Ask for Message
+      const subject = trimmed;
+      setContactData((prev) => ({ ...prev, subject }));
 
       setTimeout(() => {
         setIsThinking(false);
@@ -185,33 +178,16 @@ export default function ContactAgentPage() {
           {
             id: `agent-${Date.now()}`,
             sender: "agent",
-            text: "Excellent. Please share a brief outline of the project, proposal, tech requirements, or inquiry.",
+            text: "Noted. Please share the details of your message, proposal, or inquiry.",
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           },
         ]);
-      }, 1100);
+      }, 900);
     } else if (step === 3) {
-      const brief = trimmed;
-      setIntakeData((prev) => ({ ...prev, brief }));
-
-      setTimeout(() => {
-        setIsThinking(false);
-        setStep(4);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `agent-${Date.now()}`,
-            sender: "agent",
-            text: "Understood and recorded. What is your anticipated timeline or kick-off urgency?",
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            chips: TIMELINE_SUGGESTIONS,
-          },
-        ]);
-      }, 1100);
-    } else if (step === 4) {
-      const timeline = trimmed;
-      const finalData = { ...intakeData, timeline };
-      setIntakeData(finalData);
+      // Step 3: Message received -> Transmit to /api/contact & finalize
+      const message = trimmed;
+      const finalData: ContactData = { ...contactData, message };
+      setContactData(finalData);
 
       try {
         const res = await fetch("/api/contact", {
@@ -220,13 +196,13 @@ export default function ContactAgentPage() {
           body: JSON.stringify({
             name: finalData.name,
             email: finalData.email,
-            subject: `[Contact Intake] ${finalData.category} - ${finalData.name}`,
-            message: `--- AUTONOMOUS AGENT INTAKE DISPATCH ---\nSender: ${finalData.name} <${finalData.email}>\nCategory: ${finalData.category}\nTarget Timeline: ${timeline}\nDispatched At: ${new Date().toISOString()}\n\nPROJECT BRIEF & REQUIREMENTS:\n${finalData.brief}\n\n--- END OF TRANSMISSION ---`,
+            subject: finalData.subject,
+            message: finalData.message,
           }),
         });
 
         if (!res.ok) {
-          throw new Error("SMTP dispatch transmission failed");
+          throw new Error("Transmission request failed");
         }
       } catch (err) {
         console.warn("[Contact Agent] Transmission warning:", err);
@@ -235,20 +211,19 @@ export default function ContactAgentPage() {
       setTimeout(() => {
         setIsThinking(false);
         setIsCompleted(true);
-        setReceiptTimestamp(new Date().toISOString());
 
         setMessages((prev) => [
           ...prev,
           {
             id: `agent-end-${Date.now()}`,
             sender: "agent",
-            text: `Dispatch successfully routed! Thank you, ${finalData.name}. All parameters have been synthesized and delivered directly to Kaium's inbox.`,
+            text: `Your message has been successfully transmitted. Thank you, ${finalData.name}. I have delivered your coordinates directly to Kaium's inbox.`,
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             isEndReceipt: true,
           },
         ]);
-        toast.success("Dispatch successfully transmitted via SMTP 465!");
-      }, 1600);
+        toast.success("Message successfully transmitted via SMTP 465.");
+      }, 1400);
     }
   };
 
@@ -257,20 +232,19 @@ export default function ContactAgentPage() {
     setInputVal("");
     setIsThinking(false);
     setIsCompleted(false);
-    setIntakeData({
+    setContactData({
       name: "",
       email: "",
-      category: "",
-      brief: "",
-      timeline: "",
+      subject: "",
+      message: "",
     });
     setMessages([
       {
         id: `msg-reset-${Date.now()}`,
         sender: "agent",
-        text: "Session refreshed! I am ready to intake new coordinates. Who do I have the pleasure of speaking with today?",
+        text: "Session refreshed. I am ready to assist. May I know your name?",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        chips: INITIAL_SUGGESTIONS,
+        chips: INITIAL_NAME_SUGGESTIONS,
       },
     ]);
   };
@@ -294,14 +268,14 @@ export default function ContactAgentPage() {
         toast.error("Audio capture failed. Please type your input.");
       };
       recognition.start();
-      toast.info("Listening... speak your response");
+      toast.info("Listening... speak your response.");
     } catch {
       toast.info("Voice input unavailable.");
     }
   };
 
-  // Progress percentage (matches circular progress ring in screenshot)
-  const progressPercent = isCompleted ? 100 : Math.min(100, Math.round(((step + 1) / 5) * 100));
+  // Progress percentage across 4 fields (Name, Email, Subject, Message)
+  const progressPercent = isCompleted ? 100 : Math.min(100, Math.round(((step + 1) / 4) * 100));
 
   return (
     <div className="h-[100dvh] w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden flex flex-col antialiased">
@@ -358,7 +332,7 @@ export default function ContactAgentPage() {
                       {msg.text}
                     </div>
 
-                    {/* Suggestion Chips */}
+                    {/* Professional Suggestion Chips (Zero emojis) */}
                     {msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
                       <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-200">
                         {msg.chips.map((chipText) => (
@@ -391,42 +365,34 @@ export default function ContactAgentPage() {
                           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
                             <div className="space-y-0.5">
                               <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Contact
+                                Name
                               </dt>
                               <dd className="font-medium text-zinc-900 dark:text-zinc-100">
-                                {intakeData.name} ({intakeData.email})
+                                {contactData.name}
                               </dd>
                             </div>
                             <div className="space-y-0.5">
                               <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Domain
+                                Email
                               </dt>
                               <dd className="font-medium text-zinc-900 dark:text-zinc-100">
-                                {intakeData.category || "General Inquiry"}
+                                {contactData.email}
                               </dd>
                             </div>
-                            <div className="space-y-0.5">
+                            <div className="sm:col-span-2 space-y-0.5">
                               <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Timeline
+                                Subject
                               </dt>
                               <dd className="font-medium text-zinc-900 dark:text-zinc-100">
-                                {intakeData.timeline || "Not specified"}
-                              </dd>
-                            </div>
-                            <div className="space-y-0.5">
-                              <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Route
-                              </dt>
-                              <dd className="font-medium text-zinc-900 dark:text-zinc-100">
-                                SMTP Port 465 (kalimon291@gmail.com)
+                                {contactData.subject}
                               </dd>
                             </div>
                             <div className="sm:col-span-2 space-y-0.5 pt-2 border-t border-zinc-200 dark:border-zinc-800">
                               <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Brief Outline
+                                Message
                               </dt>
                               <dd className="text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap leading-relaxed font-sans text-xs sm:text-sm">
-                                {intakeData.brief}
+                                {contactData.message}
                               </dd>
                             </div>
                           </dl>
@@ -464,7 +430,7 @@ export default function ContactAgentPage() {
                     )}
                   </div>
                 ) : (
-                  /* User Message Turn (Matches reference image right-aligned card) */
+                  /* User Message Turn (Right-aligned clean card) */
                   <div className="flex justify-end pl-10">
                     <div className="max-w-lg rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-sm sm:text-[15px] leading-relaxed shadow-xs">
                       <div className="whitespace-pre-wrap font-sans">{msg.text}</div>
@@ -474,7 +440,7 @@ export default function ContactAgentPage() {
               </div>
             ))}
 
-            {/* Thinking Indicator (Matches "✨ Thinking 3.4s" from reference image) */}
+            {/* Thinking Indicator (Matches "Thinking 3.4s") */}
             {isThinking && (
               <div className="flex items-center gap-2 text-zinc-400 dark:text-zinc-500 font-sans text-xs sm:text-sm animate-in fade-in duration-200 select-none py-1">
                 <Sparkles className="size-3.5 text-zinc-400 animate-pulse" />
@@ -491,7 +457,7 @@ export default function ContactAgentPage() {
           </div>
         </main>
 
-        {/* 4. Pinned Bottom Area (Exact Match to Reference Image) */}
+        {/* 4. Pinned Bottom Area (Clean professional layout, zero emojis) */}
         <footer className="shrink-0 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 sm:p-4 z-20">
           <div className="max-w-3xl mx-auto w-full space-y-2.5">
             {/* Pill-shaped Input Bar */}
@@ -506,11 +472,9 @@ export default function ContactAgentPage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (step === 0) handleUserInput(INITIAL_SUGGESTIONS[0]);
-                  else if (step === 1) handleUserInput("kalimon291@gmail.com");
-                  else if (step === 2) handleUserInput(CATEGORY_SUGGESTIONS[0]);
-                  else if (step === 4) handleUserInput(TIMELINE_SUGGESTIONS[0]);
-                  else toast.info("Please describe your brief or idea");
+                  if (step === 0) handleUserInput(INITIAL_NAME_SUGGESTIONS[0]);
+                  else if (step === 2) handleUserInput(SUBJECT_SUGGESTIONS[0]);
+                  else toast.info("Please enter your response.");
                 }}
                 className="size-7 sm:size-8 shrink-0 rounded-full bg-zinc-200/70 dark:bg-zinc-800 hover:bg-zinc-300/80 dark:hover:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
                 title="Quick insert suggestion"
@@ -526,14 +490,12 @@ export default function ContactAgentPage() {
                 onChange={(e) => setInputVal(e.target.value)}
                 placeholder={
                   step === 0
-                    ? "Ask me anything or enter your name..."
+                    ? "Enter your name..."
                     : step === 1
-                    ? "Enter your email coordinate..."
+                    ? "Enter your email address..."
                     : step === 2
-                    ? "Select or enter project category..."
-                    : step === 3
-                    ? "Enter project brief outline or inquiry..."
-                    : "Enter project timeline or urgency..."
+                    ? "Select or enter a subject..."
+                    : "Enter your message details..."
                 }
                 disabled={isThinking || isCompleted}
                 className="flex-1 bg-transparent px-1 sm:px-2 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none disabled:opacity-50 font-sans"
