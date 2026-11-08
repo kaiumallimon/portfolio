@@ -74,53 +74,16 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
 
   return (
     <section className="w-full bg-white dark:bg-zinc-950">
-      {/* Top 1024 Dimension Guide Bar */}
-      <div
-        className="relative w-full h-7 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-3 text-zinc-400 dark:text-zinc-600 select-none overflow-hidden"
-        aria-hidden="true"
-      >
-        <div className="w-2 h-full flex items-center">
-          <div className="w-px h-3 bg-zinc-300 dark:bg-zinc-700" />
-        </div>
-        <div className="flex-1 flex items-center px-2">
-          <svg className="shrink-0 size-2" viewBox="0 0 9 7" fill="none" stroke="currentColor" strokeWidth="1">
-            <path d="M.5 3.5 8.5.5v6Z" fill="currentColor" />
-          </svg>
-          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
-          <span className="font-mono text-[10px] tabular-nums px-2 text-zinc-400 dark:text-zinc-500">
-            1024
-          </span>
-          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
-          <svg className="shrink-0 size-2 -scale-x-100" viewBox="0 0 9 7" fill="none" stroke="currentColor" strokeWidth="1">
-            <path d="M.5 3.5 8.5.5v6Z" fill="currentColor" />
-          </svg>
-        </div>
-        <div className="w-2 h-full flex items-center justify-end">
-          <div className="w-px h-3 bg-zinc-300 dark:bg-zinc-700" />
-        </div>
-      </div>
-
-      {/* 1. Full-width CAD Cover: Full width of the 1024px canvas, KAL in dead center */}
+      {/* Cover + Profile Hero: cover-grid-bg spans the full area (cover row + right profile column) */}
+      {/* Row 1: Full-width KAL cover with cover-grid-bg */}
       <div className="relative w-full border-b border-zinc-200 dark:border-zinc-800 cover-grid-bg overflow-hidden flex items-center justify-center">
         <CadIsometricCover />
       </div>
 
-      {/* 2. Profile Section: 160px Avatar on Left, Name & Designation on Right */}
-      <div className="relative grid grid-cols-1 sm:grid-cols-[auto_1fr] border-b border-zinc-200 dark:border-zinc-800 overflow-visible bg-white dark:bg-zinc-950">
-        {/* Left Column: 160px Avatar container with Ø160 dimension marker */}
-        <div className="p-4 sm:p-6 flex items-center justify-center shrink-0 relative border-b sm:border-b-0 sm:border-r border-zinc-200 dark:border-zinc-800">
-          {/* Ø160 Dimension line on the left */}
-          <div
-            className="pointer-events-none absolute inset-y-0 -left-6 hidden lg:flex flex-col items-center py-2 text-zinc-400 dark:text-zinc-600 select-none"
-            aria-hidden="true"
-          >
-            <div className="flex-1 w-px bg-zinc-300 dark:bg-zinc-700" />
-            <span className="font-mono text-[10px] tabular-nums py-1 text-zinc-400">
-              Ø160
-            </span>
-            <div className="flex-1 w-px bg-zinc-300 dark:bg-zinc-700" />
-          </div>
-
+      {/* Row 2: Profile Section — left=avatar (solid bg), right=cover-grid-bg continuing */}
+      <div className="relative grid grid-cols-1 sm:grid-cols-[auto_1fr] border-b border-zinc-200 dark:border-zinc-800 overflow-visible cover-grid-bg">
+        {/* Left Column: Avatar — solid background to contrast with grid */}
+        <div className="p-4 sm:p-6 flex items-center justify-center shrink-0 relative border-b sm:border-b-0 sm:border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
           {/* 160px Circular Profile Picture */}
           <div className="relative size-28 min-[24rem]:size-32 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
             <Image
@@ -134,7 +97,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
           </div>
         </div>
 
-        {/* Right Column: Name & Designation */}
+        {/* Right Column: Name & Designation — no background override, grid shows through */}
         <div className="flex flex-col justify-end">
           {/* Upper line: Name + verified badge + sound chime */}
           <div className="px-4 py-2.5 sm:py-3 flex items-center gap-2">
@@ -165,7 +128,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
           </div>
 
           {/* Lower line: Designation in monospace font */}
-          <div className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/20">
+          <div className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800">
             <p className="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
               Full-Stack Software Engineer.
             </p>
@@ -173,15 +136,8 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
         </div>
       </div>
 
-      {/* 3. Stripe Divider with 32 dimension indicator */}
-      <div className="relative stripe-divider h-8 border-b border-zinc-200 dark:border-zinc-800 w-full flex items-center justify-end pr-4">
-        <span
-          className="pointer-events-none hidden sm:inline-block font-mono text-[10px] text-zinc-400 dark:text-zinc-500 select-none tabular-nums"
-          aria-hidden="true"
-        >
-          ↕ 32
-        </span>
-      </div>
+      {/* Stripe Divider */}
+      <div className="stripe-divider h-8 border-b border-zinc-200 dark:border-zinc-800 w-full" />
 
       {/* 4. Contacts: 2-Column Hairline Table */}
       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono">
