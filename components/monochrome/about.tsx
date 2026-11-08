@@ -23,14 +23,14 @@ export function MonochromeAbout() {
           <p className="flex items-start gap-2.5">
             <span className="text-zinc-400 select-none">•</span>
             <span>
-              I’m <strong>Kaium Al Limon</strong> (call me Limon) — a Full-Stack Software Engineer with a deep focus on Flutter mobile development, modern Next.js web applications, and high-performance backends.
+              I&apos;m <strong>Kaium Al Limon</strong>, a software engineer who enjoys turning ideas and complex problems into practical, well-engineered software.
             </span>
           </p>
 
           <p className="flex items-start gap-2.5">
             <span className="text-zinc-400 select-none">•</span>
             <span>
-              Computer Science &amp; Engineering student at{" "}
+              A Computer Science &amp; Engineering graduate from{" "}
               <a
                 href="https://www.uiu.ac.bd/"
                 target="_blank"
@@ -39,14 +39,14 @@ export function MonochromeAbout() {
               >
                 United International University (UIU)
               </a>
-              . Active competitor holding 4 CSE Project Show honors including Champion (Summer &apos;24) and 1st Runner-Up (Fall &apos;24 &amp; Spring &apos;24).
+              , I specialize in cross-platform mobile development with Flutter, modern web applications with Next.js, and backend engineering. I care about clean architecture, thoughtful user experiences, performance, and building software that solves actual problems.
             </span>
           </p>
 
           <p className="flex items-start gap-2.5">
             <span className="text-zinc-400 select-none">•</span>
             <span>
-              Passionate about clean architecture, responsive design systems, and turning real-world constraints into elegant production software.
+              Over the years, I&apos;ve worked on several academic, personal, and collaborative projects, taking ideas from initial concepts to functional products.
             </span>
           </p>
         </div>
