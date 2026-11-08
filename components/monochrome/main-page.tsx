@@ -48,13 +48,13 @@ export function MonochromeMainPage({
         {/* Main Content Sections */}
         <main>
           <MonochromeHero settings={settings} />
+          <MonochromeGitHubTelemetry stats={gitHubStats} username="kaiumallimon" />
           <MonochromeAbout />
           <MonochromeTestimonials />
           <InteractiveShowcase />
           <MonochromeProjects projects={projects} />
           <MonochromeExperience experiences={experiences} />
           <MonochromeSkills skills={skills} />
-          <MonochromeGitHubTelemetry stats={gitHubStats} username="kaiumallimon" />
           <MonochromeContactFooter settings={settings} />
         </main>
       </div>

@@ -2,38 +2,37 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { ArrowUpRight, Volume2, Check, Copy, CheckCheck } from "lucide-react";
+import { Volume2, Check, Copy, CheckCheck } from "lucide-react";
 import {
   RiTwitterXLine,
   RiGithubLine,
   RiLinkedinLine,
-  RiDiscordLine,
-  RiYoutubeLine,
   RiCodeSSlashLine,
-  RiLightbulbLine,
   RiMapPinLine,
   RiTimeLine,
   RiMailLine,
-  RiGlobalLine,
   RiPhoneLine,
-  RiUserSmileLine,
-  RiArticleLine,
 } from "@remixicon/react";
 import { toast } from "sonner";
-import { PixelLogo } from "./pixel-logo";
+import { ThreeKalCover } from "./three-kal-cover";
 import { ISiteSettings } from "@/lib/models";
 
-// Synthesized name chime matching chanhdai's signature sound
+// Synthesized name pronunciation chime
 function playAudioChime() {
   try {
-    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new AudioCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
+
     osc.type = "sine";
     osc.frequency.setValueAtTime(587.33, ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.setValueAtTime(0.14, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start();
@@ -44,7 +43,6 @@ function playAudioChime() {
 export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
   const [timeString, setTimeString] = useState<string>("");
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
-  const [copiedUrl, setCopiedUrl] = useState<boolean>(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -54,11 +52,11 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
           timeZone: settings.timezone || "Asia/Dhaka",
           hour: "2-digit",
           minute: "2-digit",
-          hour12: false,
+          hour12: true,
         }).format(now);
         setTimeString(formatted);
       } catch {
-        setTimeString(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false }));
+        setTimeString(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
       }
     };
 
@@ -74,133 +72,95 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
-  const copyUrl = () => {
-    navigator.clipboard.writeText("https://kaiumallimon.tech");
-    setCopiedUrl(true);
-    toast.success("URL copied to clipboard");
-    setTimeout(() => setCopiedUrl(false), 2000);
-  };
-
-  const socialRow1 = [
-    {
-      name: "X",
-      icon: <RiTwitterXLine className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />,
-      url: settings.twitterUrl || "https://x.com/kaiumallimon",
-    },
-    {
-      name: "GitHub",
-      icon: <RiGithubLine className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />,
-      url: settings.githubUrl || "https://github.com/kaiumallimon",
-    },
-    {
-      name: "LinkedIn",
-      icon: <RiLinkedinLine className="w-4 h-4 text-[#0077b5]" />,
-      url: settings.linkedinUrl || "https://linkedin.com/in/kaiumallimon",
-    },
-  ];
-
-  const socialRow2 = [
-    {
-      name: "daily.dev",
-      icon: <RiArticleLine className="w-4 h-4 text-[#9055ff]" />,
-      url: "https://daily.dev",
-    },
-    {
-      name: "Discord",
-      icon: <RiDiscordLine className="w-4 h-4 text-[#5865f2]" />,
-      url: "https://discord.com",
-    },
-    {
-      name: "YouTube",
-      icon: <RiYoutubeLine className="w-4 h-4 text-[#ff0000]" />,
-      url: "https://youtube.com",
-    },
-  ];
-
   return (
     <section className="w-full bg-white dark:bg-zinc-950">
-      {/* 1. Elevated Cover Area with Small Grid Pattern & Tiny5 KAL Monogram */}
-      <div className="relative w-full h-60 sm:h-72 md:h-80 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-center overflow-hidden bg-white dark:bg-zinc-950 select-none cover-grid-bg">
-        {/* Subtle, thin fine-grid overlay (14px x 14px small squares) */}
-        <svg
-          className="absolute inset-0 w-full h-full text-zinc-950/[0.045] dark:text-white/[0.04] pointer-events-none select-none"
-          xmlns="http://www.w3.org/2000/svg"
+      {/* 1. Cover: Three.js Interactive 30° Isometric KAL Monogram */}
+      <div className="relative w-full h-64 sm:h-80 md:h-96 border-b border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-950">
+        <ThreeKalCover />
+      </div>
+
+      {/* 2. Profile Row: 160px avatar on left, Name & Designation in bottom area */}
+      <div className="grid grid-cols-[auto_1fr] border-b border-zinc-200 dark:border-zinc-800">
+        {/* Left: 160px Avatar container with Ø160 dimension marker */}
+        <div className="relative border-r border-zinc-200 dark:border-zinc-800 p-3 sm:p-4 flex items-center justify-center shrink-0">
+          {/* Ø160 Dimension line on the left */}
+          <div
+            className="pointer-events-none absolute inset-y-0 -left-6 hidden lg:flex flex-col items-center py-2 text-zinc-400 dark:text-zinc-600 select-none"
+            aria-hidden="true"
+          >
+            <div className="flex-1 w-px bg-zinc-300 dark:bg-zinc-700" />
+            <span className="font-mono text-[10px] tabular-nums py-1 text-zinc-400">
+              Ø160
+            </span>
+            <div className="flex-1 w-px bg-zinc-300 dark:bg-zinc-700" />
+          </div>
+
+          {/* 160px Circular Profile Picture */}
+          <div className="relative size-28 min-[24rem]:size-32 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+            <Image
+              src="/bordered.png"
+              alt={settings.name}
+              fill
+              sizes="160px"
+              className="object-cover select-none"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Right: Bottom area has name and designation */}
+        <div className="flex flex-col justify-end">
+          <div className="border-t border-zinc-200 dark:border-zinc-800">
+            {/* Upper line: Name + verified badge + sound chime */}
+            <div className="px-4 py-2.5 sm:py-3 flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
+                {settings.name}
+              </h1>
+
+              {/* Blue Verified Badge */}
+              <span
+                className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs"
+                title="Verified Design & Systems Engineer"
+              >
+                <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
+              </span>
+
+              {/* Audio Pronunciation Button */}
+              <button
+                onClick={() => {
+                  playAudioChime();
+                  toast.success("Name pronunciation chime played");
+                }}
+                className="p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                title="Pronounce my name"
+                aria-label="Pronounce my name"
+              >
+                <Volume2 className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Lower line: Designation in monospace font */}
+            <div className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/20">
+              <p className="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+                Full-Stack &amp; Design Engineer.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Stripe Divider with 32 dimension indicator */}
+      <div className="relative stripe-divider h-8 border-b border-zinc-200 dark:border-zinc-800 w-full flex items-center justify-end pr-4">
+        <span
+          className="pointer-events-none hidden sm:inline-block font-mono text-[10px] text-zinc-400 dark:text-zinc-500 select-none tabular-nums"
           aria-hidden="true"
         >
-          <defs>
-            <pattern id="cover-small-grid" width="14" height="14" patternUnits="userSpaceOnUse">
-              <path d="M 14 0 L 0 0 0 14" fill="none" stroke="currentColor" strokeWidth="1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#cover-small-grid)" />
-        </svg>
-
-        {/* Technical Corner Crosshairs */}
-        <span className="absolute top-2.5 left-3 font-mono text-[11px] text-zinc-400/70 dark:text-zinc-600 select-none" aria-hidden="true">+</span>
-        <span className="absolute top-2.5 right-3 font-mono text-[11px] text-zinc-400/70 dark:text-zinc-600 select-none" aria-hidden="true">+</span>
-        <span className="absolute bottom-2.5 left-3 font-mono text-[11px] text-zinc-400/70 dark:text-zinc-600 select-none" aria-hidden="true">+</span>
-        <span className="absolute bottom-2.5 right-3 font-mono text-[11px] text-zinc-400/70 dark:text-zinc-600 select-none" aria-hidden="true">+</span>
-
-        {/* Centered Monogram KAL in Fully Tiny5 font */}
-        <div className="relative z-10 flex items-center justify-center">
-          <PixelLogo />
-        </div>
+          ↕ 32
+        </span>
       </div>
 
-      {/* 3. Profile Avatar & Name Block matching chanhdai.com */}
-      <div className="p-4 sm:p-6 flex items-start sm:items-center gap-4 sm:gap-6 border-b border-zinc-200 dark:border-zinc-800">
-        <div className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-full overflow-hidden shrink-0 border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900">
-          <Image
-            src="/bordered.png"
-            alt={settings.name}
-            fill
-            sizes="120px"
-            className="object-cover"
-            priority
-          />
-        </div>
-
-        <div className="space-y-1">
-          {/* Quirky Monospace Tailwind class annotation from chanhdai */}
-          <div className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 select-none">
-            text-3xl text-zinc-950 font-medium
-          </div>
-
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
-              {settings.name}
-            </h1>
-
-            {/* Blue Verified Badge */}
-            <span
-              className="w-4.5 h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs"
-              title="Verified Design & Systems Engineer"
-            >
-              <Check className="w-3 h-3 stroke-[3]" />
-            </span>
-
-            {/* Audio Chime Button */}
-            <button
-              onClick={() => {
-                playAudioChime();
-                toast.success("Name chime played");
-              }}
-              className="p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
-              title="Pronounce name"
-              aria-label="Pronounce name"
-            >
-              <Volume2 className="w-4 h-4" />
-            </button>
-          </div>
-
-          <p className="font-mono text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
-            Open Source Contributor & Design Engineer
-          </p>
-        </div>
-      </div>
-
-      {/* 4. Signature 2-Column Hairline Metadata Table */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 border-b border-zinc-200 dark:border-zinc-800 sm:divide-x divide-zinc-200 dark:divide-zinc-800 text-xs sm:text-sm font-mono">
+      {/* 4. Contacts: 2-Column Hairline Table */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono">
         {/* Left Column */}
         <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
           <div className="px-4 py-2.5 flex items-center gap-3">
@@ -209,15 +169,6 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
             </div>
             <span className="text-zinc-700 dark:text-zinc-300">
               Design Engineer <span className="text-zinc-400">@</span>UIU
-            </span>
-          </div>
-
-          <div className="px-4 py-2.5 flex items-center gap-3">
-            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
-              <RiLightbulbLine className="w-3.5 h-3.5" />
-            </div>
-            <span className="text-zinc-700 dark:text-zinc-300">
-              Founder <span className="text-zinc-400">@</span>Routine Finder
             </span>
           </div>
 
@@ -235,6 +186,43 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
             </a>
           </div>
 
+          <div className="px-4 py-2.5 flex items-center justify-between group">
+            <div className="flex items-center gap-3">
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+                <RiMailLine className="w-3.5 h-3.5" />
+              </div>
+              <a
+                href={`mailto:${settings.email}`}
+                className="text-zinc-700 dark:text-zinc-300 hover:underline truncate"
+              >
+                {settings.email}
+              </a>
+            </div>
+            <button
+              onClick={copyEmail}
+              className="text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 p-1 opacity-80 group-hover:opacity-100 transition-opacity cursor-pointer"
+              title="Copy email address"
+            >
+              {copiedEmail ? (
+                <CheckCheck className="w-3.5 h-3.5 text-emerald-500" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          <div className="px-4 py-2.5 flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+              <RiTimeLine className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-zinc-700 dark:text-zinc-300 tabular-nums">
+              {timeString || "06:12 PM"} <span className="text-zinc-400">// Dhaka (GMT+6)</span>
+            </span>
+          </div>
+
           <div className="px-4 py-2.5 flex items-center gap-3">
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiPhoneLine className="w-3.5 h-3.5" />
@@ -247,76 +235,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
             </a>
           </div>
 
-          <div className="px-4 py-2.5 flex items-center justify-between group">
-            <div className="flex items-center gap-3">
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
-                <RiGlobalLine className="w-3.5 h-3.5" />
-              </div>
-              <a
-                href="https://kaiumallimon.tech"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-zinc-700 dark:text-zinc-300 hover:underline"
-              >
-                kaiumallimon.tech
-              </a>
-            </div>
-            <button
-              onClick={copyUrl}
-              className="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 p-1 rounded-sm opacity-80 group-hover:opacity-100 transition-opacity"
-              title="Copy URL"
-            >
-              {copiedUrl ? <CheckCheck className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="divide-y divide-zinc-200 dark:divide-zinc-800 border-t sm:border-t-0 border-zinc-200 dark:border-zinc-800">
-          <div className="px-4 py-2.5 flex items-center gap-3">
-            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
-              <RiTimeLine className="w-3.5 h-3.5" />
-            </div>
-            <span className="text-zinc-700 dark:text-zinc-300 tabular-nums">
-              {timeString || "17:05"} <span className="text-zinc-400">// Dhaka (GMT+6)</span>
-            </span>
-          </div>
-
-          <div className="px-4 py-2.5 flex items-center justify-between group">
-            <div className="flex items-center gap-3">
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
-                <RiMailLine className="w-3.5 h-3.5" />
-              </div>
-              <a
-                href={`mailto:${settings.email}`}
-                className="text-zinc-700 dark:text-zinc-300 hover:underline truncate max-w-[180px] sm:max-w-none"
-              >
-                {settings.email}
-              </a>
-            </div>
-            <button
-              onClick={copyEmail}
-              className="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 p-1 rounded-sm opacity-80 group-hover:opacity-100 transition-opacity"
-              title="Copy email address"
-            >
-              {copiedEmail ? <CheckCheck className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-            </button>
-          </div>
-
-          <div className="px-4 py-2.5 flex items-center gap-3">
-            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
-              <RiUserSmileLine className="w-3.5 h-3.5" />
-            </div>
-            <span className="text-zinc-700 dark:text-zinc-300">
-              he/him
-            </span>
-          </div>
-
-          {/* Empty spacer rows to align table height seamlessly */}
-          <div className="hidden sm:flex px-4 py-2.5 items-center gap-3 text-transparent select-none">
-            <div className="size-6" />
-            <span>—</span>
-          </div>
+          {/* Spacer row for visual balance */}
           <div className="hidden sm:flex px-4 py-2.5 items-center gap-3 text-transparent select-none">
             <div className="size-6" />
             <span>—</span>
@@ -324,45 +243,63 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
         </div>
       </div>
 
-      {/* 5. 6-Card Social Links Grid (3 columns x 2 rows) matching Screenshot 1 */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800">
-        {socialRow1.map((item) => (
-          <a
-            key={item.name}
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors group"
+      {/* 5. Social Links Row with "follow me" Handwritten Annotation */}
+      <div className="relative px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
+        {/* Handwritten note on the left */}
+        <div
+          className="pointer-events-none hidden sm:flex items-center gap-1.5 font-serif italic text-xs text-zinc-500 dark:text-zinc-400 select-none mr-2"
+          aria-hidden="true"
+        >
+          <span>follow me</span>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            className="text-zinc-400 dark:text-zinc-600 -rotate-12"
           >
-            <div className="flex items-center gap-3">
-              {item.icon}
-              <span className="text-xs sm:text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                {item.name}
-              </span>
-            </div>
-            <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
-          </a>
-        ))}
-      </div>
+            <path
+              d="M 4 8 Q 12 12 18 16 M 14 16 L 18 16 L 18 12"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800">
-        {socialRow2.map((item) => (
+        {/* Social Buttons */}
+        <div className="flex items-center gap-2">
           <a
-            key={item.name}
-            href={item.url}
+            href={settings.twitterUrl || "https://x.com/kaiumallimon"}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors group"
+            className="size-8 rounded-lg border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white transition-colors"
+            title="X (Twitter)"
           >
-            <div className="flex items-center gap-3">
-              {item.icon}
-              <span className="text-xs sm:text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                {item.name}
-              </span>
-            </div>
-            <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+            <RiTwitterXLine className="w-4 h-4" />
           </a>
-        ))}
+
+          <a
+            href={settings.githubUrl || "https://github.com/kaiumallimon"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="size-8 rounded-lg border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white transition-colors"
+            title="GitHub"
+          >
+            <RiGithubLine className="w-4 h-4" />
+          </a>
+
+          <a
+            href={settings.linkedinUrl || "https://linkedin.com/in/kaiumallimon"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="size-8 rounded-lg border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white transition-colors"
+            title="LinkedIn"
+          >
+            <RiLinkedinLine className="w-4 h-4" />
+          </a>
+        </div>
       </div>
     </section>
   );
