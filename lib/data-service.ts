@@ -25,6 +25,7 @@ export interface IAchievementItem {
   date: string;
   project: string;
   team: string;
+  images?: string[];
 }
 
 // Fallback site settings populated with authentic live data from kaiumallimon.tech
@@ -423,6 +424,7 @@ export const fallbackAchievements: IAchievementItem[] = [
     date: "8 September 2024",
     project: "MediTouch",
     team: "Team Bcrypt",
+    images: ["/sad-lab.png", "/sad-lab-2.jpg"],
   },
   {
     id: "se-fall-24",
@@ -432,6 +434,7 @@ export const fallbackAchievements: IAchievementItem[] = [
     date: "27 January 2025",
     project: "MediTouch",
     team: "Team Bcrypt",
+    images: ["/software-lab.jpg", "/software-lab-2.jpg"],
   },
   {
     id: "dbms-spring-24",
@@ -441,6 +444,7 @@ export const fallbackAchievements: IAchievementItem[] = [
     date: "3 June 2024",
     project: "Pharmabrew",
     team: "Team Bcrypt",
+    images: ["/dbms-lab.png", "/dbms-lab-2.png"],
   },
   {
     id: "aoop-spring-23",
@@ -450,6 +454,7 @@ export const fallbackAchievements: IAchievementItem[] = [
     date: "3 May 2023",
     project: "Wayout",
     team: "Team Tripod",
+    images: ["/aoop-lab.jpg", "/aoop-lab-2.jpg"],
   },
 ];
 
