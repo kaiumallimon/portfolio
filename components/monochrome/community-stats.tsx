@@ -14,7 +14,7 @@ export function MonochromeCommunityStats() {
     <section className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
       <div className="py-4 border-b border-zinc-200 dark:border-zinc-800">
         <h2 className="text-center text-xs font-mono font-medium tracking-wider text-zinc-500 uppercase">
-          Growing with the community
+          Key Metrics &amp; Milestones
         </h2>
       </div>
 
