@@ -213,7 +213,7 @@ export function MonochromeHero({
                     </kbd>
                   </span>
                   <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
-                    click or press space to run (mini-game 🎮)
+                    click or press space to run!
                   </span>
                 </div>
               )}

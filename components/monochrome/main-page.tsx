@@ -10,6 +10,7 @@ import { MonochromeSkills } from "./skills";
 import { MonochromeExperience } from "./experience";
 import { MonochromeEducation } from "./education";
 import { MonochromeProjects } from "./projects-grid";
+import { MonochromeThesis } from "./thesis";
 import { MonochromeRecognition } from "./recognition";
 import { MonochromeContactFooter } from "./contact-footer";
 import { MonochromeCommandDialog } from "./command-dialog";
@@ -82,7 +83,10 @@ export function MonochromeMainPage({
           {/* 8. Projects */}
           <MonochromeProjects projects={projects} />
 
-          {/* 9. Recognition */}
+          {/* 9. Thesis & Defense Project */}
+          <MonochromeThesis />
+
+          {/* 10. Recognition */}
           <MonochromeRecognition achievements={achievements} />
 
           {/* 10. Footer */}
