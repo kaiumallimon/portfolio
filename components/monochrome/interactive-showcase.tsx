@@ -118,7 +118,7 @@ export function InteractiveShowcase() {
 
   return (
     <section id="tools" className="py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-8 space-y-4">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4">
         {/* Section Header */}
         <div className="flex items-baseline justify-between">
           <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">

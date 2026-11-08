@@ -12,7 +12,7 @@ interface HeaderProps {
 export function MonochromeHeader({ onOpenCommand, starsCount = 140 }: HeaderProps) {
   return (
     <header className="w-full border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-md sticky top-0 z-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-8 h-12 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 h-12 flex items-center justify-between">
         {/* Left: subtle home indicator */}
         <Link
           href="/"
