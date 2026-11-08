@@ -7,7 +7,6 @@ export function MonochromeCommunityStats() {
     { label: "Years in Software Development", value: "3+" },
     { label: "Competitions", value: "4" },
     { label: "Wins & Top 3s", value: "4" },
-    { label: "App Forum Tenure", value: "3+ yrs" },
     { label: "GitHub Stars", value: "22" },
   ];
 
