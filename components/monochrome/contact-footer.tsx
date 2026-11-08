@@ -1,142 +1,117 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Send, ArrowUp, RotateCcw } from "lucide-react";
+import { useState } from "react";
+import { Send, ArrowUp } from "lucide-react";
+import {
+  RiTwitterXLine,
+  RiGithubLine,
+  RiLinkedinLine,
+} from "@remixicon/react";
 import { toast } from "sonner";
 import { ISiteSettings } from "@/lib/models";
+
+function FooterBotanicalFlowers() {
+  return (
+    <svg
+      viewBox="0 0 460 96"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-[280px] sm:w-[380px] md:w-[460px] h-auto text-zinc-400/80 dark:text-zinc-500/80 overflow-visible select-none"
+      aria-hidden="true"
+    >
+      {/* Stem 1 - Left cluster with 5-petal flower and side bud */}
+      <path d="M 52 96 Q 50 62 55 36" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M 52 68 Q 42 64 40 70 Q 48 74 52 70" fill="currentColor" opacity="0.85" />
+      <path d="M 53 54 Q 63 50 65 56 Q 57 60 53 56" fill="currentColor" opacity="0.85" />
+      <g transform="translate(55, 34)">
+        <circle cx="0" cy="0" r="3.6" fill="currentColor" />
+        <circle cx="0" cy="-6.2" r="3.2" fill="currentColor" opacity="0.95" />
+        <circle cx="5.9" cy="-1.9" r="3.2" fill="currentColor" opacity="0.95" />
+        <circle cx="3.6" cy="5.1" r="3.2" fill="currentColor" opacity="0.95" />
+        <circle cx="-3.6" cy="5.1" r="3.2" fill="currentColor" opacity="0.95" />
+        <circle cx="-5.9" cy="-1.9" r="3.2" fill="currentColor" opacity="0.95" />
+        <circle cx="0" cy="0" r="1.8" className="fill-zinc-100 dark:fill-zinc-950" />
+      </g>
+      <path d="M 52 64 Q 68 60 72 48" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="72" cy="46" r="3.2" fill="currentColor" />
+      <circle cx="76" cy="50" r="2.2" fill="currentColor" opacity="0.8" />
+
+      {/* Stem 2 - Left-center tulip / bud sprout */}
+      <path d="M 115 96 Q 118 64 112 44" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M 116 74 Q 106 70 104 76 Q 113 80 116 76" fill="currentColor" opacity="0.85" />
+      <path d="M 114 58 Q 124 54 126 60 Q 117 64 114 60" fill="currentColor" opacity="0.85" />
+      <g transform="translate(112, 40)">
+        <ellipse cx="-4" cy="-2" rx="3.2" ry="4.5" transform="rotate(-18 -4 -2)" fill="currentColor" />
+        <ellipse cx="4" cy="-2" rx="3.2" ry="4.5" transform="rotate(18 4 -2)" fill="currentColor" />
+        <ellipse cx="0" cy="-5" rx="3.5" ry="5" fill="currentColor" />
+      </g>
+
+      {/* Stem 3 - Center tall daisy with multi-tiered leaves */}
+      <path d="M 195 96 Q 192 52 195 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M 194 76 Q 182 70 180 78 Q 191 82 194 78" fill="currentColor" opacity="0.9" />
+      <path d="M 195 60 Q 208 54 210 62 Q 200 66 195 62" fill="currentColor" opacity="0.9" />
+      <path d="M 195 42 Q 184 36 182 44 Q 192 48 195 44" fill="currentColor" opacity="0.9" />
+      <g transform="translate(195, 17)">
+        <circle cx="0" cy="-7.8" r="4" fill="currentColor" />
+        <circle cx="7.4" cy="-2.4" r="4" fill="currentColor" />
+        <circle cx="4.6" cy="6.3" r="4" fill="currentColor" />
+        <circle cx="-4.6" cy="6.3" r="4" fill="currentColor" />
+        <circle cx="-7.4" cy="-2.4" r="4" fill="currentColor" />
+        <circle cx="0" cy="0" r="4.6" fill="currentColor" />
+        <circle cx="0" cy="0" r="2.2" className="fill-zinc-100 dark:fill-zinc-950" />
+      </g>
+
+      {/* Stem 4 - Center-right triple cluster */}
+      <path d="M 255 96 Q 258 68 252 48" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M 256 78 Q 266 74 268 80 Q 259 84 256 80" fill="currentColor" opacity="0.85" />
+      <g transform="translate(252, 44)">
+        <circle cx="0" cy="0" r="3.4" fill="currentColor" />
+        <circle cx="-5.5" cy="-3.5" r="3" fill="currentColor" />
+        <circle cx="5.5" cy="-3.5" r="3" fill="currentColor" />
+        <circle cx="0" cy="-6.5" r="3" fill="currentColor" />
+        <circle cx="0" cy="0" r="1.6" className="fill-zinc-100 dark:fill-zinc-950" />
+      </g>
+      <path d="M 255 64 Q 242 58 238 50" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <circle cx="237" cy="48" r="2.8" fill="currentColor" />
+
+      {/* Stem 5 - Right bell sprout */}
+      <path d="M 310 96 Q 306 68 312 42" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M 308 76 Q 298 72 296 78 Q 305 82 308 78" fill="currentColor" opacity="0.85" />
+      <path d="M 310 60 Q 320 56 322 62 Q 313 66 310 62" fill="currentColor" opacity="0.85" />
+      <g transform="translate(312, 38)">
+        <ellipse cx="-4" cy="-2" rx="3" ry="4.5" transform="rotate(-15 -4 -2)" fill="currentColor" />
+        <ellipse cx="4" cy="-2" rx="3.2" ry="4.5" transform="rotate(15 4 -2)" fill="currentColor" />
+        <ellipse cx="0" cy="-4.5" rx="3.2" ry="5" fill="currentColor" />
+      </g>
+
+      {/* Stem 6 - Right 5-petal daisy */}
+      <path d="M 375 96 Q 378 64 373 35" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M 376 72 Q 386 68 388 74 Q 379 78 376 74" fill="currentColor" opacity="0.85" />
+      <path d="M 374 54 Q 364 50 362 56 Q 371 60 374 56" fill="currentColor" opacity="0.85" />
+      <g transform="translate(373, 32)">
+        <circle cx="0" cy="-6.2" r="3.2" fill="currentColor" />
+        <circle cx="5.9" cy="-1.9" r="3.2" fill="currentColor" />
+        <circle cx="3.6" cy="5.1" r="3.2" fill="currentColor" />
+        <circle cx="-3.6" cy="5.1" r="3.2" fill="currentColor" />
+        <circle cx="-5.9" cy="-1.9" r="3.2" fill="currentColor" />
+        <circle cx="0" cy="0" r="3.5" fill="currentColor" />
+        <circle cx="0" cy="0" r="1.8" className="fill-zinc-100 dark:fill-zinc-950" />
+      </g>
+
+      {/* Stem 7 - Far-right graceful budding sprig */}
+      <path d="M 418 96 Q 415 70 420 46" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M 417 76 Q 407 72 405 78 Q 414 82 417 78" fill="currentColor" opacity="0.85" />
+      <circle cx="420" cy="44" r="3.4" fill="currentColor" />
+      <circle cx="425" cy="49" r="2.4" fill="currentColor" opacity="0.85" />
+    </svg>
+  );
+}
 
 export function MonochromeContactFooter({ settings }: { settings: ISiteSettings }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Interactive Signature Canvas State
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [hasCustomSignature, setHasCustomSignature] = useState(false);
-
-  // Initialize canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Set resolution
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * 2;
-    canvas.height = rect.height * 2;
-    ctx.scale(2, 2);
-
-    // Initial default calligraphic signature
-    drawDefaultSignature(ctx, rect.width, rect.height);
-  }, []);
-
-  const drawDefaultSignature = (
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ) => {
-    ctx.clearRect(0, 0, width, height);
-    ctx.strokeStyle = document.documentElement.classList.contains("dark")
-      ? "#e4e4e7"
-      : "#18181b";
-    ctx.lineWidth = 1.6;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    ctx.beginPath();
-    // K
-    ctx.moveTo(20, 16);
-    ctx.lineTo(22, 44);
-    ctx.moveTo(35, 20);
-    ctx.lineTo(21, 32);
-    ctx.lineTo(37, 44);
-    // a i u m
-    ctx.moveTo(42, 38);
-    ctx.quadraticCurveTo(46, 32, 50, 38);
-    ctx.quadraticCurveTo(54, 44, 58, 36);
-    ctx.quadraticCurveTo(62, 32, 66, 38);
-    ctx.quadraticCurveTo(70, 44, 74, 36);
-    ctx.lineTo(76, 44);
-    // L
-    ctx.moveTo(88, 14);
-    ctx.lineTo(90, 42);
-    ctx.lineTo(108, 42);
-    // i m o n
-    ctx.moveTo(114, 36);
-    ctx.lineTo(115, 42);
-    ctx.moveTo(122, 36);
-    ctx.quadraticCurveTo(126, 32, 130, 42);
-    ctx.quadraticCurveTo(134, 32, 138, 42);
-    ctx.moveTo(144, 39);
-    ctx.ellipse(148, 39, 4, 3, 0, 0, Math.PI * 2);
-    ctx.moveTo(156, 36);
-    ctx.quadraticCurveTo(160, 32, 164, 42);
-    // Underline flourish
-    ctx.moveTo(16, 48);
-    ctx.quadraticCurveTo(90, 52, 175, 46);
-    ctx.stroke();
-  };
-
-  const clearSignature = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-    ctx.clearRect(0, 0, rect.width, rect.height);
-    setHasCustomSignature(false);
-    drawDefaultSignature(ctx, rect.width, rect.height);
-    toast.success("Signature reset");
-  };
-
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    if (!hasCustomSignature) {
-      const rect = canvas.getBoundingClientRect();
-      ctx.clearRect(0, 0, rect.width, rect.height);
-      setHasCustomSignature(true);
-    }
-
-    setIsDrawing(true);
-    const rect = canvas.getBoundingClientRect();
-    const x = "touches" in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = "touches" in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-
-    ctx.strokeStyle = document.documentElement.classList.contains("dark")
-      ? "#e4e4e7"
-      : "#18181b";
-    ctx.lineWidth = 1.8;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-  };
-
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = "touches" in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = "touches" in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  };
-
-  const stopDrawing = () => {
-    setIsDrawing(false);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -247,157 +222,104 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
         <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />
       </section>
 
-      {/* Technical Colophon Footer matching chanhdai.com */}
-      <footer className="w-full bg-white dark:bg-zinc-950 text-xs font-mono border-b border-zinc-200 dark:border-zinc-800">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
-          <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-            kaiumallimon.tech
-          </span>
-          <span className="font-sans text-zinc-500">
-            A CAD-engineered, minimal design portfolio &amp; telemetry hub.
-          </span>
-        </div>
+      {/* Blake Cyze Inspired Rounded Footer Card */}
+      <footer className="w-full bg-white dark:bg-zinc-950 pt-16 sm:pt-24 pb-0 overflow-hidden">
+        <div className="w-full">
+          {/* Top Meta Header & Sprouting Botanical Flowers */}
+          <div className="relative">
+            {/* Top Meta: Left & Right info */}
+            <div className="flex items-center justify-between px-4 sm:px-8 pb-3 text-[11px] sm:text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              <div className="flex items-center gap-2">
+                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Made in Dhaka, Bangladesh</span>
+              </div>
+              <div className="hidden sm:flex items-center gap-2 text-zinc-400 dark:text-zinc-500">
+                <span>Tea &amp; Code // no plans to stop</span>
+              </div>
+            </div>
 
-        {/* 4-column Colophon Specification Grid */}
-        <dl className="grid grid-cols-2 md:grid-cols-4 gap-px bg-zinc-200 dark:bg-zinc-800">
-          <div className="flex min-w-0 flex-col gap-1 bg-white dark:bg-zinc-950 px-4 py-3">
-            <dt className="text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
-              Crafted by
-            </dt>
-            <dd className="text-xs">
+            {/* Botanical Flowers blooming out from behind the card rim */}
+            <div className="absolute left-1/2 -bottom-[1px] -translate-x-1/2 z-0 pointer-events-none">
+              <FooterBotanicalFlowers />
+            </div>
+          </div>
+
+          {/* The Main Rounded Card with monochrome website colors */}
+          <div className="relative z-10 rounded-t-[32px] sm:rounded-t-[44px] lg:rounded-t-[54px] border-t border-zinc-200 dark:border-zinc-800 bg-gradient-to-b from-zinc-100 via-zinc-100/90 to-zinc-200/50 dark:from-zinc-900 dark:via-zinc-950 dark:to-black overflow-hidden pt-12 sm:pt-16 pb-0 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+            {/* Halftone / Stipple Dot Matrix Texture Overlay */}
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.12] dark:opacity-[0.16] text-zinc-950 dark:text-white"
+              style={{
+                backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
+                backgroundSize: "8px 8px",
+              }}
+              aria-hidden="true"
+            />
+
+            {/* Social Links Row */}
+            <div className="relative z-10 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-3 px-4 sm:px-8 font-mono text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
               <a
-                className="underline hover:text-zinc-900 dark:hover:text-white"
-                href="https://github.com/kaiumallimon"
+                href={settings.linkedinUrl || "https://linkedin.com/in/kaiumallimon"}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
               >
-                @kaiumallimon
+                <RiLinkedinLine className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+                <span className="hover:underline underline-offset-4">linkedin.com/in/kaiumallimon</span>
               </a>
-            </dd>
-          </div>
 
-          <div className="flex min-w-0 flex-col gap-1 bg-white dark:bg-zinc-950 px-4 py-3">
-            <dt className="text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
-              Location
-            </dt>
-            <dd className="text-xs text-zinc-700 dark:text-zinc-300">
-              Dhaka, Bangladesh
-            </dd>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-1 bg-white dark:bg-zinc-950 px-4 py-3">
-            <dt className="text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
-              Deployed on
-            </dt>
-            <dd className="text-xs text-zinc-700 dark:text-zinc-300 flex items-center gap-1">
-              <span>▲</span>
-              <span>Vercel</span>
-            </dd>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-1 bg-white dark:bg-zinc-950 px-4 py-3">
-            <dt className="text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
-              Typeface
-            </dt>
-            <dd className="text-xs text-zinc-700 dark:text-zinc-300">
-              Geist &amp; Geist Mono
-            </dd>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-1 bg-white dark:bg-zinc-950 px-4 py-3 col-span-2">
-            <dt className="text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
-              Stack
-            </dt>
-            <dd className="text-xs text-zinc-600 dark:text-zinc-400">
-              Next.js 16 · React 19 · Tailwind CSS v4 · Framer Motion
-            </dd>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-1 bg-white dark:bg-zinc-950 px-4 py-3">
-            <dt className="text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
-              License
-            </dt>
-            <dd className="text-xs text-zinc-700 dark:text-zinc-300">
-              MIT License
-            </dd>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-1 bg-white dark:bg-zinc-950 px-4 py-3">
-            <dt className="text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
-              For agents
-            </dt>
-            <dd className="text-xs">
               <a
-                className="underline hover:text-zinc-900 dark:hover:text-white"
-                href="/llms.txt"
+                href={settings.githubUrl || "https://github.com/kaiumallimon"}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
               >
-                llms.txt
+                <RiGithubLine className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+                <span className="hover:underline underline-offset-4">github.com/kaiumallimon</span>
               </a>
-            </dd>
-          </div>
 
-          {/* Approved by Interactive Signature Canvas */}
-          <div className="flex min-w-0 flex-col gap-1 bg-white dark:bg-zinc-950 px-4 py-3 col-span-2 md:col-span-4 border-t border-zinc-200 dark:border-zinc-800">
-            <div className="flex items-center justify-between">
-              <dt className="text-[10px] font-medium tracking-wider text-zinc-400 uppercase">
-                Approved by
-              </dt>
+              <a
+                href={settings.twitterUrl || "https://x.com/kaiumallimon"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
+              >
+                <RiTwitterXLine className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+                <span className="hover:underline underline-offset-4">x.com/kaiumallimon</span>
+              </a>
+
               <button
                 type="button"
-                onClick={clearSignature}
-                className="flex items-center gap-1 text-[10px] font-mono text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer"
-                title="Sign again or reset signature"
+                onClick={scrollToTop}
+                className="group inline-flex items-center gap-2 hover:text-zinc-950 dark:hover:text-white transition-colors cursor-pointer py-1"
               >
-                <RotateCcw className="w-3 h-3" />
-                <span>Sign again</span>
+                <ArrowUp className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white group-hover:-translate-y-0.5 transition-all" />
+                <span className="hover:underline underline-offset-4">Back to top</span>
               </button>
             </div>
 
-            <div className="relative w-full h-16 border border-dashed border-zinc-200 dark:border-zinc-800 mt-1 cursor-crosshair bg-zinc-50/50 dark:bg-zinc-900/40">
-              <canvas
-                ref={canvasRef}
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={stopDrawing}
-                onMouseLeave={stopDrawing}
-                onTouchStart={startDrawing}
-                onTouchMove={draw}
-                onTouchEnd={stopDrawing}
-                className="w-full h-full block"
-              />
-              <span className="pointer-events-none absolute bottom-1 right-2 text-[9px] font-mono text-zinc-400 select-none">
-                KAIUM AL LIMON
+            {/* Subtle Sub-bar with Colophon & Agent Info */}
+            <div className="relative z-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-6 text-[10px] sm:text-[11px] font-mono text-zinc-400 dark:text-zinc-600">
+              <span>© {new Date().getFullYear()} Kaium Al Limon</span>
+              <span>·</span>
+              <span>Geist</span>
+              <span>·</span>
+              <a
+                href="/llms.txt"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors"
+              >
+                llms.txt
+              </a>
+            </div>
+
+            {/* Massive Faded Half-Visible Initials "KAL" in Geist Font */}
+            <div className="relative z-10 w-full overflow-hidden flex justify-center pointer-events-none select-none mt-2 sm:mt-4">
+              <span className="font-sans text-[100px] sm:text-[160px] md:text-[230px] lg:text-[300px] xl:text-[360px] font-extrabold leading-[0.72] tracking-tight text-zinc-900/[0.07] dark:text-zinc-100/[0.08] uppercase whitespace-nowrap translate-y-[33%] transition-all">
+                KAL
               </span>
             </div>
-          </div>
-        </dl>
-
-        {/* Bottom bar with return to top */}
-        <div className="px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-zinc-500">
-            <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-              Kaium Al Limon
-            </span>
-            <span>·</span>
-            <span>© {new Date().getFullYear()}</span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-zinc-500">
-              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="hidden sm:inline">Available for hire</span>
-            </span>
-
-            <button
-              onClick={scrollToTop}
-              className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
-              title="Return to top"
-              aria-label="Return to top"
-            >
-              <ArrowUp className="w-4 h-4" />
-            </button>
           </div>
         </div>
       </footer>
