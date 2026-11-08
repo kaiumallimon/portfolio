@@ -227,7 +227,7 @@ export default function ContactAgentPage() {
           body: JSON.stringify({
             name: finalData.name,
             email: finalData.email,
-            subject: `[Agentic Intake] ${finalData.category} - ${finalData.name}`,
+            subject: `[Contact Intake] ${finalData.category} - ${finalData.name}`,
             message: `--- AUTONOMOUS AGENT INTAKE DISPATCH ---\nSender: ${finalData.name} <${finalData.email}>\nCategory: ${finalData.category}\nTarget Timeline: ${timeline}\nDispatched At: ${new Date().toISOString()}\n\nPROJECT BRIEF & REQUIREMENTS:\n${finalData.brief}\n\n--- END OF TRANSMISSION ---`,
           }),
         });

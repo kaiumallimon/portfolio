@@ -23,10 +23,10 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
       <div className="px-4 sm:px-6 py-4 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
         <div>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
-            Contact &amp; Dispatch
+            Let&apos;s Talk
           </h2>
           <p className="text-xs text-zinc-500 font-mono mt-0.5">
-            Autonomous agentic intake &amp; direct routing
+            Direct routing &amp; interactive intake
           </p>
         </div>
       </div>
@@ -39,7 +39,7 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
           </span>
-          <span>Agent Online // Ready to Connect</span>
+          <span>Online // Ready to Connect</span>
         </div>
 
         {/* Clean Headline & Copy */}
@@ -48,7 +48,7 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
             Let’s build something together.
           </h3>
           <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 font-mono max-w-lg mx-auto leading-relaxed">
-            Chat with my AI intake agent to calibrate project requirements, explore collaboration, and route your brief directly to my inbox.
+            Calibrate project requirements, explore collaboration, and route your brief directly to my inbox.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-950 text-white dark:bg-zinc-50 dark:text-zinc-950 font-mono text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-sm group cursor-pointer"
           >
             <Bot className="size-4 text-emerald-400 dark:text-emerald-600 group-hover:rotate-6 transition-transform" />
-            <span>Start Agentic Chat</span>
+            <span>Let&apos;s Talk</span>
             <ArrowRight className="size-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Link>
 
