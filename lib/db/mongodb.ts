@@ -7,15 +7,14 @@ interface MongooseCache {
   promise: Promise<typeof mongoose> | null;
 }
 
-declare global {
-  // eslint-disable-next-line no-var
-  var mongooseCache: MongooseCache | undefined;
-}
+const globalWithMongoose = globalThis as unknown as {
+  mongooseCache?: MongooseCache;
+};
 
-let cached: MongooseCache = global.mongooseCache || { conn: null, promise: null };
+const cached: MongooseCache = globalWithMongoose.mongooseCache || { conn: null, promise: null };
 
-if (!global.mongooseCache) {
-  global.mongooseCache = cached;
+if (!globalWithMongoose.mongooseCache) {
+  globalWithMongoose.mongooseCache = cached;
 }
 
 export async function connectToDatabase(): Promise<typeof mongoose | null> {

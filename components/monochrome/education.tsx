@@ -1,21 +1,33 @@
 "use client";
 
-import { IEducationItem } from "@/lib/data-service";
-import { RiLink, RiGraduationCapLine } from "@remixicon/react";
+import React from "react";
+import { EducationItem, EDUCATION_DATA } from "@/data/education";
+import { RiLink } from "@remixicon/react";
 import { toast } from "sonner";
+import { motion, useReducedMotion } from "framer-motion";
+
+interface MonochromeEducationProps {
+  education?: EducationItem[];
+}
 
 export function MonochromeEducation({
-  education,
-}: {
-  education: IEducationItem[];
-}) {
+  education = EDUCATION_DATA,
+}: MonochromeEducationProps = {}) {
+  const shouldReduceMotion = useReducedMotion();
+  const items = education && education.length > 0 ? education : EDUCATION_DATA;
+
   const copyLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}#education`);
-    toast.success("Section link copied");
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(`${window.location.origin}#education`);
+      toast.success("Section link copied");
+    }
   };
 
   return (
-    <section id="education" className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
+    <section
+      id="education"
+      className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800"
+    >
       {/* Header bar */}
       <div className="px-4 sm:px-6 py-4 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-2">
@@ -32,39 +44,88 @@ export function MonochromeEducation({
         </div>
       </div>
 
-      <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
-        {education.map((item) => (
-          <div
-            key={item.id}
-            className="p-4 sm:p-6 space-y-2 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 transition-colors"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <RiGraduationCapLine className="w-4 h-4 text-zinc-400 shrink-0" />
-                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 font-sans">
-                  {item.degree}
-                </h3>
-                <span className="text-zinc-400 text-xs">@</span>
-                <span className="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
-                  {item.institution}
-                </span>
-                {item.status === "current" && (
-                  <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                    In Progress
-                  </span>
+      {/* Minimalist Vertical Timeline matching Experience section */}
+      <div className="p-4 sm:p-6">
+        <motion.ol
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          aria-label="Education history"
+          className="relative pt-1 pl-1"
+        >
+          {items.map((item, idx) => {
+            const isLast = idx === items.length - 1;
+            const isCurrent = item.status === "current";
+
+            return (
+              <li
+                key={item.id}
+                className="relative pl-6 sm:pl-8 pb-5 last:pb-1 group list-none"
+              >
+                {/* Vertical Timeline Track Line */}
+                {!isLast && (
+                  <div
+                    className="absolute left-[7px] sm:left-[11px] top-3.5 bottom-0 w-px bg-zinc-200 dark:bg-zinc-800"
+                    aria-hidden="true"
+                  />
                 )}
-              </div>
 
-              <div className="text-xs font-mono text-zinc-400 tabular-nums">
-                {item.period}
-              </div>
-            </div>
+                {/* Timeline Node Dot */}
+                <div
+                  className="absolute left-[2px] sm:left-[6px] top-1 size-3.5 rounded-full border border-zinc-400 dark:border-zinc-500 bg-white dark:bg-zinc-950 flex items-center justify-center group-hover:border-zinc-900 dark:group-hover:border-zinc-100 transition-colors"
+                  aria-hidden="true"
+                >
+                  <div
+                    className={`size-1.5 rounded-full ${
+                      isCurrent
+                        ? "bg-emerald-500 animate-pulse"
+                        : "bg-zinc-900 dark:bg-zinc-100"
+                    }`}
+                  />
+                </div>
 
-            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 font-sans leading-relaxed">
-              {item.description}
-            </p>
-          </div>
-        ))}
+                {/* Entry Content */}
+                <div className="space-y-1">
+                  {/* Row: Degree, Institution, and Dates */}
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-sm sm:text-base font-medium text-zinc-900 dark:text-zinc-100 font-sans tracking-tight">
+                        {item.degree}
+                      </h3>
+                      <span
+                        className="text-zinc-400 dark:text-zinc-500 text-xs select-none"
+                        aria-hidden="true"
+                      >
+                        @
+                      </span>
+                      <span className="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                        {item.institution}
+                      </span>
+                      {isCurrent && (
+                        <span className="px-1.5 py-0.2 rounded-xs text-[10px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                          In Progress
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Dates: Right-aligned on desktop, stacked on mobile */}
+                    <span className="text-xs font-mono text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0">
+                      {item.period}
+                    </span>
+                  </div>
+
+                  {/* Description / Subtext */}
+                  {item.description && (
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans leading-relaxed">
+                      {item.description}
+                    </p>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </motion.ol>
       </div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />

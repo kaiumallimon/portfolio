@@ -13,9 +13,9 @@ import { MonochromeProjects } from "./projects-grid";
 import { MonochromeRecognition } from "./recognition";
 import { MonochromeContactFooter } from "./contact-footer";
 import { MonochromeCommandDialog } from "./command-dialog";
-import { ISiteSettings, IProject, IExperience } from "@/lib/models";
-import { IEducationItem, IAchievementItem } from "@/lib/data-service";
-import { GitHubStats } from "@/lib/github";
+import type { ISiteSettings, IProject, IExperience } from "@/lib/models";
+import type { IEducationItem, IAchievementItem } from "@/lib/data-service";
+import type { GitHubStats } from "@/lib/github";
 import { Toaster } from "sonner";
 
 interface MainPageProps {
@@ -70,14 +70,14 @@ export function MonochromeMainPage({
           {/* 4. Community Stats */}
           <MonochromeCommunityStats />
 
-          {/* 5. Skills */}
+          {/* 5. Stack */}
           <MonochromeSkills skills={skills} />
 
-          {/* 6. Experience */}
-          <MonochromeExperience experiences={experiences} />
-
-          {/* 7. Education */}
+          {/* 6. Education */}
           <MonochromeEducation education={education} />
+
+          {/* 7. Co-Curricular & Engineering Leadership */}
+          <MonochromeExperience experiences={experiences} />
 
           {/* 8. Projects */}
           <MonochromeProjects projects={projects} />
