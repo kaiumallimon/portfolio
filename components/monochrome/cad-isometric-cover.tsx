@@ -30,7 +30,7 @@ export function CadIsometricCover() {
           playClickSound();
         }
       }}
-      className="relative w-full h-full min-h-[180px] sm:min-h-[220px] md:min-h-[260px] cover-grid-bg flex items-center justify-center cursor-pointer select-none overflow-hidden group transition-colors"
+      className="relative w-full h-full min-h-[180px] sm:min-h-[220px] md:min-h-[260px] flex items-center justify-center cursor-pointer select-none overflow-hidden group transition-colors"
       title="KAL — Click for sound"
       aria-label="KAL"
     >

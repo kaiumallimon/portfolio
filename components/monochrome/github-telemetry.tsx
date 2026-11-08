@@ -5,6 +5,7 @@ import { GitHubStats } from "@/lib/github";
 import { Star, GitFork, BookOpen, Flame } from "lucide-react";
 import { RiGithubLine } from "@remixicon/react";
 import { ActivityCalendar } from "react-activity-calendar";
+import "react-activity-calendar/tooltips.css";
 import { getKaiumContributionData } from "@/lib/github-data";
 
 export function MonochromeGitHubTelemetry({
@@ -48,11 +49,6 @@ export function MonochromeGitHubTelemetry({
                   `${activity.count} contributions on ${activity.date}`,
               },
             }}
-            renderBlock={(block, activity) =>
-              React.cloneElement(block, {
-                title: `${activity.count} contributions on ${activity.date}`,
-              })
-            }
             theme={{
               light: ["#f4f4f5", "#d4d4d8", "#a1a1aa", "#71717a", "#18181b"],
               dark: ["#18181b", "#27272a", "#3f3f46", "#71717a", "#fafafa"],

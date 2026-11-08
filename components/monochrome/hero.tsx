@@ -74,7 +74,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
 
   return (
     <section className="w-full bg-white dark:bg-zinc-950">
-      {/* Top 768 Dimension Guide Bar */}
+      {/* Top 1024 Dimension Guide Bar */}
       <div
         className="relative w-full h-7 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-3 text-zinc-400 dark:text-zinc-600 select-none overflow-hidden"
         aria-hidden="true"
@@ -87,7 +87,9 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
             <path d="M.5 3.5 8.5.5v6Z" fill="currentColor" />
           </svg>
           <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
-
+          <span className="font-mono text-[10px] tabular-nums px-2 text-zinc-400 dark:text-zinc-500">
+            1024
+          </span>
           <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
           <svg className="shrink-0 size-2 -scale-x-100" viewBox="0 0 9 7" fill="none" stroke="currentColor" strokeWidth="1">
             <path d="M.5 3.5 8.5.5v6Z" fill="currentColor" />
@@ -98,75 +100,81 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
         </div>
       </div>
 
-      {/* 1. Full-width CAD / Tiny5 KAL Cover with Fine Grid Background */}
-      <div className="relative w-full border-b border-zinc-200 dark:border-zinc-800 overflow-hidden">
-        <CadIsometricCover />
-      </div>
+      {/* Hero Grid matching Chanh Dai: Full area above avatar and name belongs to the cover grid */}
+      <div className="relative grid grid-cols-1 sm:grid-cols-[auto_1fr] sm:grid-rows-[1fr_auto] border-b border-zinc-200 dark:border-zinc-800 overflow-visible cover-grid-bg">
+        {/* Left Column: 160px Avatar container spanning 2 rows */}
+        <div className="flex flex-col sm:row-span-2 sm:row-start-1">
+          {/* Top-left area (row 1) above avatar is transparent, so cover-grid-bg seamlessly covers it */}
+          {/* Avatar Box (row 2) starts at the marked horizontal border, with solid bg and crisp borders */}
+          <div className="mt-auto p-4 sm:p-6 flex items-center justify-center shrink-0 relative border-t sm:border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+            {/* Ø160 Dimension line on the left */}
+            <div
+              className="pointer-events-none absolute inset-y-0 -left-6 hidden lg:flex flex-col items-center py-2 text-zinc-400 dark:text-zinc-600 select-none"
+              aria-hidden="true"
+            >
+              <div className="flex-1 w-px bg-zinc-300 dark:bg-zinc-700" />
+              <span className="font-mono text-[10px] tabular-nums py-1 text-zinc-400">
+                Ø160
+              </span>
+              <div className="flex-1 w-px bg-zinc-300 dark:bg-zinc-700" />
+            </div>
 
-      {/* 2. Profile Section: 160px Avatar on Left, Name & Designation on Right */}
-      <div className="relative grid grid-cols-1 sm:grid-cols-[auto_1fr] border-b border-zinc-200 dark:border-zinc-800 overflow-visible">
-        {/* Left Column: 160px Avatar container with Ø160 dimension marker */}
-        <div className="p-4 sm:p-6 flex items-center justify-center shrink-0 relative border-b sm:border-b-0 sm:border-r border-zinc-200 dark:border-zinc-800">
-          {/* Ø160 Dimension line on the left */}
-          <div
-            className="pointer-events-none absolute inset-y-0 -left-6 hidden lg:flex flex-col items-center py-2 text-zinc-400 dark:text-zinc-600 select-none"
-            aria-hidden="true"
-          >
-            <div className="flex-1 w-px bg-zinc-300 dark:bg-zinc-700" />
-            <span className="font-mono text-[10px] tabular-nums py-1 text-zinc-400">
-              Ø160
-            </span>
-            <div className="flex-1 w-px bg-zinc-300 dark:bg-zinc-700" />
-          </div>
-
-          {/* 160px Circular Profile Picture */}
-          <div className="relative size-28 min-[24rem]:size-32 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
-            <Image
-              src="/bordered.png"
-              alt={settings.name}
-              fill
-              sizes="160px"
-              className="object-cover select-none"
-              priority
-            />
+            {/* 160px Circular Profile Picture */}
+            <div className="relative size-28 min-[24rem]:size-32 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+              <Image
+                src="/bordered.png"
+                alt={settings.name}
+                fill
+                sizes="160px"
+                className="object-cover select-none"
+                priority
+              />
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Name & Designation */}
+        {/* Right Column, Row 1: Typed Tiny5 KAL Cover */}
+        <div className="relative w-full h-full min-h-[180px] sm:min-h-[220px] md:min-h-[260px] overflow-hidden flex items-center justify-center">
+          <CadIsometricCover />
+        </div>
+
+        {/* Right Column, Row 2: Name & Designation */}
         <div className="flex flex-col justify-end">
-          {/* Upper line: Name + verified badge + sound chime */}
-          <div className="px-4 py-2.5 sm:py-3 flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
-              {settings.name}
-            </h1>
+          <div className="mt-auto border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+            {/* Upper line: Name + verified badge + sound chime */}
+            <div className="px-4 py-2.5 sm:py-3 flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
+                {settings.name}
+              </h1>
 
-            {/* Verified Badge */}
-            <span
-              className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
-              title="Verified Engineer"
-            >
-              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
-            </span>
+              {/* Verified Badge */}
+              <span
+                className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
+                title="Verified Engineer"
+              >
+                <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
+              </span>
 
-            {/* Audio Pronunciation Button */}
-            <button
-              onClick={() => {
-                playAudioChime();
-                toast.success("Name pronunciation chime played");
-              }}
-              className="p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
-              title="Pronounce my name"
-              aria-label="Pronounce my name"
-            >
-              <Volume2 className="w-4 h-4" />
-            </button>
-          </div>
+              {/* Audio Pronunciation Button */}
+              <button
+                onClick={() => {
+                  playAudioChime();
+                  toast.success("Name pronunciation chime played");
+                }}
+                className="p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                title="Pronounce my name"
+                aria-label="Pronounce my name"
+              >
+                <Volume2 className="w-4 h-4" />
+              </button>
+            </div>
 
-          {/* Lower line: Designation in monospace font */}
-          <div className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/20">
-            <p className="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-              Full-Stack Software Engineer.
-            </p>
+            {/* Lower line: Designation in monospace font */}
+            <div className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/20">
+              <p className="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+                Full-Stack Software Engineer.
+              </p>
+            </div>
           </div>
         </div>
       </div>

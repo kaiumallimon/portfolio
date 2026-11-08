@@ -79,6 +79,43 @@ html.dark .cover-grid-bg {
 }
 
 /* ---------------------------------------------------------------------------
+ * React Activity Calendar Tooltip (GitHub Telemetry)
+ * --------------------------------------------------------------------------- */
+.react-activity-calendar__tooltip {
+  width: max-content !important;
+  max-width: calc(100vw - 20px) !important;
+  padding: 5px 9px !important;
+  border-radius: 4px !important;
+  background-color: #09090b !important;
+  color: #f4f4f5 !important;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  letter-spacing: -0.01em !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 99999 !important;
+}
+
+html:not(.dark) .react-activity-calendar__tooltip,
+.react-activity-calendar__tooltip[data-color-scheme="light"] {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+.react-activity-calendar__tooltip-arrow {
+  fill: #09090b !important;
+}
+
+html:not(.dark) .react-activity-calendar__tooltip-arrow,
+.react-activity-calendar__tooltip[data-color-scheme="light"] .react-activity-calendar__tooltip-arrow {
+  fill: #ffffff !important;
+}
+
+/* ---------------------------------------------------------------------------
  * BoardUI Theme Transition
  * --------------------------------------------------------------------------- */
 ::view-transition-old(root),
