@@ -1,12 +1,108 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { Volume2, VolumeX, RotateCcw } from "lucide-react";
 import { usePixelRunner, GameMode } from "./use-pixel-runner";
 import { ThemeMode } from "./sprites";
 
 interface PixelRunnerProps {
   onGameModeChange?: (mode: GameMode) => void;
+}
+
+interface ClampedSpeechBubbleProps {
+  text: string;
+  charX: number;
+  charY: number;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+function ClampedSpeechBubble({
+  text,
+  charX,
+  charY,
+  containerRef,
+}: ClampedSpeechBubbleProps) {
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState<{
+    left: number;
+    top: number;
+    arrowLeft: number;
+  } | null>(null);
+
+  useLayoutEffect(() => {
+    const bubble = bubbleRef.current;
+    const container = containerRef.current;
+    if (!bubble || !container) return;
+
+    const reposition = () => {
+      const containerRect = container.getBoundingClientRect();
+      const containerWidth = containerRect.width || container.clientWidth || 320;
+      const bubbleWidth = bubble.offsetWidth || 140;
+      const charPixelX = charX * 2 + 12; // 12px centers over the 24px wide scaled avatar
+      const padding = 10; // 10px safe margin to guarantee staying inside canvas boundaries
+
+      // Calculate ideal center position over character
+      const idealLeft = charPixelX - bubbleWidth / 2;
+      const minLeft = padding;
+      const maxLeft = Math.max(minLeft, containerWidth - bubbleWidth - padding);
+      const clampedLeft = Math.min(Math.max(idealLeft, minLeft), maxLeft);
+
+      // Arrow position relative to the speech bubble's left edge
+      const idealArrowLeft = charPixelX - clampedLeft;
+      const minArrow = 14;
+      const maxArrow = Math.max(minArrow, bubbleWidth - 14);
+      const clampedArrow = Math.min(Math.max(idealArrowLeft, minArrow), maxArrow);
+
+      setCoords({
+        left: Math.round(clampedLeft),
+        top: Math.round(Math.max(8, charY * 2 - 30)),
+        arrowLeft: Math.round(clampedArrow),
+      });
+    };
+
+    reposition();
+
+    const ro = new ResizeObserver(reposition);
+    ro.observe(container);
+    window.addEventListener("resize", reposition);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", reposition);
+    };
+  }, [charX, charY, text, containerRef]);
+
+  // Initial calculated positions before layout measurement to avoid jump
+  const initialCharPixelX = charX * 2 + 12;
+  const initialEstWidth = Math.min(220, text.length * 8 + 24);
+  const initialLeft = Math.max(10, initialCharPixelX - initialEstWidth / 2);
+  const activeLeft = coords ? coords.left : initialLeft;
+  const activeTop = coords ? coords.top : Math.max(8, charY * 2 - 30);
+  const activeArrowLeft = coords
+    ? coords.arrowLeft
+    : Math.min(Math.max(14, initialCharPixelX - initialLeft), initialEstWidth - 14);
+
+  return (
+    <div
+      ref={bubbleRef}
+      className="absolute z-20 pointer-events-none transition-all duration-150 animate-in fade-in zoom-in-95 max-w-[calc(100%-20px)]"
+      style={{
+        left: `${activeLeft}px`,
+        top: `${activeTop}px`,
+      }}
+    >
+      <div className="relative px-2.5 py-1 rounded bg-zinc-900/95 dark:bg-zinc-100/95 text-white dark:text-zinc-950 font-mono text-[10px] sm:text-xs shadow-md border border-zinc-700/60 dark:border-zinc-300/60 whitespace-nowrap">
+        {text}
+        {/* Tiny speech bubble arrow pointing precisely downward to character */}
+        <div
+          className="absolute -bottom-1 w-2 h-2 -translate-x-1/2 rotate-45 bg-zinc-900/95 dark:bg-zinc-100/95 border-r border-b border-zinc-700/60 dark:border-zinc-300/60"
+          style={{
+            left: `${activeArrowLeft}px`,
+          }}
+        />
+      </div>
+    </div>
+  );
 }
 
 export function PixelRunner({ onGameModeChange }: PixelRunnerProps) {
@@ -89,22 +185,14 @@ export function PixelRunner({ onGameModeChange }: PixelRunnerProps) {
         }}
       />
 
-      {/* Floating Speech Bubble in Idle Mode */}
+      {/* Floating Speech Bubble in Idle Mode (Clamped inside canvas) */}
       {gameMode === "idle" && speechBubble && (
-        <div
-          className="absolute z-20 pointer-events-none transition-all duration-200 animate-in fade-in zoom-in-95"
-          style={{
-            left: `${speechBubble.x * 2}px`,
-            top: `${Math.max(12, speechBubble.y * 2 - 28)}px`,
-            transform: "translateX(-40%)",
-          }}
-        >
-          <div className="relative px-2.5 py-1 rounded bg-zinc-900/90 dark:bg-zinc-100/90 text-white dark:text-zinc-950 font-mono text-[10px] sm:text-xs shadow-md border border-zinc-700/50 dark:border-zinc-300/50 whitespace-nowrap">
-            {speechBubble.text}
-            {/* Tiny speech bubble arrow */}
-            <div className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 rotate-45 bg-zinc-900/90 dark:bg-zinc-100/90 border-r border-b border-zinc-700/50 dark:border-zinc-300/50" />
-          </div>
-        </div>
+        <ClampedSpeechBubble
+          text={speechBubble.text}
+          charX={speechBubble.x}
+          charY={speechBubble.y}
+          containerRef={containerRef}
+        />
       )}
 
       {/* Milestone Notification Toast */}

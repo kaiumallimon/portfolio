@@ -121,6 +121,7 @@ export function usePixelRunner(theme: ThemeMode) {
     isRunning: true,
     reducedMotion: false,
     nextMilestone: 100,
+    speechPauseTimer: 0,
   });
 
   // Sync high score and check reduced motion on mount
@@ -180,6 +181,7 @@ export function usePixelRunner(theme: ThemeMode) {
     e.floatingTexts = [];
     e.nextObstacleDist = 80;
     e.nextMilestone = 100;
+    e.speechPauseTimer = 0;
     setMilestoneMsg(null);
     setSpeechBubble(null);
 
@@ -227,6 +229,7 @@ export function usePixelRunner(theme: ThemeMode) {
     e.char.isJumping = false;
     e.char.subState = 'walking';
     e.char.idleTimer = 0;
+    e.speechPauseTimer = 0;
     setMilestoneMsg(null);
     setSpeechBubble(null);
   }, []);
@@ -239,6 +242,7 @@ export function usePixelRunner(theme: ThemeMode) {
   // Show a speech bubble over character
   const triggerSpeechBubble = useCallback((text: string, durationMs = 2800) => {
     const e = engineRef.current;
+    e.speechPauseTimer = Math.round(durationMs / 16.6);
     setSpeechBubble({
       text,
       x: e.char.x,
@@ -589,17 +593,22 @@ export function usePixelRunner(theme: ThemeMode) {
               }
             }
           } else {
-            // Normal gentle strolling back and forth
-            e.char.x += e.char.vx;
-            e.char.y = floorY - 16;
-            e.char.state = e.char.walkFrame === 0 ? 'walk1' : 'walk2';
+            if (e.speechPauseTimer > 0) {
+              e.speechPauseTimer--;
+              e.char.state = 'idle';
+            } else {
+              // Normal gentle strolling back and forth
+              e.char.x += e.char.vx;
+              e.char.y = floorY - 16;
+              e.char.state = e.char.walkFrame === 0 ? 'walk1' : 'walk2';
 
-            if (e.char.x < 15) {
-              e.char.vx = 0.5;
-              e.char.facingLeft = false;
-            } else if (e.char.x > e.width - 25) {
-              e.char.vx = -0.5;
-              e.char.facingLeft = true;
+              if (e.char.x < 15) {
+                e.char.vx = 0.5;
+                e.char.facingLeft = false;
+              } else if (e.char.x > e.width - 25) {
+                e.char.vx = -0.5;
+                e.char.facingLeft = true;
+              }
             }
           }
         }
