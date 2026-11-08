@@ -6,6 +6,7 @@ import { geistSans, geistMono, tiny5 } from "@/lib/fonts";
 import { getSiteSettings } from "@/lib/data-service";
 import { SITE_URL } from "@/lib/site";
 import GAListener from "@/lib/ga-listener";
+import ClickSpark from "@/components/ClickSpark";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -107,7 +108,14 @@ export default async function RootLayout({
           <GAListener />
         </Suspense>
 
-        {children}
+        <ClickSpark
+          sparkSize={12}
+          sparkRadius={26}
+          sparkCount={8}
+          duration={450}
+        >
+          {children}
+        </ClickSpark>
       </body>
     </html>
   );
