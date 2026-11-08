@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { GitHubStats } from "@/lib/github";
-import { Star, GitFork, BookOpen } from "lucide-react";
+import { Star, GitFork, BookOpen, Flame } from "lucide-react";
 import { RiGithubLine } from "@remixicon/react";
-import { GitHubCalendar } from "react-github-calendar";
+import { ActivityCalendar } from "react-activity-calendar";
+import { getKaiumContributionData } from "@/lib/github-data";
 
 export function MonochromeGitHubTelemetry({
   stats,
@@ -13,13 +14,29 @@ export function MonochromeGitHubTelemetry({
   stats: GitHubStats | null;
   username?: string;
 }) {
+  const contributionData = useMemo(() => getKaiumContributionData(), []);
+
   return (
     <section className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
-      {/* Calendar Area directly below socials matching blueprint */}
+      {/* Calendar Area */}
       <div className="p-4 sm:p-6 overflow-hidden">
+        {/* Calendar Summary Line */}
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-zinc-500">
+          <div>
+            <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+              3,553 contributions
+            </span>{" "}
+            in the last year
+          </div>
+          <div className="text-[11px] text-zinc-400">
+            9 Nov 2025 — 8 Nov 2026
+          </div>
+        </div>
+
+        {/* Square Sharp Matrix: rx=0 ry=0 enforced on all svg rects */}
         <div className="overflow-x-auto py-2 flex justify-center [&_rect]:rx-0 [&_rect]:ry-0">
-          <GitHubCalendar
-            username={username}
+          <ActivityCalendar
+            data={contributionData}
             blockSize={11.5}
             blockMargin={3}
             fontSize={11}
@@ -43,31 +60,31 @@ export function MonochromeGitHubTelemetry({
           />
         </div>
 
-        {/* Muted stats & language telemetry bar */}
+        {/* Telemetry metrics bar */}
         <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-900 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-500">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1.5" title="Public Repositories">
               <BookOpen className="w-3.5 h-3.5 text-zinc-400" />
               <span className="text-zinc-900 dark:text-zinc-100 font-medium tabular-nums">
-                {stats?.publicRepos ?? 147}
+                {stats?.publicRepos || 100}
               </span>
               <span>repos</span>
             </span>
 
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1.5" title="Total Stars">
               <Star className="w-3.5 h-3.5 text-zinc-400" />
               <span className="text-zinc-900 dark:text-zinc-100 font-medium tabular-nums">
-                {stats?.totalStars ?? 142}
+                {stats?.totalStars || 22}
               </span>
               <span>stars</span>
             </span>
 
-            <span className="flex items-center gap-1">
-              <GitFork className="w-3.5 h-3.5 text-zinc-400" />
+            <span className="flex items-center gap-1.5" title="Longest Streak">
+              <Flame className="w-3.5 h-3.5 text-orange-500/80" />
               <span className="text-zinc-900 dark:text-zinc-100 font-medium tabular-nums">
-                {stats?.totalForks ?? 38}
+                12
               </span>
-              <span>forks</span>
+              <span>day streak</span>
             </span>
           </div>
 

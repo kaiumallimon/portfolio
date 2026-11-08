@@ -1,0 +1,563 @@
+{
+  "projects": [
+    {
+      "id": "e27f7099-9725-4b3d-a78c-2b89c5e6946b",
+      "name": "MediTouch",
+      "short_details": "MediTouch is a telemedicine platform delivering affordable, accessible healthcare and education to underserved communities in rural Bangladesh.",
+      "github_url": "https://github.com/kaiumallimon/meditouch",
+      "live_url": null,
+      "client": "mobile",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 0,
+      "created_at": "2026-07-15T01:14:07.872755+00:00",
+      "image": null,
+      "technologies": null,
+      "images": null
+    },
+    {
+      "id": "ff5f108b-7e59-4b49-8560-67781f26995c",
+      "name": "GadgetWizard",
+      "short_details": "A production-grade full-featured tech e-commerce platform for Australia region built with Next.js 16, React 19, TypeScript, Tailwind CSS v4 and MySQL.",
+      "github_url": "https://github.com/kaiumallimon/gadgetwizard",
+      "live_url": "https://gadgetwizard.com.au/",
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 2,
+      "created_at": "2026-07-15T21:50:43.957774+00:00",
+      "image": "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784152238285-fk2waud3wle.png",
+      "technologies": null,
+      "images": [
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784152238285-fk2waud3wle.png"
+      ]
+    },
+    {
+      "id": "4ad65f68-6174-4762-bf8d-8d3fc87add0a",
+      "name": "COSMOS ITS",
+      "short_details": "COSMOS-ITS (Collaborative Orchestration System for Multi-Agent Optimization and Synthesis for Intelligent Tutoring Systems) is a personalized academic support for university students provided by an AI-powered intelligent tutoring System.",
+      "github_url": "https://github.com/kaiumallimon/comos-its",
+      "live_url": "https://cosmos-its-amber.vercel.app/",
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 2,
+      "created_at": "2026-07-15T22:06:21.015282+00:00",
+      "image": "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784154526848-p64xge4bfrr.png",
+      "technologies": null,
+      "images": [
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784154526848-p64xge4bfrr.png",
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784154532442-h4uqr9kshf5.png"
+      ]
+    },
+    {
+      "id": "105be92f-a6ff-40ce-827d-0320f2038a27",
+      "name": "Aven - AI-Powered Job Application Tracker & Career Workspace",
+      "short_details": "An AI-powered career workspace that helps job seekers organize applications, analyze job opportunities, tailor resumes, and prepare for interviews. It combines AI-powered job extraction, resume matching, outreach automation, interview preparation, and career analytics in one platform.",
+      "github_url": "https://github.com/kaiumallimon/Aven---AI-Powered-Job-Application-Tracker",
+      "live_url": null,
+      "client": null,
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 3,
+      "created_at": "2026-09-07T17:47:29.791965+00:00",
+      "image": null,
+      "technologies": null,
+      "images": null
+    },
+    {
+      "id": "93429e35-89bc-453c-bc60-a2977eb6ae9e",
+      "name": "Portfolio Website",
+      "short_details": "Fully managable modern portfolio website made by Next.js.",
+      "github_url": "https://github.com/kaiumallimon/portfolio",
+      "live_url": "www.kaiumallimon.tech",
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 3,
+      "created_at": "2026-07-15T14:52:50.53516+00:00",
+      "image": "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784127119031-w273txa7ml.png",
+      "technologies": [
+        "Next.js",
+        "Supabase",
+        "reCaptcha",
+        "Framer",
+        "Shadcn"
+      ],
+      "images": [
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784127119031-w273txa7ml.png",
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784127791232-oi58ek05et.png"
+      ]
+    },
+    {
+      "id": "013c9dbc-ceff-41e4-91e3-ef560ed0fdab",
+      "name": "Dorm of Decents",
+      "short_details": "A comprehensive bachelor flat expense management system built with Next.js 16, React 19, Tailwind CSS v4 & Firebase.",
+      "github_url": "https://github.com/kaiumallimon/dorm-of-descent",
+      "live_url": "https://dorm-of-decents.vercel.app/",
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 4,
+      "created_at": "2026-07-15T21:59:43.329337+00:00",
+      "image": "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784152772626-qgg2wusynwp.png",
+      "technologies": null,
+      "images": [
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784152772626-qgg2wusynwp.png",
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784152778061-5ie9zs2zc6t.png"
+      ]
+    },
+    {
+      "id": "97441023-38ea-472a-8041-007ec7ebf744",
+      "name": "Viae",
+      "short_details": "A full-featured resume builder that combines a structured section-by-section editor with multiple layout templates, real-time ATS readability scoring, and high-fidelity PDF export — all in one cohesive application.",
+      "github_url": "https://github.com/kaiumallimon/viae",
+      "live_url": null,
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 5,
+      "created_at": "2026-07-29T01:09:39.22211+00:00",
+      "image": null,
+      "technologies": null,
+      "images": []
+    },
+    {
+      "id": "42ae651c-a1d6-4578-a103-3f0118df2b0b",
+      "name": "Neuroweb",
+      "short_details": "An Australian digital marketing & web development agency portfolio built with Next.js 16 and React 19.",
+      "github_url": "https://github.com/kaiumallimon/neuroweb",
+      "live_url": "https://www.neuroweb.com.au/",
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 5,
+      "created_at": "2026-07-15T21:21:13.540295+00:00",
+      "image": "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784150769821-cdj245m5m5o.png",
+      "technologies": null,
+      "images": [
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784150769821-cdj245m5m5o.png"
+      ]
+    },
+    {
+      "id": "0655bef2-d065-442d-972e-6610984e8a95",
+      "name": "Quran Companion",
+      "short_details": "A production-grade, offline-first Quran companion application.",
+      "github_url": "https://github.com/kaiumallimon/al-quran",
+      "live_url": null,
+      "client": "mobile",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 6,
+      "created_at": "2026-07-15T22:02:51.534094+00:00",
+      "image": null,
+      "technologies": null,
+      "images": []
+    },
+    {
+      "id": "3bfe4515-b7ed-45bd-afab-b9db81eb8b0c",
+      "name": "Nex",
+      "short_details": "A modern AI chatbot application built with Flutter.",
+      "github_url": "https://github.com/kaiumallimon/nex",
+      "live_url": null,
+      "client": "mobile",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 6,
+      "created_at": "2026-07-15T22:40:03.338692+00:00",
+      "image": null,
+      "technologies": null,
+      "images": []
+    },
+    {
+      "id": "fe94c8d9-f4a5-4eda-9002-4d1c80cdf845",
+      "name": "Melbourne Acid Washing",
+      "short_details": "A high-performance marketing website for a Melbourne-based exterior cleaning business.",
+      "github_url": "https://github.com/kaiumallimon/melbourne-acid-washing",
+      "live_url": "https://melbourne-acid-washing.vercel.app/",
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 7,
+      "created_at": "2026-07-15T21:39:38.720437+00:00",
+      "image": "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784151571957-t6xh1aamfe.png",
+      "technologies": null,
+      "images": [
+        "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1784151571957-t6xh1aamfe.png"
+      ]
+    },
+    {
+      "id": "219862a5-9a05-4297-b35d-c0a0b0f36e24",
+      "name": "UIU CGPA Calculator",
+      "short_details": "A modern, user-friendly CGPA (Cumulative Grade Point Average) calculator built specifically for United International University students.",
+      "github_url": "https://github.com/kaiumallimon/uiu-cgpa-calculator",
+      "live_url": "https://uiu-cgpa-calculator-three.vercel.app/",
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 9,
+      "created_at": "2026-07-15T22:38:37.258039+00:00",
+      "image": null,
+      "technologies": null,
+      "images": []
+    },
+    {
+      "id": "f43d9bbc-a35f-4228-a3ac-eb3d1a351b59",
+      "name": "Pharmbrew",
+      "short_details": "A comprehensive and scalable Integrated Industry Management System built with Flutter for web.",
+      "github_url": "https://github.com/kaiumallimon/pharmbrew",
+      "live_url": null,
+      "client": "web",
+      "overview": null,
+      "features": null,
+      "conclusion": null,
+      "order": 11,
+      "created_at": "2026-07-15T22:41:39.710291+00:00",
+      "image": null,
+      "technologies": null,
+      "images": []
+    }
+  ],
+  "education": [
+    {
+      "id": "0c13c0c3-60c1-4618-bded-74b4c41751d8",
+      "degree": "B.Sc. in Computer Science & Engineering",
+      "institution": "United International University",
+      "period": "2022 — 2026",
+      "description": "Specializing in full-stack development, system design, and cloud technologies.",
+      "status": "current",
+      "order": 1,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "3aeba712-c917-432a-802a-be92d6344ac3",
+      "degree": "Higher Secondary Certificate (HSC)",
+      "institution": "Safiuddin Sarkar Academy & College",
+      "period": "2018 — 2020",
+      "description": "GPA: 5.00 — (Science Group)",
+      "status": "completed",
+      "order": 2,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "c596cd19-af54-45af-a81b-eb54a7bdb3c1",
+      "degree": "Secondary School Certificate (SSC)",
+      "institution": "Daudpur Putina High School",
+      "period": "2013 — 2018",
+      "description": "GPA: 5.00 — (Science Group)",
+      "status": "completed",
+      "order": 3,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    }
+  ],
+  "skills": [
+    {
+      "id": "544c784e-efc3-4bbe-a3ea-2eb88a13cd88",
+      "category": "Mobile & Core",
+      "icon": "FaMobile",
+      "skills": [
+        {
+          "name": "Flutter",
+          "highlight": true
+        },
+        {
+          "name": "Dart",
+          "highlight": true
+        },
+        {
+          "name": "Provider",
+          "highlight": true
+        },
+        {
+          "name": "BLoC",
+          "highlight": true
+        },
+        {
+          "name": "GetX",
+          "highlight": false
+        },
+        {
+          "name": "Clean Architecture",
+          "highlight": false
+        },
+        {
+          "name": "Responsive Designs",
+          "highlight": false
+        },
+        {
+          "name": "Custom Widgets",
+          "highlight": false
+        },
+        {
+          "name": "State Management",
+          "highlight": false
+        },
+        {
+          "name": "Navigation & Routing",
+          "highlight": false
+        },
+        {
+          "name": "Firebase Integration",
+          "highlight": false
+        },
+        {
+          "name": "REST APIs",
+          "highlight": false
+        },
+        {
+          "name": "CI/CD for Flutter",
+          "highlight": false
+        }
+      ],
+      "order": 1,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "410aa4e1-e621-4640-aac5-71d50475b0e1",
+      "category": "AI & Intelligent Systems",
+      "icon": "Server",
+      "skills": [
+        {
+          "name": "LangChain",
+          "highlight": true
+        },
+        {
+          "name": "LangGraph",
+          "highlight": false
+        },
+        {
+          "name": "RAG Systems",
+          "highlight": true
+        },
+        {
+          "name": "Pinecone",
+          "highlight": true
+        },
+        {
+          "name": "ChromaDB",
+          "highlight": false
+        },
+        {
+          "name": "Multi-Agent Orchestration",
+          "highlight": false
+        }
+      ],
+      "order": 2,
+      "created_at": "2026-07-15T03:02:01.148375+00:00"
+    },
+    {
+      "id": "3393820d-7d7b-4057-8059-87633920a797",
+      "category": "Backend & API",
+      "icon": "Server",
+      "skills": [
+        {
+          "name": "FastAPI",
+          "highlight": true
+        },
+        {
+          "name": "Python",
+          "highlight": true
+        },
+        {
+          "name": "Node.js",
+          "highlight": false
+        },
+        {
+          "name": "Express",
+          "highlight": false
+        },
+        {
+          "name": "PostgreSQL",
+          "highlight": false
+        },
+        {
+          "name": "MySQL",
+          "highlight": false
+        },
+        {
+          "name": "MongoDB",
+          "highlight": false
+        },
+        {
+          "name": "Firebase",
+          "highlight": false
+        },
+        {
+          "name": "Supabase",
+          "highlight": false
+        }
+      ],
+      "order": 3,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "bc751a18-acbb-4b98-8cf2-f06759bc4e92",
+      "category": "Web & DevOps",
+      "icon": "Globe",
+      "skills": [
+        {
+          "name": "Next.js",
+          "highlight": true
+        },
+        {
+          "name": "React",
+          "highlight": false
+        },
+        {
+          "name": "TypeScript",
+          "highlight": false
+        },
+        {
+          "name": "Tailwind CSS",
+          "highlight": true
+        },
+        {
+          "name": "Git",
+          "highlight": true
+        },
+        {
+          "name": "GitHub Actions",
+          "highlight": false
+        },
+        {
+          "name": "Docker",
+          "highlight": false
+        },
+        {
+          "name": "CI/CD",
+          "highlight": false
+        },
+        {
+          "name": "Vercel",
+          "highlight": false
+        },
+        {
+          "name": "Netlify",
+          "highlight": false
+        }
+      ],
+      "order": 4,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    }
+  ],
+  "achievements": [
+    {
+      "id": "dcdbca55-82d7-4c3d-88db-6a8760af7dd8",
+      "title": "UIU CSE Project Show | Fall '24",
+      "award": "1st Runner-Up – Software Engineering Lab",
+      "award_rank": "1st-runner-up",
+      "date": "27 January 2025",
+      "project": "MediTouch",
+      "team": "Team Bcrypt",
+      "image": "/software-lab.jpg",
+      "order": 1,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "bd09d7d3-8e88-4145-b634-128650d2dfa7",
+      "title": "UIU CSE Project Show | Summer '24",
+      "award": "Champion – System Analysis and Design",
+      "award_rank": "champion",
+      "date": "8 September 2024",
+      "project": "MediTouch",
+      "team": "Team Bcrypt",
+      "image": "/sad-lab.png",
+      "order": 2,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "a463701d-a8e2-4224-9bca-ec89bea19cae",
+      "title": "UIU CSE Project Show | Spring '24",
+      "award": "1st Runner-Up – Database Management System (DBMS)",
+      "award_rank": "1st-runner-up",
+      "date": "3 June 2024",
+      "project": "Pharmabrew",
+      "team": "Team Bcrypt",
+      "image": "/dbms-lab.png",
+      "order": 3,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "7708c518-9fbb-4b4e-a5ca-3fc5fba3b36a",
+      "title": "UIU CSE Project Show | Spring '23",
+      "award": "2nd Runner-Up – Advanced Object-Oriented Programming (AOOP)",
+      "award_rank": "2nd-runner-up",
+      "date": "3 May 2023",
+      "project": "Wayout",
+      "team": "Team Tripod",
+      "image": "/aoop-lab.jpg",
+      "order": 4,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    }
+  ],
+  "activities": [
+    {
+      "id": "aa097697-707f-4f0d-8b42-10d433bbfe25",
+      "title": "Head of Software & Innovation",
+      "organization": "UIU App Forum",
+      "period": "Sep 2024 – Oct 2025",
+      "active": true,
+      "order": 1,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "44018a4b-bc14-4191-882a-f56d407ebc2c",
+      "title": "Junior Executive of Development",
+      "organization": "UIU App Forum",
+      "period": "Aug 2023 – Sep 2024",
+      "active": false,
+      "order": 2,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "39c7a40f-a6c3-45f5-8830-c3ef7b6a0e91",
+      "title": "Mentor — Grooming for CSE Project Show",
+      "organization": "UIU App Forum",
+      "period": "Aug 2023",
+      "active": false,
+      "order": 3,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    },
+    {
+      "id": "d4d18f93-b2a1-4d81-ae4b-e760bea0d095",
+      "title": "General Member",
+      "organization": "UIU App Forum",
+      "period": "Mar 2022 – Aug 2023",
+      "active": false,
+      "order": 4,
+      "created_at": "2026-07-15T00:21:09.127038+00:00"
+    }
+  ],
+  "settings": {
+    "id": 1,
+    "display_name": "Kaium Al Limon",
+    "hero_headline": null,
+    "hero_subheadline": "Specializing in fluid Flutter mobile applications, modern Next.js web platforms, and resilient, high-speed backends built with FastAPI and Node.js + Express",
+    "about_bio": "<p>Computer Science &amp; Engineering graduate from <a target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-indigo-400 underline hover:text-indigo-300 transition-colors\" href=\"https://www.uiu.ac.bd/\"><strong>United International University</strong></a>. While my academic journey provided the theoretical foundation, my real education happened in the IDE. Over the past few years, I've grown into a Software Engineer with a deep focus on Flutter and full-stack development. From building scalable backends with FastAPI and Node.js + Express to creating interactive web experiences with Next.js and optimizing mobile UIs, I am passionate about quality and seamless user experiences. I value writing clean, understandable code and learning from real-world constraints through projects. My goal is to continue building robust and scalable software by learning from real projects, improving with each iteration, and solving practical problems across mobile and web.</p>",
+    "available_status": true,
+    "profile_image": "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/portfolio-media/1790225302202-en7iamdlcj4.png",
+    "github_url": "https://github.com/kaiumallimon",
+    "linkedin_url": "https://linkedin.com/in/kaiumallimon",
+    "email": "kalimon291@gmail.com",
+    "location": "Dhaka, Bangladesh",
+    "github_username": "kaiumallimon",
+    "resume_url": "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/resumes/1786734778380-87o1hmihtey.pdf",
+    "seo_title": "Kaium Al Limon | Full-Stack Software Engineer",
+    "seo_description": "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer specializing in Flutter & Next.js. Computer Science student at UIU.",
+    "updated_at": "2026-07-15T00:21:09.127038+00:00",
+    "footer_description": "Full-Stack Mobile & Web Software Engineer building cross-platform apps, modern web experiences, and scalable backends with clean architecture and production-ready code.",
+    "facebook_url": "https://facebook.com/kaiumallimon"
+  }
+}

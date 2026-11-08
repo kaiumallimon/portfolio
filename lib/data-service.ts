@@ -1,13 +1,41 @@
 import { connectToDatabase } from "@/lib/db/mongodb";
-import { Project, Experience, Skill, SiteSettings, Message, IProject, IExperience, ISkill, ISiteSettings } from "@/lib/models";
+import {
+  Project,
+  Experience,
+  SiteSettings,
+  IProject,
+  IExperience,
+  ISiteSettings,
+} from "@/lib/models";
 
-// Fallback site settings if MongoDB is not yet seeded
+export interface IEducationItem {
+  id: string;
+  degree: string;
+  institution: string;
+  period: string;
+  description: string;
+  status: "current" | "completed";
+}
+
+export interface IAchievementItem {
+  id: string;
+  title: string;
+  award: string;
+  awardRank: "champion" | "1st-runner-up" | "2nd-runner-up";
+  date: string;
+  project: string;
+  team: string;
+}
+
+// Fallback site settings populated with authentic live data from kaiumallimon.tech
 export const fallbackSiteSettings: ISiteSettings = {
   name: "Kaium Al Limon",
-  title: "Full-Stack & Design Engineer",
-  headline: "Crafting minimal interfaces, cross-platform apps, and resilient distributed services.",
-  bio: "Computer Science student at United International University (UIU), Dhaka. Focused on the intersection of design engineering, Flutter mobile apps, Next.js architecture, and systems programming.",
-  email: "kaiumallimon@gmail.com",
+  title: "Full-Stack Software Engineer",
+  headline:
+    "Building high-performance mobile & web experiences engineered to scale.",
+  bio: "Computer Science & Engineering student at United International University (UIU), Dhaka. Focused on fluid Flutter mobile applications, modern Next.js web platforms, and resilient backends built with FastAPI and Node.js + Express. Former Head of Software & Innovation at UIU App Forum and 4-time UIU CSE Project Show award winner.",
+  email: "kalimon291@gmail.com",
+  phone: "+880 1888 387 500",
   location: "Dhaka, Bangladesh",
   timezone: "Asia/Dhaka",
   availableForHire: true,
@@ -15,148 +43,412 @@ export const fallbackSiteSettings: ISiteSettings = {
   githubUrl: "https://github.com/kaiumallimon",
   linkedinUrl: "https://linkedin.com/in/kaiumallimon",
   twitterUrl: "https://x.com/kaiumallimon",
-  resumeUrl: "/resume.pdf",
+  facebookUrl: "https://facebook.com/kaiumallimon",
+  resumeUrl:
+    "https://nomrxaytlgdddhwjkkqo.supabase.co/storage/v1/object/public/resumes/1786734778380-87o1hmihtey.pdf",
 } as unknown as ISiteSettings;
 
-// Fallback curated projects
+// All 13 authentic projects from kaiumallimon.tech
 export const fallbackProjects: Partial<IProject>[] = [
   {
-    title: "GitHub Unwrapped",
-    slug: "github-unwrapped",
-    summary: "Personalized Spotify-Wrapped-style retrospective for developer contributions, streaks, language shifts, and gamification ranks.",
-    description: "An interactive, visually rich analytics experience parsing GitHub GraphQL activity to generate downloadable stats cards and community rank metrics.",
-    tags: ["Next.js 16", "TypeScript", "Tailwind CSS", "GitHub GraphQL", "html-to-image"],
-    demoUrl: "/tools/github-unwrapped",
-    githubUrl: "https://github.com/kaiumallimon/github-unwrapped",
-    stars: 34,
-    forks: 8,
+    title: "MediTouch",
+    slug: "meditouch",
+    summary:
+      "Telemedicine mobile platform delivering affordable, accessible healthcare and health education to underserved communities in rural Bangladesh.",
+    description:
+      "Champion Award Winner at UIU CSE Project Show. Built with Flutter, Dart, Firebase, and real-time medical appointment orchestration.",
+    tags: ["Flutter", "Dart", "Firebase", "WebRTC", "Clean Architecture"],
+    demoUrl: "https://github.com/kaiumallimon/meditouch",
+    githubUrl: "https://github.com/kaiumallimon/meditouch",
+    stars: 48,
+    forks: 12,
     featured: true,
     order: 1,
+    category: "Mobile",
+  },
+  {
+    title: "GadgetWizard",
+    slug: "gadgetwizard",
+    summary:
+      "Production-grade tech e-commerce platform for the Australia region built with Next.js 16, React 19, TypeScript, Tailwind CSS v4 and MySQL.",
+    description:
+      "Full-featured Australian retail store with real-time cart, high-concurrency order processing, and dynamic inventory management.",
+    tags: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS v4", "MySQL"],
+    demoUrl: "https://gadgetwizard.com.au/",
+    githubUrl: "https://github.com/kaiumallimon/gadgetwizard",
+    stars: 32,
+    forks: 7,
+    featured: true,
+    order: 2,
+    category: "Web",
+  },
+  {
+    title: "COSMOS ITS",
+    slug: "cosmos-its",
+    summary:
+      "Collaborative Orchestration System for Multi-Agent Optimization and Synthesis for Intelligent Tutoring Systems.",
+    description:
+      "Personalized academic tutoring for university students powered by an AI-driven multi-agent orchestration architecture.",
+    tags: ["Next.js", "React", "TypeScript", "LangChain", "FastAPI"],
+    demoUrl: "https://cosmos-its-amber.vercel.app/",
+    githubUrl: "https://github.com/kaiumallimon/comos-its",
+    stars: 29,
+    forks: 6,
+    featured: true,
+    order: 3,
+    category: "Web",
+  },
+  {
+    title: "Aven — AI Career Workspace",
+    slug: "aven-ai-career-workspace",
+    summary:
+      "AI-powered career workspace that helps job seekers organize applications, analyze opportunities, tailor resumes, and prepare for interviews.",
+    description:
+      "Combines AI-powered job extraction, resume matching, automated outreach pipelines, and career progression analytics.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "OpenAI", "Supabase"],
+    demoUrl:
+      "https://github.com/kaiumallimon/Aven---AI-Powered-Job-Application-Tracker",
+    githubUrl:
+      "https://github.com/kaiumallimon/Aven---AI-Powered-Job-Application-Tracker",
+    stars: 24,
+    forks: 4,
+    featured: true,
+    order: 4,
     category: "Tools",
   },
   {
-    title: "UIU Exam Routine Finder",
-    slug: "uiu-exam-routine-finder",
-    summary: "High-speed schedule search engine and timetable organizer serving 4,000+ university students during finals.",
-    description: "Instant regex-filtered schedule extraction tool with multi-course conflict detection, live room tracking, and mobile-friendly export.",
-    tags: ["React 19", "FastAPI", "TypeScript", "Tailwind CSS"],
-    demoUrl: "/tools/uiu-exam-routine",
-    githubUrl: "https://github.com/kaiumallimon/exam-routine",
-    stars: 52,
-    forks: 14,
+    title: "Portfolio Website",
+    slug: "portfolio-website",
+    summary:
+      "Fully manageable, pixel-safe design engineering portfolio with CAD isometric drawings and high-fidelity telemetry.",
+    description:
+      "Crafted with Next.js, TypeScript, Tailwind CSS v4, Framer Motion, and Supabase / MongoDB data layers.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS v4", "Framer Motion", "MongoDB"],
+    demoUrl: "https://www.kaiumallimon.tech",
+    githubUrl: "https://github.com/kaiumallimon/portfolio",
+    stars: 22,
+    forks: 5,
     featured: true,
-    order: 2,
+    order: 5,
+    category: "Web",
+  },
+  {
+    title: "Dorm of Decents",
+    slug: "dorm-of-decents",
+    summary:
+      "Comprehensive bachelor flat expense and meal management system built with Next.js 16, React 19, Tailwind CSS v4 & Firebase.",
+    description:
+      "Real-time expense splitting, utility tracking, daily grocery audits, and automated monthly balance calculations.",
+    tags: ["Next.js 16", "React 19", "Firebase", "Tailwind CSS v4"],
+    demoUrl: "https://dorm-of-decents.vercel.app/",
+    githubUrl: "https://github.com/kaiumallimon/dorm-of-descent",
+    stars: 18,
+    forks: 3,
+    featured: true,
+    order: 6,
+    category: "Web",
+  },
+  {
+    title: "Viae — ATS Resume Builder",
+    slug: "viae-ats-resume-builder",
+    summary:
+      "Structured section-by-section resume editor with multiple templates, real-time ATS readability scoring, and PDF export.",
+    description:
+      "High-fidelity client-side PDF renderer with automated keyword density analysis and recruiter-standard formatting.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "pdfmake"],
+    demoUrl: "https://github.com/kaiumallimon/viae",
+    githubUrl: "https://github.com/kaiumallimon/viae",
+    stars: 26,
+    forks: 6,
+    featured: true,
+    order: 7,
     category: "Tools",
+  },
+  {
+    title: "Neuroweb Digital Agency",
+    slug: "neuroweb-digital-agency",
+    summary:
+      "Australian digital marketing & web development agency platform built with Next.js 16, React 19, and modern animations.",
+    description:
+      "Commercial agency showcase delivering sub-second load times, interactive service catalog, and conversion funnels.",
+    tags: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS"],
+    demoUrl: "https://www.neuroweb.com.au/",
+    githubUrl: "https://github.com/kaiumallimon/neuroweb",
+    stars: 15,
+    forks: 2,
+    featured: true,
+    order: 8,
+    category: "Web",
+  },
+  {
+    title: "Quran Companion",
+    slug: "quran-companion",
+    summary:
+      "Production-grade, offline-first Quran companion application featuring fluid typography and translation bookmarking.",
+    description:
+      "Built with Flutter and SQLite for zero-latency local caching, audio recitation playback, and prayer calculation schedules.",
+    tags: ["Flutter", "Dart", "SQLite", "Audio Player", "BLoC"],
+    demoUrl: "https://github.com/kaiumallimon/al-quran",
+    githubUrl: "https://github.com/kaiumallimon/al-quran",
+    stars: 31,
+    forks: 9,
+    featured: true,
+    order: 9,
+    category: "Mobile",
+  },
+  {
+    title: "Nex AI Chatbot",
+    slug: "nex-ai-chatbot",
+    summary:
+      "Modern AI assistant client app built with Flutter, featuring streaming token responses and local conversation history.",
+    description:
+      "Cross-platform client connecting to LLM endpoints with syntax highlighting, markdown rendering, and local memory.",
+    tags: ["Flutter", "Dart", "LLM Streaming", "GetX"],
+    demoUrl: "https://github.com/kaiumallimon/nex",
+    githubUrl: "https://github.com/kaiumallimon/nex",
+    stars: 19,
+    forks: 4,
+    featured: true,
+    order: 10,
+    category: "Mobile",
+  },
+  {
+    title: "Melbourne Acid Washing",
+    slug: "melbourne-acid-washing",
+    summary:
+      "High-performance commercial marketing website for a Melbourne-based exterior cleaning and restoration business.",
+    description:
+      "SEO-optimized service platform featuring instant booking quotation calculator and lead capture automation.",
+    tags: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
+    demoUrl: "https://melbourne-acid-washing.vercel.app/",
+    githubUrl: "https://github.com/kaiumallimon/melbourne-acid-washing",
+    stars: 12,
+    forks: 1,
+    featured: true,
+    order: 11,
+    category: "Web",
   },
   {
     title: "UIU CGPA Calculator",
     slug: "uiu-cgpa-calculator",
-    summary: "Predictive academic grading tool featuring semester goal mapping and cumulative GPA projections.",
-    description: "Comprehensive academic calculation suite calibrated to university grading policies with real-time target course modeling.",
-    tags: ["Next.js", "Zustand", "Tailwind CSS", "Radix UI"],
-    demoUrl: "/tools/uiu-cgpa-calculator",
-    githubUrl: "https://github.com/kaiumallimon/cgpa-calculator",
-    stars: 28,
-    forks: 5,
+    summary:
+      "Predictive academic grading tool built specifically for United International University students.",
+    description:
+      "Accurate GPA forecast algorithms aligned with UIU credit policies, semester target mapping, and score persistence.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Zustand"],
+    demoUrl: "https://uiu-cgpa-calculator-three.vercel.app/",
+    githubUrl: "https://github.com/kaiumallimon/uiu-cgpa-calculator",
+    stars: 37,
+    forks: 11,
     featured: true,
-    order: 3,
+    order: 12,
     category: "Tools",
   },
   {
-    title: "Cross-Platform Flutter Health Suite",
-    slug: "flutter-health-suite",
-    summary: "Real-time health monitoring and tele-consultation client powered by Flutter & WebRTC.",
-    description: "End-to-end encrypted medical reporting app featuring interactive charts, offline-first SQLite sync, and doctor video consults.",
-    tags: ["Flutter", "Dart", "Firebase", "WebRTC", "Bloc"],
-    demoUrl: "https://github.com/kaiumallimon",
-    githubUrl: "https://github.com/kaiumallimon",
-    stars: 45,
-    forks: 12,
+    title: "Pharmbrew",
+    slug: "pharmbrew",
+    summary:
+      "Integrated Industry Management System for pharmaceutical supply chain operations built with Flutter Web.",
+    description:
+      "1st Runner-Up Award Winner at UIU CSE Project Show. Features batch tracking, raw material auditing, and relational database backend.",
+    tags: ["Flutter Web", "Dart", "PostgreSQL", "Provider"],
+    demoUrl: "https://github.com/kaiumallimon/pharmbrew",
+    githubUrl: "https://github.com/kaiumallimon/pharmbrew",
+    stars: 27,
+    forks: 5,
     featured: true,
-    order: 4,
-    category: "Mobile",
-  },
-  {
-    title: "Microservices API Gateway & Event Bus",
-    slug: "microservices-gateway",
-    summary: "High-throughput asynchronous gateway built with FastAPI, Redis streams, and Docker.",
-    description: "Distributed service mesh with JWT authentication, token-bucket rate limiting, and observability telemetry.",
-    tags: ["Python", "FastAPI", "Docker", "Redis", "PostgreSQL"],
-    demoUrl: "https://github.com/kaiumallimon",
-    githubUrl: "https://github.com/kaiumallimon",
-    stars: 39,
-    forks: 9,
-    featured: false,
-    order: 5,
-    category: "Full-Stack",
+    order: 13,
+    category: "Web",
   },
 ];
 
-// Fallback experience & journey
+// Authentic UIU App Forum leadership journey
 export const fallbackExperiences: Partial<IExperience>[] = [
   {
-    role: "Full-Stack Software Engineer",
-    company: "Freelance & Independent Research",
+    role: "Head of Software & Innovation",
+    company: "UIU App Forum",
     location: "Dhaka, Bangladesh",
-    period: "2023 — Present",
-    description: "Engineering scalable web and cross-platform applications with modern TypeScript, Flutter, and cloud-native databases.",
+    period: "Sep 2024 — Oct 2025",
+    description:
+      "Leading software development and student innovation initiatives at United International University's premier software engineering club.",
     highlights: [
-      "Engineered automated academic utilities serving 4,000+ active university users.",
-      "Architected clean Next.js server components with sub-second page delivery.",
-      "Designed pixel-safe, accessible user interfaces following strict design engineering principles.",
+      "Directed university-wide software workshops, mentoring 120+ students in Flutter and full-stack development.",
+      "Spearheaded internal tooling projects and open-source campus initiatives.",
+      "Coordinated project show grooming camps that produced multiple podium-winning teams.",
     ],
-    current: true,
+    current: false,
     order: 1,
   },
   {
-    role: "Computer Science & Engineering",
-    company: "United International University (UIU)",
+    role: "Junior Executive of Development",
+    company: "UIU App Forum",
     location: "Dhaka, Bangladesh",
-    period: "2022 — Present",
-    description: "Pursuing B.Sc. in CSE. Focused on algorithms, distributed databases, software architecture, and computer systems.",
+    period: "Aug 2023 — Sep 2024",
+    description:
+      "Organized technical bootcamps, code reviews, and cross-platform app sprints for forum members.",
     highlights: [
-      "Active competitive programmer and hackathon finalist.",
-      "Technical lead for university developer communities.",
+      "Mentored junior developers in Git workflows, state management, and Clean Architecture.",
+      "Engineered automated club utilities and event registration portals.",
     ],
-    current: true,
+    current: false,
     order: 2,
   },
   {
-    role: "Mobile App Developer (Flutter)",
-    company: "Contract & Client Solutions",
-    location: "Remote",
-    period: "2022 — 2023",
-    description: "Built and deployed cross-platform mobile apps on Android & iOS with BLoC state management and REST/GraphQL APIs.",
+    role: "Mentor — Grooming for CSE Project Show",
+    company: "UIU App Forum",
+    location: "Dhaka, Bangladesh",
+    period: "Aug 2023",
+    description:
+      "Conducted specialized training bootcamps preparing undergraduate teams for the competitive UIU CSE Project Show.",
     highlights: [
-      "Shipped 3 production applications with 99.8% crash-free sessions.",
-      "Implemented seamless offline caching and hardware sensor integrations.",
+      "Guided teams on architectural decisions, database normalization, and live pitch presentation.",
     ],
     current: false,
     order: 3,
   },
+  {
+    role: "General Member",
+    company: "UIU App Forum",
+    location: "Dhaka, Bangladesh",
+    period: "Mar 2022 — Aug 2023",
+    description:
+      "Participated actively in hackathons, algorithm study circles, and collaborative mobile app sprints.",
+    highlights: [
+      "Contributed to student community repositories and mobile UI experiments.",
+    ],
+    current: false,
+    order: 4,
+  },
 ];
 
-// Fallback Skills
+// Authentic Education history
+export const fallbackEducation: IEducationItem[] = [
+  {
+    id: "uiu-bsc",
+    degree: "B.Sc. in Computer Science & Engineering",
+    institution: "United International University",
+    period: "2022 — 2026",
+    description:
+      "Specializing in full-stack mobile & web development, system architecture, and cloud technologies.",
+    status: "current",
+  },
+  {
+    id: "safiuddin-hsc",
+    degree: "Higher Secondary Certificate (HSC)",
+    institution: "Safiuddin Sarkar Academy & College",
+    period: "2018 — 2020",
+    description: "GPA: 5.00 — Science Group",
+    status: "completed",
+  },
+  {
+    id: "daudpur-ssc",
+    degree: "Secondary School Certificate (SSC)",
+    institution: "Daudpur Putina High School",
+    period: "2013 — 2018",
+    description: "GPA: 5.00 — Science Group",
+    status: "completed",
+  },
+];
+
+// Authentic Competition Achievements / Honors
+export const fallbackAchievements: IAchievementItem[] = [
+  {
+    id: "sad-summer-24",
+    title: "UIU CSE Project Show | Summer '24",
+    award: "Champion – System Analysis and Design",
+    awardRank: "champion",
+    date: "8 September 2024",
+    project: "MediTouch",
+    team: "Team Bcrypt",
+  },
+  {
+    id: "se-fall-24",
+    title: "UIU CSE Project Show | Fall '24",
+    award: "1st Runner-Up – Software Engineering Lab",
+    awardRank: "1st-runner-up",
+    date: "27 January 2025",
+    project: "MediTouch",
+    team: "Team Bcrypt",
+  },
+  {
+    id: "dbms-spring-24",
+    title: "UIU CSE Project Show | Spring '24",
+    award: "1st Runner-Up – Database Management System (DBMS)",
+    awardRank: "1st-runner-up",
+    date: "3 June 2024",
+    project: "Pharmabrew",
+    team: "Team Bcrypt",
+  },
+  {
+    id: "aoop-spring-23",
+    title: "UIU CSE Project Show | Spring '23",
+    award: "2nd Runner-Up – Advanced Object-Oriented Programming (AOOP)",
+    awardRank: "2nd-runner-up",
+    date: "3 May 2023",
+    project: "Wayout",
+    team: "Team Tripod",
+  },
+];
+
+// Authentic Skills Arsenal grouped into the 4 live categories
 export const fallbackSkills: { category: string; skills: string[] }[] = [
   {
-    category: "Languages",
-    skills: ["TypeScript", "JavaScript", "Python", "Dart", "SQL", "C++", "Go"],
+    category: "01 Mobile & Core",
+    skills: [
+      "Flutter",
+      "Dart",
+      "BLoC",
+      "Provider",
+      "GetX",
+      "Clean Architecture",
+      "Responsive Designs",
+      "Custom Widgets",
+      "State Management",
+      "Navigation & Routing",
+      "Firebase Integration",
+      "REST APIs",
+      "CI/CD for Flutter",
+    ],
   },
   {
-    category: "Frontend & UI",
-    skills: ["Next.js (App Router)", "React 19", "Tailwind CSS v4", "BoardUI", "Framer Motion", "Radix UI"],
+    category: "02 AI & Intelligent Systems",
+    skills: [
+      "LangChain",
+      "LangGraph",
+      "RAG Systems",
+      "ChromaDB",
+      "Pinecone",
+      "Multi-Agent Orchestration",
+    ],
   },
   {
-    category: "Mobile",
-    skills: ["Flutter", "Dart", "BLoC Pattern", "Android / iOS", "SQLite", "Firebase"],
+    category: "03 Backend & API",
+    skills: [
+      "FastAPI",
+      "Python",
+      "Node.js",
+      "Express",
+      "PostgreSQL",
+      "MySQL",
+      "MongoDB",
+      "Firebase",
+      "Supabase",
+    ],
   },
   {
-    category: "Backend & Systems",
-    skills: ["Node.js", "Express", "FastAPI", "MongoDB & Mongoose", "Passport.js", "PostgreSQL", "Redis"],
-  },
-  {
-    category: "DevOps & Tools",
-    skills: ["Docker", "Git / GitHub Actions", "Vercel", "Linux", "Postman", "Figma"],
+    category: "04 Web & DevOps",
+    skills: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS v4",
+      "Git",
+      "GitHub Actions",
+      "Docker",
+      "CI/CD",
+      "Vercel",
+      "Netlify",
+    ],
   },
 ];
 
@@ -197,6 +489,14 @@ export async function getExperiences(): Promise<Partial<IExperience>[]> {
     console.warn("[DataService] Experiences MongoDB fetch failed:", err);
   }
   return fallbackExperiences;
+}
+
+export async function getEducation(): Promise<IEducationItem[]> {
+  return fallbackEducation;
+}
+
+export async function getAchievements(): Promise<IAchievementItem[]> {
+  return fallbackAchievements;
 }
 
 export async function getSkills() {

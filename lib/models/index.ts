@@ -34,7 +34,7 @@ export interface IProject extends Document {
   forks?: number;
   featured: boolean;
   order: number;
-  category: "Full-Stack" | "Mobile" | "Tools" | "Open Source";
+  category: "Full-Stack" | "Mobile" | "Tools" | "Open Source" | "Web";
   createdAt: Date;
 }
 
@@ -110,13 +110,16 @@ export interface ISiteSettings extends Document {
   headline: string;
   bio: string;
   email: string;
+  phone?: string;
   location: string;
   timezone: string;
   availableForHire: boolean;
   statusText: string;
   githubUrl: string;
+  githubUsername?: string;
   linkedinUrl: string;
   twitterUrl?: string;
+  facebookUrl?: string;
   resumeUrl?: string;
 }
 

@@ -40,11 +40,11 @@
   /* ----- Typography ----------------------------------------------------------
    * Configured with Manrope, Ubuntu Mono, and Tiny5 for logo.
    * --------------------------------------------------------------------------*/
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif,
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
                "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
                "Noto Color Emoji";
 
-  --font-mono: var(--font-ubuntu-mono), ui-monospace, "SFMono-Regular", Menlo,
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", Menlo,
                Consolas, "Liberation Mono", monospace;
 
   --font-tiny5: var(--font-tiny5), monospace;

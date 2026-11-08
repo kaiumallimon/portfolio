@@ -144,10 +144,10 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
               {settings.name}
             </h1>
 
-            {/* Blue Verified Badge */}
+            {/* Verified Badge */}
             <span
-              className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs"
-              title="Verified Full-Stack & Design Engineer"
+              className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
+              title="Verified Engineer"
             >
               <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
             </span>
@@ -169,7 +169,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
           {/* Lower line: Designation in monospace font */}
           <div className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/40 dark:bg-zinc-900/20">
             <p className="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-              Full-Stack &amp; Design Engineer.
+              Full-Stack Software Engineer.
             </p>
           </div>
         </div>
@@ -194,7 +194,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
               <RiCodeSSlashLine className="w-3.5 h-3.5" />
             </div>
             <span className="text-zinc-700 dark:text-zinc-300">
-              Design Engineer <span className="text-zinc-400">@</span>UIU
+              Full-Stack Software Engineer <span className="text-zinc-400">@</span>UIU
             </span>
           </div>
 
@@ -254,10 +254,10 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
               <RiPhoneLine className="w-3.5 h-3.5" />
             </div>
             <a
-              href="tel:+8801839520929"
+              href="tel:+8801888387500"
               className="text-zinc-700 dark:text-zinc-300 hover:underline"
             >
-              +880 183 952 0929
+              +880 1888 387 500
             </a>
           </div>
 
