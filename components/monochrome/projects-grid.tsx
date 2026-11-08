@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, Star, GitFork } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 import { RiGithubLine } from "@remixicon/react";
 import { IProject } from "@/lib/models";
 
@@ -15,112 +15,107 @@ export function MonochromeProjects({ projects }: { projects: Partial<IProject>[]
     : projects.filter((p) => p.category === filter);
 
   return (
-    <section id="projects" className="py-8">
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
-              Selected Works
-            </h2>
-            <p className="text-xs text-zinc-500 font-sans mt-0.5">
-              Production applications, tools & open-source libraries
-            </p>
-          </div>
-
-          {/* Filter Pills */}
-          <div className="flex items-center gap-1 p-0.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-100/60 dark:bg-zinc-900/60 w-fit">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-2 py-0.5 text-xs font-mono rounded transition-colors cursor-pointer ${
-                  filter === cat
-                    ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs font-medium"
-                    : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+    <section id="projects" className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
+      {/* Header Bar */}
+      <div className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
+            Selected Works
+          </h2>
+          <p className="text-xs text-zinc-500 font-mono mt-0.5">
+            Production applications, tools &amp; open-source repositories
+          </p>
         </div>
 
-        {/* 2-column bento grid on wider canvas */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          {filteredProjects.map((p, index) => (
-            <div
-              key={p.slug || index}
-              className="group rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1 p-0.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-100/60 dark:bg-zinc-900/60 w-fit">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setFilter(cat)}
+              className={`px-2.5 py-0.5 text-xs font-mono rounded transition-colors cursor-pointer ${
+                filter === cat
+                  ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs font-medium"
+                  : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+              }`}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1.5 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-medium text-zinc-400">
-                      [{p.category || "Full-Stack"}]
-                    </span>
-                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 font-sans">
-                      {p.title}
-                    </h3>
-                  </div>
-
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans">
-                    {p.summary}
-                  </p>
-
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {p.tags?.slice(0, 4).map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Right links & stars */}
-                <div className="flex flex-col items-end gap-2 shrink-0 pt-0.5">
-                  <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
-                    {typeof p.stars === "number" && p.stars > 0 && (
-                      <span className="flex items-center gap-0.5 text-[11px]">
-                        <Star className="w-3 h-3 text-zinc-400" />
-                        <span>{p.stars}</span>
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2 text-xs font-mono">
-                    {p.demoUrl && (
-                      <a
-                        href={p.demoUrl}
-                        target={p.demoUrl.startsWith("http") ? "_blank" : undefined}
-                        rel="noopener noreferrer"
-                        className="text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white flex items-center gap-0.5"
-                      >
-                        <span>Demo</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </a>
-                    )}
-                    {p.githubUrl && (
-                      <a
-                        href={p.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
-                        title="GitHub Code"
-                      >
-                        <RiGithubLine className="w-3.5 h-3.5" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+              {cat}
+            </button>
           ))}
         </div>
       </div>
+
+      {/* 2-column bento grid */}
+      <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {filteredProjects.map((p, index) => (
+          <div
+            key={p.slug || index}
+            className="group rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-medium text-zinc-400">
+                    [{p.category || "Full-Stack"}]
+                  </span>
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 font-sans">
+                    {p.title}
+                  </h3>
+                </div>
+
+                {typeof p.stars === "number" && p.stars > 0 && (
+                  <span className="flex items-center gap-1 text-[11px] font-mono text-zinc-400 shrink-0">
+                    <Star className="w-3 h-3 text-zinc-400" />
+                    <span>{p.stars}</span>
+                  </span>
+                )}
+              </div>
+
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans">
+                {p.summary}
+              </p>
+
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {p.tags?.slice(0, 4).map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-900 mt-3 text-xs font-mono">
+              {p.demoUrl && (
+                <a
+                  href={p.demoUrl}
+                  target={p.demoUrl.startsWith("http") ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  className="text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white flex items-center gap-1"
+                >
+                  <span>Live Preview</span>
+                  <ArrowUpRight className="w-3 h-3" />
+                </a>
+              )}
+              {p.githubUrl && (
+                <a
+                  href={p.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-zinc-500 hover:text-zinc-950 dark:hover:text-white flex items-center gap-1"
+                >
+                  <RiGithubLine className="w-3.5 h-3.5" />
+                  <span>Code</span>
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />
     </section>
   );
 }

@@ -40,6 +40,29 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+ * Chanhdai Architectural Stripe Dividers & Hairlines
+ * --------------------------------------------------------------------------- */
+.stripe-divider {
+  background-image: repeating-linear-gradient(
+    315deg,
+    transparent,
+    transparent 4px,
+    rgba(0, 0, 0, 0.04) 4px,
+    rgba(0, 0, 0, 0.04) 5px
+  );
+}
+
+html.dark .stripe-divider {
+  background-image: repeating-linear-gradient(
+    315deg,
+    transparent,
+    transparent 4px,
+    rgba(255, 255, 255, 0.04) 4px,
+    rgba(255, 255, 255, 0.04) 5px
+  );
+}
+
+/* ---------------------------------------------------------------------------
  * BoardUI Theme Transition
  * --------------------------------------------------------------------------- */
 ::view-transition-old(root),

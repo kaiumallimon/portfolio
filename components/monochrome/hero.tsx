@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { ArrowUpRight, Volume2, Check } from "lucide-react";
+import { ArrowUpRight, Volume2, Check, Copy, CheckCheck } from "lucide-react";
 import {
   RiTwitterXLine,
   RiGithubLine,
@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import { PixelLogo } from "./pixel-logo";
 import { ISiteSettings } from "@/lib/models";
 
-// Gentle synthesized chime on audio button click (matching chanhdai's signature)
+// Synthesized name chime matching chanhdai's signature sound
 function playAudioChime() {
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
@@ -43,7 +43,8 @@ function playAudioChime() {
 
 export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
   const [timeString, setTimeString] = useState<string>("");
-  const [copied, setCopied] = useState<boolean>(false);
+  const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
+  const [copiedUrl, setCopiedUrl] = useState<boolean>(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -68,12 +69,19 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
 
   const copyEmail = () => {
     navigator.clipboard.writeText(settings.email);
-    setCopied(true);
-    toast.success("Email address copied to clipboard");
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedEmail(true);
+    toast.success("Email copied to clipboard");
+    setTimeout(() => setCopiedEmail(false), 2000);
   };
 
-  const socialLinks = [
+  const copyUrl = () => {
+    navigator.clipboard.writeText("https://kaiumallimon.tech");
+    setCopiedUrl(true);
+    toast.success("URL copied to clipboard");
+    setTimeout(() => setCopiedUrl(false), 2000);
+  };
+
+  const socialRow1 = [
     {
       name: "X",
       icon: <RiTwitterXLine className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />,
@@ -89,6 +97,9 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
       icon: <RiLinkedinLine className="w-4 h-4 text-[#0077b5]" />,
       url: settings.linkedinUrl || "https://linkedin.com/in/kaiumallimon",
     },
+  ];
+
+  const socialRow2 = [
     {
       name: "daily.dev",
       icon: <RiArticleLine className="w-4 h-4 text-[#9055ff]" />,
@@ -107,151 +118,237 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
   ];
 
   return (
-    <section className="pt-8 pb-10">
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-8">
-        {/* 1. Large Pixel Logo [KL] matching chanhdai.com [CD] */}
-        <PixelLogo size={42} />
+    <section className="w-full bg-white dark:bg-zinc-950">
+      {/* 1. Dimension indicator at top of canvas (1024 width marker) */}
+      <div className="hidden sm:flex items-center px-4 h-8 border-b border-zinc-200 dark:border-zinc-800 text-zinc-400 select-none">
+        <div className="flex-1 bg-zinc-200 dark:bg-zinc-800 h-px" />
+        <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 px-3 tabular-nums">
+          1024
+        </span>
+        <div className="flex-1 bg-zinc-200 dark:bg-zinc-800 h-px" />
+      </div>
 
-        {/* 2. Profile Avatar + Verified Name Block */}
-        <div className="flex items-center gap-4">
-          <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 shrink-0">
-            <Image
-              src="/bordered.png"
-              alt={settings.name}
-              fill
-              sizes="80px"
-              className="object-cover"
-              priority
-            />
-          </div>
+      {/* 2. Large Pixel Monogram [KL] Centered */}
+      <div className="py-8 sm:py-10 flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800">
+        <PixelLogo size={44} />
+      </div>
 
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
-                {settings.name}
-              </h1>
-
-              {/* Blue Verified Badge */}
-              <span
-                className="w-4.5 h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs"
-                title="Verified Design & Software Engineer"
-              >
-                <Check className="w-3 h-3 stroke-[3]" />
-              </span>
-
-              {/* Audio Chime Button */}
-              <button
-                onClick={() => {
-                  playAudioChime();
-                  toast.success("Name chime played");
-                }}
-                className="p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
-                title="Pronounce / Audio Chime"
-              >
-                <Volume2 className="w-4 h-4" />
-              </button>
-            </div>
-
-            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-sans">
-              Full-Stack & Design Engineer · Open Source Contributor
-            </p>
-          </div>
+      {/* 3. Profile Avatar & Name Block matching chanhdai.com */}
+      <div className="p-4 sm:p-6 flex items-start sm:items-center gap-4 sm:gap-6 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-full overflow-hidden shrink-0 border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900">
+          <Image
+            src="/bordered.png"
+            alt={settings.name}
+            fill
+            sizes="120px"
+            className="object-cover"
+            priority
+          />
         </div>
 
-        {/* 3. The Signature 2-Column Info Table (matching Screenshot 1) */}
-        <div className="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden text-xs font-sans divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
-          {/* Row 1 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800">
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-              <RiCodeSSlashLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>Full-Stack & Design Engineer @Freelance</span>
-            </div>
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-              <RiLightbulbLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>Founder @kaium.dev</span>
-            </div>
+        <div className="space-y-1">
+          {/* Quirky Monospace Tailwind class annotation from chanhdai */}
+          <div className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 select-none">
+            text-3xl text-zinc-950 font-medium
           </div>
 
-          {/* Row 2 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800">
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-              <RiLightbulbLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>Student @United International University (UIU)</span>
-            </div>
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-              <span className="text-zinc-400 font-mono text-[11px] shrink-0">B.Sc.</span>
-              <span>Computer Science & Engineering</span>
-            </div>
-          </div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
+              {settings.name}
+            </h1>
 
-          {/* Row 3: Location + Live Ticking Clock */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800">
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-              <RiMapPinLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>Dhaka, Bangladesh</span>
-            </div>
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300 font-mono">
-              <RiTimeLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span className="tabular-nums font-medium">{timeString || "16:35"}</span>
-              <span className="text-zinc-400 font-sans">// Local Time (GMT+6)</span>
-            </div>
-          </div>
-
-          {/* Row 4: Contact & Email */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800">
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300 font-mono">
-              <RiPhoneLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>+880 1700 000 000</span>
-            </div>
-            <button
-              onClick={copyEmail}
-              className="px-3.5 py-2.5 flex items-center justify-between text-zinc-700 dark:text-zinc-300 font-mono hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-left cursor-pointer"
+            {/* Blue Verified Badge */}
+            <span
+              className="w-4.5 h-4.5 rounded-full bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs"
+              title="Verified Design & Systems Engineer"
             >
-              <div className="flex items-center gap-2">
-                <RiMailLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-                <span>{settings.email}</span>
-              </div>
-              <span className="text-[10px] text-zinc-400 uppercase font-sans">
-                {copied ? "Copied" : "Copy"}
-              </span>
+              <Check className="w-3 h-3 stroke-[3]" />
+            </span>
+
+            {/* Audio Chime Button */}
+            <button
+              onClick={() => {
+                playAudioChime();
+                toast.success("Name chime played");
+              }}
+              className="p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+              title="Pronounce name"
+              aria-label="Pronounce name"
+            >
+              <Volume2 className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Row 5: Domain & Pronouns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800">
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300 font-mono">
-              <RiGlobalLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <a href="https://kaiumallimon.tech" target="_blank" rel="noopener noreferrer" className="hover:underline">
+          <p className="font-mono text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+            Open Source Contributor & Design Engineer
+          </p>
+        </div>
+      </div>
+
+      {/* 4. Signature 2-Column Hairline Metadata Table */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 border-b border-zinc-200 dark:border-zinc-800 sm:divide-x divide-zinc-200 dark:divide-zinc-800 text-xs sm:text-sm font-mono">
+        {/* Left Column */}
+        <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          <div className="px-4 py-2.5 flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+              <RiCodeSSlashLine className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-zinc-700 dark:text-zinc-300">
+              Design Engineer <span className="text-zinc-400">@</span>UIU
+            </span>
+          </div>
+
+          <div className="px-4 py-2.5 flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+              <RiLightbulbLine className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-zinc-700 dark:text-zinc-300">
+              Founder <span className="text-zinc-400">@</span>Routine Finder
+            </span>
+          </div>
+
+          <div className="px-4 py-2.5 flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+              <RiMapPinLine className="w-3.5 h-3.5" />
+            </div>
+            <a
+              href="https://maps.google.com/?q=Dhaka,Bangladesh"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-700 dark:text-zinc-300 hover:underline"
+            >
+              Dhaka, Bangladesh
+            </a>
+          </div>
+
+          <div className="px-4 py-2.5 flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+              <RiPhoneLine className="w-3.5 h-3.5" />
+            </div>
+            <a
+              href="tel:+8801839520929"
+              className="text-zinc-700 dark:text-zinc-300 hover:underline"
+            >
+              +880 183 952 0929
+            </a>
+          </div>
+
+          <div className="px-4 py-2.5 flex items-center justify-between group">
+            <div className="flex items-center gap-3">
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+                <RiGlobalLine className="w-3.5 h-3.5" />
+              </div>
+              <a
+                href="https://kaiumallimon.tech"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-700 dark:text-zinc-300 hover:underline"
+              >
                 kaiumallimon.tech
               </a>
             </div>
-            <div className="px-3.5 py-2.5 flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-              <RiUserSmileLine className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>he / him</span>
-            </div>
+            <button
+              onClick={copyUrl}
+              className="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 p-1 rounded-sm opacity-80 group-hover:opacity-100 transition-opacity"
+              title="Copy URL"
+            >
+              {copiedUrl ? <CheckCheck className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+            </button>
           </div>
         </div>
 
-        {/* 4. Social Links Grid (3 columns x 2 rows, matching Screenshot 1) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {socialLinks.map((item) => (
-            <a
-              key={item.name}
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3.5 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-2.5">
-                {item.icon}
-                <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200">
-                  {item.name}
-                </span>
+        {/* Right Column */}
+        <div className="divide-y divide-zinc-200 dark:divide-zinc-800 border-t sm:border-t-0 border-zinc-200 dark:border-zinc-800">
+          <div className="px-4 py-2.5 flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+              <RiTimeLine className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-zinc-700 dark:text-zinc-300 tabular-nums">
+              {timeString || "17:05"} <span className="text-zinc-400">// Dhaka (GMT+6)</span>
+            </span>
+          </div>
+
+          <div className="px-4 py-2.5 flex items-center justify-between group">
+            <div className="flex items-center gap-3">
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+                <RiMailLine className="w-3.5 h-3.5" />
               </div>
-              <ArrowUpRight className="w-3 h-3 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
-            </a>
-          ))}
+              <a
+                href={`mailto:${settings.email}`}
+                className="text-zinc-700 dark:text-zinc-300 hover:underline truncate max-w-[180px] sm:max-w-none"
+              >
+                {settings.email}
+              </a>
+            </div>
+            <button
+              onClick={copyEmail}
+              className="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 p-1 rounded-sm opacity-80 group-hover:opacity-100 transition-opacity"
+              title="Copy email address"
+            >
+              {copiedEmail ? <CheckCheck className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+
+          <div className="px-4 py-2.5 flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+              <RiUserSmileLine className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-zinc-700 dark:text-zinc-300">
+              he/him
+            </span>
+          </div>
+
+          {/* Empty spacer rows to align table height seamlessly */}
+          <div className="hidden sm:flex px-4 py-2.5 items-center gap-3 text-transparent select-none">
+            <div className="size-6" />
+            <span>—</span>
+          </div>
+          <div className="hidden sm:flex px-4 py-2.5 items-center gap-3 text-transparent select-none">
+            <div className="size-6" />
+            <span>—</span>
+          </div>
         </div>
+      </div>
+
+      {/* 5. 6-Card Social Links Grid (3 columns x 2 rows) matching Screenshot 1 */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800">
+        {socialRow1.map((item) => (
+          <a
+            key={item.name}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              {item.icon}
+              <span className="text-xs sm:text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                {item.name}
+              </span>
+            </div>
+            <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+          </a>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800">
+        {socialRow2.map((item) => (
+          <a
+            key={item.name}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              {item.icon}
+              <span className="text-xs sm:text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                {item.name}
+              </span>
+            </div>
+            <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+          </a>
+        ))}
       </div>
     </section>
   );
