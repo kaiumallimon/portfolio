@@ -246,14 +246,16 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
             />
 
             {/* Social Links Row */}
-            <div className="relative z-10 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-3 px-4 sm:px-8 font-mono text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
+            <div className="relative z-10 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-8 gap-y-3 px-4 sm:px-8 font-mono text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
               <a
                 href={settings.linkedinUrl || "https://linkedin.com/in/kaiumallimon"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
+                className="group inline-flex items-center gap-2.5 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
               >
-                <RiLinkedinLine className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+                <div className="flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 text-zinc-700 dark:text-zinc-300 shadow-sm group-hover:border-zinc-400 dark:group-hover:border-zinc-700 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800 group-hover:text-zinc-950 dark:group-hover:text-white transition-all">
+                  <RiLinkedinLine className="size-3.5 sm:size-4" />
+                </div>
                 <span className="hover:underline underline-offset-4">linkedin.com/in/kaiumallimon</span>
               </a>
 
@@ -261,9 +263,11 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
                 href={settings.githubUrl || "https://github.com/kaiumallimon"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
+                className="group inline-flex items-center gap-2.5 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
               >
-                <RiGithubLine className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+                <div className="flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 text-zinc-700 dark:text-zinc-300 shadow-sm group-hover:border-zinc-400 dark:group-hover:border-zinc-700 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800 group-hover:text-zinc-950 dark:group-hover:text-white transition-all">
+                  <RiGithubLine className="size-3.5 sm:size-4" />
+                </div>
                 <span className="hover:underline underline-offset-4">github.com/kaiumallimon</span>
               </a>
 
@@ -271,18 +275,22 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
                 href={settings.twitterUrl || "https://x.com/kaiumallimon"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
+                className="group inline-flex items-center gap-2.5 hover:text-zinc-950 dark:hover:text-white transition-colors py-1"
               >
-                <RiTwitterXLine className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors" />
+                <div className="flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 text-zinc-700 dark:text-zinc-300 shadow-sm group-hover:border-zinc-400 dark:group-hover:border-zinc-700 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800 group-hover:text-zinc-950 dark:group-hover:text-white transition-all">
+                  <RiTwitterXLine className="size-3.5 sm:size-4" />
+                </div>
                 <span className="hover:underline underline-offset-4">x.com/kaiumallimon</span>
               </a>
 
               <button
                 type="button"
                 onClick={scrollToTop}
-                className="group inline-flex items-center gap-2 hover:text-zinc-950 dark:hover:text-white transition-colors cursor-pointer py-1"
+                className="group inline-flex items-center gap-2.5 hover:text-zinc-950 dark:hover:text-white transition-colors cursor-pointer py-1"
               >
-                <ArrowUp className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white group-hover:-translate-y-0.5 transition-all" />
+                <div className="flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 text-zinc-700 dark:text-zinc-300 shadow-sm group-hover:border-zinc-400 dark:group-hover:border-zinc-700 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800 group-hover:text-zinc-950 dark:group-hover:text-white transition-all">
+                  <ArrowUp className="size-3.5 sm:size-4 group-hover:-translate-y-0.5 transition-transform" />
+                </div>
                 <span className="hover:underline underline-offset-4">Back to top</span>
               </button>
             </div>
