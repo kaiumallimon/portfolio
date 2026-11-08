@@ -294,8 +294,8 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
 
             {/* Massive Faded Half-Visible Name in Tiny5 Font */}
             <div className="relative z-10 w-full overflow-hidden flex justify-center pointer-events-none select-none mt-2 sm:mt-4">
-              <span className="font-tiny5 text-[110px] sm:text-[180px] md:text-[260px] lg:text-[340px] xl:text-[400px] font-normal leading-[0.72] tracking-wider text-zinc-900/[0.08] dark:text-zinc-100/[0.08] uppercase whitespace-nowrap translate-y-[33%] transition-all">
-                KAL
+              <span className="font-tiny5 text-[72px] sm:text-[120px] md:text-[170px] lg:text-[220px] xl:text-[270px] font-normal leading-[0.72] tracking-wider text-zinc-900/[0.08] dark:text-zinc-100/[0.08] uppercase whitespace-nowrap translate-y-[33%] transition-all">
+                LIMON
               </span>
             </div>
           </div>
