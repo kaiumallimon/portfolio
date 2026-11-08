@@ -22,10 +22,10 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
       {/* Clean Centered CTA Stage */}
       <div className="px-4 sm:px-6 py-14 sm:py-20 text-center max-w-2xl mx-auto space-y-6">
         {/* Subtle Online Indicator */}
-        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono text-xs">
+        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 font-mono text-xs">
           <span className="relative flex size-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-zinc-400 dark:bg-zinc-500 opacity-75" />
+            <span className="relative inline-flex size-2 rounded-full bg-zinc-900 dark:bg-zinc-100" />
           </span>
           <span>Online // Ready to Connect</span>
         </div>
@@ -47,7 +47,7 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
             prefetch={false}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-950 text-white dark:bg-zinc-50 dark:text-zinc-950 font-mono text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-sm group cursor-pointer"
           >
-            <MessageSquare className="size-3.5 text-emerald-400 dark:text-emerald-600 group-hover:scale-110 transition-transform" />
+            <MessageSquare className="size-3.5 text-zinc-300 dark:text-zinc-600 group-hover:text-white dark:group-hover:text-zinc-950 group-hover:scale-110 transition-all" />
             <span>Let&apos;s Talk</span>
             <ArrowRight className="size-3.5 group-hover:translate-x-0.5 transition-transform" />
           </Link>
@@ -58,7 +58,7 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 font-mono text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer shadow-2xs"
             title="Copy email to clipboard"
           >
-            {copied ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
+            {copied ? <Check className="size-3.5 text-zinc-950 dark:text-zinc-50" /> : <Copy className="size-3.5" />}
             <span>{email}</span>
           </button>
         </div>
