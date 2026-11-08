@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MonochromeHeader } from "./header";
 import { MonochromeHero } from "./hero";
 import { MonochromeGitHubTelemetry } from "./github-telemetry";
@@ -38,6 +38,8 @@ export function MonochromeMainPage({
   gitHubStats,
 }: MainPageProps) {
   const [commandOpen, setCommandOpen] = useState(false);
+  // ref attached to the cover section — shared with Header for scroll-driven KAL animation
+  const coverRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 transition-colors duration-200">
@@ -45,16 +47,16 @@ export function MonochromeMainPage({
 
       {/* Central Editorial Container: max-w-5xl */}
       <div className="mx-auto max-w-5xl bg-white dark:bg-zinc-950 border-x border-zinc-200 dark:border-zinc-800 min-h-screen">
-        {/* Sticky Header with Ctrl+K Command Dialog */}
+        {/* Sticky Header — receives coverRef to drive KAL scroll animation */}
         <MonochromeHeader
           onOpenCommand={() => setCommandOpen(true)}
           starsCount={gitHubStats?.totalStars || 22}
+          coverRef={coverRef}
         />
 
-        {/* Main Architectural Sections */}
         <main>
-          {/* 1. Hero with 768 bar, CAD Isometric Cover, 160 avatar, contacts, social links */}
-          <MonochromeHero settings={settings} />
+          {/* 1. Hero — coverRef attached to the cover div */}
+          <MonochromeHero settings={settings} coverRef={coverRef} />
 
           {/* 2. GitHub Contribution Calendar & Telemetry */}
           <MonochromeGitHubTelemetry
@@ -62,33 +64,33 @@ export function MonochromeMainPage({
             username={settings.githubUsername || "kaiumallimon"}
           />
 
-          {/* 3. About Section with Dynamic Greeting */}
+          {/* 3. About */}
           <MonochromeAbout />
 
-          {/* 4. Growing with the Community (Stats) */}
+          {/* 4. Community Stats */}
           <MonochromeCommunityStats />
 
-          {/* 5. Technical Stack Arsenal (4 Categories) */}
+          {/* 5. Skills */}
           <MonochromeSkills skills={skills} />
 
-          {/* 6. Professional & Leadership Experience (UIU App Forum) */}
+          {/* 6. Experience */}
           <MonochromeExperience experiences={experiences} />
 
-          {/* 7. Dedicated Education Section (UIU, Safiuddin, Daudpur) */}
+          {/* 7. Education */}
           <MonochromeEducation education={education} />
 
-          {/* 8. Selected Works & Projects (All 13 Projects) */}
+          {/* 8. Projects */}
           <MonochromeProjects projects={projects} />
 
-          {/* 9. Dedicated Recognition Section (4 Project Show Honors) */}
+          {/* 9. Recognition */}
           <MonochromeRecognition achievements={achievements} />
 
-          {/* 10. Message Dispatch & Technical Colophon Footer with Interactive Signature */}
+          {/* 10. Footer */}
           <MonochromeContactFooter settings={settings} />
         </main>
       </div>
 
-      {/* Command Palette (Ctrl+K) */}
+      {/* Command Palette */}
       <MonochromeCommandDialog
         open={commandOpen}
         onOpenChange={setCommandOpen}

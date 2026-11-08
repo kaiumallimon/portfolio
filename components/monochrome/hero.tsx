@@ -40,7 +40,13 @@ function playAudioChime() {
   } catch {}
 }
 
-export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
+export function MonochromeHero({
+  settings,
+  coverRef,
+}: {
+  settings: ISiteSettings;
+  coverRef?: React.RefObject<HTMLDivElement | null>;
+}) {
   const [timeString, setTimeString] = useState<string>("");
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
 
@@ -94,7 +100,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
         </div>
 
         {/* Right Column, Row 1: KAL cover with cover-grid-bg */}
-        <div className="relative cover-grid-bg overflow-hidden flex items-center justify-center">
+        <div ref={coverRef} className="relative cover-grid-bg overflow-hidden flex items-center justify-center">
           <CadIsometricCover />
         </div>
 
