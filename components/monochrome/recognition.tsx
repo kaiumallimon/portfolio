@@ -33,6 +33,7 @@ interface RecognitionCardProps {
 function RecognitionCard({ item }: RecognitionCardProps) {
   const images = getAchievementImages(item);
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const hasMultipleImages = images.length > 1;
 
   const nextImage = (e?: React.MouseEvent) => {
@@ -46,6 +47,7 @@ function RecognitionCard({ item }: RecognitionCardProps) {
   };
 
   const currentImage = images[currentIdx];
+  const isFailed = currentImage ? Boolean(failedImages[currentImage]) : false;
 
   return (
     <div className="group border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors flex flex-col justify-between overflow-hidden">
@@ -59,14 +61,27 @@ function RecognitionCard({ item }: RecognitionCardProps) {
           title={hasMultipleImages ? "Click to view next photo" : undefined}
         >
           {currentImage ? (
-            <Image
-              src={currentImage}
-              alt={`${item.award} — Photo ${currentIdx + 1}`}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-102"
-              priority={item.awardRank === "champion"}
-            />
+            !isFailed ? (
+              <Image
+                src={currentImage}
+                alt={`${item.award} — Photo ${currentIdx + 1}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-102"
+                priority={item.awardRank === "champion"}
+                onError={() =>
+                  setFailedImages((prev) => ({ ...prev, [currentImage]: true }))
+                }
+              />
+            ) : (
+              /* Fallback to direct static image if Next.js image optimization fails or times out */
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={currentImage}
+                alt={`${item.award} — Photo ${currentIdx + 1}`}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+              />
+            )
           ) : (
             <div className="w-full h-full flex items-center justify-center text-xs font-mono text-zinc-400">
               No image available
