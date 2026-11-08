@@ -22,7 +22,6 @@ export function MonochromeExperience({
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
             Experience
           </h2>
-          <sup className="text-xs font-mono text-zinc-400">({experiences.length})</sup>
           <button
             onClick={copyLink}
             className="p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
