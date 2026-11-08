@@ -91,11 +91,20 @@ const MonochromeRecognition = dynamic(
   }
 );
 
-const MonochromeContactFooter = dynamic(
-  () => import("./contact-footer").then((m) => m.MonochromeContactFooter),
+const MonochromeContact = dynamic(
+  () => import("./contact").then((m) => m.MonochromeContact),
   {
     loading: () => (
-      <div className="w-full h-72 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+      <div className="w-full h-48 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+    ),
+  }
+);
+
+const MonochromeFooter = dynamic(
+  () => import("./footer").then((m) => m.MonochromeFooter),
+  {
+    loading: () => (
+      <div className="w-full h-56 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
     ),
   }
 );
@@ -174,8 +183,11 @@ export function MonochromeMainPage({
           {/* 10. Recognition */}
           <MonochromeRecognition achievements={achievements} />
 
-          {/* 10. Footer */}
-          <MonochromeContactFooter settings={settings} />
+          {/* 11. Contact & Message Dispatch */}
+          <MonochromeContact settings={settings} />
+
+          {/* 12. Footer */}
+          <MonochromeFooter settings={settings} />
         </main>
       </div>
 

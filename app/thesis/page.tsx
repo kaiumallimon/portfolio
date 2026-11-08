@@ -12,11 +12,11 @@ import {
   RiGithubLine,
 } from "@remixicon/react";
 
-const MonochromeContactFooter = dynamicImport(
-  () => import("@/components/monochrome/contact-footer").then((m) => m.MonochromeContactFooter),
+const MonochromeFooter = dynamicImport(
+  () => import("@/components/monochrome/footer").then((m) => m.MonochromeFooter),
   {
     loading: () => (
-      <div className="w-full h-72 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+      <div className="w-full h-56 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
     ),
   }
 );
@@ -182,7 +182,7 @@ export default async function ThesisPage() {
         </div>
 
         {/* Footer */}
-        <MonochromeContactFooter settings={settings} />
+        <MonochromeFooter settings={settings} />
       </div>
     </div>
   );

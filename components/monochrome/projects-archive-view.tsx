@@ -9,11 +9,11 @@ import { IProject, ISiteSettings } from "@/lib/models";
 import { MonochromeHeader } from "./header";
 import { ProjectCard } from "./project-card";
 
-const MonochromeContactFooter = dynamic(
-  () => import("./contact-footer").then((m) => m.MonochromeContactFooter),
+const MonochromeFooter = dynamic(
+  () => import("./footer").then((m) => m.MonochromeFooter),
   {
     loading: () => (
-      <div className="w-full h-72 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
+      <div className="w-full h-56 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/20 dark:bg-zinc-900/10" />
     ),
   }
 );
@@ -206,7 +206,7 @@ export function ProjectsArchiveView({
         </div>
 
         {/* Footer */}
-        <MonochromeContactFooter settings={settings} />
+        <MonochromeFooter settings={settings} />
       </div>
     </div>
   );
