@@ -119,16 +119,7 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
 
   return (
     <section className="w-full bg-white dark:bg-zinc-950">
-      {/* 1. Dimension indicator at top of canvas (1024 width marker) */}
-      <div className="hidden sm:flex items-center px-4 h-8 border-b border-zinc-200 dark:border-zinc-800 text-zinc-400 select-none">
-        <div className="flex-1 bg-zinc-200 dark:bg-zinc-800 h-px" />
-        <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 px-3 tabular-nums">
-          1024
-        </span>
-        <div className="flex-1 bg-zinc-200 dark:bg-zinc-800 h-px" />
-      </div>
-
-      {/* 2. Elevated Cover Area with Small Grid Pattern & Tiny5 KAL Monogram */}
+      {/* 1. Elevated Cover Area with Small Grid Pattern & Tiny5 KAL Monogram */}
       <div className="relative w-full h-60 sm:h-72 md:h-80 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-center overflow-hidden bg-white dark:bg-zinc-950 select-none cover-grid-bg">
         {/* Subtle, thin fine-grid overlay (14px x 14px small squares) */}
         <svg
