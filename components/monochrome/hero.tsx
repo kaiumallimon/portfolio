@@ -98,8 +98,8 @@ export function MonochromeHero({ settings }: { settings: ISiteSettings }) {
           <CadIsometricCover />
         </div>
 
-        {/* Right Column, Row 2: Name & Designation — cover-grid-bg continues */}
-        <div className="flex flex-col justify-end cover-grid-bg border-t border-zinc-200 dark:border-zinc-800">
+        {/* Right Column, Row 2: Name & Designation — plain solid background */}
+        <div className="flex flex-col justify-end bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
           {/* Upper line: Name + verified badge + sound chime */}
           <div className="px-4 py-2.5 sm:py-3 flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
