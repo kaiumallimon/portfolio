@@ -27,13 +27,13 @@ export function CadIsometricCover() {
       className="relative w-full h-full min-h-[160px] sm:min-h-[185px] md:min-h-[205px] flex items-center justify-center select-none overflow-hidden transition-all duration-300"
       title="KAL Cover — Click character or press Space to play"
     >
-      {/* Background Pixel-art "KAL" typography */}
+      {/* Background Pixel-art "KAL" typography — soft faded in idle, completely removed when game is ongoing */}
       <span
         onClick={playClickSound}
-        className={`font-tiny5 text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.25em] pl-[0.25em] text-zinc-950 dark:text-zinc-50 transition-all duration-300 select-none ${
-          gameMode === "running"
-            ? "opacity-15 blur-[0.4px] scale-[0.98]"
-            : "opacity-100"
+        className={`font-tiny5 text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.25em] pl-[0.25em] text-zinc-950 dark:text-zinc-50 transition-all duration-500 select-none ${
+          gameMode === "running" || gameMode === "gameover"
+            ? "opacity-0 pointer-events-none scale-95"
+            : "opacity-25 dark:opacity-20"
         }`}
       >
         KAL
