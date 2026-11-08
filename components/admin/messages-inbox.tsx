@@ -71,7 +71,7 @@ export function MessagesInbox({
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "contact_messages" },
-        (payload) => {
+        (payload: any) => {
           if (payload.eventType === "INSERT") {
             const row = payload.new as Row;
             setThreads((prev) => {
@@ -121,7 +121,7 @@ export function MessagesInbox({
           }
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         if (status === "SUBSCRIBED") setLive(true);
       });
 

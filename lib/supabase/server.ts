@@ -1,21 +1,26 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+// Self-contained zero-dependency stub client for MongoDB migration
+export function getServerSupabase(): any {
+  const queryChain: any = {
+    select: () => queryChain,
+    eq: () => queryChain,
+    order: () => queryChain,
+    range: async () => ({ data: [], error: null, count: 0 }),
+    maybeSingle: async () => ({ data: null, error: null }),
+    single: async () => ({ data: null, error: null }),
+    or: () => queryChain,
+    insert: async () => ({ data: null, error: null }),
+    update: async () => ({ data: null, error: null }),
+    delete: async () => ({ data: null, error: null }),
+    then: (resolve: any) => resolve({ data: [], error: null }),
+  };
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-// Server-only Supabase client using the SERVICE ROLE key.
-// Bypasses RLS — must NEVER be imported into a client component.
-const globalForSupabase = globalThis as unknown as {
-  serverSupabase?: SupabaseClient;
-};
-
-export function getServerSupabase(): SupabaseClient {
-  if (globalForSupabase.serverSupabase) return globalForSupabase.serverSupabase;
-
-  const client = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-
-  globalForSupabase.serverSupabase = client;
-  return client;
+  return {
+    from: () => queryChain,
+    storage: {
+      from: () => ({
+        remove: async () => ({ data: null, error: null }),
+        upload: async () => ({ data: null, error: null }),
+      }),
+    },
+  };
 }

@@ -1,98 +1,61 @@
-import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-import { getServerSupabase } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from "next/server";
+import { connectToDatabase } from "@/lib/db/mongodb";
+import { Message } from "@/lib/models";
+import nodemailer from "nodemailer";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { name, email, message, token } = await req.json();
+    const { name, email, subject, message } = await req.json();
 
-    if (!email || !message) {
-      return NextResponse.json({ error: 'Email and message are required' }, { status: 400 });
+    if (!name || !email || !message) {
+      return NextResponse.json(
+        { error: "Name, email, and message are required." },
+        { status: 400 }
+      );
     }
 
-    // reCAPTCHA verification (only enforced when a secret is configured).
-    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
-    if (recaptchaSecret) {
-      if (!token) {
-        return NextResponse.json({ error: 'reCAPTCHA verification required' }, { status: 400 });
-      }
-      try {
-        const verifyRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(token)}`,
-        });
-        const verifyData = await verifyRes.json();
-        if (!verifyData.success) {
-          return NextResponse.json({ error: 'reCAPTCHA verification failed. Please try again.' }, { status: 400 });
-        }
-      } catch {
-        return NextResponse.json({ error: 'reCAPTCHA verification failed. Please try again.' }, { status: 400 });
-      }
-    }
-
-    // Persist the message (best-effort; never block the email send).
+    // Save to MongoDB if connected
     try {
-      const supabase = getServerSupabase();
-      await supabase.from('contact_messages').insert({ name, email, message });
+      await connectToDatabase();
+      await Message.create({
+        name,
+        email,
+        subject: subject || "Portfolio Contact",
+        message,
+        read: false,
+      });
     } catch (dbErr) {
-      console.error('Failed to store contact message:', dbErr);
+      console.warn("[Contact API] MongoDB save error (continuing with email):", dbErr);
     }
 
-    const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_TO } = process.env;
+    // Send email via Nodemailer if configured
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST || "smtp.gmail.com",
+          port: Number(process.env.SMTP_PORT) || 465,
+          secure: Number(process.env.SMTP_PORT || 465) === 465,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+        });
 
-    if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
-      console.warn('[contact] SMTP not configured — message stored but email not sent.');
-      return NextResponse.json({ ok: true, emailSent: false, note: 'Message saved. Email notification is not configured.' });
+        await transporter.sendMail({
+          from: `"${name}" <${process.env.SMTP_USER}>`,
+          replyTo: email,
+          to: process.env.CONTACT_NOTIFICATION_EMAIL || process.env.SMTP_USER,
+          subject: `[Portfolio Contact] ${subject || "New Message from " + name}`,
+          text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+        });
+      } catch (mailErr) {
+        console.warn("[Contact API] SMTP send error:", mailErr);
+      }
     }
 
-    try {
-      const transporter = nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: Number(SMTP_PORT),
-        secure: Number(SMTP_PORT) === 465,
-        auth: { user: SMTP_USER, pass: SMTP_PASS },
-      });
-
-      const safe = (v?: string) => (v ?? '').trim();
-      const timestamp = new Date().toLocaleString();
-
-      const html = `
-        <div style="font-family: Arial, sans-serif; background:#f9f9f9; padding:24px;">
-          <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-            <div style="padding:20px; border-bottom:1px solid #eee;">
-              <h2 style="margin:0; font-size:20px; color:#333;">New Contact Message</h2>
-              <p style="margin:4px 0 0; font-size:12px; color:#888;">${timestamp}</p>
-            </div>
-            <div style="padding:20px; color:#333; font-size:14px; line-height:1.5;">
-              <p><strong>From:</strong> ${safe(name) || '-'}</p>
-              <p><strong>Email:</strong> <a href="mailto:${safe(email)}" style="color:#1a73e8; text-decoration:none;">${safe(email)}</a></p>
-              <p><strong>Message:</strong></p>
-              <p style="white-space: pre-wrap; background:#f5f5f5; padding:12px; border-radius:4px;">${safe(message)}</p>
-            </div>
-            <div style="padding:12px 20px; font-size:12px; color:#aaa; border-top:1px solid #eee; text-align:center;">
-              Sent from portfolio contact page
-            </div>
-          </div>
-        </div>
-      `;
-
-      const info = await transporter.sendMail({
-        from: `"Contact form submission" <${SMTP_USER}>`,
-        to: SMTP_TO || SMTP_USER,
-        replyTo: email,
-        subject: `New message from ${safe(name) || 'Unknown'} via portfolio contact form`,
-        text: `${safe(name)} <${safe(email)}> says:\n\n${safe(message)}`,
-        html,
-      });
-
-      return NextResponse.json({ ok: true, emailSent: true, messageId: info.messageId });
-    } catch (mailErr: any) {
-      console.error('[contact] Email send failed:', mailErr);
-      // Message is already saved — don't fail the request.
-      return NextResponse.json({ ok: true, emailSent: false, note: 'Message saved, but the email notification failed to send.' });
-    }
-  } catch (error: any) {
-    return NextResponse.json({ error: error?.message || 'Failed to send email' }, { status: 500 });
+    return NextResponse.json({ success: true, message: "Message received successfully." });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Error submitting contact form";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

@@ -1,41 +1,18 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
-
-import GAListener from "@/lib/ga-listener";
-
-import { ThemeProvider } from "@/components/theme-provider";
-import SmoothScrollProvider from "@/components/providers/smooth-scroll-provider";
-import { getSiteSettings } from "@/lib/data";
+import { manrope, ubuntuMono, tiny5 } from "@/lib/fonts";
+import { getSiteSettings } from "@/lib/data-service";
 import { SITE_URL } from "@/lib/site";
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
-  subsets: ["latin"],
-  display: "swap",
-});
+import GAListener from "@/lib/ga-listener";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
-  const title = settings?.seo_title || "Kaium Al Limon | Full-Stack Developer";
+  const title = `${settings?.name || "Kaium Al Limon"} — ${settings?.title || "Full-Stack & Design Engineer"}`;
   const description =
-    settings?.seo_description ||
-    "Personal portfolio of Kaium Al Limon, a Full-Stack Cross-Platform Mobile & Web Developer specializing in Flutter & Next.js. Computer Science student at UIU.";
-
-  const profileImg = settings?.profile_image || "/bordered.png";
+    settings?.headline ||
+    "Crafting minimal interfaces, cross-platform apps, and resilient distributed services. Computer Science student at UIU.";
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -47,31 +24,18 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords: [
       "Kaium Al Limon",
       "Full-Stack Developer",
+      "Design Engineer",
       "Flutter Developer",
       "Next.js Developer",
-      "Mobile App Developer",
-      "Web Developer",
-      "Software Engineer",
       "FastAPI",
       "TypeScript",
-      "Python",
-      "Dart",
+      "MongoDB",
       "UIU",
-      "United International University",
-      "Bangladesh",
+      "Software Engineer",
       "Portfolio",
     ],
     authors: [{ name: "Kaium Al Limon", url: "https://github.com/kaiumallimon" }],
     creator: "Kaium Al Limon",
-    publisher: "Kaium Al Limon",
-    formatDetection: {
-      email: true,
-      address: false,
-      telephone: false,
-    },
-    alternates: {
-      canonical: SITE_URL,
-    },
     openGraph: {
       type: "website",
       locale: "en_US",
@@ -81,23 +45,12 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "Kaium Al Limon Portfolio",
       images: [
         {
-          url: profileImg,
+          url: "/bordered.png",
           width: 800,
           height: 800,
-          alt: "Kaium Al Limon — Full-Stack Developer",
+          alt: "Kaium Al Limon",
         },
       ],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
     },
   };
 }
@@ -107,66 +60,35 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getSiteSettings();
-  const personJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: settings?.display_name || "Kaium Al Limon",
-    url: SITE_URL,
-    image: `${SITE_URL}${settings?.profile_image || "/bordered.png"}`,
-    jobTitle: "Full-Stack Developer",
-    worksFor: {
-      "@type": "Organization",
-      name: "Freelance & Open Source",
-    },
-    alumniOf: {
-      "@type": "EducationalOrganization",
-      name: "United International University",
-    },
-    sameAs: [
-      settings?.github_url || "https://github.com/kaiumallimon",
-      settings?.linkedin_url || "https://linkedin.com/in/kaiumallimon",
-      settings?.facebook_url || "https://facebook.com/kaiumallimon",
-    ].filter(Boolean),
-    knowsAbout: [
-      "Flutter",
-      "Dart",
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Python",
-      "FastAPI",
-      "Node.js",
-      "PostgreSQL",
-      "Cross-Platform Mobile Development",
-    ],
-  };
-
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Kaium Al Limon Portfolio",
-    url: SITE_URL,
-    author: {
-      "@type": "Person",
-      name: "Kaium Al Limon",
-    },
-  };
-
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${manrope.variable} ${ubuntuMono.variable} ${tiny5.variable} dark`}
+      suppressHydrationWarning
+    >
       <head>
+        {/* Anti-flash inline script for BoardUI light/dark theme switch */}
         <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var stored = localStorage.getItem('boardui:theme');
+                if (stored === 'light') {
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.classList.add('light');
+                } else {
+                  document.documentElement.classList.add('dark');
+                  document.documentElement.classList.remove('light');
+                }
+              } catch (e) {}
+            `,
+          }}
         />
       </head>
 
-      <body className={`${inter.className} ${inter.variable} ${bricolage.variable} ${jetbrainsMono.variable} antialiased`}>
+      <body
+        className={`${manrope.className} font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen`}
+      >
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"
@@ -185,11 +107,7 @@ export default async function RootLayout({
           <GAListener />
         </Suspense>
 
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <SmoothScrollProvider>
-            {children}
-          </SmoothScrollProvider>
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );

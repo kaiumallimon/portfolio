@@ -1,19 +1,23 @@
 import { NextResponse } from "next/server";
-import { getSiteSettings } from "@/lib/data";
+import { getSiteSettings } from "@/lib/data-service";
 
 export const dynamic = "force-dynamic";
 
-// Public, non-sensitive site settings used by client components (footer, etc.).
+// Public, non-sensitive site settings used by client components
 export async function GET() {
   const s = await getSiteSettings();
   return NextResponse.json({
-    display_name: s?.display_name ?? null,
-    available_status: s?.available_status ?? null,
-    footer_description: s?.footer_description ?? null,
-    facebook_url: s?.facebook_url ?? null,
-    github_url: s?.github_url ?? null,
-    linkedin_url: s?.linkedin_url ?? null,
-    email: s?.email ?? null,
-    location: s?.location ?? null,
+    name: s.name,
+    title: s.title,
+    bio: s.bio,
+    email: s.email,
+    location: s.location,
+    timezone: s.timezone,
+    availableForHire: s.availableForHire,
+    statusText: s.statusText,
+    githubUrl: s.githubUrl,
+    linkedinUrl: s.linkedinUrl,
+    twitterUrl: s.twitterUrl,
+    resumeUrl: s.resumeUrl,
   });
 }

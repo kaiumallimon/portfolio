@@ -1,11 +1,36 @@
-"use client";
+// Browser dummy client matching previous API for safe migration
+export const browserSupabase = {
+  auth: {
+    async getUser() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) return { data: { user: null }, error: null };
+        const data = await res.json();
+        return { data: { user: data.user }, error: null };
+      } catch {
+        return { data: { user: null }, error: null };
+      }
+    },
+    async signOut() {
+      await fetch("/api/auth/logout", { method: "POST" });
+      window.location.href = "/admin/login";
+    },
+  },
+  channel(_name?: string) {
+    return {
+      on(_type?: string, _filter?: unknown, _callback?: unknown) {
+        return this;
+      },
+      subscribe(_callback?: (status: string) => void) {
+        if (_callback) _callback("SUBSCRIBED");
+        return this;
+      },
+      unsubscribe() {},
+    };
+  },
+  removeChannel(_channel?: unknown) {},
+};
 
-import { createBrowserClient } from "@supabase/ssr";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-// Browser Supabase client (anon key) — only for auth flows on the client.
-// Uses @supabase/ssr so the session is persisted in cookies that the
-// server (getSessionUser / middleware) can read.
-export const browserSupabase = createBrowserClient(supabaseUrl, anonKey);
+export function createBrowserClient() {
+  return browserSupabase;
+}

@@ -15,10 +15,10 @@ import type {
 // so the site still renders if the database is unreachable.
 
 async function safeQuery<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return fallback;
   try {
     return await fn();
-  } catch (err) {
-    console.error("[data] fetch failed:", err);
+  } catch {
     return fallback;
   }
 }

@@ -634,8 +634,8 @@ export async function saveSettings(formData: FormData) {
   if (resumeUrl) {
     const { data: rows } = await supabase.from("resume").select("resume_url");
     const stale = (rows ?? [])
-      .map((r) => r.resume_url)
-      .filter((u): u is string => Boolean(u) && u !== resumeUrl);
+      .map((r: any) => r.resume_url)
+      .filter((u: any): u is string => Boolean(u) && u !== resumeUrl);
     for (const u of stale) {
       const m = /\/public\/resumes\/(.+)$/.exec(u);
       if (m) await supabase.storage.from("resumes").remove([m[1]]).catch(() => {});
