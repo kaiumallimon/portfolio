@@ -225,19 +225,8 @@ export function MonochromeContactFooter({ settings }: { settings: ISiteSettings 
       {/* Blake Cyze Inspired Rounded Footer Card */}
       <footer className="w-full bg-white dark:bg-zinc-950 pt-16 sm:pt-24 pb-0 overflow-hidden">
         <div className="w-full">
-          {/* Top Meta Header & Sprouting Botanical Flowers */}
-          <div className="relative">
-            {/* Top Meta: Left & Right info */}
-            <div className="flex items-center justify-between px-4 sm:px-8 pb-3 text-[11px] sm:text-xs font-mono text-zinc-500 dark:text-zinc-400">
-              <div className="flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Made in Dhaka, Bangladesh</span>
-              </div>
-              <div className="hidden sm:flex items-center gap-2 text-zinc-400 dark:text-zinc-500">
-                <span>Tea &amp; Code // no plans to stop</span>
-              </div>
-            </div>
-
+          {/* Sprouting Botanical Flowers Crest */}
+          <div className="relative h-16 sm:h-20 flex justify-center">
             {/* Botanical Flowers blooming out from behind the card rim */}
             <div className="absolute left-1/2 -bottom-[1px] -translate-x-1/2 z-0 pointer-events-none">
               <FooterBotanicalFlowers />
