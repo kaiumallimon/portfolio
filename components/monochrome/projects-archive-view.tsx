@@ -121,13 +121,9 @@ export function ProjectsArchiveView({
                   </p>
                 </div>
 
-                {/* Telemetry / Badge Row — Non-interactive, high contrast text */}
-                <div className="flex flex-wrap items-center gap-2 mt-4 pt-3.5 border-t border-zinc-200/80 dark:border-zinc-800/80 text-[11px] font-mono text-zinc-600 dark:text-zinc-400">
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Production Ready
-                  </span>
-                  <span className="text-zinc-600 dark:text-zinc-400 select-none">
+                {/* Meta Row — Non-interactive, high contrast text */}
+                <div className="flex items-center gap-2 mt-4 pt-3.5 border-t border-zinc-200/80 dark:border-zinc-800/80 text-[11px] font-mono text-zinc-600 dark:text-zinc-400 select-none">
+                  <span>
                     {projects.length} projects · Mobile & Web
                   </span>
                 </div>
