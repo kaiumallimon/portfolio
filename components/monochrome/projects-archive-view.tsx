@@ -142,9 +142,11 @@ export function ProjectsArchiveView({
     const q = searchQuery.trim();
 
     try {
-      const res = await fetch(
-        `/api/projects?page=${nextPage}&limit=10&q=${encodeURIComponent(q)}`
-      );
+      const [res] = await Promise.all([
+        fetch(`/api/projects?page=${nextPage}&limit=10&q=${encodeURIComponent(q)}`),
+        new Promise((resolve) => setTimeout(resolve, 500)), // Smooth transition so loading animation is visible
+      ]);
+
       if (res.ok) {
         const data: PaginatedProjectsResult = await res.json();
         setDisplayedProjects((prev) => {
@@ -177,7 +179,7 @@ export function ProjectsArchiveView({
           loadMore();
         }
       },
-      { rootMargin: "300px" } // trigger seamlessly before reaching absolute bottom
+      { rootMargin: "100px" }
     );
 
     observer.observe(sentinel);
@@ -326,18 +328,67 @@ export function ProjectsArchiveView({
           {/* Projects Grid */}
           <section className="p-4 sm:p-6">
             {displayedProjects.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                {displayedProjects.map((p, index) => {
-                  const slug = p.slug || (p._id ? String(p._id) : `project-${index}`);
-                  return (
-                    <ProjectCard
-                      key={slug}
-                      project={p}
-                      isHighlighted={hoveredSlug === slug}
-                      onHover={setHoveredSlug}
-                    />
-                  );
-                })}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  {displayedProjects.map((p, index) => {
+                    const slug = p.slug || (p._id ? String(p._id) : `project-${index}`);
+                    return (
+                      <ProjectCard
+                        key={slug}
+                        project={p}
+                        isHighlighted={hoveredSlug === slug}
+                        onHover={setHoveredSlug}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* When max displayed reached & still more to load: show loading animation */}
+                {hasMore && (
+                  <div ref={sentinelRef} className="pt-2 space-y-4">
+                    {/* Skeleton Wireframe Preview Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                      <div className="border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-5 space-y-4 animate-pulse rounded-xs">
+                        <div className="h-36 bg-zinc-100 dark:bg-zinc-900/80 rounded-xs flex items-center justify-center border border-zinc-200/50 dark:border-zinc-800/50">
+                          <span className="w-2 h-2 bg-zinc-400 dark:bg-zinc-600 animate-ping" />
+                        </div>
+                        <div className="space-y-2 pt-1">
+                          <div className="h-3 w-20 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+                          <div className="h-4 w-44 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+                          <div className="h-3 w-5/6 bg-zinc-100 dark:bg-zinc-900 rounded-xs" />
+                        </div>
+                      </div>
+                      <div className="border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-5 space-y-4 animate-pulse rounded-xs hidden sm:block">
+                        <div className="h-36 bg-zinc-100 dark:bg-zinc-900/80 rounded-xs flex items-center justify-center border border-zinc-200/50 dark:border-zinc-800/50">
+                          <span className="w-2 h-2 bg-zinc-400 dark:bg-zinc-600 animate-ping" />
+                        </div>
+                        <div className="space-y-2 pt-1">
+                          <div className="h-3 w-24 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+                          <div className="h-4 w-40 bg-zinc-200 dark:bg-zinc-800 rounded-xs" />
+                          <div className="h-3 w-4/6 bg-zinc-100 dark:bg-zinc-900 rounded-xs" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Animated Loader Status Bar */}
+                    <div className="py-6 flex flex-col items-center justify-center gap-1.5 text-center">
+                      <div className="flex items-center gap-2 font-mono text-xs text-zinc-700 dark:text-zinc-300">
+                        <RiLoader4Line className="w-4 h-4 animate-spin text-zinc-950 dark:text-zinc-50" />
+                        <span>Loading more projects...</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
+                        {totalMatching - displayedProjects.length} remaining in archive
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* End of list banner when all projects are loaded */}
+                {!hasMore && displayedProjects.length >= 10 && (
+                  <div className="py-6 text-center text-[11px] font-mono text-zinc-400 dark:text-zinc-600 border-t border-zinc-100 dark:border-zinc-900 mt-4">
+                    All {totalMatching} projects loaded
+                  </div>
+                )}
               </div>
             ) : (
               /* Empty State */
@@ -352,24 +403,6 @@ export function ProjectsArchiveView({
                 >
                   Clear search
                 </button>
-              </div>
-            )}
-
-            {/* Infinite Scroll Loading Sentinel */}
-            <div ref={sentinelRef} className="h-6 w-full" />
-
-            {/* Loading Indicator */}
-            {isLoadingMore && (
-              <div className="py-6 flex items-center justify-center gap-2 font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                <RiLoader4Line className="w-4 h-4 animate-spin text-zinc-700 dark:text-zinc-300" />
-                <span>Loading more projects...</span>
-              </div>
-            )}
-
-            {/* End of list banner */}
-            {!hasMore && displayedProjects.length >= 10 && (
-              <div className="py-6 text-center text-[11px] font-mono text-zinc-400 dark:text-zinc-600 border-t border-zinc-100 dark:border-zinc-900 mt-4">
-                All {totalMatching} projects loaded
               </div>
             )}
           </section>
