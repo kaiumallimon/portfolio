@@ -36,103 +36,21 @@ interface ContactData {
   message: string;
 }
 
-// Diverse Initial Greetings (Zero emojis, asks for name with an example, no designations)
-const GREETINGS = [
-  "Hello. I am Kaium's autonomous assistant.\n\nI can help outline your inquiry, calibrate requirements, and route your message directly to Kaium's inbox.\n\nTo begin, may I know your full name? (e.g. Alex Rivera)",
-  "Greetings. I coordinate project intake and direct communication for Kaium.\n\nI will gather your brief and ensure it reaches his inbox promptly.\n\nWho do I have the pleasure of speaking with today? (e.g. Sarah Chen)",
-  "Welcome. I serve as Kaium's dispatch assistant.\n\nWhether you are inquiring about full-stack engineering, architecture consulting, or potential collaboration, I am here to help.\n\nMay I have your full name to get started? (e.g. David Miller)",
-  "Hello, thank you for reaching out. I assist Kaium with engineering communications and project intake.\n\nTo ensure proper routing, could you please introduce yourself with your full name? (e.g. Elena Rostova)",
-  "Good day. I am Kaium's autonomous communication assistant.\n\nI will take down your inquiry details and deliver them straight to Kaium.\n\nTo begin our conversation, what is your name? (e.g. Marcus Vance)",
+type IntakeStep = "name" | "email" | "subject" | "message" | "review" | "confirmed";
+
+const INITIAL_GREETINGS = [
+  "Hello. I am Kaium's autonomous assistant powered by Llama 3.1.\n\nI can help outline your inquiry, calibrate requirements, and route your message directly to Kaium's inbox.\n\nTo begin, may I know your full name? (e.g. Alex Rivera)",
+  "Greetings. I coordinate project intake and direct communication for Kaium.\n\nI will gather your brief, verify the details with you, and ensure it reaches his inbox promptly.\n\nWho do I have the pleasure of speaking with today? (e.g. Sarah Chen)",
+  "Welcome. I serve as Kaium's dispatch assistant.\n\nWhether you are inquiring about full-stack engineering, architecture consulting, or potential collaboration, I am here to assist.\n\nMay I have your full name to get started? (e.g. David Miller)",
 ];
 
-// Diverse Subject Suggestions (Zero emojis)
-const SUBJECT_SUGGESTIONS = [
-  "Project Collaboration",
-  "Full-Stack Development",
-  "Architecture Consulting",
-  "Contract / Full-Time Role",
-  "Research & Thesis",
-  "General Inquiry",
-];
-
-// Diverse Prompts asking for Email (Step 0 -> Step 1)
-const getEmailPrompts = (name: string): string[] => [
-  `Pleasure to connect with you, ${name}. What is your email address so Kaium can follow up directly?`,
-  `Thank you, ${name}. Where should Kaium send his response? Please provide your email address.`,
-  `Good to meet you, ${name}. What is the best email coordinate for direct correspondence?`,
-  `Acknowledged, ${name}. Please share your email address so we can ensure timely communication.`,
-  `Understood, ${name}. At what email address can Kaium reach back out to you?`,
-  `Great to meet you, ${name}. Could you share your email address for our correspondence?`,
-  `Coordinates saved for ${name}. What is your preferred email address for direct follow-up?`,
-  `Thank you, ${name}. Please provide your email address so Kaium can review and reply.`,
-];
-
-// Diverse Prompts asking for Subject (Step 1 -> Step 2)
-const getSubjectPrompts = (name: string, email: string): string[] => [
-  `Email coordinate recorded (${email}). What is the primary subject or topic of your message?`,
-  `Received. What topic or subject best describes your inquiry?`,
-  `Got it, ${name}. What is the primary subject of your communication?`,
-  `Coordinates noted. To help prioritize and route this dispatch, what subject does this concern?`,
-  `Thank you. What is the subject or focus area of your message?`,
-  `Recorded. Could you specify the subject or nature of what you would like to discuss?`,
-  `Email confirmed. What topic or subject would you like to address today?`,
-];
-
-// Context-aware Prompts asking for Message Details (Step 2 -> Step 3)
-const getMessagePrompts = (subject: string): string[] => {
-  const s = subject.toLowerCase();
-  if (s.includes("collaborat") || s.includes("project")) {
-    return [
-      `Understood. Regarding project collaboration, please share an outline of the scope, tech stack, and goals.`,
-      `Excellent. Please detail what you would like to build together, including any technical requirements or target milestones.`,
-      `Noted. Feel free to describe the project background, timeline, and how you envision collaborating with Kaium.`,
-    ];
-  }
-  if (s.includes("consult") || s.includes("architect")) {
-    return [
-      `Architecture consulting noted. Please outline the system challenges, technical stack, or scale requirements you need assistance with.`,
-      `Understood. Please describe the engineering context, design constraints, or advisory questions you would like addressed.`,
-      `Recorded. Please outline the architectural scope or technical challenges you would like Kaium to review.`,
-    ];
-  }
-  if (s.includes("role") || s.includes("job") || s.includes("hire") || s.includes("position") || s.includes("contract")) {
-    return [
-      `Understood. Please share details regarding the role, company context, team structure, and primary tech stack.`,
-      `Thank you. Please describe the opportunity, location/remote policy, and key responsibilities for the role.`,
-      `Noted. Feel free to provide the job description, scope, and timeline for this opportunity.`,
-    ];
-  }
-  if (s.includes("research") || s.includes("thesis")) {
-    return [
-      `Research collaboration noted. Please share a summary of the topic, methodologies, and proposed areas of collaboration.`,
-      `Understood. Please outline the research problem, academic context, and goals of the proposed collaboration.`,
-    ];
-  }
-  return [
-    `Understood. Please share the details, background, or proposal for your message.`,
-    `Noted. Whenever you are ready, please outline your inquiry below.`,
-    `Acknowledged. Please provide your message details or any specific questions you would like Kaium to address.`,
-    `Clear. Go ahead and detail your message, specifications, or proposal.`,
-    `Recorded. Please describe your inquiry or project specifications in detail.`,
-  ];
-};
-
-// Diverse Final Closing Responses (Step 3 -> Completed)
-const getClosingMessages = (name: string, email: string, subject: string): string[] => [
-  `Your message has been successfully transmitted via SMTP 465. Thank you, ${name}. Kaium reviews incoming dispatches promptly and will follow up with you at ${email}.`,
-  `Transmission confirmed. All coordinates and message parameters have been routed directly to Kaium's inbox. Thank you for your time, ${name}.`,
-  `Dispatch delivered. Kaium has received your brief regarding "${subject}" and will respond to ${email} shortly.`,
-  `Thank you, ${name}. Your message has been logged and forwarded directly to Kaium Al Limon. Expect direct correspondence at ${email}.`,
-  `All coordinates synchronized and dispatched. Thank you, ${name}, for reaching out. Kaium will follow up with you as soon as possible.`,
-];
-
-// Helper to pick a random item from an array
 function sample<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
 export default function ContactAgentPage() {
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState<IntakeStep>("name");
+  const [activeModel, setActiveModel] = useState("Llama 3.1");
   const [inputVal, setInputVal] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingSeconds, setThinkingSeconds] = useState(0);
@@ -147,9 +65,9 @@ export default function ContactAgentPage() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  // Initialize randomized greeting on mount (asks for name with example, no inline suggestion chips)
+  // Initialize randomized greeting on mount
   useEffect(() => {
-    const greeting = sample(GREETINGS);
+    const greeting = sample(INITIAL_GREETINGS);
     setMessages([
       {
         id: "msg-0",
@@ -209,140 +127,106 @@ export default function ContactAgentPage() {
       timestamp: time,
     };
 
-    // Clear chips from previous messages so old option buttons don't linger
+    // Immediately clear chips from previous messages so old option buttons don't linger
     setMessages((prev) =>
       prev.map((m) => (m.chips ? { ...m, chips: undefined } : m)).concat(userMsg)
     );
     setInputVal("");
     setIsThinking(true);
 
-    if (step === 0) {
-      // Step 0: Name received -> Pick dynamic prompt for Email
-      const name = trimmed;
-      setContactData((prev) => ({ ...prev, name }));
-      const promptText = sample(getEmailPrompts(name));
+    try {
+      const res = await fetch("/api/contact/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userMessage: trimmed,
+          history: messages.map((m) => ({
+            role: m.sender === "user" ? "user" : "assistant",
+            content: m.text,
+          })),
+          currentData: contactData,
+          step,
+        }),
+      });
 
-      setTimeout(() => {
-        setIsThinking(false);
-        setStep(1);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `agent-${Date.now()}`,
-            sender: "agent",
-            text: promptText,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          },
-        ]);
-      }, 850 + Math.random() * 300);
-    } else if (step === 1) {
-      // Step 1: Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(trimmed)) {
-        setTimeout(() => {
-          setIsThinking(false);
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: `agent-err-${Date.now()}`,
-              sender: "agent",
-              text: "That does not appear to be a valid email address. Please provide a valid email so Kaium can follow up (e.g. alex@company.com).",
-              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            },
-          ]);
-        }, 500);
-        return;
+      if (!res.ok) {
+        throw new Error("Chat intake request returned non-OK status");
       }
 
-      const email = trimmed;
-      setContactData((prev) => ({ ...prev, email }));
-      const promptText = sample(getSubjectPrompts(contactData.name, email));
+      const data = await res.json();
+      const nextStep: IntakeStep = data.step;
+      const updatedData: ContactData = data.updatedData || contactData;
 
-      setTimeout(() => {
-        setIsThinking(false);
-        setStep(2);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `agent-${Date.now()}`,
-            sender: "agent",
-            text: promptText,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            chips: SUBJECT_SUGGESTIONS,
-          },
-        ]);
-      }, 850 + Math.random() * 300);
-    } else if (step === 2) {
-      // Step 2: Subject received -> Handle "No", "Skip", "None", "N/A" gracefully
-      const isSkipSubject = /^(no|nope|none|skip|nah|nothing|na|n\/a|not really|no subject)$/i.test(trimmed);
-      const actualSubject = isSkipSubject ? "General Inquiry" : trimmed;
-      setContactData((prev) => ({ ...prev, subject: actualSubject }));
+      setContactData(updatedData);
+      setStep(nextStep);
 
-      const promptText = isSkipSubject
-        ? "No problem, we'll keep it as a general inquiry. Please go ahead and share your message details, specifications, or proposal."
-        : sample(getMessagePrompts(actualSubject));
+      if (data.modelName) {
+        const cleaned = data.modelName
+          .replace("-8b-instant", "")
+          .replace("-70b-versatile", "")
+          .split("-")
+          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+        setActiveModel(cleaned || "Llama 3.1");
+      }
 
-      setTimeout(() => {
-        setIsThinking(false);
-        setStep(3);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `agent-${Date.now()}`,
-            sender: "agent",
-            text: promptText,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          },
-        ]);
-      }, 850 + Math.random() * 300);
-    } else if (step === 3) {
-      // Step 3: Message received -> Transmit to /api/contact & finalize
-      const message = trimmed;
-      const finalData: ContactData = { ...contactData, message };
-      setContactData(finalData);
-
-      try {
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: finalData.name,
-            email: finalData.email,
-            subject: finalData.subject,
-            message: finalData.message,
-          }),
-        });
-
-        if (!res.ok) {
-          throw new Error("Transmission request failed");
+      // If user verified and confirmed, perform final SMTP dispatch
+      if (nextStep === "confirmed") {
+        try {
+          await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedData),
+          });
+        } catch (postErr) {
+          console.warn("[Contact] SMTP dispatch error:", postErr);
         }
-      } catch (err) {
-        console.warn("[Contact Agent] Transmission warning:", err);
-      }
 
-      const closingText = sample(getClosingMessages(finalData.name, finalData.email, finalData.subject));
-
-      setTimeout(() => {
         setIsThinking(false);
         setIsCompleted(true);
-
         setMessages((prev) => [
           ...prev,
           {
             id: `agent-end-${Date.now()}`,
             sender: "agent",
-            text: closingText,
+            text: data.reply,
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             isEndReceipt: true,
           },
         ]);
-        toast.success("Message successfully transmitted via SMTP 465.");
-      }, 1400);
+        toast.success("Dispatch verified and transmitted via SMTP 465.");
+        return;
+      }
+
+      // Normal assistant reply
+      setIsThinking(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `agent-${Date.now()}`,
+          sender: "agent",
+          text: data.reply,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          chips: data.suggestions || undefined,
+        },
+      ]);
+    } catch (err) {
+      console.warn("[Contact Chat] Error:", err);
+      setIsThinking(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `agent-err-${Date.now()}`,
+          sender: "agent",
+          text: "I encountered a momentary connection issue. Please share your input again.",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
     }
   };
 
   const handleReset = () => {
-    setStep(0);
+    setStep("name");
     setInputVal("");
     setIsThinking(false);
     setIsCompleted(false);
@@ -353,7 +237,7 @@ export default function ContactAgentPage() {
       message: "",
     });
 
-    const freshGreeting = sample(GREETINGS);
+    const freshGreeting = sample(INITIAL_GREETINGS);
 
     setMessages([
       {
@@ -390,16 +274,20 @@ export default function ContactAgentPage() {
     }
   };
 
-  // Progress percentage across 4 fields (Name, Email, Subject, Message)
+  // Progress percentage across stages (Name -> Email -> Subject -> Message -> Verification -> 100%)
   const progressPercent = isCompleted
     ? 100
-    : step === 0
+    : step === "name"
     ? 15
-    : step === 1
-    ? 40
-    : step === 2
-    ? 65
-    : 85;
+    : step === "email"
+    ? 35
+    : step === "subject"
+    ? 55
+    : step === "message"
+    ? 75
+    : step === "review"
+    ? 90
+    : 100;
 
   return (
     <div className="h-[100dvh] w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden flex flex-col antialiased">
@@ -457,7 +345,7 @@ export default function ContactAgentPage() {
                     </div>
 
                     {/* Professional Suggestion Chips (Zero emojis, dismissed once answered) */}
-                    {msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && step === 2 && (
+                    {msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
                       <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-200">
                         {msg.chips.map((chipText) => (
                           <button
@@ -596,9 +484,10 @@ export default function ContactAgentPage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (step === 0) setInputVal("Alex Rivera");
-                  else if (step === 1) setInputVal("alex@company.com");
-                  else if (step === 2) handleUserInput(SUBJECT_SUGGESTIONS[0]);
+                  if (step === "name") setInputVal("Alex Rivera");
+                  else if (step === "email") setInputVal("alex@company.com");
+                  else if (step === "subject") handleUserInput("Project Collaboration");
+                  else if (step === "review") handleUserInput("Confirm & Send");
                   else toast.info("Please enter your message details.");
                 }}
                 className="size-7 sm:size-8 shrink-0 rounded-full bg-zinc-200/70 dark:bg-zinc-800 hover:bg-zinc-300/80 dark:hover:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
@@ -614,13 +503,15 @@ export default function ContactAgentPage() {
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
                 placeholder={
-                  step === 0
+                  step === "name"
                     ? "Enter your full name (e.g. Alex Rivera)..."
-                    : step === 1
+                    : step === "email"
                     ? "Enter your email address (e.g. alex@company.com)..."
-                    : step === 2
+                    : step === "subject"
                     ? "Select or enter a subject..."
-                    : "Enter your message details..."
+                    : step === "message"
+                    ? "Enter your message details..."
+                    : "Confirm or request edits (e.g. 'Confirm & Send')..."
                 }
                 disabled={isThinking || isCompleted}
                 className="flex-1 bg-transparent px-1 sm:px-2 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none disabled:opacity-50 font-sans"
@@ -628,7 +519,7 @@ export default function ContactAgentPage() {
 
               {/* Model / Assistant Dropdown Pill */}
               <div className="hidden xs:inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-mono text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 cursor-default select-none">
-                <span>KAL 2.4</span>
+                <span>{activeModel}</span>
                 <ChevronDown className="size-3 opacity-60" />
               </div>
 
