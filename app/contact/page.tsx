@@ -209,7 +209,10 @@ export default function ContactAgentPage() {
       timestamp: time,
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    // Clear chips from previous messages so old option buttons don't linger
+    setMessages((prev) =>
+      prev.map((m) => (m.chips ? { ...m, chips: undefined } : m)).concat(userMsg)
+    );
     setInputVal("");
     setIsThinking(true);
 
@@ -233,7 +236,24 @@ export default function ContactAgentPage() {
         ]);
       }, 850 + Math.random() * 300);
     } else if (step === 1) {
-      // Step 1: Email received -> Pick dynamic prompt for Subject
+      // Step 1: Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmed)) {
+        setTimeout(() => {
+          setIsThinking(false);
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `agent-err-${Date.now()}`,
+              sender: "agent",
+              text: "That does not appear to be a valid email address. Please provide a valid email so Kaium can follow up (e.g. alex@company.com).",
+              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            },
+          ]);
+        }, 500);
+        return;
+      }
+
       const email = trimmed;
       setContactData((prev) => ({ ...prev, email }));
       const promptText = sample(getSubjectPrompts(contactData.name, email));
@@ -253,10 +273,14 @@ export default function ContactAgentPage() {
         ]);
       }, 850 + Math.random() * 300);
     } else if (step === 2) {
-      // Step 2: Subject received -> Pick context-aware dynamic prompt for Message Details
-      const subject = trimmed;
-      setContactData((prev) => ({ ...prev, subject }));
-      const promptText = sample(getMessagePrompts(subject));
+      // Step 2: Subject received -> Handle "No", "Skip", "None", "N/A" gracefully
+      const isSkipSubject = /^(no|nope|none|skip|nah|nothing|na|n\/a|not really|no subject)$/i.test(trimmed);
+      const actualSubject = isSkipSubject ? "General Inquiry" : trimmed;
+      setContactData((prev) => ({ ...prev, subject: actualSubject }));
+
+      const promptText = isSkipSubject
+        ? "No problem, we'll keep it as a general inquiry. Please go ahead and share your message details, specifications, or proposal."
+        : sample(getMessagePrompts(actualSubject));
 
       setTimeout(() => {
         setIsThinking(false);
@@ -367,7 +391,15 @@ export default function ContactAgentPage() {
   };
 
   // Progress percentage across 4 fields (Name, Email, Subject, Message)
-  const progressPercent = isCompleted ? 100 : Math.min(100, Math.round(((step + 1) / 4) * 100));
+  const progressPercent = isCompleted
+    ? 100
+    : step === 0
+    ? 15
+    : step === 1
+    ? 40
+    : step === 2
+    ? 65
+    : 85;
 
   return (
     <div className="h-[100dvh] w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden flex flex-col antialiased">
@@ -424,8 +456,8 @@ export default function ContactAgentPage() {
                       {msg.text}
                     </div>
 
-                    {/* Professional Suggestion Chips (Zero emojis) */}
-                    {msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
+                    {/* Professional Suggestion Chips (Zero emojis, dismissed once answered) */}
+                    {msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && step === 2 && (
                       <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-200">
                         {msg.chips.map((chipText) => (
                           <button
