@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useRef } from "react";
 import dynamic from "next/dynamic";
-import { Volume2, Check, Copy, CheckCheck } from "lucide-react";
+import { Volume2, Copy, CheckCheck } from "lucide-react";
 import {
   RiTwitterXLine,
   RiGithubLine,
@@ -138,20 +138,12 @@ export function MonochromeHero({
 
         {/* Name & Tagline: Bottom-Right beneath cover on mobile (< md), Bottom-Right beneath cover on desktop (md:) */}
         <div className="col-start-2 row-start-2 md:col-start-2 md:row-start-2 flex flex-col justify-center md:justify-end bg-white dark:bg-zinc-950 min-w-0">
-          {/* Upper row: Name + verified badge + sound chime + Tech Humor Game Hint (desktop md:) */}
+          {/* Upper row: Name + sound chime + Tech Humor Game Hint (desktop md:) */}
           <div className="px-3.5 pt-2.5 pb-1 sm:px-5 sm:pt-3 sm:pb-1 md:px-4 md:py-2.5 flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 sm:gap-2">
               <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
                 {settings.name}
               </h1>
-
-              {/* Verified Badge */}
-              <span
-                className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-4.5 md:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
-                title="Verified Engineer"
-              >
-                <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 stroke-[3]" />
-              </span>
 
               {/* Audio Pronunciation Button */}
               <button
