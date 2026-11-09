@@ -68,6 +68,21 @@ export default function ContactAgentPage() {
     resetSeconds: 60,
   });
   const [resetCountdown, setResetCountdown] = useState(60);
+  const [usageMenuOpen, setUsageMenuOpen] = useState(false);
+  const usageMenuRef = useRef<HTMLDivElement | null>(null);
+
+  // Close context menu on click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (usageMenuRef.current && !usageMenuRef.current.contains(e.target as Node)) {
+        setUsageMenuOpen(false);
+      }
+    }
+    if (usageMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [usageMenuOpen]);
 
   // Sync countdown whenever server reports new resetSeconds
   useEffect(() => {
@@ -668,11 +683,17 @@ export default function ContactAgentPage() {
                 </div>
               </div>
 
-              {/* Right: Client IP Usage Quota (Real-time & isolated per visitor) */}
-              <div className="flex items-center">
-                <div
-                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-100/70 dark:bg-zinc-900/70 text-zinc-600 dark:text-zinc-400 font-mono text-[10px] select-none transition-colors"
-                  title={`Your Client IP Usage: ${clientQuota.remaining}/${clientQuota.limit} requests remaining this minute (resets in ${resetCountdown}s)`}
+              {/* Right: Client IP Usage Quota (Borderless, backgroundless, live context menu) */}
+              <div
+                className="relative"
+                onMouseEnter={() => setUsageMenuOpen(true)}
+                onMouseLeave={() => setUsageMenuOpen(false)}
+              >
+                <button
+                  type="button"
+                  onClick={() => setUsageMenuOpen((prev) => !prev)}
+                  className="inline-flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 font-mono text-[11px] select-none transition-colors cursor-pointer"
+                  title="Click or hover to inspect live usage quota"
                 >
                   <span
                     className={`size-1.5 rounded-full transition-colors ${
@@ -683,12 +704,93 @@ export default function ContactAgentPage() {
                         : "bg-red-500 animate-pulse"
                     }`}
                   />
-                  <Activity className="size-2.5 opacity-70" />
+                  <Activity className="size-3 opacity-70" />
                   <span className="tabular-nums">
                     {clientQuota.remaining}/{clientQuota.limit}
                   </span>
-                  <span className="text-[9px] text-zinc-400 uppercase tracking-wider">req/min</span>
-                </div>
+                  <span className="text-[10px] text-zinc-400 uppercase tracking-wider">req/min</span>
+                  <ChevronDown className={`size-2.5 opacity-60 transition-transform duration-200 ${usageMenuOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {/* Floating Live Usage Context Menu */}
+                {usageMenuOpen && (
+                  <div
+                    ref={usageMenuRef}
+                    className="absolute bottom-full right-0 mb-2 w-72 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-3.5 shadow-xl font-mono text-xs z-50 animate-in fade-in zoom-in-95 duration-150 space-y-3"
+                  >
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                      <div className="flex items-center gap-1.5 font-semibold text-zinc-900 dark:text-zinc-100 text-[11px] uppercase tracking-wider">
+                        <Activity className="size-3 text-emerald-500" />
+                        <span>Client Usage Quota</span>
+                      </div>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+                          clientQuota.remaining > 3
+                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                            : clientQuota.remaining > 0
+                            ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                            : "bg-red-500/10 text-red-600 dark:text-red-400 font-bold"
+                        }`}
+                      >
+                        {clientQuota.remaining > 0 ? "Normal" : "Rate Limited"}
+                      </span>
+                    </div>
+
+                    {/* Progress Bar of remaining quota */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[11px] text-zinc-600 dark:text-zinc-400">
+                        <span>Remaining Capacity</span>
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">
+                          {clientQuota.remaining} / {clientQuota.limit} req
+                        </span>
+                      </div>
+                      <div className="w-full bg-zinc-200 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-300 rounded-full ${
+                            clientQuota.remaining > 3
+                              ? "bg-emerald-500"
+                              : clientQuota.remaining > 0
+                              ? "bg-amber-500"
+                              : "bg-red-500"
+                          }`}
+                          style={{ width: `${(clientQuota.remaining / clientQuota.limit) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Details Grid */}
+                    <div className="space-y-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 pt-0.5">
+                      <div className="flex items-center justify-between">
+                        <span>Sliding Window:</span>
+                        <span className="text-zinc-900 dark:text-zinc-200">60 seconds</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Next Slot Reset:</span>
+                        <span className="text-zinc-900 dark:text-zinc-200 tabular-nums">
+                          {clientQuota.used > 0 ? `${resetCountdown}s` : "Idle"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Burst Protection:</span>
+                        <span className="text-zinc-900 dark:text-zinc-200">750ms min gap</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Quota Isolation:</span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Client IP Only</span>
+                      </div>
+                    </div>
+
+                    {/* Footer Info */}
+                    <div className="border-t border-zinc-200 dark:border-zinc-800 pt-2 text-[10px] text-zinc-400 flex items-center justify-between">
+                      <span>Anti-Spam Shield</span>
+                      <span className="text-emerald-500 flex items-center gap-1 font-medium">
+                        <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
+                        Active
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
