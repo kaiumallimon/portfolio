@@ -71,6 +71,7 @@ export function MonochromeHero({
   coverRef?: React.RefObject<HTMLDivElement | null>;
 }) {
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
+  const [copiedPhone, setCopiedPhone] = useState<boolean>(false);
   const [coverGameMode, setCoverGameMode] = useState<GameMode>("idle");
 
   const copyEmail = () => {
@@ -80,20 +81,42 @@ export function MonochromeHero({
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
+  const copyPhone = () => {
+    navigator.clipboard.writeText("+880 1888 387 500");
+    setCopiedPhone(true);
+    toast.success("Phone number copied to clipboard");
+    setTimeout(() => setCopiedPhone(false), 2000);
+  };
+
   return (
     <section className="w-full bg-white dark:bg-zinc-950">
-      {/* Hero: single grid — avatar spans 2 rows on left, cover+name on right with cover-grid-bg */}
-      <div className="relative grid grid-cols-1 sm:grid-cols-[auto_1fr] sm:grid-rows-[1fr_auto] border-b border-zinc-200 dark:border-zinc-800 overflow-hidden">
+      {/* 
+        Hero Layout matching Chanh Dai:
+        - On mobile (< sm):
+          Row 1: Cover artwork spans full width (col-span-2)
+          Row 2: Avatar on left (col-start-1), Name + Rotating tagline on right (col-start-2)
+        - On desktop (sm: and up):
+          Col 1: Avatar spans both rows (sm:col-start-1 sm:row-start-1 sm:row-span-2)
+          Col 2: Row 1 is Cover (sm:col-start-2 sm:row-start-1), Row 2 is Name & Tagline (sm:col-start-2 sm:row-start-2)
+      */}
+      <div className="relative grid grid-cols-[auto_1fr] sm:grid-cols-[auto_1fr] border-b border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        {/* Cover Artwork: Full width at top on mobile, Top-Right on desktop */}
+        <div
+          ref={coverRef}
+          className="col-span-2 row-start-1 sm:col-span-1 sm:col-start-2 sm:row-start-1 relative cover-grid-bg overflow-hidden flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800"
+        >
+          <CadIsometricCover onGameModeChange={setCoverGameMode} />
+        </div>
 
-        {/* Left Column: avatar spans both rows, no top border cutting across */}
-        <div className="sm:row-span-2 sm:row-start-1 flex flex-col border-b sm:border-b-0 sm:border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-          <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
-            <div className="relative size-28 min-[24rem]:size-32 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+        {/* Circular Avatar: Bottom-Left beneath cover on mobile, Left column spanning 2 rows on desktop */}
+        <div className="col-start-1 row-start-2 sm:col-start-1 sm:row-start-1 sm:row-span-2 flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+          <div className="flex-1 flex items-center justify-center p-3 min-[24rem]:p-4 sm:p-6">
+            <div className="relative size-20 min-[24rem]:size-24 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
               <Image
                 src="/bordered.png"
                 alt={settings.name}
                 fill
-                sizes="160px"
+                sizes="(max-width: 640px) 96px, 160px"
                 className="object-cover select-none"
                 loading="lazy"
               />
@@ -101,26 +124,21 @@ export function MonochromeHero({
           </div>
         </div>
 
-        {/* Right Column, Row 1: KAL cover with cover-grid-bg */}
-        <div ref={coverRef} className="relative cover-grid-bg overflow-hidden flex items-center justify-center">
-          <CadIsometricCover onGameModeChange={setCoverGameMode} />
-        </div>
-
-        {/* Right Column, Row 2: Name & Designation — plain solid background */}
-        <div className="flex flex-col justify-end bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
-          {/* Upper line: Name + verified badge + sound chime + Tech Humor Game Hint */}
-          <div className="px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
+        {/* Name & Tagline: Bottom-Right beneath cover on mobile, Bottom-Right beneath cover on desktop */}
+        <div className="col-start-2 row-start-2 sm:col-start-2 sm:row-start-2 flex flex-col justify-between bg-white dark:bg-zinc-950">
+          {/* Upper row: Name + verified badge + sound chime + Tech Humor Game Hint (desktop) */}
+          <div className="px-3 min-[24rem]:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <h1 className="text-lg min-[24rem]:text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
                 {settings.name}
               </h1>
 
               {/* Verified Badge */}
               <span
-                className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
+                className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
                 title="Verified Engineer"
               >
-                <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
+                <Check className="w-2 h-2 sm:w-3 sm:h-3 stroke-[3]" />
               </span>
 
               {/* Audio Pronunciation Button */}
@@ -133,11 +151,11 @@ export function MonochromeHero({
                 title="Pronounce my name"
                 aria-label="Pronounce my name"
               >
-                <Volume2 className="w-4 h-4" />
+                <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
             </div>
 
-            {/* Tech humor instruction outside cover indicating it is an endless runner game */}
+            {/* Tech humor runner game instruction (desktop view) */}
             <button
               type="button"
               onClick={() => {
@@ -145,7 +163,7 @@ export function MonochromeHero({
                   window.dispatchEvent(new CustomEvent("kal:start-runner"));
                 }
               }}
-              className="inline-flex items-center gap-1.5 sm:gap-2 text-left group select-none cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="hidden sm:inline-flex items-center gap-1.5 sm:gap-2 text-left group select-none cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
               title="Click or press Space to play Chrome-dino developer runner"
             >
               {/* Sketched / doodle curved arrow pointing up-left towards cover character */}
@@ -219,8 +237,8 @@ export function MonochromeHero({
             </button>
           </div>
 
-          {/* Lower line: Rotating Tagline / Sentences */}
-          <div className="px-4 py-2 sm:py-2.5 border-t border-zinc-200 dark:border-zinc-800 min-h-[2.75rem] sm:min-h-[2.25rem] flex items-center">
+          {/* Lower row: Rotating Tagline / Sentences */}
+          <div className="px-3 min-[24rem]:px-4 py-2 sm:py-2.5 border-t border-zinc-200 dark:border-zinc-800 min-h-[2.5rem] sm:min-h-[2.25rem] flex items-center">
             <RotatingText
               texts={[
                 "Building high-performance mobile & web experiences engineered to scale.",
@@ -241,13 +259,22 @@ export function MonochromeHero({
         </div>
       </div>
 
-      {/* Stripe Divider */}
-      <div className="stripe-divider h-8 border-b border-zinc-200 dark:border-zinc-800 w-full" />
+      {/* Stripe Divider matching Chanh Dai */}
+      <div className="stripe-divider h-6 sm:h-8 border-b border-zinc-200 dark:border-zinc-800 w-full" />
 
-      {/* 4. Contacts: 2-Column Hairline Table */}
+      {/* 
+        Contacts: Arranged to stack sequentially on mobile in exact order matching Chanh Dai:
+        1. Designation
+        2. Location
+        3. Realtime Clock
+        4. Email (with copy)
+        5. Phone (with copy)
+        6. Availability status
+      */}
       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono">
-        {/* Left Column */}
-        <div className="flex flex-col">
+        {/* Left Column (Desktop) / Items 1-3 (Mobile) */}
+        <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
+          {/* 1. Designation */}
           <div className="px-4 py-2.5 flex items-center gap-3">
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiCodeSSlashLine className="w-3.5 h-3.5" />
@@ -257,6 +284,7 @@ export function MonochromeHero({
             </span>
           </div>
 
+          {/* 2. Location */}
           <div className="px-4 py-2.5 flex items-center gap-3">
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiMapPinLine className="w-3.5 h-3.5" />
@@ -271,8 +299,20 @@ export function MonochromeHero({
             </a>
           </div>
 
+          {/* 3. Live Clock */}
+          <div className="px-4 py-2.5 flex items-center gap-3">
+            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+              <RiTimeLine className="w-3.5 h-3.5" />
+            </div>
+            <RealtimeCounterClock timezone={settings.timezone || "Asia/Dhaka"} />
+          </div>
+        </div>
+
+        {/* Right Column (Desktop) / Items 4-6 (Mobile) */}
+        <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
+          {/* 4. Email */}
           <div className="px-4 py-2.5 flex items-center justify-between group">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
                 <RiMailLine className="w-3.5 h-3.5" />
               </div>
@@ -285,7 +325,7 @@ export function MonochromeHero({
             </div>
             <button
               onClick={copyEmail}
-              className="text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 p-1 opacity-80 group-hover:opacity-100 transition-opacity cursor-pointer"
+              className="text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 p-1 opacity-80 group-hover:opacity-100 transition-opacity cursor-pointer shrink-0 ml-2"
               title="Copy email address"
             >
               {copiedEmail ? (
@@ -295,30 +335,34 @@ export function MonochromeHero({
               )}
             </button>
           </div>
-        </div>
 
-        {/* Right Column */}
-        <div className="flex flex-col">
-          <div className="px-4 py-2.5 flex items-center gap-3">
-            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
-              <RiTimeLine className="w-3.5 h-3.5" />
+          {/* 5. Phone */}
+          <div className="px-4 py-2.5 flex items-center justify-between group">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
+                <RiPhoneLine className="w-3.5 h-3.5" />
+              </div>
+              <a
+                href="tel:+8801888387500"
+                className="text-zinc-700 dark:text-zinc-300 hover:underline truncate"
+              >
+                +880 1888 387 500
+              </a>
             </div>
-            <RealtimeCounterClock timezone={settings.timezone || "Asia/Dhaka"} />
-          </div>
-
-          <div className="px-4 py-2.5 flex items-center gap-3">
-            <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
-              <RiPhoneLine className="w-3.5 h-3.5" />
-            </div>
-            <a
-              href="tel:+8801888387500"
-              className="text-zinc-700 dark:text-zinc-300 hover:underline"
+            <button
+              onClick={copyPhone}
+              className="text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 p-1 opacity-80 group-hover:opacity-100 transition-opacity cursor-pointer shrink-0 ml-2"
+              title="Copy phone number"
             >
-              +880 1888 387 500
-            </a>
+              {copiedPhone ? (
+                <CheckCheck className="w-3.5 h-3.5 text-emerald-500" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+            </button>
           </div>
 
-          {/* Status Row */}
+          {/* 6. Availability Status */}
           <div className="px-4 py-2.5 flex items-center gap-3">
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <span className="relative flex size-2">
@@ -333,7 +377,7 @@ export function MonochromeHero({
         </div>
       </div>
 
-      {/* 5. Social Links Row with "follow me" Handwritten Annotation */}
+      {/* 5. Social Links Row with "follow me" Annotation */}
       <div className="relative px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
         {/* Handwritten note on the left */}
         <div
