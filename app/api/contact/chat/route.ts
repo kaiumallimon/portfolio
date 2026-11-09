@@ -54,9 +54,21 @@ CONVERSATIONAL GUIDELINES:
 - Handling Questions: If the visitor asks a specific question about Kaium's background or skills, answer concisely and accurately, then direct them back to the intake process.
 - Flexible Subject: If the user explicitly asks to skip or says "no" to specifying a subject, categorize it as "General Inquiry" and move to the message step.
 - Email Validation: Verify that the email contains '@' and a valid domain. If invalid, politely explain and ask for a valid email coordinate.
-- The Verification Gate (No Premature Sending): Once all 4 fields (name, email, subject, message) are gathered and valid, transition to step "review". Set "suggestions": ["Confirm & Send", "Edit Details"].
-- Edit Details: If the user asks to edit or change details during review, ask what they would like to adjust and set suggestions to: ["Edit Name", "Edit Email", "Edit Subject", "Edit Message"].
-- Confirmation: When in "review" and the user confirms ("Confirm & Send", "yes", "looks good", "send it"), transition to step "confirmed" with a courteous closing statement acknowledging that their message is now being routed to Kaium's inbox.
+- The Verification Gate (No Premature Sending): Once all 4 fields (name, email, subject, message) are gathered and valid, transition to step "review". Present the bulleted brief:
+  • Name: [name]
+  • Email: [email]
+  • Subject: [subject]
+  • Message: [message]
+  "Would you like me to send this now, or would you like to edit anything?"
+  Set "suggestions": ["Confirm & Send", "Edit Details"].
+- Edit Requests & Specific Fields:
+  - If the user selects or says "Edit Message" (or "change message"): set "step": "message", "reply": "Please provide your updated message details for Kaium.", "suggestions": null.
+  - If the user selects or says "Edit Name" (or "change name"): set "step": "name", "reply": "Please provide your updated full name (e.g. Alex Rivera).", "suggestions": null.
+  - If the user selects or says "Edit Email" (or "change email"): set "step": "email", "reply": "Please provide your updated email address (e.g. alex@company.com).", "suggestions": null.
+  - If the user selects or says "Edit Subject" (or "change subject"): set "step": "subject", "reply": "Please select or enter the updated subject of your inquiry.", "suggestions": ["Project Collaboration", "Full-Stack Development", "Architecture Consulting", "Contract / Full-Time Role", "General Inquiry"].
+  - If the user says generally "Edit Details" or "I want to edit": set "step": "review", "reply": "Which detail would you like to edit?", "suggestions": ["Edit Name", "Edit Email", "Edit Subject", "Edit Message", "Confirm & Send"]. DO NOT append the full review summary.
+- In-place Direct Corrections: If the user provides a direct correction (e.g. "actually my email is alex@gmail.com" or "name is Jane Doe"), update that field in updatedData, stay in step "review", and present the updated summary with suggestions: ["Confirm & Send", "Edit Details"].
+- Confirmation: When in "review" and the user confirms ("Confirm & Send", "yes", "looks good", "send it"), transition to step "confirmed" with a courteous closing statement acknowledging that their message is now being routed to Kaium's inbox. Set "suggestions": null.
 
 RESPONSE FORMAT:
 You MUST respond with a valid JSON object matching this schema:
@@ -84,6 +96,8 @@ export async function POST(req: NextRequest) {
       step = "name",
     } = payload;
 
+    const trimmed = (userMessage || "").trim();
+
     // Client-specific rate limiting & anti-bot protection
     const rateCheck = checkClientRateLimit(ip, userMessage);
     if (!rateCheck.allowed) {
@@ -105,6 +119,133 @@ export async function POST(req: NextRequest) {
 
     const apiKey = process.env.GROQ_API_KEY;
     const model = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+
+    // Direct deterministic handlers for review/edit state machine (prevents repetitive prompt loops)
+    const isEditMsg = /^(edit\s+message|change\s+message|modify\s+message|update\s+message)$/i.test(trimmed);
+    const isEditName = /^(edit\s+name|change\s+name|modify\s+name|update\s+name)$/i.test(trimmed);
+    const isEditEmail = /^(edit\s+email|change\s+email|modify\s+email|update\s+email)$/i.test(trimmed);
+    const isEditSubj = /^(edit\s+subject|change\s+subject|modify\s+subject|update\s+subject)$/i.test(trimmed);
+    const isEditGen = /^(edit|edit\s+details|change\s+details|modify\s+details|revise)$/i.test(trimmed);
+    const isConfirm = /^(confirm|send|confirm & send|looks good|send it|send message|yes, send)$/i.test(trimmed);
+
+    if (step === "review") {
+      if (isConfirm) {
+        return NextResponse.json({
+          reply: `Your message has been verified and successfully scheduled for dispatch. Thank you, ${currentData.name || "there"}. Kaium will follow up with you directly at ${currentData.email}.`,
+          updatedData: currentData,
+          step: "confirmed",
+          suggestions: null,
+          telemetry: rateCheck.telemetry,
+        });
+      }
+
+      if (isEditMsg) {
+        return NextResponse.json({
+          reply: "Please provide your updated message details for Kaium.",
+          updatedData: currentData,
+          step: "message",
+          suggestions: null,
+          telemetry: rateCheck.telemetry,
+        });
+      }
+
+      if (isEditName) {
+        return NextResponse.json({
+          reply: "Please provide your updated full name (e.g. Alex Rivera).",
+          updatedData: currentData,
+          step: "name",
+          suggestions: null,
+          telemetry: rateCheck.telemetry,
+        });
+      }
+
+      if (isEditEmail) {
+        return NextResponse.json({
+          reply: "Please provide your updated email address (e.g. alex@company.com).",
+          updatedData: currentData,
+          step: "email",
+          suggestions: null,
+          telemetry: rateCheck.telemetry,
+        });
+      }
+
+      if (isEditSubj) {
+        return NextResponse.json({
+          reply: "Please select or enter the updated subject of your inquiry.",
+          updatedData: currentData,
+          step: "subject",
+          suggestions: [
+            "Project Collaboration",
+            "Full-Stack Development",
+            "Architecture Consulting",
+            "Contract / Full-Time Role",
+            "General Inquiry",
+          ],
+          telemetry: rateCheck.telemetry,
+        });
+      }
+
+      if (isEditGen) {
+        return NextResponse.json({
+          reply: "Which detail would you like to edit?",
+          updatedData: currentData,
+          step: "review",
+          suggestions: ["Edit Name", "Edit Email", "Edit Subject", "Edit Message", "Confirm & Send"],
+          telemetry: rateCheck.telemetry,
+        });
+      }
+    }
+
+    // If all 4 fields were previously recorded and user was editing one specific field, return directly to review
+    if (
+      currentData.name &&
+      currentData.email &&
+      currentData.subject &&
+      currentData.message &&
+      step !== "review" &&
+      step !== "confirmed"
+    ) {
+      if (step === "message" && trimmed.length >= 4) {
+        const u = { ...currentData, message: trimmed };
+        return NextResponse.json({
+          reply: `Updated message recorded:\n\n• Name: ${u.name}\n• Email: ${u.email}\n• Subject: ${u.subject}\n• Message: ${u.message}\n\nWould you like me to send this now, or would you like to edit anything?`,
+          updatedData: u,
+          step: "review",
+          suggestions: ["Confirm & Send", "Edit Details"],
+          telemetry: rateCheck.telemetry,
+        });
+      }
+      if (step === "name" && trimmed.length >= 2) {
+        const u = { ...currentData, name: trimmed };
+        return NextResponse.json({
+          reply: `Updated name recorded:\n\n• Name: ${u.name}\n• Email: ${u.email}\n• Subject: ${u.subject}\n• Message: ${u.message}\n\nWould you like me to send this now, or would you like to edit anything?`,
+          updatedData: u,
+          step: "review",
+          suggestions: ["Confirm & Send", "Edit Details"],
+          telemetry: rateCheck.telemetry,
+        });
+      }
+      if (step === "email" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+        const u = { ...currentData, email: trimmed };
+        return NextResponse.json({
+          reply: `Updated email recorded:\n\n• Name: ${u.name}\n• Email: ${u.email}\n• Subject: ${u.subject}\n• Message: ${u.message}\n\nWould you like me to send this now, or would you like to edit anything?`,
+          updatedData: u,
+          step: "review",
+          suggestions: ["Confirm & Send", "Edit Details"],
+          telemetry: rateCheck.telemetry,
+        });
+      }
+      if (step === "subject" && trimmed.length >= 2) {
+        const u = { ...currentData, subject: trimmed };
+        return NextResponse.json({
+          reply: `Updated subject recorded:\n\n• Name: ${u.name}\n• Email: ${u.email}\n• Subject: ${u.subject}\n• Message: ${u.message}\n\nWould you like me to send this now, or would you like to edit anything?`,
+          updatedData: u,
+          step: "review",
+          suggestions: ["Confirm & Send", "Edit Details"],
+          telemetry: rateCheck.telemetry,
+        });
+      }
+    }
 
     if (apiKey) {
       try {
@@ -165,14 +306,25 @@ export async function POST(req: NextRequest) {
             const parsed = JSON.parse(rawContent);
             const u = parsed.updatedData || currentData;
 
-            // Safety guarantee for review step: ensure formatted brief is always presented
+            // Safety guarantee for review step: only append bullets when presenting the brief, NEVER when asking what to edit
             if (parsed.step === "review") {
-              const hasBullets = parsed.reply?.includes("•") || parsed.reply?.includes("- Name");
-              if (!hasBullets) {
-                parsed.reply = `${parsed.reply || "Please verify your details before sending:"}\n\n• Name: ${u.name}\n• Email: ${u.email}\n• Subject: ${u.subject || "General Inquiry"}\n• Message: ${u.message}\n\nWould you like me to send this now, or would you like to edit anything?`;
-              }
-              if (!parsed.suggestions || parsed.suggestions.length === 0) {
-                parsed.suggestions = ["Confirm & Send", "Edit Details"];
+              const isAskingWhatToEdit =
+                parsed.reply?.toLowerCase().includes("which detail") ||
+                parsed.reply?.toLowerCase().includes("what would you like to edit") ||
+                parsed.suggestions?.some((s: string) => s.toLowerCase().includes("edit name"));
+
+              if (!isAskingWhatToEdit) {
+                const hasBullets = parsed.reply?.includes("•") || parsed.reply?.includes("- Name");
+                if (!hasBullets) {
+                  parsed.reply = `${parsed.reply || "Please verify your details before sending:"}\n\n• Name: ${u.name}\n• Email: ${u.email}\n• Subject: ${u.subject || "General Inquiry"}\n• Message: ${u.message}\n\nWould you like me to send this now, or would you like to edit anything?`;
+                }
+                if (!parsed.suggestions || parsed.suggestions.length === 0) {
+                  parsed.suggestions = ["Confirm & Send", "Edit Details"];
+                }
+              } else {
+                if (!parsed.suggestions || parsed.suggestions.length === 0) {
+                  parsed.suggestions = ["Edit Name", "Edit Email", "Edit Subject", "Edit Message", "Confirm & Send"];
+                }
               }
             }
 
@@ -193,7 +345,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Dynamic Server Fallback (only invoked if external LLM network is completely down)
-    const trimmed = (userMessage || "").trim();
     const updated = { ...currentData };
 
     if (isGreeting) {
@@ -266,8 +417,9 @@ Would you like me to send this message now, or would you like to edit anything?`
         nextStep = "confirmed";
         reply = `Your message has been verified and successfully transmitted via SMTP 465. Thank you, ${updated.name}. Kaium will follow up with you at ${updated.email}.`;
       } else if (isEdit) {
-        nextStep = "name";
-        reply = "Understood. Let us revise from the beginning. May I have your full name?";
+        nextStep = "review";
+        reply = "Which detail would you like to edit?";
+        suggestions = ["Edit Name", "Edit Email", "Edit Subject", "Edit Message", "Confirm & Send"];
       } else {
         reply = "Please confirm if you would like to send this message, or select 'Edit Details' to make changes.";
         suggestions = ["Confirm & Send", "Edit Details"];
