@@ -100,11 +100,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
             </a>
           )}
         </div>
-
-        {/* Indicator */}
-        <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
-          {isMobile ? "APP" : "SYS"}
-        </span>
       </div>
     </div>
   );

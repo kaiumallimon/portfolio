@@ -81,9 +81,6 @@ export function ProjectsArchiveView({
                     <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
                       Projects Archive
                     </h1>
-                    <span className="font-mono text-[10px] px-1.5 py-0.5 border border-zinc-200 dark:border-zinc-800 rounded-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-                      {projects.length} works
-                    </span>
                   </div>
                   <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-sans max-w-2xl leading-relaxed">
                     Curated archive of production mobile applications, high-throughput web systems, distributed APIs, and open-source packages.
