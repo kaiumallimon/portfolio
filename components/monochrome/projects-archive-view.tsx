@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowLeft } from "lucide-react";
-import { RiSearchLine, RiCloseLine } from "@remixicon/react";
+import { RiSearchLine, RiCloseLine, RiHomeLine } from "@remixicon/react";
 import { IProject, ISiteSettings } from "@/lib/models";
 import { MonochromeHeader } from "./header";
 import { ProjectCard } from "./project-card";
+import { Breadcrumb, BreadcrumbItem } from "@/components/base/breadcrumb/breadcrumb";
+import { ProjectsHeroAnimation } from "./projects-hero-animation";
 
 const MonochromeFooter = dynamic(
   () => import("./footer").then((m) => m.MonochromeFooter),
@@ -63,29 +63,42 @@ export function ProjectsArchiveView({
           {/* Header */}
           <MonochromeHeader />
 
-          {/* Page Banner */}
-          <section className="px-4 sm:px-6 py-8 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30">
-            <div className="space-y-4">
-              <Link
-                href="/"
-                prefetch={false}
-                className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors group"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-                <span>Back to Overview</span>
-              </Link>
+          {/* Page Banner / Hero */}
+          <section className="px-4 sm:px-6 py-10 sm:py-12 md:py-14 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+              {/* Left Column: Breadcrumb & Title */}
+              <div className="md:col-span-7 flex flex-col justify-center">
+                <Breadcrumb className="mb-4">
+                  <BreadcrumbItem href="/" icon={RiHomeLine}>
+                    Overview
+                  </BreadcrumbItem>
+                  <BreadcrumbItem current>Projects Archive</BreadcrumbItem>
+                </Breadcrumb>
 
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
-                      Projects Archive
-                    </h1>
-                  </div>
-                  <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-sans max-w-2xl leading-relaxed">
+                <div className="space-y-2">
+                  <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans max-w-sm sm:max-w-md">
+                    Projects Archive
+                  </h1>
+                  <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-sans max-w-sm sm:max-w-md leading-relaxed">
                     Curated archive of production mobile applications, high-throughput web systems, distributed APIs, and open-source packages.
                   </p>
                 </div>
+
+                {/* Telemetry metadata */}
+                <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-zinc-200/60 dark:border-zinc-800/60 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
+                  <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Production Ready
+                  </span>
+                  <span>13 Engineered Systems</span>
+                  <span className="text-zinc-300 dark:text-zinc-700">·</span>
+                  <span>Mobile & Web Core</span>
+                </div>
+              </div>
+
+              {/* Right Column: Interactive Hero Animation */}
+              <div className="md:col-span-5 flex justify-center md:justify-end">
+                <ProjectsHeroAnimation />
               </div>
             </div>
           </section>
