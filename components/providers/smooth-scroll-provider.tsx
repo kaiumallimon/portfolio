@@ -22,15 +22,6 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
   const pathname = usePathname();
 
   useEffect(() => {
-    // Disable Lenis smooth scroll on /admin routes so native mouse wheel scrolling works on sidebars, dialogs, and tables
-    if (pathname.startsWith("/admin")) {
-      if (lenisRef.current) {
-        lenisRef.current.destroy();
-        lenisRef.current = null;
-      }
-      return;
-    }
-
     // Check if user prefers reduced motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) return;

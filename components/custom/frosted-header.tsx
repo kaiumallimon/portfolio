@@ -1,9 +1,8 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import GlobalSearch from "@/components/global-search";
 
 interface FrostedHeaderProps {
   title: string;
@@ -68,36 +67,8 @@ export const FrostedHeader: React.FC<FrostedHeaderProps> = ({
           </div>
         </div>
 
-        {/* Right side - Search + Additional children */}
+        {/* Right side - Additional children */}
         <div className="flex items-center gap-3 shrink-0">
-          {/* Search command palette - visible on larger screens, mobile search button on small screens */}
-          {showSearch && (
-            <>
-              {/* Desktop search bar */}
-              <div className="hidden lg:block">
-                <GlobalSearch className="w-64" />
-              </div>
-
-              {/* Mobile search button */}
-              <div className="lg:hidden">
-                <GlobalSearch
-                  trigger={
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="p-2 h-8 w-8"
-                      aria-label="Search"
-                    >
-                      <Search className="h-4 w-4" />
-                    </Button>
-                  }
-                  className="w-8 h-8"
-                />
-              </div>
-            </>
-          )}
-
-          {/* Additional children */}
           {children && <>{children}</>}
         </div>
       </div>

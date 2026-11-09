@@ -27,7 +27,7 @@ import {
 import { toExternalUrl } from "@/lib/utils";
 import { ReadmeRenderer } from "@/components/custom-new/readme-renderer";
 import { Reveal } from "@/components/custom-new/reveal";
-import { DonutChart } from "@/components/admin/charts/donut";
+import { DonutChart } from "@/components/ui/donut-chart";
 import { ProjectGallery } from "@/components/custom-new/project-gallery";
 
 import { SITE_URL } from "@/lib/site";
