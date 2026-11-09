@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import { Volume2, Check, Copy, CheckCheck } from "lucide-react";
 import {
@@ -40,29 +40,6 @@ const RealtimeCounterClock = dynamic(
   }
 );
 
-// Synthesized name pronunciation chime
-function playAudioChime() {
-  try {
-    const AudioCtx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const ctx = new AudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0.14, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.28);
-  } catch {}
-}
-
 export function MonochromeHero({
   settings,
   coverRef,
@@ -73,6 +50,41 @@ export function MonochromeHero({
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
   const [copiedPhone, setCopiedPhone] = useState<boolean>(false);
   const [coverGameMode, setCoverGameMode] = useState<GameMode>("idle");
+  const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
+  const pronunciationAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Play real human name pronunciation recorded in public/audio/
+  const playNamePronunciation = () => {
+    try {
+      if (!pronunciationAudioRef.current) {
+        pronunciationAudioRef.current = new Audio("/audio/name-pronunciation.mp3");
+        pronunciationAudioRef.current.onended = () => setIsPlayingAudio(false);
+        pronunciationAudioRef.current.onerror = () => {
+          // Fallback to original raw filename if needed
+          const fallback = new Audio(
+            "/audio/ElevenLabs_2026-11-08T13_53_53_Adam%20-%20Dominant,%20Firm_pre_s50_sim75_v4.mp3"
+          );
+          fallback.onended = () => setIsPlayingAudio(false);
+          fallback.play().catch(() => {});
+          setIsPlayingAudio(true);
+        };
+      }
+      pronunciationAudioRef.current.currentTime = 0;
+      setIsPlayingAudio(true);
+      pronunciationAudioRef.current
+        .play()
+        .then(() => {
+          toast.success("Playing name pronunciation: Kaium Al Limon");
+        })
+        .catch((err) => {
+          console.warn("Audio playback error:", err);
+          setIsPlayingAudio(false);
+        });
+    } catch (err) {
+      console.warn("Audio error:", err);
+      setIsPlayingAudio(false);
+    }
+  };
 
   const copyEmail = () => {
     navigator.clipboard.writeText(settings.email);
@@ -143,12 +155,14 @@ export function MonochromeHero({
 
               {/* Audio Pronunciation Button */}
               <button
-                onClick={() => {
-                  playAudioChime();
-                  toast.success("Name pronunciation chime played");
-                }}
-                className="p-1 text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
-                title="Pronounce my name"
+                type="button"
+                onClick={playNamePronunciation}
+                className={`p-1 transition-colors cursor-pointer ${
+                  isPlayingAudio
+                    ? "text-blue-500 dark:text-blue-400 animate-pulse"
+                    : "text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100"
+                }`}
+                title="Pronounce my name (audio recording)"
                 aria-label="Pronounce my name"
               >
                 <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
