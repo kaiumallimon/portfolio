@@ -164,11 +164,6 @@ export function DeviceMockup({ type, title }: DeviceMockupProps) {
             className="fill-zinc-400 dark:fill-zinc-600"
           />
         </svg>
-
-        {/* Device Type Pill */}
-        <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded-xs font-mono text-[9px] uppercase tracking-wider bg-white/80 dark:bg-zinc-900/80 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 backdrop-blur-xs">
-          iOS / Flutter
-        </span>
       </div>
     );
   }
@@ -336,11 +331,6 @@ export function DeviceMockup({ type, title }: DeviceMockupProps) {
           className="fill-zinc-400 dark:fill-zinc-600"
         />
       </svg>
-
-      {/* Device Type Pill */}
-      <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded-xs font-mono text-[9px] uppercase tracking-wider bg-white/80 dark:bg-zinc-900/80 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 backdrop-blur-xs">
-        Desktop / Web
-      </span>
     </div>
   );
 }
