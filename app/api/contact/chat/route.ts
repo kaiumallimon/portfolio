@@ -8,42 +8,34 @@ interface ContactData {
 }
 
 interface ChatRequestPayload {
-  userMessage: string;
-  history: { role: "user" | "assistant"; content: string }[];
-  currentData: ContactData;
-  step: "name" | "email" | "subject" | "message" | "review" | "confirmed";
+  userMessage?: string;
+  isGreeting?: boolean;
+  history?: { role: "user" | "assistant"; content: string }[];
+  currentData?: ContactData;
+  step?: "name" | "email" | "subject" | "message" | "review" | "confirmed";
 }
 
-const SYSTEM_PROMPT = `You are Kaium's autonomous portfolio assistant for Kaium Al Limon (Full-Stack Software Engineer & CS student at UIU in Dhaka).
-Kaium crafts minimal interfaces, cross-platform apps (Flutter), and distributed backends (Next.js, FastAPI, MongoDB, PostgreSQL, TypeScript).
+const SYSTEM_PROMPT = `You are Kaium's autonomous assistant (representing Kaium Al Limon, a Full-Stack Software Engineer and CS student at UIU in Dhaka, Bangladesh).
+Kaium crafts minimal interfaces, cross-platform apps (Flutter), and distributed services (Next.js, FastAPI, TypeScript, MongoDB, PostgreSQL, Docker).
 
-YOUR GOAL:
-Conduct a natural, professional intake conversation to gather and validate 4 items:
+YOUR PURPOSE:
+Engage the visitor in an organic, intelligent, completely unscripted conversation while collecting and validating 4 key pieces of information:
 1. Full Name
-2. Email address
-3. Subject (e.g. Project Collaboration, Architecture Consulting, Job Opportunity, etc. If the user skips or says "no"/"none", set to "General Inquiry")
-4. Message details
+2. Email Address
+3. Subject / Topic of inquiry (e.g. Project Collaboration, Full-Stack Development, Architecture Consulting, Job Opportunity, or General Inquiry)
+4. Message details / proposal
 
-CRITICAL VALIDATION & VERIFICATION RULES:
-- Zero emojis. Do not output any emojis under any circumstance.
-- Always be concise, polite, professional, and developer-native.
-- Email Validation: Verify that the email is a valid email format (contains '@' and a domain with '.'). If invalid, politely explain and ask for a valid email.
-- Never directly send or finalize without explicit user verification!
-- When all 4 fields (name, email, subject, message) are gathered and valid:
-  - Set "step": "review"
-  - Present a neat, formatted summary of the 4 collected items:
-    "Here is a summary of your inquiry details before I dispatch them to Kaium:
-    • Name: <name>
-    • Email: <email>
-    • Subject: <subject>
-    • Message: <message>
-
-    Would you like me to send this message now, or would you like to edit anything?"
-  - Set "suggestions": ["Confirm & Send", "Edit Details"]
-- When in "review" step, if the user confirms ("Confirm & Send", "yes", "looks good", "send it", "confirmed"):
-  - Set "step": "confirmed"
-  - Output a professional closing acknowledging that the message is now being routed to Kaium's inbox.
-- If the user asks general questions about Kaium's skills, experience, or portfolio, answer concisely and accurately, then guide them back to their message.
+CONVERSATIONAL GUIDELINES:
+- Identity: You are strictly Kaium's autonomous assistant. Introduce yourself only as "Kaium's autonomous assistant" (never say "intake assistant" or "dispatch assistant").
+- No pre-written or canned templates. Speak naturally, politely, and concisely as an AI assistant.
+- Zero emojis: Never output emojis under any circumstance.
+- Initial Greeting: When asked to generate an initial greeting, welcome the visitor warmly as Kaium's autonomous assistant, mention that you can help outline their project or inquiry, and invite them to share their name with a clean example (e.g. Alex Rivera). Set "step": "name", "suggestions": null.
+- Handling Questions: If the visitor asks a question about Kaium's skills, availability, or experience, answer knowledgeably and politely, then steer back to collecting the next piece of information.
+- Flexible Subject: If the user skips or says "no" to specifying a subject, gracefully categorize it as "General Inquiry" and move to the message step.
+- Email Validation: Verify that the email contains '@' and a valid domain. If invalid, politely explain and ask for a valid email coordinate.
+- The Verification Gate (No Premature Sending): Once all 4 fields (name, email, subject, message) are gathered and valid, transition to step "review". Set "suggestions": ["Confirm & Send", "Edit Details"].
+- Edit Details: If the user asks to edit or change details during review, ask what they would like to adjust and set suggestions to: ["Edit Name", "Edit Email", "Edit Subject", "Edit Message"].
+- Confirmation: When in "review" and the user confirms ("Confirm & Send", "yes", "looks good", "send it"), transition to step "confirmed" with a courteous closing statement acknowledging that their message is now being routed to Kaium's inbox.
 
 RESPONSE FORMAT:
 You MUST respond with a valid JSON object matching this schema:
@@ -62,25 +54,35 @@ You MUST respond with a valid JSON object matching this schema:
 export async function POST(req: NextRequest) {
   try {
     const payload: ChatRequestPayload = await req.json();
-    const { userMessage, history, currentData, step } = payload;
+    const {
+      userMessage = "",
+      isGreeting = false,
+      history = [],
+      currentData = { name: "", email: "", subject: "", message: "" },
+      step = "name",
+    } = payload;
 
     const apiKey = process.env.GROQ_API_KEY;
     const model = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 
-    // If Groq API key is present, execute via Llama 3.1 8B Instant on Groq
     if (apiKey) {
       try {
-        const groqMessages = [
-          { role: "system", content: SYSTEM_PROMPT },
-          ...history.slice(-6).map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-          {
+        const groqMessages = [{ role: "system", content: SYSTEM_PROMPT }];
+
+        if (isGreeting) {
+          groqMessages.push({
+            role: "user",
+            content: "Generate a spontaneous, natural, polite initial greeting welcoming the visitor and asking for their full name with an example. Return JSON with 'reply', 'step': 'name', 'suggestions': null.",
+          });
+        } else {
+          history.slice(-8).forEach((m) => {
+            groqMessages.push({ role: m.role, content: m.content });
+          });
+          groqMessages.push({
             role: "user",
             content: `User Input: "${userMessage}"\nCurrent Data: ${JSON.stringify(currentData)}\nCurrent Step: "${step}"`,
-          },
-        ];
+          });
+        }
 
         let groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
@@ -92,8 +94,8 @@ export async function POST(req: NextRequest) {
             model,
             messages: groqMessages,
             response_format: { type: "json_object" },
-            temperature: 0.2,
-            max_tokens: 700,
+            temperature: 0.35,
+            max_tokens: 750,
           }),
         });
 
@@ -109,8 +111,8 @@ export async function POST(req: NextRequest) {
               model: "openai/gpt-oss-20b",
               messages: groqMessages,
               response_format: { type: "json_object" },
-              temperature: 0.2,
-              max_tokens: 700,
+              temperature: 0.35,
+              max_tokens: 750,
             }),
           });
         }
@@ -120,34 +122,56 @@ export async function POST(req: NextRequest) {
           const rawContent = data.choices?.[0]?.message?.content;
           if (rawContent) {
             const parsed = JSON.parse(rawContent);
+            const u = parsed.updatedData || currentData;
+
+            // Safety guarantee for review step: ensure formatted brief is always presented
+            if (parsed.step === "review") {
+              const hasBullets = parsed.reply?.includes("•") || parsed.reply?.includes("- Name");
+              if (!hasBullets) {
+                parsed.reply = `${parsed.reply || "Please verify your details before sending:"}\n\n• Name: ${u.name}\n• Email: ${u.email}\n• Subject: ${u.subject || "General Inquiry"}\n• Message: ${u.message}\n\nWould you like me to send this now, or would you like to edit anything?`;
+              }
+              if (!parsed.suggestions || parsed.suggestions.length === 0) {
+                parsed.suggestions = ["Confirm & Send", "Edit Details"];
+              }
+            }
+
             return NextResponse.json({
               reply: parsed.reply,
-              updatedData: parsed.updatedData || currentData,
+              updatedData: u,
               step: parsed.step || step,
               suggestions: parsed.suggestions || null,
               provider: "groq-llm",
-              modelName: model,
+              modelName: data.model || model,
             });
           }
-        } else {
-          const errText = await groqRes.text();
-          console.warn("[Groq API] Non-OK response, falling back to local engine:", errText);
         }
       } catch (groqErr) {
-        console.warn("[Groq API] Error during completion, falling back to local engine:", groqErr);
+        console.warn("[Groq API] Error during completion, falling back to dynamic fallback:", groqErr);
       }
     }
 
-    // Fallback: Intelligent Local Validation & Verification Engine
+    // Dynamic Server Fallback (only invoked if external LLM network is completely down)
     const trimmed = (userMessage || "").trim();
     const updated = { ...currentData };
+
+    if (isGreeting) {
+      return NextResponse.json({
+        reply: "Hello. I am Kaium's autonomous assistant.\n\nI can help outline your project or inquiry and route your message directly to Kaium's inbox.\n\nTo begin, may I know your full name? (e.g. Alex Rivera)",
+        updatedData: updated,
+        step: "name",
+        suggestions: null,
+        provider: "fallback",
+        modelName: model,
+      });
+    }
+
     let nextStep = step;
     let reply = "";
     let suggestions: string[] | null = null;
 
     if (step === "name") {
       if (trimmed.length < 2) {
-        reply = "Please provide your full name so Kaium knows who is reaching out (e.g. Alex Rivera).";
+        reply = "Please share your full name so Kaium knows who is reaching out (e.g. Alex Rivera).";
       } else {
         updated.name = trimmed;
         nextStep = "email";
@@ -174,7 +198,7 @@ export async function POST(req: NextRequest) {
       updated.subject = isSkip ? "General Inquiry" : trimmed;
       nextStep = "message";
       reply = isSkip
-        ? "No problem, we'll keep it as a general inquiry. Please share the details of your message, specifications, or proposal."
+        ? "No problem, we will keep it as a general inquiry. Please share the details of your message, specifications, or proposal."
         : `Understood regarding ${updated.subject}. Please share the details of your message, proposal, or inquiry.`;
     } else if (step === "message") {
       if (trimmed.length < 4) {
@@ -213,7 +237,8 @@ Would you like me to send this message now, or would you like to edit anything?`
       updatedData: updated,
       step: nextStep,
       suggestions,
-      provider: "local-validation-engine",
+      provider: "fallback",
+      modelName: model,
     });
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : "Error processing chat intake";

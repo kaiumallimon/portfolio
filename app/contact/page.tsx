@@ -38,16 +38,6 @@ interface ContactData {
 
 type IntakeStep = "name" | "email" | "subject" | "message" | "review" | "confirmed";
 
-const INITIAL_GREETINGS = [
-  "Hello. I am Kaium's autonomous assistant powered by Llama 3.1.\n\nI can help outline your inquiry, calibrate requirements, and route your message directly to Kaium's inbox.\n\nTo begin, may I know your full name? (e.g. Alex Rivera)",
-  "Greetings. I coordinate project intake and direct communication for Kaium.\n\nI will gather your brief, verify the details with you, and ensure it reaches his inbox promptly.\n\nWho do I have the pleasure of speaking with today? (e.g. Sarah Chen)",
-  "Welcome. I serve as Kaium's dispatch assistant.\n\nWhether you are inquiring about full-stack engineering, architecture consulting, or potential collaboration, I am here to assist.\n\nMay I have your full name to get started? (e.g. David Miller)",
-];
-
-function sample<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 export default function ContactAgentPage() {
   const [step, setStep] = useState<IntakeStep>("name");
   const [activeModel, setActiveModel] = useState("Llama 3.1");
@@ -65,17 +55,55 @@ export default function ContactAgentPage() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  // Initialize randomized greeting on mount
+  // Fetch spontaneous dynamic LLM greeting on mount (zero hardcoded strings)
   useEffect(() => {
-    const greeting = sample(INITIAL_GREETINGS);
-    setMessages([
-      {
-        id: "msg-0",
-        sender: "agent",
-        text: greeting,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      },
-    ]);
+    let isMounted = true;
+    setIsThinking(true);
+
+    fetch("/api/contact/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isGreeting: true }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted) return;
+        setIsThinking(false);
+        if (data.modelName) {
+          const cleaned = data.modelName
+            .replace("-8b-instant", "")
+            .replace("-70b-versatile", "")
+            .split("-")
+            .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+          setActiveModel(cleaned || "Llama 3.1");
+        }
+        setMessages([
+          {
+            id: "msg-0",
+            sender: "agent",
+            text: data.reply,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            chips: data.suggestions || undefined,
+          },
+        ]);
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setIsThinking(false);
+        setMessages([
+          {
+            id: "msg-0",
+            sender: "agent",
+            text: "Hello. I am Kaium's autonomous assistant. To get started, may I have your full name? (e.g. Alex Rivera)",
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ]);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -228,7 +256,7 @@ export default function ContactAgentPage() {
   const handleReset = () => {
     setStep("name");
     setInputVal("");
-    setIsThinking(false);
+    setIsThinking(true);
     setIsCompleted(false);
     setContactData({
       name: "",
@@ -237,16 +265,35 @@ export default function ContactAgentPage() {
       message: "",
     });
 
-    const freshGreeting = sample(INITIAL_GREETINGS);
-
-    setMessages([
-      {
-        id: `msg-reset-${Date.now()}`,
-        sender: "agent",
-        text: freshGreeting,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      },
-    ]);
+    fetch("/api/contact/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isGreeting: true }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setIsThinking(false);
+        setMessages([
+          {
+            id: `msg-reset-${Date.now()}`,
+            sender: "agent",
+            text: data.reply,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            chips: data.suggestions || undefined,
+          },
+        ]);
+      })
+      .catch(() => {
+        setIsThinking(false);
+        setMessages([
+          {
+            id: `msg-reset-${Date.now()}`,
+            sender: "agent",
+            text: "Hello. I am Kaium's autonomous assistant. To get started, may I have your full name? (e.g. Alex Rivera)",
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ]);
+      });
   };
 
   const toggleListening = () => {
@@ -315,7 +362,7 @@ export default function ContactAgentPage() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
             </span>
-            <span className="hidden sm:inline">Dispatch Agent Online</span>
+            <span className="hidden sm:inline">Autonomous Assistant Online</span>
             <span className="text-zinc-300 dark:text-zinc-700">·</span>
             <button
               type="button"
@@ -347,16 +394,23 @@ export default function ContactAgentPage() {
                     {/* Professional Suggestion Chips (Zero emojis, dismissed once answered) */}
                     {msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
                       <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-200">
-                        {msg.chips.map((chipText) => (
-                          <button
-                            key={chipText}
-                            type="button"
-                            onClick={() => handleUserInput(chipText)}
-                            className="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 text-zinc-800 dark:text-zinc-200 font-mono text-xs transition-all shadow-2xs active:scale-95 cursor-pointer text-left"
-                          >
-                            {chipText}
-                          </button>
-                        ))}
+                        {msg.chips.map((chipText) => {
+                          const isConfirm = chipText === "Confirm & Send";
+                          return (
+                            <button
+                              key={chipText}
+                              type="button"
+                              onClick={() => handleUserInput(chipText)}
+                              className={`px-3 py-1.5 rounded-lg border font-mono text-xs transition-all shadow-2xs active:scale-95 cursor-pointer text-left ${
+                                isConfirm
+                                  ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200"
+                                  : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 text-zinc-800 dark:text-zinc-200"
+                              }`}
+                            >
+                              {chipText}
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
 
