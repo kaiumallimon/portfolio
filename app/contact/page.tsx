@@ -13,7 +13,6 @@ import {
   RotateCcw,
   Home,
   FolderGit2,
-  Activity,
 } from "lucide-react";
 import { MonochromeHeader } from "@/components/monochrome/header";
 import { toast } from "sonner";
@@ -682,14 +681,6 @@ export default function ContactAgentPage() {
                   className="inline-flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 font-mono text-[11px] select-none transition-colors cursor-pointer"
                   title="Click or hover to inspect live usage quota"
                 >
-                  <span
-                    className={`size-1.5 rounded-full transition-colors ${
-                      clientQuota.remaining > 0
-                        ? "bg-zinc-400 dark:bg-zinc-500"
-                        : "bg-zinc-900 dark:bg-zinc-100 animate-pulse"
-                    }`}
-                  />
-                  <Activity className="size-3 opacity-70" />
                   <span className="tabular-nums">
                     {clientQuota.remaining}/{clientQuota.limit}
                   </span>
