@@ -21,7 +21,6 @@ import {
   IntakeStep,
   submitChatTurn,
   dispatchContactMessage,
-  getInitialChatState,
 } from "./actions";
 
 interface ChatMessage {
@@ -126,21 +125,23 @@ export function ContactChatClient({
   useEffect(() => {
     if (clientQuota.used === 0) return;
     const interval = setInterval(() => {
-      setResetCountdown((prev) => {
-        if (prev <= 1) {
-          // Window expired, re-fetch fresh quota snapshot via Server Action
-          getInitialChatState()
-            .then((state) => {
-              if (state.telemetry) setClientQuota(state.telemetry);
-            })
-            .catch(() => {});
-          return 60;
-        }
-        return prev - 1;
-      });
+      setResetCountdown((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => clearInterval(interval);
   }, [clientQuota.used]);
+
+  // Auto-restore quota capacity when the sliding window reaches 0
+  useEffect(() => {
+    if (resetCountdown === 0 && clientQuota.used > 0) {
+      setClientQuota((prev) => ({
+        ...prev,
+        remaining: prev.limit,
+        used: 0,
+        resetSeconds: 60,
+      }));
+      setResetCountdown(60);
+    }
+  }, [resetCountdown, clientQuota.used]);
 
   const activeStreamRef = useRef<NodeJS.Timeout | null>(null);
 
