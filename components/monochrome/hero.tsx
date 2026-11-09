@@ -115,7 +115,7 @@ export function MonochromeHero({
         {/* Cover Artwork: Full width at top on mobile (< md), Top-Right on desktop (md:) */}
         <div
           ref={coverRef}
-          className="col-span-2 row-start-1 md:col-span-1 md:col-start-2 md:row-start-1 relative cover-grid-bg overflow-hidden flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800"
+          className="col-span-2 row-start-1 md:col-span-1 md:col-start-2 md:row-start-1 relative cover-grid-bg overflow-hidden flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800 h-[175px] sm:h-[190px] md:h-full"
         >
           <CadIsometricCover onGameModeChange={setCoverGameMode} />
         </div>
@@ -246,7 +246,7 @@ export function MonochromeHero({
           {/* Lower row: Rotating Tagline / Sentences */}
           {/* On mobile (< md): Sits snugly right underneath the name without split border or giant void */}
           {/* On desktop (md:): Padded in lower bar with top border */}
-          <div className="px-3.5 pb-2.5 pt-0.5 sm:px-5 sm:pb-3 sm:pt-0.5 md:px-4 md:py-2.5 md:border-t md:border-zinc-200 md:dark:border-zinc-800 flex items-center">
+          <div className="px-3.5 pb-2.5 pt-0.5 sm:px-5 sm:pb-3 sm:pt-0.5 md:px-4 md:py-2.5 md:border-t md:border-zinc-200 md:dark:border-zinc-800 flex items-center min-h-[52px] sm:min-h-[52px] md:min-h-[44px]">
             <RotatingText
               texts={[
                 "Building high-performance mobile & web experiences engineered to scale.",

@@ -36,7 +36,7 @@ export function CadIsometricCover({ onGameModeChange }: CadIsometricCoverProps =
 
   return (
     <div
-      className="relative w-full h-full min-h-[160px] sm:min-h-[185px] md:min-h-[205px] flex items-center justify-center select-none overflow-hidden transition-all duration-300"
+      className="relative w-full h-[175px] sm:h-[190px] md:h-full md:min-h-[205px] flex items-center justify-center select-none overflow-hidden"
       title="KAL Cover — Click character or press Space to play"
     >
       {/* Background Pixel-art "KAL" typography — soft faded in idle, completely removed when game is ongoing */}
