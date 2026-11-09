@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { motion, useReducedMotion } from "framer-motion";
 import { EXPERIENCE_DATA } from "@/data/experience";
 import { ExperienceItem } from "./experience/experience-item";
+import { EASE_OUT } from "@/lib/motion";
 
 interface MonochromeExperienceProps {
   experiences?: Partial<IExperience>[];
@@ -71,8 +72,8 @@ export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
         <motion.ol
           initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
+          viewport={{ once: true, margin: "-20px" }}
+          transition={{ duration: 0.45, ease: EASE_OUT }}
           aria-label="Roles at UIU App Forum"
           className="relative pt-1 pl-1"
         >

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { motion, useReducedMotion } from "framer-motion";
 import { STACK_CATEGORIES } from "@/data/stack";
 import { StackCard } from "./stack/stack-card";
+import { EASE_OUT } from "@/lib/motion";
 
 interface MonochromeSkillsProps {
   skills?: { category: string; skills: string[] }[];
@@ -47,8 +48,8 @@ export function MonochromeSkills({}: MonochromeSkillsProps = {}) {
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
+          viewport={{ once: true, margin: "-20px" }}
+          transition={{ duration: 0.45, ease: EASE_OUT }}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4"
         >
           {STACK_CATEGORIES.map((category) => (

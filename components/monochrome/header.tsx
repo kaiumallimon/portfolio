@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useLenis } from "lenis/react";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
 import { RiMenuLine, RiArrowRightUpLine } from "@remixicon/react";
 import {
@@ -37,8 +38,9 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isFabVisible, setIsFabVisible] = useState(true);
+  const lenis = useLenis();
 
-  // Smooth scroll to target section with sticky header offset
+  // Smooth scroll to target section with sticky header offset (using Lenis when active)
   const handleSectionScroll = (
     e: React.MouseEvent<HTMLAnchorElement>,
     targetId: string
@@ -48,13 +50,19 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
       const element = document.getElementById(targetId);
       if (element) {
         const headerOffset = 52;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth",
-        });
+        if (lenis) {
+          lenis.scrollTo(element, {
+            offset: -headerOffset,
+            duration: 1.1,
+          });
+        } else {
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
 
         window.history.pushState(null, "", `#${targetId}`);
       }
@@ -74,13 +82,19 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
         const element = document.getElementById(targetId);
         if (element) {
           const headerOffset = 52;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
+          if (lenis) {
+            lenis.scrollTo(element, {
+              offset: -headerOffset,
+              duration: 1.1,
+            });
+          } else {
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: "smooth",
+            });
+          }
 
           window.history.pushState(null, "", `#${targetId}`);
         }
@@ -94,10 +108,14 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (isHomePage) {
       e.preventDefault();
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      if (lenis) {
+        lenis.scrollTo(0, { duration: 1.1 });
+      } else {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
       window.history.pushState(null, "", "/");
     }
   };
@@ -266,6 +284,7 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
       {/* Mobile Navigation Sheet Drawer */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <SheetContent
+          data-lenis-prevent
           side="right"
           className="w-[280px] sm:w-[320px] bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 p-6 flex flex-col justify-between z-50"
         >

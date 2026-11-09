@@ -5,7 +5,9 @@ import Image from "next/image";
 import { ArrowLeft, ArrowRight, X, Maximize2 } from "lucide-react";
 import { RiLink, RiTrophyLine, RiMedalLine } from "@remixicon/react";
 import { toast } from "sonner";
+import { motion, useReducedMotion } from "framer-motion";
 import { IAchievementItem } from "@/lib/data-service";
+import { EASE_OUT } from "@/lib/motion";
 
 function getAchievementImages(item: IAchievementItem): string[] {
   if (item.images && item.images.length > 0) return item.images;
@@ -68,6 +70,7 @@ function FullscreenImageModal({
     <div
       role="dialog"
       aria-modal="true"
+      data-lenis-prevent
       className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6 select-none animate-in fade-in-0 duration-200"
       onClick={onClose}
     >
@@ -320,6 +323,7 @@ export function MonochromeRecognition({
 }: {
   achievements: IAchievementItem[];
 }) {
+  const shouldReduceMotion = useReducedMotion();
   const [modalState, setModalState] = useState<{
     item: IAchievementItem;
     images: string[];
@@ -367,13 +371,27 @@ export function MonochromeRecognition({
 
       {/* Responsive Grid replacing the old vertical list */}
       <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {achievements.map((item) => (
-          <RecognitionCard
-            key={item.id}
-            item={item}
-            onOpenPreview={handleOpenPreview}
-          />
-        ))}
+        {achievements.map((item, index) => {
+          const rowIndex = Math.floor(index / 2);
+          return (
+            <motion.div
+              key={item.id}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{
+                duration: 0.45,
+                delay: shouldReduceMotion ? 0 : rowIndex * 0.1,
+                ease: EASE_OUT,
+              }}
+            >
+              <RecognitionCard
+                item={item}
+                onOpenPreview={handleOpenPreview}
+              />
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Fullscreen Image Preview Modal */}

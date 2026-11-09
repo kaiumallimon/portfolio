@@ -54,13 +54,16 @@ export function ContributionSnake({
 
   // Refs for animation loop
   const snakeRef = useRef(snake);
-  snakeRef.current = snake;
   const dirRef = useRef(dir);
-  dirRef.current = dir;
   const foodsRef = useRef(foods);
-  foodsRef.current = foods;
   const isUserControlledRef = useRef(isUserControlled);
-  isUserControlledRef.current = isUserControlled;
+
+  useEffect(() => {
+    snakeRef.current = snake;
+    dirRef.current = dir;
+    foodsRef.current = foods;
+    isUserControlledRef.current = isUserControlled;
+  }, [snake, dir, foods, isUserControlled]);
 
   // Key handling
   useEffect(() => {

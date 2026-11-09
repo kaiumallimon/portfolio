@@ -15,12 +15,13 @@ import { Select, SelectItem } from "@/components/base/select/select";
 import { ContributionSnake } from "./contribution-snake";
 import { cn } from "@/lib/utils";
 import { THEME_CHANGE_EVENT } from "@/components/application/theme/theme-toggle";
+import { motion, useReducedMotion } from "framer-motion";
+import { EASE_OUT } from "@/lib/motion";
 
 export function MonochromeGitHubTelemetry({
-  stats,
   username = "kaiumallimon",
 }: {
-  stats: GitHubStats | null;
+  stats?: GitHubStats | null;
   username?: string;
 }) {
   // Available years: 2026 (running year, Jan 01 to today), 2025, 2024, 2023
@@ -29,6 +30,7 @@ export function MonochromeGitHubTelemetry({
   const [isSnakeLoading, setIsSnakeLoading] = useState<boolean>(false);
   const [isArcadeMode, setIsArcadeMode] = useState<boolean>(false);
   const [isDark, setIsDark] = useState<boolean>(true);
+  const shouldReduceMotion = useReducedMotion();
 
   // Map of contribution data by year (starts with pre-cached real data)
   const [yearsData, setYearsData] = useState<Record<number, YearContributionInfo>>(() => {
@@ -219,7 +221,14 @@ export function MonochromeGitHubTelemetry({
               onComplete={() => setIsArcadeMode(false)}
             />
           ) : (
-            <div className="w-full overflow-x-auto py-2 flex justify-center text-zinc-400 dark:text-zinc-500 font-mono [&_rect]:rx-0 [&_rect]:ry-0 [&_.react-activity-calendar__count]:hidden [&_footer>div:first-child:not(:last-child)]:hidden">
+            <motion.div
+              data-lenis-prevent
+              initial={shouldReduceMotion ? false : { clipPath: "inset(0 100% 0 0)" }}
+              whileInView={{ clipPath: "inset(0 0% 0 0)" }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.75, ease: EASE_OUT }}
+              className="w-full overflow-x-auto py-2 flex justify-center text-zinc-400 dark:text-zinc-500 font-mono [&_rect]:rx-0 [&_rect]:ry-0 [&_.react-activity-calendar__count]:hidden [&_footer>div:first-child:not(:last-child)]:hidden"
+            >
               <ActivityCalendar
                 data={currentData.data}
                 blockSize={11.5}
@@ -252,7 +261,7 @@ export function MonochromeGitHubTelemetry({
                   ],
                 }}
               />
-            </div>
+            </motion.div>
           )}
         </div>
 

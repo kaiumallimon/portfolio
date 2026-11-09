@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Command } from "cmdk";
 import {
   RiSearchLine,
@@ -67,7 +67,10 @@ export function MonochromeCommandDialog({ open, onOpenChange }: CommandDialogPro
         className="fixed inset-0"
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative w-full max-w-lg rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-2xl overflow-hidden z-10 font-sans">
+      <div
+        data-lenis-prevent
+        className="relative w-full max-w-lg rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-2xl overflow-hidden z-10 font-sans"
+      >
         <Command className="w-full">
           <div className="flex items-center px-3 border-b border-zinc-200 dark:border-zinc-800">
             <RiSearchLine className="w-4 h-4 text-zinc-400 mr-2 shrink-0" />
@@ -81,7 +84,7 @@ export function MonochromeCommandDialog({ open, onOpenChange }: CommandDialogPro
             </kbd>
           </div>
 
-          <Command.List className="max-h-72 overflow-y-auto p-2 text-xs font-mono space-y-1">
+          <Command.List data-lenis-prevent className="max-h-72 overflow-y-auto p-2 text-xs font-mono space-y-1">
             <Command.Empty className="py-6 text-center text-zinc-500 text-xs font-mono">
               No matching commands.
             </Command.Empty>

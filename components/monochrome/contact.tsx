@@ -5,8 +5,11 @@ import { useState } from "react";
 import { MessageSquare, ArrowRight, Copy, Check } from "lucide-react";
 import { ISiteSettings } from "@/lib/models";
 import { toast } from "sonner";
+import { motion, useReducedMotion } from "framer-motion";
+import { EASE_OUT } from "@/lib/motion";
 
 export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
+  const shouldReduceMotion = useReducedMotion();
   const [copied, setCopied] = useState(false);
   const email = settings.email || "kalimon291@gmail.com";
 
@@ -20,7 +23,13 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
   return (
     <section id="contact" className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
       {/* Clean Centered CTA Stage */}
-      <div className="px-4 sm:px-6 py-14 sm:py-20 text-center max-w-2xl mx-auto space-y-6">
+      <motion.div
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-20px" }}
+        transition={{ duration: 0.5, ease: EASE_OUT }}
+        className="px-4 sm:px-6 py-14 sm:py-20 text-center max-w-2xl mx-auto space-y-6"
+      >
         {/* Subtle Online Indicator */}
         <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 font-mono text-xs">
           <span className="relative flex size-2">
@@ -67,7 +76,7 @@ export function MonochromeContact({ settings }: { settings: ISiteSettings }) {
         <div className="pt-2 text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
           Typical response turnaround &lt; 24 hrs // Dhaka (GMT+6)
         </div>
-      </div>
+      </motion.div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />
     </section>

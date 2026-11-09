@@ -7,6 +7,7 @@ import { getSiteSettings } from "@/lib/data-service";
 import { SITE_URL } from "@/lib/site";
 import GAListener from "@/lib/ga-listener";
 import ClickSpark from "@/components/ClickSpark";
+import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -108,9 +109,11 @@ export default async function RootLayout({
           <GAListener />
         </Suspense>
 
-        <ClickSpark preset="comet">
-          {children}
-        </ClickSpark>
+        <SmoothScrollProvider>
+          <ClickSpark preset="comet">
+            {children}
+          </ClickSpark>
+        </SmoothScrollProvider>
       </body>
     </html>
   );

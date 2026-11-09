@@ -1,8 +1,11 @@
 "use client";
 
 import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { CountUp, EASE_OUT } from "@/lib/motion";
 
 export function MonochromeCommunityStats() {
+  const shouldReduceMotion = useReducedMotion();
   const stats = [
     { label: "Years in Software Development", value: "3+" },
     { label: "Competitions", value: "4" },
@@ -20,14 +23,25 @@ export function MonochromeCommunityStats() {
 
       <dl className="grid gap-3.5 p-4 sm:p-6 font-mono text-xs sm:text-sm">
         {stats.map((s, idx) => (
-          <div key={idx} className="flex items-baseline gap-2">
+          <motion.div
+            key={idx}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{
+              duration: 0.4,
+              delay: shouldReduceMotion ? 0 : idx * 0.08,
+              ease: EASE_OUT,
+            }}
+            className="flex items-baseline gap-2"
+          >
             <dt className="flex flex-1 items-baseline gap-2 text-zinc-600 dark:text-zinc-400 after:flex-1 after:translate-y-0.75 after:border-b after:border-dashed after:border-zinc-200 dark:after:border-zinc-800">
               {s.label}
             </dt>
             <dd className="font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">
-              {s.value}
+              <CountUp value={s.value} delay={idx * 0.08} />
             </dd>
-          </div>
+          </motion.div>
         ))}
       </dl>
 

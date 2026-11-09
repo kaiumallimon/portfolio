@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 import { Volume2, Copy, CheckCheck } from "lucide-react";
 import {
   RiTwitterXLine,
@@ -19,6 +20,7 @@ import { CadIsometricCover } from "./cad-isometric-cover";
 import RotatingText from "@/components/RotatingText";
 import { ISiteSettings } from "@/lib/models";
 import { GameMode } from "@/components/cover/use-pixel-runner";
+import { useIsInitialReveal, markLoadRevealPlayed, EASE_OUT } from "@/lib/motion";
 
 // Client-only dynamic import to guarantee zero hydration mismatch on the realtime clock
 const RealtimeCounterClock = dynamic(
@@ -52,6 +54,17 @@ export function MonochromeHero({
   const [coverGameMode, setCoverGameMode] = useState<GameMode>("idle");
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
   const pronunciationAudioRef = useRef<HTMLAudioElement | null>(null);
+  const isInitialReveal = useIsInitialReveal();
+
+  // Load reveal: marks played once the 1.3s load sequence settles
+  useEffect(() => {
+    if (isInitialReveal) {
+      const timer = setTimeout(() => {
+        markLoadRevealPlayed();
+      }, 1300);
+      return () => clearTimeout(timer);
+    }
+  }, [isInitialReveal]);
 
   // Play real human name pronunciation recorded in public/audio/
   const playNamePronunciation = () => {
@@ -123,7 +136,12 @@ export function MonochromeHero({
         {/* Circular Avatar: Bottom-Left beneath cover on mobile (< md), Left column spanning 2 rows on desktop (md:) */}
         <div className="col-start-1 row-start-2 md:col-start-1 md:row-start-1 md:row-span-2 flex items-center justify-center border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 h-[105px] sm:h-[115px] md:h-full">
           <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 w-full h-full">
-            <div className="relative size-16 sm:size-20 md:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+            <motion.div
+              initial={isInitialReveal ? { opacity: 0, scale: 0.92 } : false}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: isInitialReveal ? 0.35 : 0, ease: EASE_OUT }}
+              className="relative size-16 sm:size-20 md:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0"
+            >
               <Image
                 src="/bordered.png"
                 alt={settings.name}
@@ -132,7 +150,7 @@ export function MonochromeHero({
                 className="object-cover select-none"
                 loading="lazy"
               />
-            </div>
+            </motion.div>
           </div>
         </div>
 
@@ -140,7 +158,12 @@ export function MonochromeHero({
         <div className="col-start-2 row-start-2 md:col-start-2 md:row-start-2 flex flex-col justify-end bg-white dark:bg-zinc-950 min-w-0 h-[105px] sm:h-[115px] md:h-auto">
           {/* Upper row: Name + sound chime + Tech Humor Game Hint (desktop md:) */}
           <div className="px-3.5 pt-2 pb-0.5 sm:px-4 sm:pt-2 sm:pb-0.5 md:px-4 md:py-2 flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <motion.div
+              initial={isInitialReveal ? { opacity: 0, y: 6 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: isInitialReveal ? 0.45 : 0, ease: EASE_OUT }}
+              className="flex items-center gap-1.5 sm:gap-2"
+            >
               <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
                 {settings.name}
               </h1>
@@ -159,7 +182,7 @@ export function MonochromeHero({
               >
                 <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
-            </div>
+            </motion.div>
 
             {/* Tech humor runner game instruction (desktop view md:) */}
             <button
@@ -246,7 +269,12 @@ export function MonochromeHero({
           {/* Lower row: Rotating Tagline / Sentences */}
           {/* On mobile (< md): Sits snugly right underneath the name without split border or giant void */}
           {/* On desktop (md:): Padded in lower bar with top border */}
-          <div className="px-3.5 pb-2.5 pt-0 sm:px-4 sm:pb-3 sm:pt-0 md:px-4 md:py-2 md:border-t md:border-zinc-200 md:dark:border-zinc-800 flex items-start h-[38px] sm:h-[40px] md:h-[42px] overflow-hidden">
+          <motion.div
+            initial={isInitialReveal ? { opacity: 0 } : false}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: isInitialReveal ? 0.55 : 0, ease: EASE_OUT }}
+            className="px-3.5 pb-2.5 pt-0 sm:px-4 sm:pb-3 sm:pt-0 md:px-4 md:py-2 md:border-t md:border-zinc-200 md:dark:border-zinc-800 flex items-start h-[38px] sm:h-[40px] md:h-[42px] overflow-hidden"
+          >
             <RotatingText
               layout={false}
               texts={[
@@ -264,7 +292,7 @@ export function MonochromeHero({
               loop={true}
               pauseOnHover={true}
             />
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -284,7 +312,12 @@ export function MonochromeHero({
         {/* Left Column (Desktop) / Items 1-3 (Mobile) */}
         <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {/* 1. Education */}
-          <div className="px-4 py-2.5 flex items-center gap-3">
+          <motion.div
+            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: isInitialReveal ? 0.65 : 0, ease: EASE_OUT }}
+            className="px-4 py-2.5 flex items-center gap-3"
+          >
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiGraduationCapLine className="w-3.5 h-3.5" />
             </div>
@@ -295,10 +328,15 @@ export function MonochromeHero({
             >
               Computer Science Graduate <span className="text-zinc-400">@</span>UIU
             </a>
-          </div>
+          </motion.div>
 
           {/* 2. Location */}
-          <div className="px-4 py-2.5 flex items-center gap-3">
+          <motion.div
+            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: isInitialReveal ? 0.70 : 0, ease: EASE_OUT }}
+            className="px-4 py-2.5 flex items-center gap-3"
+          >
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiMapPinLine className="w-3.5 h-3.5" />
             </div>
@@ -310,21 +348,31 @@ export function MonochromeHero({
             >
               Dhaka, Bangladesh
             </a>
-          </div>
+          </motion.div>
 
           {/* 3. Live Clock */}
-          <div className="px-4 py-2.5 flex items-center gap-3">
+          <motion.div
+            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: isInitialReveal ? 0.75 : 0, ease: EASE_OUT }}
+            className="px-4 py-2.5 flex items-center gap-3"
+          >
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <RiTimeLine className="w-3.5 h-3.5" />
             </div>
             <RealtimeCounterClock timezone={settings.timezone || "Asia/Dhaka"} />
-          </div>
+          </motion.div>
         </div>
 
         {/* Right Column (Desktop) / Items 4-6 (Mobile) */}
         <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {/* 4. Email */}
-          <div className="px-4 py-2.5 flex items-center justify-between group">
+          <motion.div
+            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: isInitialReveal ? 0.80 : 0, ease: EASE_OUT }}
+            className="px-4 py-2.5 flex items-center justify-between group"
+          >
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
                 <RiMailLine className="w-3.5 h-3.5" />
@@ -347,10 +395,15 @@ export function MonochromeHero({
                 <Copy className="w-3.5 h-3.5" />
               )}
             </button>
-          </div>
+          </motion.div>
 
           {/* 5. Phone */}
-          <div className="px-4 py-2.5 flex items-center justify-between group">
+          <motion.div
+            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: isInitialReveal ? 0.85 : 0, ease: EASE_OUT }}
+            className="px-4 py-2.5 flex items-center justify-between group"
+          >
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
                 <RiPhoneLine className="w-3.5 h-3.5" />
@@ -373,10 +426,15 @@ export function MonochromeHero({
                 <Copy className="w-3.5 h-3.5" />
               )}
             </button>
-          </div>
+          </motion.div>
 
           {/* 6. Availability Status */}
-          <div className="px-4 py-2.5 flex items-center gap-3">
+          <motion.div
+            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: isInitialReveal ? 0.90 : 0, ease: EASE_OUT }}
+            className="px-4 py-2.5 flex items-center gap-3"
+          >
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
               <span className="relative flex size-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -386,12 +444,17 @@ export function MonochromeHero({
             <span className="text-zinc-700 dark:text-zinc-300 font-mono text-xs sm:text-sm">
               Available <span className="text-zinc-400 dark:text-zinc-500">{"//"} Open to work</span>
             </span>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* 5. Social Links Row with "follow me" Annotation */}
-      <div className="relative px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
+      <motion.div
+        initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: isInitialReveal ? 0.95 : 0, ease: EASE_OUT }}
+        className="relative px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3"
+      >
         {/* Handwritten note on the left */}
         <div
           className="pointer-events-none hidden sm:flex items-center gap-1.5 font-serif italic text-xs text-zinc-500 dark:text-zinc-400 select-none mr-2"
@@ -447,7 +510,7 @@ export function MonochromeHero({
             <RiLinkedinLine className="w-4 h-4" />
           </a>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
