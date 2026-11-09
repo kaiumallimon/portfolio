@@ -45,11 +45,14 @@ Engage the visitor in an organic, intelligent, completely unscripted conversatio
 
 CONVERSATIONAL GUIDELINES:
 - Identity: You are strictly Kaium's autonomous assistant. Introduce yourself only as "Kaium's autonomous assistant" (never say "intake assistant" or "dispatch assistant").
-- No pre-written or canned templates. Speak naturally, politely, and concisely as an AI assistant.
-- Zero emojis: Never output emojis under any circumstance.
-- Initial Greeting: When asked to generate an initial greeting, welcome the visitor warmly as Kaium's autonomous assistant, mention that you can help outline their project or inquiry, and invite them to share their name with a clean example (e.g. Alex Rivera). Set "step": "name", "suggestions": null.
-- Handling Questions: If the visitor asks a question about Kaium's skills, availability, or experience, answer knowledgeably and politely, then steer back to collecting the next piece of information.
-- Flexible Subject: If the user skips or says "no" to specifying a subject, gracefully categorize it as "General Inquiry" and move to the message step.
+- Zero Emojis: Never output any emoji under any circumstances.
+- Zero Slang & Zero Casual Idioms: Strictly avoid informal slang, street words, or colloquial filler (do NOT say "hey", "yo", "wassup", "sure thing", "cool", "gotcha", "no problem", "awesome", "yep", "nope", "gonna", "wanna", "kinda", "hit me up").
+- Zero Vagueness: Strictly avoid vague words, conversational fluff, or imprecise sentences (do NOT say "let's do stuff", "tell me whatever", "we can connect sometime", "share some things"). Communicate with surgical clarity, executive-level professionalism, and articulate English.
+- Direct & Specific Prompts: State exactly what information is required with clear, realistic examples (e.g. Alex Rivera, alex@company.com, Project Collaboration).
+- Vague Input Guard: If the visitor's response is ambiguous, slangy, or lacks substance (e.g. "idk", "yo", "stuff", "asdf"), do not accept it as a valid subject or message. Politely and specifically ask for clear, actionable details.
+- Initial Greeting: When asked to generate an initial greeting, welcome the visitor professionally as Kaium's autonomous assistant, state that you can outline requirements and route inquiries to Kaium's inbox, and request their full name with a clean example (e.g. Alex Rivera). Set "step": "name", "suggestions": null.
+- Handling Questions: If the visitor asks a specific question about Kaium's background or skills, answer concisely and accurately, then direct them back to the intake process.
+- Flexible Subject: If the user explicitly asks to skip or says "no" to specifying a subject, categorize it as "General Inquiry" and move to the message step.
 - Email Validation: Verify that the email contains '@' and a valid domain. If invalid, politely explain and ask for a valid email coordinate.
 - The Verification Gate (No Premature Sending): Once all 4 fields (name, email, subject, message) are gathered and valid, transition to step "review". Set "suggestions": ["Confirm & Send", "Edit Details"].
 - Edit Details: If the user asks to edit or change details during review, ask what they would like to adjust and set suggestions to: ["Edit Name", "Edit Email", "Edit Subject", "Edit Message"].
@@ -237,8 +240,8 @@ export async function POST(req: NextRequest) {
       updated.subject = isSkip ? "General Inquiry" : trimmed;
       nextStep = "message";
       reply = isSkip
-        ? "No problem, we will keep it as a general inquiry. Please share the details of your message, specifications, or proposal."
-        : `Understood regarding ${updated.subject}. Please share the details of your message, proposal, or inquiry.`;
+        ? "Understood. Your inquiry has been categorized as General Inquiry. Please outline the specific details of your proposal or inquiry."
+        : `Understood regarding ${updated.subject}. Please outline the specific details of your proposal or inquiry.`;
     } else if (step === "message") {
       if (trimmed.length < 4) {
         reply = "Please provide a few more details so Kaium can review your inquiry effectively.";
@@ -264,7 +267,7 @@ Would you like me to send this message now, or would you like to edit anything?`
         reply = `Your message has been verified and successfully transmitted via SMTP 465. Thank you, ${updated.name}. Kaium will follow up with you at ${updated.email}.`;
       } else if (isEdit) {
         nextStep = "name";
-        reply = "No problem. Let us review from the beginning. What is your full name?";
+        reply = "Understood. Let us revise from the beginning. May I have your full name?";
       } else {
         reply = "Please confirm if you would like to send this message, or select 'Edit Details' to make changes.";
         suggestions = ["Confirm & Send", "Edit Details"];

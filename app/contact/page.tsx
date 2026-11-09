@@ -5,8 +5,6 @@ import { useState, useRef, useEffect } from "react";
 import {
   ArrowLeft,
   ArrowUp,
-  Plus,
-  Mic,
   GitBranch,
   Folder,
   ChevronDown,
@@ -390,30 +388,7 @@ export default function ContactAgentPage() {
       });
   };
 
-  const toggleListening = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRec) {
-      toast.info("Speech recognition not supported in this browser. Please type your message.");
-      return;
-    }
-    try {
-      const recognition = new SpeechRec();
-      recognition.lang = "en-US";
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInputVal((prev) => (prev ? `${prev} ${transcript}` : transcript));
-      };
-      recognition.onerror = () => {
-        toast.error("Audio capture failed. Please type your input.");
-      };
-      recognition.start();
-      toast.info("Listening... speak your response.");
-    } catch {
-      toast.info("Voice input unavailable.");
-    }
-  };
+
 
 
 
@@ -616,24 +591,8 @@ export default function ContactAgentPage() {
                 e.preventDefault();
                 handleUserInput(inputVal);
               }}
-              className="relative flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/70 shadow-xs focus-within:border-zinc-400 dark:focus-within:border-zinc-600 focus-within:bg-white dark:focus-within:bg-zinc-900 transition-all"
+              className="relative flex items-center gap-2 pl-3.5 pr-1.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/70 shadow-xs focus-within:border-zinc-400 dark:focus-within:border-zinc-600 focus-within:bg-white dark:focus-within:bg-zinc-900 transition-all"
             >
-              {/* Circular + button */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (step === "name") setInputVal("Alex Rivera");
-                  else if (step === "email") setInputVal("alex@company.com");
-                  else if (step === "subject") handleUserInput("Project Collaboration");
-                  else if (step === "review") handleUserInput("Confirm & Send");
-                  else toast.info("Please enter your message details.");
-                }}
-                className="size-7 sm:size-8 shrink-0 rounded-full bg-zinc-200/70 dark:bg-zinc-800 hover:bg-zinc-300/80 dark:hover:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-                title="Quick example or suggestion"
-              >
-                <Plus className="size-4" />
-              </button>
-
               {/* Text Input */}
               <input
                 ref={inputRef}
@@ -661,21 +620,11 @@ export default function ContactAgentPage() {
                 <ChevronDown className="size-3 opacity-60" />
               </div>
 
-              {/* Mic Icon Button */}
-              <button
-                type="button"
-                onClick={toggleListening}
-                className="size-7 sm:size-8 shrink-0 rounded-full hover:bg-zinc-200/60 dark:hover:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors cursor-pointer"
-                title="Voice input"
-              >
-                <Mic className="size-4" />
-              </button>
-
-              {/* Circular Vibrant Up Arrow Send Button */}
+              {/* Monochrome Up Arrow Send Button (Black in light mode, white in dark mode, dimmed when disabled) */}
               <button
                 type="submit"
                 disabled={!inputVal.trim() || isThinking || isCompleted}
-                className="size-7 sm:size-8 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 active:scale-95 disabled:opacity-30 disabled:hover:bg-blue-600 text-white flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                className="size-7 sm:size-8 shrink-0 rounded-full bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-xs flex items-center justify-center cursor-pointer"
                 title="Send message"
                 aria-label="Send message"
               >
