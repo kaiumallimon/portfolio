@@ -392,8 +392,7 @@ export const fallbackEducation: IEducationItem[] = [
     degree: "B.Sc. in Computer Science & Engineering",
     institution: "United International University",
     period: "2022 — 2026",
-    description:
-      "Specializing in full-stack mobile & web development, system architecture, and cloud technologies.",
+    description: "",
     status: "completed",
   },
   {
@@ -401,7 +400,7 @@ export const fallbackEducation: IEducationItem[] = [
     degree: "Higher Secondary Certificate (HSC)",
     institution: "Safiuddin Sarkar Academy & College",
     period: "2018 — 2020",
-    description: "GPA: 5.00 — Science Group",
+    description: "",
     status: "completed",
   },
   {
@@ -409,7 +408,7 @@ export const fallbackEducation: IEducationItem[] = [
     degree: "Secondary School Certificate (SSC)",
     institution: "Daudpur Putina High School",
     period: "2013 — 2018",
-    description: "GPA: 5.00 — Science Group",
+    description: "",
     status: "completed",
   },
 ];

@@ -79,7 +79,7 @@ export function MonochromeEducation({
                 </div>
 
                 {/* Entry Content */}
-                <div className="space-y-1">
+                <div>
                   {/* Row: Degree, Institution, and Dates */}
                   <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -102,13 +102,6 @@ export function MonochromeEducation({
                       {item.period}
                     </span>
                   </div>
-
-                  {/* Description / Subtext */}
-                  {item.description && (
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans leading-relaxed">
-                      {item.description}
-                    </p>
-                  )}
                 </div>
               </li>
             );
