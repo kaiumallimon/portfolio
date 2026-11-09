@@ -37,6 +37,29 @@ interface ContactData {
 
 type IntakeStep = "name" | "email" | "subject" | "message" | "review" | "confirmed";
 
+/**
+ * Highlights examples in chat messages with a distinct dimmed, font-mono typography
+ */
+function formatMessageWithExamples(text: string) {
+  if (!text) return null;
+  const exampleRegex = /(\((?:e\.g\.|for example:?|eg\.)[^)]*(?:\)|$)|\[(?:e\.g\.|for example:?|eg\.)[^\]]*(?:\]|$)|for example:\s+[^?.!\n]+)/gi;
+  const parts = text.split(exampleRegex);
+
+  return parts.map((part, i) => {
+    if (exampleRegex.test(part)) {
+      return (
+        <span
+          key={i}
+          className="text-zinc-400 dark:text-zinc-500 font-mono text-[13px] sm:text-sm tracking-tight"
+        >
+          {part}
+        </span>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 export default function ContactAgentPage() {
   const [step, setStep] = useState<IntakeStep>("name");
   const [activeModel, setActiveModel] = useState("Llama 3.1");
@@ -444,7 +467,7 @@ export default function ContactAgentPage() {
                   /* Assistant Message Turn */
                   <div className="space-y-3">
                     <div className="text-sm sm:text-[15px] font-sans leading-relaxed text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap max-w-2xl">
-                      {msg.text}
+                      {formatMessageWithExamples(msg.text)}
                       {msg.isStreaming && (
                         <span className="inline-block w-1.5 h-3.5 ml-1 bg-zinc-700 dark:bg-zinc-300 animate-pulse align-middle" />
                       )}

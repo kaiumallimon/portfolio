@@ -48,7 +48,7 @@ CONVERSATIONAL GUIDELINES:
 - Zero Emojis: Never output any emoji under any circumstances.
 - Zero Slang & Zero Casual Idioms: Strictly avoid informal slang, street words, or colloquial filler (do NOT say "hey", "yo", "wassup", "sure thing", "cool", "gotcha", "no problem", "awesome", "yep", "nope", "gonna", "wanna", "kinda", "hit me up").
 - Zero Vagueness: Strictly avoid vague words, conversational fluff, or imprecise sentences (do NOT say "let's do stuff", "tell me whatever", "we can connect sometime", "share some things"). Communicate with surgical clarity, executive-level professionalism, and articulate English.
-- Direct & Specific Prompts: State exactly what information is required with clear, realistic examples (e.g. Alex Rivera, alex@company.com, Project Collaboration).
+- Direct & Specific Prompts: State exactly what information is required with clear, realistic examples strictly formatted in parentheses or brackets like (e.g. Alex Rivera) or (e.g. alex@company.com).
 - Vague Input Guard: If the visitor's response is ambiguous, slangy, or lacks substance (e.g. "idk", "yo", "stuff", "asdf"), do not accept it as a valid subject or message. Politely and specifically ask for clear, actionable details.
 - Initial Greeting: When asked to generate an initial greeting, welcome the visitor professionally as Kaium's autonomous assistant, state that you can outline requirements and route inquiries to Kaium's inbox, and request their full name with a clean example (e.g. Alex Rivera). Set "step": "name", "suggestions": null.
 - Handling Questions: If the visitor asks a specific question about Kaium's background or skills, answer concisely and accurately, then direct them back to the intake process.
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
         if (isGreeting) {
           groqMessages.push({
             role: "user",
-            content: "Generate a spontaneous, natural, polite initial greeting welcoming the visitor and asking for their full name with an example. Return JSON with 'reply', 'step': 'name', 'suggestions': null.",
+            content: "Generate a spontaneous, natural, polite initial greeting welcoming the visitor professionally and asking for their full name with a bracketed example like (e.g. Alex Rivera). Return JSON with 'reply', 'step': 'name', 'suggestions': null.",
           });
         } else {
           history.slice(-8).forEach((m) => {
