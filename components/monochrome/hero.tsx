@@ -92,31 +92,31 @@ export function MonochromeHero({
     <section className="w-full bg-white dark:bg-zinc-950">
       {/* 
         Hero Layout matching Chanh Dai:
-        - On mobile (< sm):
+        - On mobile & sm screens (< md):
           Row 1: Cover artwork spans full width (col-span-2)
-          Row 2: Avatar on left (col-start-1), Name + Rotating tagline on right (col-start-2)
-        - On desktop (sm: and up):
-          Col 1: Avatar spans both rows (sm:col-start-1 sm:row-start-1 sm:row-span-2)
-          Col 2: Row 1 is Cover (sm:col-start-2 sm:row-start-1), Row 2 is Name & Tagline (sm:col-start-2 sm:row-start-2)
+          Row 2: Compact Avatar on left (col-start-1), Name + Snug Tagline on right (col-start-2)
+        - On desktop (md: and up):
+          Col 1: Avatar spans both rows (md:col-start-1 md:row-start-1 md:row-span-2)
+          Col 2: Row 1 is Cover (md:col-start-2 md:row-start-1), Row 2 is Name & Tagline (md:col-start-2 md:row-start-2)
       */}
-      <div className="relative grid grid-cols-[auto_1fr] sm:grid-cols-[auto_1fr] border-b border-zinc-200 dark:border-zinc-800 overflow-hidden">
-        {/* Cover Artwork: Full width at top on mobile, Top-Right on desktop */}
+      <div className="relative grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto] border-b border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        {/* Cover Artwork: Full width at top on mobile (< md), Top-Right on desktop (md:) */}
         <div
           ref={coverRef}
-          className="col-span-2 row-start-1 sm:col-span-1 sm:col-start-2 sm:row-start-1 relative cover-grid-bg overflow-hidden flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800"
+          className="col-span-2 row-start-1 md:col-span-1 md:col-start-2 md:row-start-1 relative cover-grid-bg overflow-hidden flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800"
         >
           <CadIsometricCover onGameModeChange={setCoverGameMode} />
         </div>
 
-        {/* Circular Avatar: Bottom-Left beneath cover on mobile, Left column spanning 2 rows on desktop */}
-        <div className="col-start-1 row-start-2 sm:col-start-1 sm:row-start-1 sm:row-span-2 flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-          <div className="flex-1 flex items-center justify-center p-3 min-[24rem]:p-4 sm:p-6">
-            <div className="relative size-20 min-[24rem]:size-24 sm:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+        {/* Circular Avatar: Bottom-Left beneath cover on mobile (< md), Left column spanning 2 rows on desktop (md:) */}
+        <div className="col-start-1 row-start-2 md:col-start-1 md:row-start-1 md:row-span-2 flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+          <div className="flex-1 flex items-center justify-center p-3 sm:p-4 md:p-6">
+            <div className="relative size-16 sm:size-20 md:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
               <Image
                 src="/bordered.png"
                 alt={settings.name}
                 fill
-                sizes="(max-width: 640px) 96px, 160px"
+                sizes="(max-width: 768px) 80px, 160px"
                 className="object-cover select-none"
                 loading="lazy"
               />
@@ -124,21 +124,21 @@ export function MonochromeHero({
           </div>
         </div>
 
-        {/* Name & Tagline: Bottom-Right beneath cover on mobile, Bottom-Right beneath cover on desktop */}
-        <div className="col-start-2 row-start-2 sm:col-start-2 sm:row-start-2 flex flex-col justify-between bg-white dark:bg-zinc-950">
-          {/* Upper row: Name + verified badge + sound chime + Tech Humor Game Hint (desktop) */}
-          <div className="px-3 min-[24rem]:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 flex-wrap">
+        {/* Name & Tagline: Bottom-Right beneath cover on mobile (< md), Bottom-Right beneath cover on desktop (md:) */}
+        <div className="col-start-2 row-start-2 md:col-start-2 md:row-start-2 flex flex-col justify-center md:justify-end bg-white dark:bg-zinc-950 min-w-0">
+          {/* Upper row: Name + verified badge + sound chime + Tech Humor Game Hint (desktop md:) */}
+          <div className="px-3.5 pt-2.5 pb-1 sm:px-5 sm:pt-3 sm:pb-1 md:px-4 md:py-2.5 flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <h1 className="text-lg min-[24rem]:text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
                 {settings.name}
               </h1>
 
               {/* Verified Badge */}
               <span
-                className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-4.5 md:h-4.5 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center shrink-0"
                 title="Verified Engineer"
               >
-                <Check className="w-2 h-2 sm:w-3 sm:h-3 stroke-[3]" />
+                <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 stroke-[3]" />
               </span>
 
               {/* Audio Pronunciation Button */}
@@ -155,7 +155,7 @@ export function MonochromeHero({
               </button>
             </div>
 
-            {/* Tech humor runner game instruction (desktop view) */}
+            {/* Tech humor runner game instruction (desktop view md:) */}
             <button
               type="button"
               onClick={() => {
@@ -163,7 +163,7 @@ export function MonochromeHero({
                   window.dispatchEvent(new CustomEvent("kal:start-runner"));
                 }
               }}
-              className="hidden sm:inline-flex items-center gap-1.5 sm:gap-2 text-left group select-none cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="hidden md:inline-flex items-center gap-1.5 sm:gap-2 text-left group select-none cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
               title="Click or press Space to play Chrome-dino developer runner"
             >
               {/* Sketched / doodle curved arrow pointing up-left towards cover character */}
@@ -238,7 +238,9 @@ export function MonochromeHero({
           </div>
 
           {/* Lower row: Rotating Tagline / Sentences */}
-          <div className="px-3 min-[24rem]:px-4 py-2 sm:py-2.5 border-t border-zinc-200 dark:border-zinc-800 min-h-[2.5rem] sm:min-h-[2.25rem] flex items-center">
+          {/* On mobile (< md): Sits snugly right underneath the name without split border or giant void */}
+          {/* On desktop (md:): Padded in lower bar with top border */}
+          <div className="px-3.5 pb-2.5 pt-0.5 sm:px-5 sm:pb-3 sm:pt-0.5 md:px-4 md:py-2.5 md:border-t md:border-zinc-200 md:dark:border-zinc-800 flex items-center">
             <RotatingText
               texts={[
                 "Building high-performance mobile & web experiences engineered to scale.",
@@ -246,7 +248,7 @@ export function MonochromeHero({
                 "Specializing in Flutter cross-platform apps, Next.js, and backend engineering.",
                 "Full-Stack Software Engineer crafting resilient, production-ready products.",
               ]}
-              mainClassName="font-mono text-xs sm:text-sm text-zinc-600 dark:text-zinc-400"
+              mainClassName="font-mono text-xs sm:text-[13px] md:text-sm text-zinc-600 dark:text-zinc-400 leading-snug"
               staggerDuration={0.03}
               staggerFrom="first"
               splitBy="words"
