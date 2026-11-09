@@ -219,7 +219,7 @@ export function MonochromeGitHubTelemetry({
               onComplete={() => setIsArcadeMode(false)}
             />
           ) : (
-            <div className="w-full overflow-x-auto py-2 flex justify-center [&_rect]:rx-0 [&_rect]:ry-0 [&_.react-activity-calendar__count]:hidden [&_footer>div:first-child:not(:last-child)]:hidden">
+            <div className="w-full overflow-x-auto py-2 flex justify-center text-zinc-400 dark:text-zinc-500 font-mono [&_rect]:rx-0 [&_rect]:ry-0 [&_.react-activity-calendar__count]:hidden [&_footer>div:first-child:not(:last-child)]:hidden">
               <ActivityCalendar
                 data={currentData.data}
                 blockSize={11.5}
@@ -227,6 +227,7 @@ export function MonochromeGitHubTelemetry({
                 fontSize={11}
                 blockRadius={0}
                 showTotalCount={false}
+                showWeekdayLabels={["mon", "wed", "fri"]}
                 colorScheme={isDark ? "dark" : "light"}
                 tooltips={{
                   activity: {

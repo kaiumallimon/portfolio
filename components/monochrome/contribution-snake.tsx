@@ -19,7 +19,8 @@ const ROWS = 7;
 const CELL_SIZE = 11.5;
 const GAP = 3;
 const STEP = CELL_SIZE + GAP; // 14.5px
-const SVG_WIDTH = COLS * STEP - GAP;
+const LABEL_WIDTH = 28; // width for Mon, Wed, Fri
+const SVG_WIDTH = COLS * STEP - GAP + LABEL_WIDTH;
 const SVG_HEIGHT = ROWS * STEP - GAP;
 
 function getDistance(p1: Point, p2: Point): number {
@@ -216,6 +217,35 @@ export function ContributionSnake({
           className="block"
           style={{ maxWidth: "100%", height: "auto" }}
         >
+          {/* Weekday labels Mon, Wed, Fri matching GitHub & ActivityCalendar */}
+          <text
+            x={LABEL_WIDTH - 6}
+            y={1 * STEP + CELL_SIZE / 2}
+            dominantBaseline="central"
+            textAnchor="end"
+            className="fill-zinc-400 dark:fill-zinc-500 font-mono text-[10px]"
+          >
+            Mon
+          </text>
+          <text
+            x={LABEL_WIDTH - 6}
+            y={3 * STEP + CELL_SIZE / 2}
+            dominantBaseline="central"
+            textAnchor="end"
+            className="fill-zinc-400 dark:fill-zinc-500 font-mono text-[10px]"
+          >
+            Wed
+          </text>
+          <text
+            x={LABEL_WIDTH - 6}
+            y={5 * STEP + CELL_SIZE / 2}
+            dominantBaseline="central"
+            textAnchor="end"
+            className="fill-zinc-400 dark:fill-zinc-500 font-mono text-[10px]"
+          >
+            Fri
+          </text>
+
           {Array.from({ length: COLS }).map((_, c) =>
             Array.from({ length: ROWS }).map((__, r) => {
               const key = `${c},${r}`;
@@ -250,7 +280,7 @@ export function ContributionSnake({
               return (
                 <rect
                   key={key}
-                  x={c * STEP}
+                  x={LABEL_WIDTH + c * STEP}
                   y={r * STEP}
                   width={CELL_SIZE}
                   height={CELL_SIZE}
@@ -265,7 +295,7 @@ export function ContributionSnake({
       </div>
 
       {/* Snake Telemetry / Loading Status Bar */}
-      <div className="w-full max-w-[765px] mt-2 pt-2 border-t border-dashed border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500">
+      <div className="w-full max-w-[795px] mt-2 pt-2 border-t border-dashed border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-500">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
