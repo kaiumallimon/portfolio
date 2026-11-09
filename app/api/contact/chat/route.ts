@@ -1,4 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkClientRateLimit, getClientTelemetry } from "@/lib/rate-limit";
+
+function getClientIp(req: NextRequest): string {
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  const cfIp = req.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp.trim();
+  return "127.0.0.1";
+}
+
+export async function GET(req: NextRequest) {
+  const ip = getClientIp(req);
+  return NextResponse.json({
+    telemetry: getClientTelemetry(ip),
+  });
+}
 
 interface ContactData {
   name: string;
@@ -53,6 +71,7 @@ You MUST respond with a valid JSON object matching this schema:
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
     const payload: ChatRequestPayload = await req.json();
     const {
       userMessage = "",
@@ -61,6 +80,25 @@ export async function POST(req: NextRequest) {
       currentData = { name: "", email: "", subject: "", message: "" },
       step = "name",
     } = payload;
+
+    // Client-specific rate limiting & anti-bot protection
+    const rateCheck = checkClientRateLimit(ip, userMessage);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: rateCheck.error,
+          reply: rateCheck.error,
+          retryAfter: rateCheck.retryAfter,
+          telemetry: rateCheck.telemetry,
+        },
+        {
+          status: rateCheck.status,
+          headers: rateCheck.retryAfter
+            ? { "Retry-After": String(rateCheck.retryAfter) }
+            : undefined,
+        }
+      );
+    }
 
     const apiKey = process.env.GROQ_API_KEY;
     const model = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
@@ -142,6 +180,7 @@ export async function POST(req: NextRequest) {
               suggestions: parsed.suggestions || null,
               provider: "groq-llm",
               modelName: data.model || model,
+              telemetry: rateCheck.telemetry,
             });
           }
         }
@@ -239,6 +278,7 @@ Would you like me to send this message now, or would you like to edit anything?`
       suggestions,
       provider: "fallback",
       modelName: model,
+      telemetry: rateCheck.telemetry,
     });
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : "Error processing chat intake";

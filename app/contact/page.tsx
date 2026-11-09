@@ -16,6 +16,7 @@ import {
   RotateCcw,
   Home,
   FolderGit2,
+  Activity,
 } from "lucide-react";
 import { MonochromeHeader } from "@/components/monochrome/header";
 import { toast } from "sonner";
@@ -55,10 +56,58 @@ export default function ContactAgentPage() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  // Fetch spontaneous dynamic LLM greeting on mount (zero hardcoded strings)
+  // Real-time client IP rate limit telemetry (unique per visitor)
+  const [clientQuota, setClientQuota] = useState<{
+    limit: number;
+    remaining: number;
+    used: number;
+    resetSeconds: number;
+  }>({
+    limit: 10,
+    remaining: 10,
+    used: 0,
+    resetSeconds: 60,
+  });
+  const [resetCountdown, setResetCountdown] = useState(60);
+
+  // Sync countdown whenever server reports new resetSeconds
+  useEffect(() => {
+    setResetCountdown(clientQuota.resetSeconds || 60);
+  }, [clientQuota.resetSeconds]);
+
+  // Real-time 1s countdown ticker for the sliding window
+  useEffect(() => {
+    if (clientQuota.used === 0) return;
+    const interval = setInterval(() => {
+      setResetCountdown((prev) => {
+        if (prev <= 1) {
+          // Window expired, re-fetch fresh quota snapshot for this IP
+          fetch("/api/contact/chat")
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.telemetry) setClientQuota(data.telemetry);
+            })
+            .catch(() => {});
+          return 60;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [clientQuota.used]);
+
+  // Fetch initial telemetry snapshot & spontaneous dynamic LLM greeting on mount
   useEffect(() => {
     let isMounted = true;
     setIsThinking(true);
+
+    // Initial telemetry check for this client IP
+    fetch("/api/contact/chat")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.telemetry) setClientQuota(data.telemetry);
+      })
+      .catch(() => {});
 
     fetch("/api/contact/chat", {
       method: "POST",
@@ -69,6 +118,7 @@ export default function ContactAgentPage() {
       .then((data) => {
         if (!isMounted) return;
         setIsThinking(false);
+        if (data.telemetry) setClientQuota(data.telemetry);
         if (data.modelName) {
           const cleaned = data.modelName
             .replace("-8b-instant", "")
@@ -177,11 +227,28 @@ export default function ContactAgentPage() {
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Chat intake request returned non-OK status");
+      const data = await res.json();
+      if (data.telemetry) {
+        setClientQuota(data.telemetry);
       }
 
-      const data = await res.json();
+      if (!res.ok) {
+        setIsThinking(false);
+        const errorText = data.reply || data.error || "A connection delay occurred. Please try again.";
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `err-${Date.now()}`,
+            sender: "agent",
+            text: errorText,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ]);
+        if (res.status === 429) {
+          toast.warning(`Rate limit reached: cooldown in ${data.retryAfter || 10}s.`);
+        }
+        return;
+      }
       const nextStep: IntakeStep = data.step;
       const updatedData: ContactData = data.updatedData || contactData;
 
@@ -273,6 +340,7 @@ export default function ContactAgentPage() {
       .then((res) => res.json())
       .then((data) => {
         setIsThinking(false);
+        if (data.telemetry) setClientQuota(data.telemetry);
         setMessages([
           {
             id: `msg-reset-${Date.now()}`,
@@ -614,8 +682,29 @@ export default function ContactAgentPage() {
                 </div>
               </div>
 
-              {/* Right: Agent mode & Circular Progress Ring */}
-              <div className="flex items-center gap-3">
+              {/* Right: Client IP Usage Quota & Agent mode & Circular Progress Ring */}
+              <div className="flex items-center gap-2 sm:gap-3">
+                {/* Client-specific real-time usage pill */}
+                <div
+                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-100/70 dark:bg-zinc-900/70 text-zinc-600 dark:text-zinc-400 font-mono text-[10px] select-none transition-colors"
+                  title={`Your Client IP Usage: ${clientQuota.remaining}/${clientQuota.limit} requests remaining this minute (resets in ${resetCountdown}s)`}
+                >
+                  <span
+                    className={`size-1.5 rounded-full transition-colors ${
+                      clientQuota.remaining > 3
+                        ? "bg-emerald-500"
+                        : clientQuota.remaining > 0
+                        ? "bg-amber-500"
+                        : "bg-red-500 animate-pulse"
+                    }`}
+                  />
+                  <Activity className="size-2.5 opacity-70" />
+                  <span className="tabular-nums">
+                    {clientQuota.remaining}/{clientQuota.limit}
+                  </span>
+                  <span className="text-[9px] text-zinc-400 uppercase tracking-wider hidden sm:inline">req/m</span>
+                </div>
+
                 <div className="inline-flex items-center gap-1 text-zinc-600 dark:text-zinc-400">
                   <Infinity className="size-3.5" />
                   <span>Agent</span>
