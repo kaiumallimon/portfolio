@@ -464,139 +464,166 @@ export default function ContactAgentPage() {
               <div key={msg.id} className="space-y-3">
                 {msg.sender === "agent" ? (
                   /* Assistant Message Turn */
-                  <div className="space-y-3">
-                    <div className="text-sm sm:text-[15px] font-sans leading-relaxed text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap max-w-2xl">
-                      {formatMessageWithExamples(msg.text)}
-                      {msg.isStreaming && (
-                        <span className="inline-block w-1.5 h-3.5 ml-1 bg-zinc-700 dark:bg-zinc-300 animate-pulse align-middle" />
-                      )}
+                  <div className="flex items-start gap-3 max-w-2xl">
+                    {/* Assistant Avatar */}
+                    <div className="size-7 sm:size-8 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0 mt-0.5 select-none shadow-2xs">
+                      <Sparkles className="size-3.5 sm:size-4 text-zinc-700 dark:text-zinc-300" />
                     </div>
 
-                    {/* Professional Suggestion Chips (Zero emojis, dismissed once answered, appears after streaming) */}
-                    {!msg.isStreaming && msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
-                      <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-200">
-                        {msg.chips.map((chipText) => {
-                          const isConfirm = chipText === "Confirm & Send";
-                          return (
-                            <button
-                              key={chipText}
-                              type="button"
-                              onClick={() => handleUserInput(chipText)}
-                              className={`px-3 py-1.5 rounded-lg border font-mono text-xs transition-all shadow-2xs active:scale-95 cursor-pointer text-left ${
-                                isConfirm
-                                  ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200"
-                                  : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 text-zinc-800 dark:text-zinc-200"
-                              }`}
-                            >
-                              {chipText}
-                            </button>
-                          );
-                        })}
+                    <div className="flex-1 min-w-0 space-y-2.5">
+                      {/* Identity & Timestamp Header */}
+                      <div className="flex items-center gap-2 font-mono text-[11px] select-none">
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100 tracking-wide">
+                          Assistant
+                        </span>
+                        <span className="text-zinc-300 dark:text-zinc-700">·</span>
+                        <span className="text-zinc-400 dark:text-zinc-500 text-[10px]">
+                          {msg.timestamp}
+                        </span>
                       </div>
-                    )}
 
-                    {/* Ending Receipt Card (appears after streaming completes) */}
-                    {!msg.isStreaming && msg.isEndReceipt && (
-                      <div className="pt-3 animate-in fade-in zoom-in-95 duration-300">
-                        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4 shadow-xs">
-                          <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
-                            <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 font-mono text-xs font-semibold">
-                              <CheckCheck className="size-4 text-zinc-950 dark:text-zinc-100" />
-                              <span>DISPATCH CONFIRMED // 200 OK</span>
-                            </div>
-                            <span className="font-mono text-[10px] text-zinc-400">
-                              #DSP-{Date.now().toString().slice(-6)}
-                            </span>
-                          </div>
+                      {/* Text content with progressive streaming & bracketed examples */}
+                      <div className="text-sm sm:text-[15px] font-sans leading-relaxed text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap">
+                        {formatMessageWithExamples(msg.text)}
+                        {msg.isStreaming && (
+                          <span className="inline-block w-1.5 h-3.5 ml-1 bg-zinc-700 dark:bg-zinc-300 animate-pulse align-middle" />
+                        )}
+                      </div>
 
-                          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                            <div className="space-y-0.5">
-                              <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Name
-                              </dt>
-                              <dd className="font-medium text-zinc-900 dark:text-zinc-100">
-                                {contactData.name}
-                              </dd>
-                            </div>
-                            <div className="space-y-0.5">
-                              <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Email
-                              </dt>
-                              <dd className="font-medium text-zinc-900 dark:text-zinc-100">
-                                {contactData.email}
-                              </dd>
-                            </div>
-                            <div className="sm:col-span-2 space-y-0.5">
-                              <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Subject
-                              </dt>
-                              <dd className="font-medium text-zinc-900 dark:text-zinc-100">
-                                {contactData.subject}
-                              </dd>
-                            </div>
-                            <div className="sm:col-span-2 space-y-0.5 pt-2 border-t border-zinc-200 dark:border-zinc-800">
-                              <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
-                                Message
-                              </dt>
-                              <dd className="text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap leading-relaxed font-sans text-xs sm:text-sm">
-                                {contactData.message}
-                              </dd>
-                            </div>
-                          </dl>
+                      {/* Professional Suggestion Chips (Zero emojis, dismissed once answered, appears after streaming) */}
+                      {!msg.isStreaming && msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
+                        <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-200">
+                          {msg.chips.map((chipText) => {
+                            const isConfirm = chipText === "Confirm & Send";
+                            return (
+                              <button
+                                key={chipText}
+                                type="button"
+                                onClick={() => handleUserInput(chipText)}
+                                className={`px-3 py-1.5 rounded-lg border font-mono text-xs transition-all shadow-2xs active:scale-95 cursor-pointer text-left ${
+                                  isConfirm
+                                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200"
+                                    : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 text-zinc-800 dark:text-zinc-200"
+                                }`}
+                              >
+                                {chipText}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
 
-                          <div className="pt-3 flex flex-wrap items-center gap-2.5 border-t border-zinc-200 dark:border-zinc-800">
-                            <Link
-                              href="/"
-                              prefetch={false}
-                              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 font-mono text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-xs"
-                            >
-                              <Home className="size-3.5" />
-                              <span>Return to Portfolio</span>
-                            </Link>
+                      {/* Ending Receipt Card (appears after streaming completes) */}
+                      {!msg.isStreaming && msg.isEndReceipt && (
+                        <div className="pt-3 animate-in fade-in zoom-in-95 duration-300">
+                          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4 shadow-xs">
+                            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                              <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 font-mono text-xs font-semibold">
+                                <CheckCheck className="size-4 text-zinc-950 dark:text-zinc-100" />
+                                <span>DISPATCH CONFIRMED // 200 OK</span>
+                              </div>
+                              <span className="font-mono text-[10px] text-zinc-400">
+                                #DSP-{Date.now().toString().slice(-6)}
+                              </span>
+                            </div>
 
-                            <Link
-                              href="/projects"
-                              prefetch={false}
-                              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-mono text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-95 transition-all shadow-2xs"
-                            >
-                              <FolderGit2 className="size-3.5" />
-                              <span>Browse Projects</span>
-                            </Link>
+                            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                              <div className="space-y-0.5">
+                                <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
+                                  Name
+                                </dt>
+                                <dd className="font-medium text-zinc-900 dark:text-zinc-100">
+                                  {contactData.name}
+                                </dd>
+                              </div>
+                              <div className="space-y-0.5">
+                                <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
+                                  Email
+                                </dt>
+                                <dd className="font-medium text-zinc-900 dark:text-zinc-100">
+                                  {contactData.email}
+                                </dd>
+                              </div>
+                              <div className="sm:col-span-2 space-y-0.5">
+                                <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
+                                  Subject
+                                </dt>
+                                <dd className="font-medium text-zinc-900 dark:text-zinc-100">
+                                  {contactData.subject}
+                                </dd>
+                              </div>
+                              <div className="sm:col-span-2 space-y-0.5 pt-2 border-t border-zinc-200 dark:border-zinc-800">
+                                <dt className="text-zinc-400 text-[10px] uppercase tracking-wider">
+                                  Message
+                                </dt>
+                                <dd className="text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap leading-relaxed font-sans text-xs sm:text-sm">
+                                  {contactData.message}
+                                </dd>
+                              </div>
+                            </dl>
 
-                            <button
-                              type="button"
-                              onClick={handleReset}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white font-mono text-xs transition-colors cursor-pointer ml-auto"
-                            >
-                              <RotateCcw className="size-3" />
-                              <span>New Session</span>
-                            </button>
+                            <div className="pt-3 flex flex-wrap items-center gap-2.5 border-t border-zinc-200 dark:border-zinc-800">
+                              <Link
+                                href="/"
+                                prefetch={false}
+                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 font-mono text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-xs"
+                              >
+                                <Home className="size-3.5" />
+                                <span>Return to Portfolio</span>
+                              </Link>
+
+                              <Link
+                                href="/projects"
+                                prefetch={false}
+                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-mono text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-95 transition-all shadow-2xs"
+                              >
+                                <FolderGit2 className="size-3.5" />
+                                <span>Browse Projects</span>
+                              </Link>
+
+                              <button
+                                type="button"
+                                onClick={handleReset}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white font-mono text-xs transition-colors cursor-pointer ml-auto"
+                              >
+                                <RotateCcw className="size-3" />
+                                <span>New Session</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 ) : (
-                  /* User Message Turn (Right-aligned clean card) */
-                  <div className="flex justify-end pl-10">
-                    <div className="max-w-lg rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 px-4 py-3 text-sm sm:text-[15px] leading-relaxed shadow-xs">
-                      <div className="whitespace-pre-wrap font-sans">{msg.text}</div>
+                  /* User Message Turn (Sleek conversational chat bubble, zero input-box styling) */
+                  <div className="flex flex-col items-end pl-10 sm:pl-20">
+                    <div className="flex items-center gap-1.5 mb-1 pr-1 font-mono text-[10px] text-zinc-400 dark:text-zinc-500 select-none">
+                      <span>You</span>
+                      <span>·</span>
+                      <span>{msg.timestamp}</span>
+                    </div>
+                    <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-br-xs px-4 py-2 text-sm sm:text-[15px] leading-relaxed bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs font-sans">
+                      <div className="whitespace-pre-wrap break-words">{msg.text}</div>
                     </div>
                   </div>
                 )}
               </div>
             ))}
 
-            {/* Thinking Indicator (Matches "Thinking 3.4s") */}
+            {/* Thinking Indicator (Seamlessly aligned with assistant track) */}
             {isThinking && (
-              <div className="flex items-center gap-2 text-zinc-400 dark:text-zinc-500 font-sans text-xs sm:text-sm animate-in fade-in duration-200 select-none py-1">
-                <Sparkles className="size-3.5 text-zinc-400 animate-pulse" />
-                <span className="font-medium text-zinc-500 dark:text-zinc-400">
-                  Thinking
-                </span>
-                <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 tabular-nums">
-                  {thinkingSeconds.toFixed(1)}s
-                </span>
+              <div className="flex items-start gap-3 max-w-2xl animate-in fade-in duration-200 select-none py-1">
+                <div className="size-7 sm:size-8 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                  <Sparkles className="size-3.5 sm:size-4 text-zinc-400 dark:text-zinc-500 animate-pulse" />
+                </div>
+                <div className="space-y-1 pt-1">
+                  <div className="flex items-center gap-2 font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
+                    <span className="font-semibold text-zinc-700 dark:text-zinc-300">Assistant</span>
+                    <span>·</span>
+                    <span className="tabular-nums">Thinking {thinkingSeconds.toFixed(1)}s</span>
+                  </div>
+                </div>
               </div>
             )}
 
