@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
 import { RiSearchLine } from "@remixicon/react";
 
@@ -15,6 +16,61 @@ export function MonochromeHeader({ onOpenCommand }: HeaderProps) {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const isContactPage = pathname === "/contact";
+
+  // Smooth scroll to target section with sticky header offset
+  const handleSectionScroll = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    targetId: string
+  ) => {
+    if (isHomePage) {
+      e.preventDefault();
+      const element = document.getElementById(targetId);
+      if (element) {
+        const headerOffset = 52;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+
+        window.history.pushState(null, "", `#${targetId}`);
+      }
+    }
+  };
+
+  // Smooth scroll back to top when clicking KAL logo on homepage
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isHomePage) {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      window.history.pushState(null, "", "/");
+    }
+  };
+
+  // If navigating to homepage with hash from another page, smooth scroll on arrival
+  useEffect(() => {
+    if (isHomePage && typeof window !== "undefined" && window.location.hash) {
+      const targetId = window.location.hash.replace("#", "");
+      const timer = setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          const headerOffset = 52;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isHomePage]);
 
   const handleOpenSearch = () => {
     if (onOpenCommand) {
@@ -33,13 +89,14 @@ export function MonochromeHeader({ onOpenCommand }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
-        {/* Left: KAL monogram — always visible */}
+        {/* Left: KAL monogram — always visible, smooth scroll to top on homepage */}
         <div className="flex items-center">
           <Link
             href="/"
+            onClick={handleLogoClick}
             prefetch={false}
             aria-label="Home"
-            className="font-tiny5 text-xl tracking-[0.2em] pl-[0.2em] text-zinc-950 dark:text-zinc-50 select-none hover:opacity-80 transition-opacity"
+            className="font-tiny5 text-xl tracking-[0.2em] pl-[0.2em] text-zinc-950 dark:text-zinc-50 select-none hover:opacity-80 transition-opacity cursor-pointer"
           >
             KAL
           </Link>
@@ -47,29 +104,33 @@ export function MonochromeHeader({ onOpenCommand }: HeaderProps) {
 
         {/* Right Navigation & Controls */}
         <div className="flex items-center">
-          {/* Homepage section nav URLs & Contact page */}
+          {/* Homepage section nav URLs & Contact page with smooth scroll */}
           <nav className="flex items-center gap-3 sm:gap-4.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 mr-2 sm:mr-3">
             <a
               href={isHomePage ? "#about" : "/#about"}
-              className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
+              onClick={(e) => handleSectionScroll(e, "about")}
+              className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               About
             </a>
             <a
               href={isHomePage ? "#projects" : "/#projects"}
-              className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
+              onClick={(e) => handleSectionScroll(e, "projects")}
+              className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               Projects
             </a>
             <a
               href={isHomePage ? "#experience" : "/#experience"}
-              className="hidden sm:inline-block hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
+              onClick={(e) => handleSectionScroll(e, "experience")}
+              className="hidden sm:inline-block hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               Experience
             </a>
             <a
               href={isHomePage ? "#stack" : "/#stack"}
-              className="hidden md:inline-block hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
+              onClick={(e) => handleSectionScroll(e, "stack")}
+              className="hidden md:inline-block hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               Stack
             </a>
