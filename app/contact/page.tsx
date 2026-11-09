@@ -9,7 +9,6 @@ import {
   Mic,
   GitBranch,
   Folder,
-  Infinity,
   ChevronDown,
   Sparkles,
   CheckCheck,
@@ -389,20 +388,7 @@ export default function ContactAgentPage() {
     }
   };
 
-  // Progress percentage across stages (Name -> Email -> Subject -> Message -> Verification -> 100%)
-  const progressPercent = isCompleted
-    ? 100
-    : step === "name"
-    ? 15
-    : step === "email"
-    ? 35
-    : step === "subject"
-    ? 55
-    : step === "message"
-    ? 75
-    : step === "review"
-    ? 90
-    : 100;
+
 
   return (
     <div className="h-[100dvh] w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden flex flex-col antialiased">
@@ -682,9 +668,8 @@ export default function ContactAgentPage() {
                 </div>
               </div>
 
-              {/* Right: Client IP Usage Quota & Agent mode & Circular Progress Ring */}
-              <div className="flex items-center gap-2 sm:gap-3">
-                {/* Client-specific real-time usage pill */}
+              {/* Right: Client IP Usage Quota (Real-time & isolated per visitor) */}
+              <div className="flex items-center">
                 <div
                   className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-100/70 dark:bg-zinc-900/70 text-zinc-600 dark:text-zinc-400 font-mono text-[10px] select-none transition-colors"
                   title={`Your Client IP Usage: ${clientQuota.remaining}/${clientQuota.limit} requests remaining this minute (resets in ${resetCountdown}s)`}
@@ -702,40 +687,7 @@ export default function ContactAgentPage() {
                   <span className="tabular-nums">
                     {clientQuota.remaining}/{clientQuota.limit}
                   </span>
-                  <span className="text-[9px] text-zinc-400 uppercase tracking-wider hidden sm:inline">req/m</span>
-                </div>
-
-                <div className="inline-flex items-center gap-1 text-zinc-600 dark:text-zinc-400">
-                  <Infinity className="size-3.5" />
-                  <span>Agent</span>
-                  <ChevronDown className="size-2.5 opacity-60" />
-                </div>
-
-                <div className="inline-flex items-center gap-1.5 tabular-nums text-zinc-700 dark:text-zinc-300 font-mono">
-                  <svg className="size-3.5 -rotate-90" viewBox="0 0 24 24">
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      fill="none"
-                      className="text-zinc-200 dark:text-zinc-800"
-                    />
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      fill="none"
-                      strokeDasharray={62.8}
-                      strokeDashoffset={62.8 - (62.8 * progressPercent) / 100}
-                      strokeLinecap="round"
-                      className="text-blue-600 dark:text-blue-400 transition-all duration-300"
-                    />
-                  </svg>
-                  <span>{progressPercent}%</span>
+                  <span className="text-[9px] text-zinc-400 uppercase tracking-wider">req/min</span>
                 </div>
               </div>
             </div>
