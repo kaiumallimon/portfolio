@@ -23,7 +23,15 @@ interface ProjectsArchiveViewProps {
   settings: ISiteSettings;
 }
 
-const CATEGORIES = ["All", "Mobile", "Web", "Tools"] as const;
+const CATEGORIES = [
+  "All",
+  "Mobile App",
+  "Full-Stack Web App",
+  "Full-Stack E-Commerce",
+  "Landing Page",
+  "Web Tool",
+  "Flutter Web App",
+] as const;
 
 export function ProjectsArchiveView({
   projects,
@@ -36,18 +44,12 @@ export function ProjectsArchiveView({
     const q = searchQuery.trim().toLowerCase();
 
     return projects.filter((p) => {
-      const cat =
-        p.category ||
-        (p.client === "mobile" ? "Mobile" : p.client === "web" ? "Web" : "Web");
+      const cat = p.category || "Full-Stack Web App";
       const tags = (p.tags && p.tags.length > 0) ? p.tags : (p.technologies || []);
 
       // Category filter check
       if (selectedCategory !== "All") {
-        if (selectedCategory === "Tools") {
-          const isTool =
-            cat === "Tools" || cat === "Full-Stack";
-          if (!isTool) return false;
-        } else if (cat !== selectedCategory) {
+        if (cat !== selectedCategory) {
           return false;
         }
       }
@@ -135,12 +137,12 @@ export function ProjectsArchiveView({
             </div>
 
             {/* Category Filter Pills */}
-            <div className="flex items-center gap-1 border border-zinc-200 dark:border-zinc-800 p-0.5 bg-zinc-100/60 dark:bg-zinc-900/60 w-fit shrink-0">
+            <div className="flex items-center gap-1 border border-zinc-200 dark:border-zinc-800 p-0.5 bg-zinc-100/60 dark:bg-zinc-900/60 overflow-x-auto max-w-full shrink-0">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-2.5 py-1 text-xs font-mono transition-colors cursor-pointer rounded-2xs ${
+                  className={`px-2.5 py-1 text-xs font-mono transition-colors cursor-pointer rounded-2xs whitespace-nowrap ${
                     selectedCategory === cat
                       ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white font-medium shadow-2xs"
                       : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"

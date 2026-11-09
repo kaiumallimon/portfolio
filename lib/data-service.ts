@@ -71,7 +71,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: true,
     order: 0,
     client: "mobile",
-    category: "Mobile",
+    category: "Mobile App",
   },
   {
     title: "COSMOS ITS",
@@ -94,7 +94,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: true,
     order: 2,
     client: "web",
-    category: "Web",
+    category: "Full-Stack Web App",
   },
   {
     title: "GadgetWizard",
@@ -117,7 +117,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: true,
     order: 2,
     client: "web",
-    category: "Web",
+    category: "Full-Stack E-Commerce",
   },
   {
     title: "Aven - AI-Powered Job Application Tracker & Career Workspace",
@@ -137,7 +137,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: true,
     order: 3,
     client: "web",
-    category: "Tools",
+    category: "Full-Stack Web App",
   },
   {
     title: "Portfolio Website",
@@ -158,7 +158,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: true,
     order: 3,
     client: "web",
-    category: "Web",
+    category: "Full-Stack Web App",
   },
   {
     title: "Dorm of Decents",
@@ -179,7 +179,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: false,
     order: 4,
     client: "web",
-    category: "Web",
+    category: "Full-Stack Web App",
   },
   {
     title: "Viae",
@@ -199,7 +199,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: false,
     order: 5,
     client: "web",
-    category: "Web",
+    category: "Full-Stack Web App",
   },
   {
     title: "Neuroweb",
@@ -220,7 +220,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: false,
     order: 5,
     client: "web",
-    category: "Web",
+    category: "Landing Page",
   },
   {
     title: "Nex",
@@ -240,7 +240,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: false,
     order: 6,
     client: "mobile",
-    category: "Mobile",
+    category: "Mobile App",
   },
   {
     title: "Quran Companion",
@@ -260,7 +260,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: false,
     order: 6,
     client: "mobile",
-    category: "Mobile",
+    category: "Mobile App",
   },
   {
     title: "Melbourne Acid Washing",
@@ -280,8 +280,8 @@ export const fallbackProjects: Partial<IProject>[] = [
     forks: 0,
     featured: false,
     order: 7,
-    client: "web",
-    category: "Web",
+    client: "mobile",
+    category: "Mobile App",
   },
   {
     title: "UIU CGPA Calculator",
@@ -302,7 +302,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: false,
     order: 9,
     client: "web",
-    category: "Tools",
+    category: "Web Tool",
   },
   {
     title: "Pharmbrew",
@@ -322,7 +322,7 @@ export const fallbackProjects: Partial<IProject>[] = [
     featured: false,
     order: 11,
     client: "web",
-    category: "Web",
+    category: "Flutter Web App",
   },
 ];
 

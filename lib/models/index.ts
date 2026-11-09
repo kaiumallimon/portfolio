@@ -40,7 +40,7 @@ export interface IProject extends Document {
   featured: boolean;
   order: number;
   client?: "web" | "mobile" | string;
-  category: "Full-Stack" | "Mobile" | "Tools" | "Open Source" | "Web";
+  category: string;
   createdAt: Date;
 }
 

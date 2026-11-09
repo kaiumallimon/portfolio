@@ -20,22 +20,23 @@ export function ProjectCard({ project }: ProjectCardProps) {
     : (project.technologies || []);
 
   const isMobile =
-    project.category?.toLowerCase() === "mobile" ||
-    project.client?.toLowerCase() === "mobile" ||
-    tags.some((t) => t.toLowerCase().includes("flutter"));
+    project.category?.toLowerCase().includes("mobile") ||
+    project.client?.toLowerCase() === "mobile";
 
   const categoryLabel =
     project.category ||
-    (project.client === "mobile" ? "Mobile" : project.client === "web" ? "Web" : (isMobile ? "Mobile" : "Web"));
+    (isMobile ? "Mobile App" : "Full-Stack Web App");
 
   return (
     <div className="group border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors flex flex-col justify-between overflow-hidden">
       <div>
-        {/* Visual Device Representation Header (iPhone for mobile, MacBook for web) */}
+        {/* Visual Device Representation Header according to category */}
         <div className="h-40 sm:h-44 w-full border-b border-zinc-100 dark:border-zinc-900 bg-zinc-50/70 dark:bg-zinc-900/50 flex items-center justify-center relative overflow-hidden">
           <DeviceMockup
             type={isMobile ? "mobile" : "web"}
+            category={categoryLabel}
             title={title}
+            slug={project.slug}
           />
         </div>
 
