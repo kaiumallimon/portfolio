@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { GitHubStats } from "@/lib/github";
-import { Star, BookOpen, Flame } from "lucide-react";
+import { Flame } from "lucide-react";
 import { RiGithubLine, RiGamepadLine } from "@remixicon/react";
 import { ActivityCalendar } from "react-activity-calendar";
 import "react-activity-calendar/tooltips.css";
@@ -128,6 +128,26 @@ export function MonochromeGitHubTelemetry({
   const activeData = isSnakeLoading ? targetData : currentData;
   const activeYear = isSnakeLoading ? targetYear : selectedYear;
 
+  // Calculate streak dynamically from the active year's data
+  const streakData = useMemo(() => {
+    const days = activeData.data || [];
+    let longestStreak = 0;
+    let tempStreak = 0;
+
+    for (let i = 0; i < days.length; i++) {
+      if (days[i].count > 0) {
+        tempStreak++;
+        if (tempStreak > longestStreak) {
+          longestStreak = tempStreak;
+        }
+      } else {
+        tempStreak = 0;
+      }
+    }
+
+    return { longestStreak };
+  }, [activeData.data]);
+
   return (
     <section className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
       {/* Calendar Area */}
@@ -237,30 +257,14 @@ export function MonochromeGitHubTelemetry({
 
         {/* Telemetry metrics bar */}
         <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-900 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-500">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <span
               className="flex items-center gap-1.5"
-              title="Public Repositories"
+              title={`Longest streak in ${activeYear}`}
             >
-              <BookOpen className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="text-zinc-900 dark:text-zinc-100 font-medium tabular-nums">
-                {stats?.publicRepos || 100}
-              </span>
-              <span>repos</span>
-            </span>
-
-            <span className="flex items-center gap-1.5" title="Total Stars">
-              <Star className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="text-zinc-900 dark:text-zinc-100 font-medium tabular-nums">
-                {stats?.totalStars || 22}
-              </span>
-              <span>stars</span>
-            </span>
-
-            <span className="flex items-center gap-1.5" title="Longest Streak">
               <Flame className="w-3.5 h-3.5 text-orange-500/80" />
               <span className="text-zinc-900 dark:text-zinc-100 font-medium tabular-nums">
-                12
+                {streakData.longestStreak}
               </span>
               <span>day streak</span>
             </span>
