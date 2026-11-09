@@ -36,20 +36,13 @@ interface ContactData {
   message: string;
 }
 
-// Diverse Initial Greetings (Zero emojis, professional)
+// Diverse Initial Greetings (Zero emojis, asks for name with an example, no designations)
 const GREETINGS = [
-  "Hello. I am Kaium's autonomous assistant.\n\nI can help outline your inquiry, calibrate requirements, and route your message directly to Kaium's inbox.\n\nTo begin, may I know your name?",
-  "Greetings. I coordinate project intake and direct communication for Kaium.\n\nI will gather your brief and ensure it reaches his inbox promptly.\n\nWho do I have the pleasure of speaking with today?",
-  "Welcome. I serve as Kaium's dispatch assistant.\n\nWhether you are inquiring about full-stack engineering, architecture consulting, or potential collaboration, I am here to help.\n\nMay I have your name to get started?",
-  "Hello, thank you for reaching out. I assist Kaium with engineering communications and project intake.\n\nTo ensure proper routing, could you please introduce yourself?",
-  "Good day. I am Kaium's autonomous communication assistant.\n\nI will take down your inquiry details and deliver them straight to Kaium.\n\nTo begin our conversation, what is your name?",
-];
-
-// Diverse Initial Suggestions (Rotated per session, zero emojis)
-const ROLE_SUGGESTION_SETS = [
-  ["Engineering Lead", "Founder / CTO", "Product Manager", "Fellow Developer"],
-  ["Technical Recruiter", "System Architect", "Startup Founder", "Client / Partner"],
-  ["Design Engineer", "Research Collaborator", "Engineering Manager", "Guest Explorer"],
+  "Hello. I am Kaium's autonomous assistant.\n\nI can help outline your inquiry, calibrate requirements, and route your message directly to Kaium's inbox.\n\nTo begin, may I know your full name? (e.g. Alex Rivera)",
+  "Greetings. I coordinate project intake and direct communication for Kaium.\n\nI will gather your brief and ensure it reaches his inbox promptly.\n\nWho do I have the pleasure of speaking with today? (e.g. Sarah Chen)",
+  "Welcome. I serve as Kaium's dispatch assistant.\n\nWhether you are inquiring about full-stack engineering, architecture consulting, or potential collaboration, I am here to help.\n\nMay I have your full name to get started? (e.g. David Miller)",
+  "Hello, thank you for reaching out. I assist Kaium with engineering communications and project intake.\n\nTo ensure proper routing, could you please introduce yourself with your full name? (e.g. Elena Rostova)",
+  "Good day. I am Kaium's autonomous communication assistant.\n\nI will take down your inquiry details and deliver them straight to Kaium.\n\nTo begin our conversation, what is your name? (e.g. Marcus Vance)",
 ];
 
 // Diverse Subject Suggestions (Zero emojis)
@@ -145,8 +138,6 @@ export default function ContactAgentPage() {
   const [thinkingSeconds, setThinkingSeconds] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const [currentRoleSuggestions, setCurrentRoleSuggestions] = useState<string[]>(ROLE_SUGGESTION_SETS[0]);
-
   const [contactData, setContactData] = useState<ContactData>({
     name: "",
     email: "",
@@ -156,18 +147,15 @@ export default function ContactAgentPage() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  // Initialize randomized greeting and suggestion set on mount
+  // Initialize randomized greeting on mount (asks for name with example, no inline suggestion chips)
   useEffect(() => {
     const greeting = sample(GREETINGS);
-    const roles = sample(ROLE_SUGGESTION_SETS);
-    setCurrentRoleSuggestions(roles);
     setMessages([
       {
         id: "msg-0",
         sender: "agent",
         text: greeting,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        chips: roles,
       },
     ]);
   }, []);
@@ -342,8 +330,6 @@ export default function ContactAgentPage() {
     });
 
     const freshGreeting = sample(GREETINGS);
-    const freshRoles = sample(ROLE_SUGGESTION_SETS);
-    setCurrentRoleSuggestions(freshRoles);
 
     setMessages([
       {
@@ -351,7 +337,6 @@ export default function ContactAgentPage() {
         sender: "agent",
         text: freshGreeting,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        chips: freshRoles,
       },
     ]);
   };
@@ -579,12 +564,13 @@ export default function ContactAgentPage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (step === 0) handleUserInput(currentRoleSuggestions[0]);
+                  if (step === 0) setInputVal("Alex Rivera");
+                  else if (step === 1) setInputVal("alex@company.com");
                   else if (step === 2) handleUserInput(SUBJECT_SUGGESTIONS[0]);
-                  else toast.info("Please enter your response.");
+                  else toast.info("Please enter your message details.");
                 }}
                 className="size-7 sm:size-8 shrink-0 rounded-full bg-zinc-200/70 dark:bg-zinc-800 hover:bg-zinc-300/80 dark:hover:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-                title="Quick insert suggestion"
+                title="Quick example or suggestion"
               >
                 <Plus className="size-4" />
               </button>
@@ -597,9 +583,9 @@ export default function ContactAgentPage() {
                 onChange={(e) => setInputVal(e.target.value)}
                 placeholder={
                   step === 0
-                    ? "Enter your name..."
+                    ? "Enter your full name (e.g. Alex Rivera)..."
                     : step === 1
-                    ? "Enter your email address..."
+                    ? "Enter your email address (e.g. alex@company.com)..."
                     : step === 2
                     ? "Select or enter a subject..."
                     : "Enter your message details..."
