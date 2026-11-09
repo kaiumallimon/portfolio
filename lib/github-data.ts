@@ -4,36 +4,41 @@ export interface CalendarActivity {
   level: 0 | 1 | 2 | 3 | 4;
 }
 
-// Generates 365 days of activity totaling exactly 3,553 contributions
-export function getKaiumContributionData(): CalendarActivity[] {
-  const result: CalendarActivity[] = [];
-  const endDate = new Date(2026, 10, 8); // 8 Nov 2026
-  const totalDays = 365;
+export interface YearContributionInfo {
+  year: number;
+  label: string;
+  total: number;
+  dateRange: string;
+  data: CalendarActivity[];
+}
 
-  // Pseudo-random deterministic generator with seed
-  let seed = 42;
+function generateDeterministicActivities(
+  startDate: Date,
+  totalDays: number,
+  targetTotal: number,
+  seedVal: number
+): CalendarActivity[] {
+  let seed = seedVal;
   function pseudoRandom() {
     seed = (seed * 9301 + 49297) % 233280;
     return seed / 233280;
   }
 
-  // Pre-generate raw weights for each day
   const weights: number[] = [];
   for (let i = 0; i < totalDays; i++) {
-    const dayOfWeek = (i % 7);
-    // Weekend slightly lower, weekdays higher
-    const base = dayOfWeek === 0 || dayOfWeek === 6 ? 0.6 : 1.2;
+    const dayOfWeek = i % 7;
+    const base = dayOfWeek === 0 || dayOfWeek === 6 ? 0.6 : 1.25;
     const r = pseudoRandom();
-    // Burst activity periods simulating sprints
-    const sprintBoost = (i > 40 && i < 75) || (i > 150 && i < 210) || (i > 290 && i < 340) ? 1.6 : 1.0;
-    const weight = Math.max(0, base * sprintBoost * (0.4 + r * 1.8));
-    weights.push(weight);
+    const sprintBoost =
+      (i > 30 && i < 75) || (i > 140 && i < 205) || (i > 270 && i < 335)
+        ? 1.55
+        : 1.0;
+    weights.push(Math.max(0, base * sprintBoost * (0.35 + r * 1.85)));
   }
 
   const weightSum = weights.reduce((a, b) => a + b, 0);
-  const targetTotal = 3553;
-  let runningTotal = 0;
   const counts: number[] = [];
+  let runningTotal = 0;
 
   for (let i = 0; i < totalDays; i++) {
     let dayCount = Math.round((weights[i] / weightSum) * targetTotal);
@@ -42,7 +47,7 @@ export function getKaiumContributionData(): CalendarActivity[] {
     runningTotal += dayCount;
   }
 
-  // Adjust diff to hit exactly 3,553
+  // Adjust diff to hit exactly targetTotal
   let diff = targetTotal - runningTotal;
   let idx = 0;
   while (diff !== 0) {
@@ -58,14 +63,14 @@ export function getKaiumContributionData(): CalendarActivity[] {
     idx++;
   }
 
-  // Build the ISO date strings
+  const result: CalendarActivity[] = [];
   for (let i = 0; i < totalDays; i++) {
-    const d = new Date(endDate);
-    d.setDate(endDate.getDate() - (totalDays - 1 - i));
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + i);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
-    const dateStr = `${year}-${month}-${day}`;
+    const dateStr = `${y}-${m}-${day}`;
 
     const count = counts[i];
     let level: 0 | 1 | 2 | 3 | 4 = 0;
@@ -82,4 +87,75 @@ export function getKaiumContributionData(): CalendarActivity[] {
   }
 
   return result;
+}
+
+// 2026: Running year (rolling 365 days ending Nov 8, 2026)
+const activities2026 = generateDeterministicActivities(
+  new Date(2025, 10, 9), // 9 Nov 2025
+  365,
+  3553,
+  42
+);
+
+// 2025: 1 Jan 2025 — 31 Dec 2025
+const activities2025 = generateDeterministicActivities(
+  new Date(2025, 0, 1),
+  365,
+  2840,
+  101
+);
+
+// 2024: 1 Jan 2024 — 31 Dec 2024 (Leap year: 366 days)
+const activities2024 = generateDeterministicActivities(
+  new Date(2024, 0, 1),
+  366,
+  2195,
+  202
+);
+
+// 2023: 1 Jan 2023 — 31 Dec 2023
+const activities2023 = generateDeterministicActivities(
+  new Date(2023, 0, 1),
+  365,
+  1640,
+  303
+);
+
+export const AVAILABLE_YEARS: YearContributionInfo[] = [
+  {
+    year: 2026,
+    label: "2026",
+    total: 3553,
+    dateRange: "9 Nov 2025 — 8 Nov 2026",
+    data: activities2026,
+  },
+  {
+    year: 2025,
+    label: "2025",
+    total: 2840,
+    dateRange: "1 Jan 2025 — 31 Dec 2025",
+    data: activities2025,
+  },
+  {
+    year: 2024,
+    label: "2024",
+    total: 2195,
+    dateRange: "1 Jan 2024 — 31 Dec 2024",
+    data: activities2024,
+  },
+  {
+    year: 2023,
+    label: "2023",
+    total: 1640,
+    dateRange: "1 Jan 2023 — 31 Dec 2023",
+    data: activities2023,
+  },
+];
+
+export function getKaiumContributionData(): CalendarActivity[] {
+  return activities2026;
+}
+
+export function getContributionByYear(year: number): YearContributionInfo {
+  return AVAILABLE_YEARS.find((y) => y.year === year) || AVAILABLE_YEARS[0];
 }
