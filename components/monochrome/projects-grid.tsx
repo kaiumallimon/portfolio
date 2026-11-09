@@ -70,7 +70,7 @@ export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
             Looking for more work?
           </p>
           <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-sans">
-            Explore {projects.length}+ production mobile apps, high-throughput web systems, and open-source utilities.
+            Explore production mobile apps, high-throughput web systems, and open-source utilities.
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
           prefetch={false}
           className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono font-medium rounded-xs border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 hover:border-zinc-900 dark:hover:border-zinc-100 hover:shadow-xs transition-all cursor-pointer group shrink-0"
         >
-          <span>See all projects ({projects.length})</span>
+          <span>See all projects</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>
