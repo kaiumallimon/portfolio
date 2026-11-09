@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ProjectsArchiveView } from "@/components/monochrome/projects-archive-view";
-import { getProjects, getSiteSettings } from "@/lib/data-service";
+import { getProjects, getPaginatedProjects, getSiteSettings } from "@/lib/data-service";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -21,11 +21,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ProjectsPage() {
-  const [projects, settings] = await Promise.all([
+  const [allProjects, initialPaginated, settings] = await Promise.all([
     getProjects(),
+    getPaginatedProjects({ page: 1, limit: 10 }),
     getSiteSettings(),
   ]);
 
-  return <ProjectsArchiveView projects={projects} settings={settings} />;
+  return (
+    <ProjectsArchiveView
+      allProjects={allProjects}
+      initialPaginated={initialPaginated}
+      settings={settings}
+    />
+  );
 }
 

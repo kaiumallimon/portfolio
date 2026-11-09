@@ -532,6 +532,71 @@ export async function getSiteSettings(): Promise<ISiteSettings> {
   return fallbackSiteSettings;
 }
 
+export interface PaginatedProjectsResult {
+  projects: Partial<IProject>[];
+  total: number;
+  totalMatching: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+  matchingSlugs: string[];
+}
+
+export async function getPaginatedProjects(options: {
+  page?: number;
+  limit?: number;
+  query?: string;
+}): Promise<PaginatedProjectsResult> {
+  const page = Math.max(1, options.page || 1);
+  const limit = Math.max(1, options.limit || 10);
+  const query = (options.query || "").trim().toLowerCase();
+
+  let fullList: Partial<IProject>[] = fallbackProjects;
+
+  try {
+    const db = await connectToDatabase();
+    if (db) {
+      const list = await Project.find().sort({ order: 1, createdAt: -1 }).lean();
+      if (list && list.length > 0) {
+        fullList = JSON.parse(JSON.stringify(list)) as Partial<IProject>[];
+      }
+    }
+  } catch (err) {
+    console.warn("[DataService] Paginated projects MongoDB fetch failed:", err);
+  }
+
+  const total = fullList.length;
+
+  const filtered = query
+    ? fullList.filter((p) => {
+        const cat = p.category || "Full-Stack Web App";
+        const tags = (p.tags && p.tags.length > 0) ? p.tags : (p.technologies || []);
+        const titleMatch = (p.title || p.name)?.toLowerCase().includes(query);
+        const summaryMatch = (p.summary || p.short_details)?.toLowerCase().includes(query);
+        const descMatch = (p.description || p.short_details)?.toLowerCase().includes(query);
+        const categoryMatch = cat.toLowerCase().includes(query);
+        const tagMatch = tags.some((t) => t.toLowerCase().includes(query));
+        return titleMatch || summaryMatch || descMatch || categoryMatch || tagMatch;
+      })
+    : fullList;
+
+  const totalMatching = filtered.length;
+  const startIndex = (page - 1) * limit;
+  const pageItems = filtered.slice(startIndex, startIndex + limit);
+  const hasMore = startIndex + pageItems.length < totalMatching;
+  const matchingSlugs = filtered.map((p) => p.slug || (p._id ? String(p._id) : ""));
+
+  return {
+    projects: pageItems,
+    total,
+    totalMatching,
+    page,
+    limit,
+    hasMore,
+    matchingSlugs,
+  };
+}
+
 export async function getProjects(): Promise<Partial<IProject>[]> {
   try {
     const db = await connectToDatabase();
