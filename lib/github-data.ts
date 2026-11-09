@@ -30,6 +30,7 @@ export const AVAILABLE_YEARS: YearContributionInfo[] = [
   rawCache["2025"],
   rawCache["2024"],
   rawCache["2023"],
+  rawCache["2022"],
 ].filter(Boolean);
 
 export function getKaiumContributionData(): CalendarActivity[] {
