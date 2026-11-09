@@ -32,6 +32,7 @@ export function MonochromeHeader({}: HeaderProps = {}) {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isFabVisible, setIsFabVisible] = useState(true);
 
   // Smooth scroll to target section with sticky header offset
   const handleSectionScroll = (
@@ -117,6 +118,39 @@ export function MonochromeHeader({}: HeaderProps = {}) {
     }
   }, [isHomePage]);
 
+  // Auto-hide mobile floating action bar (FAB) on scroll down, show on reverse scroll up or when scroll is at top
+  useEffect(() => {
+    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+    const handleScroll = () => {
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+      // When scroll position is 0 (or close to top <= 10px), always show FAB
+      if (currentScrollY <= 10) {
+        setIsFabVisible(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      const diff = currentScrollY - lastScrollY;
+      // Add a small jitter threshold (6px) to ignore micro-scrolls and mobile bounce
+      if (Math.abs(diff) < 6) return;
+
+      if (diff > 0) {
+        // Scrolling down -> hide automatically
+        setIsFabVisible(false);
+      } else {
+        // Reverse scrolling up -> show back
+        setIsFabVisible(true);
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
@@ -185,27 +219,33 @@ export function MonochromeHeader({}: HeaderProps = {}) {
       </header>
 
       {/* Floating Mobile Bottom Navigation Dock (< md) */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 md:hidden">
-        <div className="flex items-center h-10 px-2 rounded-full bg-transparent backdrop-blur-xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-lg shadow-black/5 dark:shadow-black/40 text-zinc-800 dark:text-zinc-200 select-none">
+      <div
+        className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-40 md:hidden transition-all duration-300 ease-out ${
+          isFabVisible
+            ? "translate-y-0 opacity-100 pointer-events-auto"
+            : "translate-y-20 opacity-0 pointer-events-none"
+        }`}
+      >
+        <div className="flex items-center h-10 px-2 rounded-full bg-zinc-950/70 dark:bg-white/15 backdrop-blur-xl shadow-2xl shadow-black/20 dark:shadow-black/50 text-zinc-100 select-none">
           {/* CTA: Let's talk */}
           <Link
             href="/contact"
             prefetch={false}
-            className="flex items-center gap-1.5 pl-3 pr-2.5 py-1.5 text-xs text-zinc-800 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white transition-colors cursor-pointer group"
+            className="flex items-center gap-1.5 pl-3 pr-2.5 py-1.5 text-xs text-zinc-200 hover:text-white dark:text-zinc-100 dark:hover:text-white transition-colors cursor-pointer group"
             aria-label="Contact / Let's talk"
           >
             <span className="font-mono text-xs font-medium">Let&apos;s talk</span>
-            <RiArrowRightUpLine className="size-3.5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <RiArrowRightUpLine className="size-3.5 text-zinc-400 group-hover:text-white dark:text-zinc-300 dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </Link>
 
           {/* Hairline Separator */}
-          <div className="h-4 w-px bg-zinc-300/80 dark:bg-zinc-700/80 shrink-0 mx-0.5" aria-hidden="true" />
+          <div className="h-4 w-px bg-zinc-700/80 dark:bg-white/20 shrink-0 mx-0.5" aria-hidden="true" />
 
           {/* Hamburger / Menu Sheet Trigger */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
-            className="flex items-center justify-center size-8 rounded-full text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer"
+            className="flex items-center justify-center size-8 rounded-full text-zinc-300 hover:text-white dark:text-zinc-200 dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
             aria-label="Open navigation menu"
           >
             <RiMenuLine className="size-4" />
