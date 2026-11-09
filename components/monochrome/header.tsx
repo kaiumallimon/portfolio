@@ -104,7 +104,7 @@ export function MonochromeHeader({ onOpenCommand }: HeaderProps) {
 
         {/* Right Navigation & Controls */}
         <div className="flex items-center">
-          {/* Homepage section nav URLs & Contact page sequentially arranged according to available sections */}
+          {/* Homepage section nav URLs sequentially arranged according to available sections */}
           <nav className="flex items-center gap-3 sm:gap-4.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 mr-2 sm:mr-3">
             <a
               href={isHomePage ? "#about" : "/#about"}
@@ -134,17 +134,20 @@ export function MonochromeHeader({ onOpenCommand }: HeaderProps) {
             >
               Projects
             </a>
-            <Link
-              href="/contact"
-              prefetch={false}
-              className={`hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors ${
-                isContactPage
-                  ? "text-zinc-950 dark:text-zinc-100 font-semibold"
-                  : ""
-              }`}
+            <a
+              href={isHomePage ? "#recognition" : "/#recognition"}
+              onClick={(e) => handleSectionScroll(e, "recognition")}
+              className="hidden lg:inline-block hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+            >
+              Recognition
+            </a>
+            <a
+              href={isHomePage ? "#contact" : "/#contact"}
+              onClick={(e) => handleSectionScroll(e, "contact")}
+              className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               Contact
-            </Link>
+            </a>
           </nav>
 
           {/* Search trigger with hairline border & soft background */}
