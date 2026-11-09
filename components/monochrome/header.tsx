@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
-import { RiSearchLine, RiMenuLine, RiGithubLine } from "@remixicon/react";
+import { RiMenuLine, RiGithubLine, RiArrowRightUpLine } from "@remixicon/react";
 import {
   Sheet,
   SheetContent,
@@ -28,7 +28,7 @@ const NAV_ITEMS = [
   { label: "Contact", href: "#contact", id: "contact" },
 ];
 
-export function MonochromeHeader({ onOpenCommand, starsCount = 22 }: HeaderProps) {
+export function MonochromeHeader({ starsCount = 22 }: HeaderProps) {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -117,20 +117,6 @@ export function MonochromeHeader({ onOpenCommand, starsCount = 22 }: HeaderProps
     }
   }, [isHomePage]);
 
-  const handleOpenSearch = () => {
-    if (onOpenCommand) {
-      onOpenCommand();
-    } else {
-      document.dispatchEvent(
-        new KeyboardEvent("keydown", {
-          key: "k",
-          metaKey: true,
-          bubbles: true,
-        })
-      );
-    }
-  };
-
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
@@ -148,8 +134,8 @@ export function MonochromeHeader({ onOpenCommand, starsCount = 22 }: HeaderProps
             </Link>
           </div>
 
-          {/* Mobile top-right controls (< md): GitHub Stars + Separator + ThemeToggle */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Mobile top-right controls (< md): GitHub Stars + Separator + ThemeToggle + Separator + CTA */}
+          <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
             <a
               href="https://github.com/kaiumallimon"
               target="_blank"
@@ -170,11 +156,22 @@ export function MonochromeHeader({ onOpenCommand, starsCount = 22 }: HeaderProps
             <div className="flex items-center shrink-0">
               <ThemeToggle appearance="segmented" size="small" />
             </div>
+
+            <div className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800" aria-hidden="true" />
+
+            <Link
+              href="/contact"
+              prefetch={false}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-xs bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-mono text-[11px] font-medium transition-colors cursor-pointer select-none group"
+            >
+              <span>Let&apos;s talk</span>
+              <RiArrowRightUpLine className="w-3 h-3 text-zinc-400 dark:text-zinc-500 group-hover:text-white dark:group-hover:text-zinc-950 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
           </div>
 
-          {/* Desktop controls (md: and up): Nav links + Search + Separator + ThemeToggle */}
-          <div className="hidden md:flex items-center">
-            <nav className="flex items-center gap-4 lg:gap-5 text-xs font-medium text-zinc-600 dark:text-zinc-400 mr-3">
+          {/* Desktop controls (md: and up): Nav links + Separator + ThemeToggle + Separator + CTA */}
+          <div className="hidden md:flex items-center gap-2 sm:gap-2.5">
+            <nav className="flex items-center gap-4 lg:gap-5 text-xs font-medium text-zinc-600 dark:text-zinc-400 mr-1 sm:mr-1.5">
               {NAV_ITEMS.map((item) => (
                 <a
                   key={item.id}
@@ -187,24 +184,9 @@ export function MonochromeHeader({ onOpenCommand, starsCount = 22 }: HeaderProps
               ))}
             </nav>
 
-            {/* Search trigger with hairline border & soft background */}
-            <button
-              type="button"
-              onClick={handleOpenSearch}
-              className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-md border border-zinc-200/90 dark:border-zinc-800/90 bg-zinc-50/90 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-850 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-all cursor-pointer shadow-2xs select-none"
-              title="Search / Command Palette (⌘K)"
-              aria-label="Search or open command palette"
-            >
-              <RiSearchLine className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 shrink-0" />
-              <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">Search</span>
-              <kbd className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500 bg-zinc-200/50 dark:bg-zinc-800/80 px-1 py-0.5 rounded border border-zinc-200/60 dark:border-zinc-700/60 leading-none">
-                ⌘K
-              </kbd>
-            </button>
-
             {/* Vertical Separator */}
             <div
-              className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-2 sm:mx-2.5 shrink-0"
+              className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 shrink-0"
               aria-hidden="true"
             />
 
@@ -212,23 +194,39 @@ export function MonochromeHeader({ onOpenCommand, starsCount = 22 }: HeaderProps
             <div className="flex items-center shrink-0">
               <ThemeToggle appearance="segmented" size="small" />
             </div>
+
+            {/* Vertical Separator */}
+            <div
+              className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 shrink-0"
+              aria-hidden="true"
+            />
+
+            {/* CTA Button: Let's talk pointing to /contact */}
+            <Link
+              href="/contact"
+              prefetch={false}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-mono text-xs font-medium transition-colors cursor-pointer select-none group border border-transparent shadow-2xs"
+            >
+              <span>Let&apos;s talk</span>
+              <RiArrowRightUpLine className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover:text-white dark:group-hover:text-zinc-950 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Floating Mobile Bottom Navigation Dock (< md) matching Chanh Dai */}
+      {/* Floating Mobile Bottom Navigation Dock (< md) */}
       <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 md:hidden">
         <div className="flex items-center h-10 px-1.5 rounded-2xl sm:rounded-full bg-zinc-900/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-700/70 dark:border-zinc-800 shadow-2xl shadow-black/50 text-zinc-200 select-none">
-          {/* Search trigger */}
-          <button
-            type="button"
-            onClick={handleOpenSearch}
-            className="flex items-center gap-2 pl-3.5 pr-3 py-1.5 text-xs text-zinc-300 hover:text-white transition-colors cursor-pointer"
-            aria-label="Search portfolio"
+          {/* CTA: Let's talk */}
+          <Link
+            href="/contact"
+            prefetch={false}
+            className="flex items-center gap-1.5 pl-3.5 pr-2.5 py-1.5 text-xs text-zinc-200 hover:text-white transition-colors cursor-pointer group"
+            aria-label="Contact / Let's talk"
           >
-            <RiSearchLine className="size-3.5 text-zinc-400" />
-            <span className="font-sans text-xs">Search...</span>
-          </button>
+            <span className="font-mono text-xs font-medium">Let&apos;s talk</span>
+            <RiArrowRightUpLine className="size-3.5 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </Link>
 
           {/* Hairline Separator */}
           <div className="h-4 w-px bg-zinc-700/60 dark:bg-zinc-800 shrink-0 mx-0.5" aria-hidden="true" />
