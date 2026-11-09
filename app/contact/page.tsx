@@ -27,6 +27,7 @@ interface ChatMessage {
   timestamp: string;
   chips?: string[];
   isEndReceipt?: boolean;
+  isStreaming?: boolean;
 }
 
 interface ContactData {
@@ -110,6 +111,76 @@ export default function ContactAgentPage() {
     return () => clearInterval(interval);
   }, [clientQuota.used]);
 
+  const activeStreamRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clean up any active streaming interval on unmount
+  useEffect(() => {
+    return () => {
+      if (activeStreamRef.current) clearInterval(activeStreamRef.current);
+    };
+  }, []);
+
+  // Progressive streaming helper for assistant responses
+  const streamMessage = (
+    msgId: string,
+    fullText: string,
+    chips?: string[],
+    isEndReceipt?: boolean
+  ) => {
+    if (activeStreamRef.current) {
+      clearInterval(activeStreamRef.current);
+    }
+    setIsThinking(false);
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    // Append initial empty message with streaming: true
+    setMessages((prev) => {
+      const exists = prev.some((m) => m.id === msgId);
+      if (exists) {
+        return prev.map((m) =>
+          m.id === msgId ? { ...m, text: "", isStreaming: true } : m
+        );
+      }
+      return [
+        ...prev,
+        {
+          id: msgId,
+          sender: "agent",
+          text: "",
+          timestamp: time,
+          isStreaming: true,
+        },
+      ];
+    });
+
+    let curr = 0;
+    const stepChars = 2; // Stream 2 characters every 16ms
+    activeStreamRef.current = setInterval(() => {
+      curr += stepChars;
+      if (curr >= fullText.length) {
+        if (activeStreamRef.current) clearInterval(activeStreamRef.current);
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === msgId
+              ? {
+                  ...m,
+                  text: fullText,
+                  isStreaming: false,
+                  chips: chips || undefined,
+                  isEndReceipt,
+                }
+              : m
+          )
+        );
+      } else {
+        const slice = fullText.slice(0, curr);
+        setMessages((prev) =>
+          prev.map((m) => (m.id === msgId ? { ...m, text: slice, isStreaming: true } : m))
+        );
+      }
+    }, 16);
+  };
+
   // Fetch initial telemetry snapshot & spontaneous dynamic LLM greeting on mount
   useEffect(() => {
     let isMounted = true;
@@ -131,7 +202,6 @@ export default function ContactAgentPage() {
       .then((res) => res.json())
       .then((data) => {
         if (!isMounted) return;
-        setIsThinking(false);
         if (data.telemetry) setClientQuota(data.telemetry);
         if (data.modelName) {
           const cleaned = data.modelName
@@ -142,27 +212,14 @@ export default function ContactAgentPage() {
             .join(" ");
           setActiveModel(cleaned || "Llama 3.1");
         }
-        setMessages([
-          {
-            id: "msg-0",
-            sender: "agent",
-            text: data.reply,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            chips: data.suggestions || undefined,
-          },
-        ]);
+        streamMessage("msg-0", data.reply, data.suggestions || undefined);
       })
       .catch(() => {
         if (!isMounted) return;
-        setIsThinking(false);
-        setMessages([
-          {
-            id: "msg-0",
-            sender: "agent",
-            text: "Hello. I am Kaium's autonomous assistant. To get started, may I have your full name? (e.g. Alex Rivera)",
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          },
-        ]);
+        streamMessage(
+          "msg-0",
+          "Hello. I am Kaium's autonomous assistant. To get started, may I have your full name? (e.g. Alex Rivera)"
+        );
       });
 
     return () => {
@@ -249,15 +306,7 @@ export default function ContactAgentPage() {
       if (!res.ok) {
         setIsThinking(false);
         const errorText = data.reply || data.error || "A connection delay occurred. Please try again.";
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `err-${Date.now()}`,
-            sender: "agent",
-            text: errorText,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          },
-        ]);
+        streamMessage(`err-${Date.now()}`, errorText);
         if (res.status === 429) {
           toast.warning(`Rate limit reached: cooldown in ${data.retryAfter || 10}s.`);
         }
@@ -291,54 +340,31 @@ export default function ContactAgentPage() {
           console.warn("[Contact] SMTP dispatch error:", postErr);
         }
 
-        setIsThinking(false);
         setIsCompleted(true);
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `agent-end-${Date.now()}`,
-            sender: "agent",
-            text: data.reply,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            isEndReceipt: true,
-          },
-        ]);
+        streamMessage(`agent-end-${Date.now()}`, data.reply, undefined, true);
         toast.success("Dispatch verified and transmitted via SMTP 465.");
         return;
       }
 
-      // Normal assistant reply
-      setIsThinking(false);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `agent-${Date.now()}`,
-          sender: "agent",
-          text: data.reply,
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          chips: data.suggestions || undefined,
-        },
-      ]);
+      // Normal assistant reply (stream in token by token)
+      streamMessage(`agent-${Date.now()}`, data.reply, data.suggestions || undefined, false);
     } catch (err) {
       console.warn("[Contact Chat] Error:", err);
       setIsThinking(false);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `agent-err-${Date.now()}`,
-          sender: "agent",
-          text: "I encountered a momentary connection issue. Please share your input again.",
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        },
-      ]);
+      streamMessage(
+        `agent-err-${Date.now()}`,
+        "I encountered a momentary connection issue. Please share your input again."
+      );
     }
   };
 
   const handleReset = () => {
+    if (activeStreamRef.current) clearInterval(activeStreamRef.current);
     setStep("name");
     setInputVal("");
     setIsThinking(true);
     setIsCompleted(false);
+    setMessages([]);
     setContactData({
       name: "",
       email: "",
@@ -353,28 +379,14 @@ export default function ContactAgentPage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setIsThinking(false);
         if (data.telemetry) setClientQuota(data.telemetry);
-        setMessages([
-          {
-            id: `msg-reset-${Date.now()}`,
-            sender: "agent",
-            text: data.reply,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            chips: data.suggestions || undefined,
-          },
-        ]);
+        streamMessage(`msg-reset-${Date.now()}`, data.reply, data.suggestions || undefined);
       })
       .catch(() => {
-        setIsThinking(false);
-        setMessages([
-          {
-            id: `msg-reset-${Date.now()}`,
-            sender: "agent",
-            text: "Hello. I am Kaium's autonomous assistant. To get started, may I have your full name? (e.g. Alex Rivera)",
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          },
-        ]);
+        streamMessage(
+          `msg-reset-${Date.now()}`,
+          "Hello. I am Kaium's autonomous assistant. To get started, may I have your full name? (e.g. Alex Rivera)"
+        );
       });
   };
 
@@ -428,8 +440,8 @@ export default function ContactAgentPage() {
           {/* Right Status */}
           <div className="flex items-center gap-2.5 font-mono text-xs text-zinc-500">
             <span className="relative flex size-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-zinc-400 dark:bg-zinc-600 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-zinc-600 dark:bg-zinc-400" />
             </span>
             <span className="hidden sm:inline">Autonomous Assistant Online</span>
             <span className="text-zinc-300 dark:text-zinc-700">·</span>
@@ -458,10 +470,13 @@ export default function ContactAgentPage() {
                   <div className="space-y-3">
                     <div className="text-sm sm:text-[15px] font-sans leading-relaxed text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap max-w-2xl">
                       {msg.text}
+                      {msg.isStreaming && (
+                        <span className="inline-block w-1.5 h-3.5 ml-1 bg-zinc-700 dark:bg-zinc-300 animate-pulse align-middle" />
+                      )}
                     </div>
 
-                    {/* Professional Suggestion Chips (Zero emojis, dismissed once answered) */}
-                    {msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
+                    {/* Professional Suggestion Chips (Zero emojis, dismissed once answered, appears after streaming) */}
+                    {!msg.isStreaming && msg.chips && msg.chips.length > 0 && !isCompleted && !isThinking && (
                       <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in duration-200">
                         {msg.chips.map((chipText) => {
                           const isConfirm = chipText === "Confirm & Send";
@@ -483,8 +498,8 @@ export default function ContactAgentPage() {
                       </div>
                     )}
 
-                    {/* Ending Receipt Card */}
-                    {msg.isEndReceipt && (
+                    {/* Ending Receipt Card (appears after streaming completes) */}
+                    {!msg.isStreaming && msg.isEndReceipt && (
                       <div className="pt-3 animate-in fade-in zoom-in-95 duration-300">
                         <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4 shadow-xs">
                           <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
@@ -697,11 +712,9 @@ export default function ContactAgentPage() {
                 >
                   <span
                     className={`size-1.5 rounded-full transition-colors ${
-                      clientQuota.remaining > 3
-                        ? "bg-emerald-500"
-                        : clientQuota.remaining > 0
-                        ? "bg-amber-500"
-                        : "bg-red-500 animate-pulse"
+                      clientQuota.remaining > 0
+                        ? "bg-zinc-400 dark:bg-zinc-500"
+                        : "bg-zinc-900 dark:bg-zinc-100 animate-pulse"
                     }`}
                   />
                   <Activity className="size-3 opacity-70" />
@@ -712,58 +725,40 @@ export default function ContactAgentPage() {
                   <ChevronDown className={`size-2.5 opacity-60 transition-transform duration-200 ${usageMenuOpen ? "rotate-180" : ""}`} />
                 </button>
 
-                {/* Floating Live Usage Context Menu */}
+                {/* Floating Live Usage Context Menu (Pure monochrome dev style, zero colors/tints) */}
                 {usageMenuOpen && (
                   <div
                     ref={usageMenuRef}
-                    className="absolute bottom-full right-0 mb-2 w-72 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-3.5 shadow-xl font-mono text-xs z-50 animate-in fade-in zoom-in-95 duration-150 space-y-3"
+                    className="absolute bottom-full right-0 mb-2 w-64 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3.5 shadow-xl font-mono text-xs z-50 animate-in fade-in zoom-in-95 duration-150 space-y-3"
                   >
-                    {/* Header */}
-                    <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-                      <div className="flex items-center gap-1.5 font-semibold text-zinc-900 dark:text-zinc-100 text-[11px] uppercase tracking-wider">
-                        <Activity className="size-3 text-emerald-500" />
-                        <span>Client Usage Quota</span>
+                    {/* Header: Title only, no icon on left, no normal badge */}
+                    <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                      <div className="font-semibold text-zinc-900 dark:text-zinc-100 text-[11px] uppercase tracking-wider">
+                        Client Usage Quota
                       </div>
-                      <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
-                          clientQuota.remaining > 3
-                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                            : clientQuota.remaining > 0
-                            ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                            : "bg-red-500/10 text-red-600 dark:text-red-400 font-bold"
-                        }`}
-                      >
-                        {clientQuota.remaining > 0 ? "Normal" : "Rate Limited"}
-                      </span>
                     </div>
 
-                    {/* Progress Bar of remaining quota */}
-                    <div className="space-y-1">
+                    {/* Progress Bar of remaining quota: pure monochrome zinc-900/zinc-100, no greenish tint */}
+                    <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-[11px] text-zinc-600 dark:text-zinc-400">
                         <span>Remaining Capacity</span>
                         <span className="font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">
                           {clientQuota.remaining} / {clientQuota.limit} req
                         </span>
                       </div>
-                      <div className="w-full bg-zinc-200 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
                         <div
-                          className={`h-full transition-all duration-300 rounded-full ${
-                            clientQuota.remaining > 3
-                              ? "bg-emerald-500"
-                              : clientQuota.remaining > 0
-                              ? "bg-amber-500"
-                              : "bg-red-500"
-                          }`}
+                          className="h-full bg-zinc-900 dark:bg-zinc-100 transition-all duration-300 rounded-full"
                           style={{ width: `${(clientQuota.remaining / clientQuota.limit) * 100}%` }}
                         />
                       </div>
                     </div>
 
-                    {/* Details Grid */}
+                    {/* Details Grid: sliding window & slot reset (no burst protection, no quota isolation, no anti-spam) */}
                     <div className="space-y-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 pt-0.5">
                       <div className="flex items-center justify-between">
                         <span>Sliding Window:</span>
-                        <span className="text-zinc-900 dark:text-zinc-200">60 seconds</span>
+                        <span className="text-zinc-900 dark:text-zinc-200 tabular-nums">60s</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Next Slot Reset:</span>
@@ -771,23 +766,6 @@ export default function ContactAgentPage() {
                           {clientQuota.used > 0 ? `${resetCountdown}s` : "Idle"}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span>Burst Protection:</span>
-                        <span className="text-zinc-900 dark:text-zinc-200">750ms min gap</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Quota Isolation:</span>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Client IP Only</span>
-                      </div>
-                    </div>
-
-                    {/* Footer Info */}
-                    <div className="border-t border-zinc-200 dark:border-zinc-800 pt-2 text-[10px] text-zinc-400 flex items-center justify-between">
-                      <span>Anti-Spam Shield</span>
-                      <span className="text-emerald-500 flex items-center gap-1 font-medium">
-                        <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
-                        Active
-                      </span>
                     </div>
                   </div>
                 )}
