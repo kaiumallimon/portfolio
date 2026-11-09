@@ -8,7 +8,7 @@ import {
   RiTwitterXLine,
   RiGithubLine,
   RiLinkedinLine,
-  RiCodeSSlashLine,
+  RiGraduationCapLine,
   RiMapPinLine,
   RiTimeLine,
   RiMailLine,
@@ -282,14 +282,18 @@ export function MonochromeHero({
       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono">
         {/* Left Column (Desktop) / Items 1-3 (Mobile) */}
         <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
-          {/* 1. Designation */}
+          {/* 1. Education */}
           <div className="px-4 py-2.5 flex items-center gap-3">
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
-              <RiCodeSSlashLine className="w-3.5 h-3.5" />
+              <RiGraduationCapLine className="w-3.5 h-3.5" />
             </div>
-            <span className="text-zinc-700 dark:text-zinc-300">
-              Full-Stack Software Engineer <span className="text-zinc-400">@</span>UIU
-            </span>
+            <a
+              href="#education"
+              className="text-zinc-700 dark:text-zinc-300 hover:underline"
+              title="View education details"
+            >
+              Computer Science Graduate <span className="text-zinc-400">@</span>UIU
+            </a>
           </div>
 
           {/* 2. Location */}
