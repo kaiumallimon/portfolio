@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
-import { RiMenuLine, RiGithubLine, RiArrowRightUpLine } from "@remixicon/react";
+import { RiMenuLine, RiArrowRightUpLine } from "@remixicon/react";
 import {
   Sheet,
   SheetContent,
@@ -28,7 +28,7 @@ const NAV_ITEMS = [
   { label: "Contact", href: "#contact", id: "contact" },
 ];
 
-export function MonochromeHeader({ starsCount = 22 }: HeaderProps) {
+export function MonochromeHeader({}: HeaderProps = {}) {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -134,39 +134,9 @@ export function MonochromeHeader({ starsCount = 22 }: HeaderProps) {
             </Link>
           </div>
 
-          {/* Mobile top-right controls (< md): GitHub Stars + Separator + ThemeToggle + Separator + CTA */}
-          <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
-            <a
-              href="https://github.com/kaiumallimon"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-1.5 py-1 text-xs font-mono text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors select-none"
-              title="GitHub profile and stars"
-            >
-              <RiGithubLine className="w-3.5 h-3.5" />
-              <span className="text-[11px] tabular-nums font-semibold">
-                {starsCount >= 1000
-                  ? `${(starsCount / 1000).toFixed(1)}k`
-                  : `${starsCount}`}
-              </span>
-            </a>
-
-            <div className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800" aria-hidden="true" />
-
-            <div className="flex items-center shrink-0">
-              <ThemeToggle appearance="segmented" size="small" />
-            </div>
-
-            <div className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800" aria-hidden="true" />
-
-            <Link
-              href="/contact"
-              prefetch={false}
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-xs bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-mono text-[11px] font-medium transition-colors cursor-pointer select-none group"
-            >
-              <span>Let&apos;s talk</span>
-              <RiArrowRightUpLine className="w-3 h-3 text-zinc-400 dark:text-zinc-500 group-hover:text-white dark:group-hover:text-zinc-950 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </Link>
+          {/* Mobile top-right controls (< md): ThemeToggle only */}
+          <div className="flex md:hidden items-center shrink-0">
+            <ThemeToggle appearance="segmented" size="small" />
           </div>
 
           {/* Desktop controls (md: and up): Nav links + Separator + ThemeToggle + Separator + CTA */}
