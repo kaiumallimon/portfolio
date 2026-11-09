@@ -17,6 +17,7 @@ interface HeaderProps {
   onOpenCommand?: () => void;
   starsCount?: number;
   coverRef?: React.RefObject<HTMLDivElement | null>;
+  hideFab?: boolean;
 }
 
 const NAV_ITEMS = [
@@ -28,10 +29,12 @@ const NAV_ITEMS = [
   { label: "Contact", href: "#contact", id: "contact" },
 ];
 
-export function MonochromeHeader({}: HeaderProps = {}) {
+export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
-  const isContactPage = pathname === "/contact";
+  const isContactPage = Boolean(
+    hideFab || pathname === "/contact" || pathname?.startsWith("/contact")
+  );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isFabVisible, setIsFabVisible] = useState(true);
 
@@ -201,20 +204,24 @@ export function MonochromeHeader({}: HeaderProps = {}) {
             </div>
 
             {/* Vertical Separator */}
-            <div
-              className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 shrink-0"
-              aria-hidden="true"
-            />
+            {!isContactPage && (
+              <div
+                className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 shrink-0"
+                aria-hidden="true"
+              />
+            )}
 
-            {/* CTA Button: Let's talk pointing to /contact */}
-            <Link
-              href="/contact"
-              prefetch={false}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-mono text-xs font-medium transition-colors cursor-pointer select-none group border border-transparent shadow-2xs"
-            >
-              <span>Let&apos;s talk</span>
-              <RiArrowRightUpLine className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover:text-white dark:group-hover:text-zinc-950 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </Link>
+            {/* CTA Button: Let's talk pointing to /contact (omitted on /contact) */}
+            {!isContactPage && (
+              <Link
+                href="/contact"
+                prefetch={false}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-mono text-xs font-medium transition-colors cursor-pointer select-none group border border-transparent shadow-2xs"
+              >
+                <span>Let&apos;s talk</span>
+                <RiArrowRightUpLine className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover:text-white dark:group-hover:text-zinc-950 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            )}
           </div>
         </div>
       </header>

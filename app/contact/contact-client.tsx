@@ -374,9 +374,9 @@ export function ContactChatClient({
     <div className="fixed inset-0 h-[100dvh] w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden flex flex-col antialiased overscroll-none">
       {/* Centered max-w-5xl canvas matching site architecture */}
       <div className="mx-auto max-w-5xl w-full bg-white dark:bg-zinc-950 border-x border-zinc-200 dark:border-zinc-800 h-full flex flex-col overflow-hidden overscroll-none">
-        {/* 1. Website Header at the top */}
+        {/* 1. Website Header at the top (hideFab explicitly set for contact page) */}
         <div className="shrink-0">
-          <MonochromeHeader />
+          <MonochromeHeader hideFab />
         </div>
 
         {/* 2. Return to Portfolio Sub-Header */}
