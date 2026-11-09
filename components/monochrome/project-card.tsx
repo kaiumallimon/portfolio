@@ -8,9 +8,16 @@ import { DeviceMockup } from "./device-mockup";
 
 interface ProjectCardProps {
   project: Partial<IProject>;
+  isHighlighted?: boolean;
+  onHover?: (slug: string | null) => void;
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({
+  project,
+  isHighlighted = false,
+  onHover,
+}: ProjectCardProps) {
+  const slug = project.slug || (project._id ? String(project._id) : "");
   const title = project.title || project.name || "Untitled";
   const summary = project.summary || project.short_details || "";
   const demoUrl = project.demoUrl || project.live_url;
@@ -28,7 +35,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
     (isMobile ? "Mobile App" : "Full-Stack Web App");
 
   return (
-    <div className="group border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors flex flex-col justify-between overflow-hidden">
+    <div
+      id={slug ? `project-${slug}` : undefined}
+      onMouseEnter={() => slug && onHover?.(slug)}
+      onMouseLeave={() => onHover?.(null)}
+      onFocusCapture={() => slug && onHover?.(slug)}
+      onBlurCapture={() => onHover?.(null)}
+      className={`group scroll-mt-20 border bg-white dark:bg-zinc-950 transition-all duration-200 flex flex-col justify-between overflow-hidden ${
+        isHighlighted
+          ? "border-zinc-950 dark:border-zinc-100 ring-1 ring-zinc-950/20 dark:ring-zinc-100/20 shadow-xs"
+          : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600"
+      }`}
+    >
       <div>
         {/* Visual Device Representation Header according to category */}
         <div className="h-40 sm:h-44 w-full border-b border-zinc-100 dark:border-zinc-900 bg-zinc-50/70 dark:bg-zinc-900/50 flex items-center justify-center relative overflow-hidden">

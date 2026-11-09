@@ -103,7 +103,7 @@ export function BreadcrumbItem({
   }
 
   const interactiveClass = cx(
-    "-mx-1 flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 text-xs font-mono whitespace-nowrap text-zinc-500 dark:text-zinc-400",
+    "-mx-1 flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 text-xs font-mono whitespace-nowrap text-zinc-600 dark:text-zinc-400",
     "transition-colors duration-150 ease outline-none",
     "hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-950 dark:hover:text-zinc-100",
     "focus-visible:ring-1 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-600",
