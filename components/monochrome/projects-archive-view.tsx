@@ -23,22 +23,11 @@ interface ProjectsArchiveViewProps {
   settings: ISiteSettings;
 }
 
-const CATEGORIES = [
-  "All",
-  "Mobile App",
-  "Full-Stack Web App",
-  "Full-Stack E-Commerce",
-  "Landing Page",
-  "Web Tool",
-  "Flutter Web App",
-] as const;
-
 export function ProjectsArchiveView({
   projects,
   settings,
 }: ProjectsArchiveViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   const filteredProjects = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -46,13 +35,6 @@ export function ProjectsArchiveView({
     return projects.filter((p) => {
       const cat = p.category || "Full-Stack Web App";
       const tags = (p.tags && p.tags.length > 0) ? p.tags : (p.technologies || []);
-
-      // Category filter check
-      if (selectedCategory !== "All") {
-        if (cat !== selectedCategory) {
-          return false;
-        }
-      }
 
       // Search query check
       if (!q) return true;
@@ -71,7 +53,7 @@ export function ProjectsArchiveView({
         tagMatch
       );
     });
-  }, [projects, searchQuery, selectedCategory]);
+  }, [projects, searchQuery]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 transition-colors duration-200">
@@ -111,10 +93,9 @@ export function ProjectsArchiveView({
             </div>
           </section>
 
-          {/* Search & Filter Bar */}
-          <section className="px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            {/* Search Input Box */}
-            <div className="relative flex-1 max-w-md">
+          {/* Search Bar */}
+          <section className="px-4 sm:px-6 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+            <div className="relative w-full max-w-lg">
               <RiSearchLine className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500" />
               <input
                 type="text"
@@ -135,23 +116,6 @@ export function ProjectsArchiveView({
                 </button>
               )}
             </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex items-center gap-1 border border-zinc-200 dark:border-zinc-800 p-0.5 bg-zinc-100/60 dark:bg-zinc-900/60 overflow-x-auto max-w-full shrink-0">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-2.5 py-1 text-xs font-mono transition-colors cursor-pointer rounded-2xs whitespace-nowrap ${
-                    selectedCategory === cat
-                      ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white font-medium shadow-2xs"
-                      : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
           </section>
 
           {/* Results Status Subtext */}
@@ -159,16 +123,13 @@ export function ProjectsArchiveView({
             <span>
               Showing {filteredProjects.length} of {projects.length} projects
             </span>
-            {(searchQuery || selectedCategory !== "All") && (
+            {searchQuery && (
               <button
                 type="button"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("All");
-                }}
+                onClick={() => setSearchQuery("")}
                 className="hover:underline text-zinc-700 dark:text-zinc-300 cursor-pointer"
               >
-                Reset filters
+                Reset search
               </button>
             )}
           </div>
@@ -192,13 +153,10 @@ export function ProjectsArchiveView({
                 </p>
                 <button
                   type="button"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedCategory("All");
-                  }}
+                  onClick={() => setSearchQuery("")}
                   className="px-3 py-1.5 text-xs font-mono border border-zinc-300 dark:border-zinc-700 hover:border-zinc-900 dark:hover:border-zinc-100 rounded-xs transition-colors cursor-pointer"
                 >
-                  Clear search filters
+                  Clear search
                 </button>
               </div>
             )}
