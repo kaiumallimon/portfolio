@@ -186,26 +186,26 @@ export function MonochromeHeader({}: HeaderProps = {}) {
 
       {/* Floating Mobile Bottom Navigation Dock (< md) */}
       <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 md:hidden">
-        <div className="flex items-center h-10 px-1.5 rounded-2xl sm:rounded-full bg-zinc-900/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-700/70 dark:border-zinc-800 shadow-2xl shadow-black/50 text-zinc-200 select-none">
+        <div className="flex items-center h-10 px-2 rounded-full bg-transparent backdrop-blur-xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-lg shadow-black/5 dark:shadow-black/40 text-zinc-800 dark:text-zinc-200 select-none">
           {/* CTA: Let's talk */}
           <Link
             href="/contact"
             prefetch={false}
-            className="flex items-center gap-1.5 pl-3.5 pr-2.5 py-1.5 text-xs text-zinc-200 hover:text-white transition-colors cursor-pointer group"
+            className="flex items-center gap-1.5 pl-3 pr-2.5 py-1.5 text-xs text-zinc-800 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white transition-colors cursor-pointer group"
             aria-label="Contact / Let's talk"
           >
             <span className="font-mono text-xs font-medium">Let&apos;s talk</span>
-            <RiArrowRightUpLine className="size-3.5 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <RiArrowRightUpLine className="size-3.5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </Link>
 
           {/* Hairline Separator */}
-          <div className="h-4 w-px bg-zinc-700/60 dark:bg-zinc-800 shrink-0 mx-0.5" aria-hidden="true" />
+          <div className="h-4 w-px bg-zinc-300/80 dark:bg-zinc-700/80 shrink-0 mx-0.5" aria-hidden="true" />
 
           {/* Hamburger / Menu Sheet Trigger */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
-            className="flex items-center justify-center size-8 rounded-full text-zinc-300 hover:text-white transition-colors cursor-pointer"
+            className="flex items-center justify-center size-8 rounded-full text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer"
             aria-label="Open navigation menu"
           >
             <RiMenuLine className="size-4" />
