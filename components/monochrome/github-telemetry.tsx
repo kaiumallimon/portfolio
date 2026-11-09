@@ -23,12 +23,21 @@ export function MonochromeGitHubTelemetry({
   stats: GitHubStats | null;
   username?: string;
 }) {
-  // Available years: 2026 (running year), 2025, 2024, 2023
+  // Available years: 2026 (running year, Jan 01 to today), 2025, 2024, 2023
   const [selectedYear, setSelectedYear] = useState<number>(2026);
   const [targetYear, setTargetYear] = useState<number>(2026);
   const [isSnakeLoading, setIsSnakeLoading] = useState<boolean>(false);
   const [isArcadeMode, setIsArcadeMode] = useState<boolean>(false);
   const [isDark, setIsDark] = useState<boolean>(true);
+
+  // Map of contribution data by year (starts with pre-cached real data)
+  const [yearsData, setYearsData] = useState<Record<number, YearContributionInfo>>(() => {
+    const map: Record<number, YearContributionInfo> = {};
+    AVAILABLE_YEARS.forEach((item) => {
+      map[item.year] = item;
+    });
+    return map;
+  });
 
   // Sync theme
   useEffect(() => {
@@ -48,13 +57,33 @@ export function MonochromeGitHubTelemetry({
     };
   }, []);
 
+  // Fetch live running-year data on mount
+  useEffect(() => {
+    let active = true;
+    fetch(`/api/github/contributions?year=2026&username=${username}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((live) => {
+        if (active && live && live.total !== undefined) {
+          setYearsData((prev) => ({
+            ...prev,
+            2026: live,
+          }));
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, [username]);
+
   const currentData: YearContributionInfo = useMemo(() => {
-    return getContributionByYear(selectedYear);
-  }, [selectedYear]);
+    return yearsData[selectedYear] || getContributionByYear(selectedYear);
+  }, [yearsData, selectedYear]);
 
   const targetData: YearContributionInfo = useMemo(() => {
-    return getContributionByYear(targetYear);
-  }, [targetYear]);
+    return yearsData[targetYear] || getContributionByYear(targetYear);
+  }, [yearsData, targetYear]);
 
   // Year selection change handler
   const handleYearChange = useCallback(
@@ -63,8 +92,21 @@ export function MonochromeGitHubTelemetry({
       setTargetYear(newYear);
       setIsSnakeLoading(true);
       setIsArcadeMode(false);
+
+      // Fetch live data for selected year filter in the background
+      fetch(`/api/github/contributions?year=${newYear}&username=${username}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((live) => {
+          if (live && live.total !== undefined) {
+            setYearsData((prev) => ({
+              ...prev,
+              [newYear]: live,
+            }));
+          }
+        })
+        .catch(() => {});
     },
-    [selectedYear, isSnakeLoading, isArcadeMode]
+    [selectedYear, isSnakeLoading, isArcadeMode, username]
   );
 
   // Snake loading completion
