@@ -6,6 +6,7 @@ import { toast } from "sonner";
 interface VCardProps {
   name?: string;
   email?: string;
+  phone?: string;
   title?: string;
   url?: string;
   location?: string;
@@ -14,6 +15,7 @@ interface VCardProps {
 export function VCardDownload({
   name = "Kaium Al Limon",
   email = "kaiumallimon@gmail.com",
+  phone = "+880 1738 439 423",
   title = "Full-Stack & Design Engineer",
   url = "https://kaiumallimon.tech",
   location = "Dhaka, Bangladesh",
@@ -25,6 +27,7 @@ export function VCardDownload({
       `FN:${name}`,
       `TITLE:${title}`,
       `EMAIL;TYPE=INTERNET,PREF:${email}`,
+      `TEL;TYPE=CELL,VOICE:${phone.replace(/\s+/g, "")}`,
       `URL:${url}`,
       `ADR;TYPE=HOME:;;;${location};;;`,
       "NOTE:Full-Stack Cross-Platform Mobile & Web Developer",

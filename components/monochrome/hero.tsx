@@ -94,7 +94,7 @@ export function MonochromeHero({
   };
 
   const copyPhone = () => {
-    navigator.clipboard.writeText("+880 1888 387 500");
+    navigator.clipboard.writeText(settings.phone || "+880 1738 439 423");
     setCopiedPhone(true);
     toast.success("Phone number copied to clipboard");
     setTimeout(() => setCopiedPhone(false), 2000);
@@ -355,10 +355,10 @@ export function MonochromeHero({
                 <RiPhoneLine className="w-3.5 h-3.5" />
               </div>
               <a
-                href="tel:+8801888387500"
+                href={`tel:${(settings.phone || "+880 1738 439 423").replace(/\s+/g, "")}`}
                 className="text-zinc-700 dark:text-zinc-300 hover:underline truncate"
               >
-                +880 1888 387 500
+                {settings.phone || "+880 1738 439 423"}
               </a>
             </div>
             <button

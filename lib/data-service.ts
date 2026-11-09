@@ -36,7 +36,7 @@ export const fallbackSiteSettings: ISiteSettings = {
     "Building high-performance mobile & web experiences engineered to scale.",
   bio: "Computer Science & Engineering student at United International University (UIU), Dhaka. Focused on fluid Flutter mobile applications, modern Next.js web platforms, and resilient backends built with FastAPI and Node.js + Express. Former Head of Software & Innovation at UIU App Forum and 4-time UIU CSE Project Show award winner.",
   email: "kalimon291@gmail.com",
-  phone: "+880 1888 387 500",
+  phone: "+880 1738 439 423",
   location: "Dhaka, Bangladesh",
   timezone: "Asia/Dhaka",
   availableForHire: true,
