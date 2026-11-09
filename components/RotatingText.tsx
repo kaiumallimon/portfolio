@@ -172,14 +172,19 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
     splitLevelClassName,
     elementLevelClassName,
     style,
+    layout,
     ...rest
   } = props;
+
+  const layoutProp = layout !== undefined ? layout : !highlight;
 
   const [currentTextIndex, setCurrentTextIndex] = useState<number>(0);
   const [hovered, setHovered] = useState(false);
   const indexRef = useRef(0);
   const onNextRef = useRef(onNext);
-  onNextRef.current = onNext;
+  useEffect(() => {
+    onNextRef.current = onNext;
+  }, [onNext]);
 
   const contentRef = useRef<HTMLSpanElement | null>(null);
   const width = useMotionValue<number | string>('auto');
@@ -218,7 +223,8 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
 
   const order = useMemo(() => {
     const total = elements.reduce((sum, word) => sum + word.characters.length, 0);
-    const shuffled = Array.from({ length: total }, (_, i) => i).sort(() => Math.random() - 0.5);
+    // Deterministic pseudo-random sequence for stagger without impure Math.random during render
+    const shuffled = Array.from({ length: total }, (_, i) => (i * 7 + 3) % (total || 1));
     return { total, shuffled };
   }, [elements]);
 
@@ -329,7 +335,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
       <motion.span
         key={activeIndex}
         className={cn(splitBy === 'lines' ? 'flex flex-col w-full' : 'flex flex-wrap whitespace-pre-wrap relative')}
-        layout={!highlight}
+        layout={layoutProp}
         aria-hidden="true"
       >
         {elements.map((wordObj, wordIndex, array) => {
@@ -376,7 +382,7 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
         style={blockStyle}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        layout={!highlight}
+        layout={layoutProp}
         transition={transition ?? LAYOUT_SPRING}
       >
         <span className="sr-only">{texts[activeIndex]}</span>

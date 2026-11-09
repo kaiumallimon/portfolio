@@ -31,6 +31,7 @@ const NAV_ITEMS = [
 export function MonochromeHeader({}: HeaderProps = {}) {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const isContactPage = pathname === "/contact";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isFabVisible, setIsFabVisible] = useState(true);
 
@@ -218,40 +219,42 @@ export function MonochromeHeader({}: HeaderProps = {}) {
         </div>
       </header>
 
-      {/* Floating Mobile Bottom Navigation Dock (< md) */}
-      <div
-        className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-40 md:hidden transition-all duration-300 ease-out ${
-          isFabVisible
-            ? "translate-y-0 opacity-100 pointer-events-auto"
-            : "translate-y-20 opacity-0 pointer-events-none"
-        }`}
-      >
-        <div className="flex items-center h-10 px-2 rounded-full bg-zinc-950/70 dark:bg-white/15 backdrop-blur-xl shadow-2xl shadow-black/20 dark:shadow-black/50 text-zinc-100 select-none">
-          {/* CTA: Let's talk */}
-          <Link
-            href="/contact"
-            prefetch={false}
-            className="flex items-center gap-1.5 pl-3 pr-2.5 py-1.5 text-xs text-zinc-200 hover:text-white dark:text-zinc-100 dark:hover:text-white transition-colors cursor-pointer group"
-            aria-label="Contact / Let's talk"
-          >
-            <span className="font-mono text-xs font-medium">Let&apos;s talk</span>
-            <RiArrowRightUpLine className="size-3.5 text-zinc-400 group-hover:text-white dark:text-zinc-300 dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-          </Link>
+      {/* Floating Mobile Bottom Navigation Dock (< md; omitted on /contact to avoid colliding with chat input) */}
+      {!isContactPage && (
+        <div
+          className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-40 md:hidden transition-all duration-300 ease-out ${
+            isFabVisible
+              ? "translate-y-0 opacity-100 pointer-events-auto"
+              : "translate-y-20 opacity-0 pointer-events-none"
+          }`}
+        >
+          <div className="flex items-center h-10 px-2 rounded-full bg-zinc-950/70 dark:bg-white/15 backdrop-blur-xl shadow-2xl shadow-black/20 dark:shadow-black/50 text-zinc-100 select-none">
+            {/* CTA: Let's talk */}
+            <Link
+              href="/contact"
+              prefetch={false}
+              className="flex items-center gap-1.5 pl-3 pr-2.5 py-1.5 text-xs text-zinc-200 hover:text-white dark:text-zinc-100 dark:hover:text-white transition-colors cursor-pointer group"
+              aria-label="Contact / Let's talk"
+            >
+              <span className="font-mono text-xs font-medium">Let&apos;s talk</span>
+              <RiArrowRightUpLine className="size-3.5 text-zinc-400 group-hover:text-white dark:text-zinc-300 dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
 
-          {/* Hairline Separator */}
-          <div className="h-4 w-px bg-zinc-700/80 dark:bg-white/20 shrink-0 mx-0.5" aria-hidden="true" />
+            {/* Hairline Separator */}
+            <div className="h-4 w-px bg-zinc-700/80 dark:bg-white/20 shrink-0 mx-0.5" aria-hidden="true" />
 
-          {/* Hamburger / Menu Sheet Trigger */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            className="flex items-center justify-center size-8 rounded-full text-zinc-300 hover:text-white dark:text-zinc-200 dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
-            aria-label="Open navigation menu"
-          >
-            <RiMenuLine className="size-4" />
-          </button>
+            {/* Hamburger / Menu Sheet Trigger */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="flex items-center justify-center size-8 rounded-full text-zinc-300 hover:text-white dark:text-zinc-200 dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
+              aria-label="Open navigation menu"
+            >
+              <RiMenuLine className="size-4" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Mobile Navigation Sheet Drawer */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>

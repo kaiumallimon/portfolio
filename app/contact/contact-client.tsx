@@ -101,7 +101,10 @@ export function ContactChatClient({
   const [clientQuota, setClientQuota] = useState(initialTelemetry);
   const [resetCountdown, setResetCountdown] = useState(initialTelemetry.resetSeconds || 60);
   const [usageMenuOpen, setUsageMenuOpen] = useState(false);
+  const [dispatchReceiptId, setDispatchReceiptId] = useState<string>("894102");
   const usageMenuRef = useRef<HTMLDivElement | null>(null);
+  const msgIdCounterRef = useRef<number>(1);
+  const getNextId = (prefix: string) => `${prefix}-${msgIdCounterRef.current++}`;
 
   // Close context menu on click outside
   useEffect(() => {
@@ -116,32 +119,25 @@ export function ContactChatClient({
     }
   }, [usageMenuOpen]);
 
-  // Sync countdown whenever server reports new resetSeconds
-  useEffect(() => {
-    setResetCountdown(clientQuota.resetSeconds || 60);
-  }, [clientQuota.resetSeconds]);
-
   // Real-time 1s countdown ticker for the sliding window
   useEffect(() => {
     if (clientQuota.used === 0) return;
     const interval = setInterval(() => {
-      setResetCountdown((prev) => Math.max(0, prev - 1));
+      setResetCountdown((prev) => {
+        if (prev <= 1) {
+          setClientQuota((current) => ({
+            ...current,
+            remaining: current.limit,
+            used: 0,
+            resetSeconds: 60,
+          }));
+          return 60;
+        }
+        return prev - 1;
+      });
     }, 1000);
     return () => clearInterval(interval);
   }, [clientQuota.used]);
-
-  // Auto-restore quota capacity when the sliding window reaches 0
-  useEffect(() => {
-    if (resetCountdown === 0 && clientQuota.used > 0) {
-      setClientQuota((prev) => ({
-        ...prev,
-        remaining: prev.limit,
-        used: 0,
-        resetSeconds: 60,
-      }));
-      setResetCountdown(60);
-    }
-  }, [resetCountdown, clientQuota.used]);
 
   const activeStreamRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -219,17 +215,16 @@ export function ContactChatClient({
 
   // Live thinking timer
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isThinking) {
-      const start = Date.now();
-      interval = setInterval(() => {
-        setThinkingSeconds((Date.now() - start) / 1000);
-      }, 100);
-    } else {
-      setThinkingSeconds(0);
+    if (!isThinking) {
+      return;
     }
+    const start = Date.now();
+    const interval = setInterval(() => {
+      setThinkingSeconds((Date.now() - start) / 1000);
+    }, 100);
     return () => {
-      if (interval) clearInterval(interval);
+      clearInterval(interval);
+      setThinkingSeconds(0);
     };
   }, [isThinking]);
 
@@ -250,13 +245,36 @@ export function ContactChatClient({
     }
   }, [isThinking, isCompleted, step]);
 
+  // Lock outer window and body scrolling on mobile while contact chat is mounted
+  useEffect(() => {
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalBodyPosition = document.body.style.position;
+    const originalBodyWidth = document.body.style.width;
+    const originalBodyHeight = document.body.style.height;
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.height = "100%";
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.position = originalBodyPosition;
+      document.body.style.width = originalBodyWidth;
+      document.body.style.height = originalBodyHeight;
+    };
+  }, []);
+
   const handleUserInput = async (textToSend: string) => {
     const trimmed = textToSend.trim();
     if (!trimmed || isThinking || isCompleted) return;
 
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     const userMsg: ChatMessage = {
-      id: `user-${Date.now()}`,
+      id: getNextId("user"),
       sender: "user",
       text: trimmed,
       timestamp: time,
@@ -283,11 +301,12 @@ export function ContactChatClient({
 
       if (data.telemetry) {
         setClientQuota(data.telemetry);
+        setResetCountdown(data.telemetry.resetSeconds || 60);
       }
 
       if (data.error && !data.reply) {
         setIsThinking(false);
-        streamMessage(`err-${Date.now()}`, data.error);
+        streamMessage(getNextId("err"), data.error);
         if (data.retryAfter) {
           toast.warning(`Rate limit reached: cooldown in ${data.retryAfter}s.`);
         }
@@ -304,18 +323,19 @@ export function ContactChatClient({
       if (nextStep === "confirmed") {
         await dispatchContactMessage(updatedData);
         setIsCompleted(true);
-        streamMessage(`agent-end-${Date.now()}`, data.reply, undefined, true);
+        setDispatchReceiptId(`894${msgIdCounterRef.current}`);
+        streamMessage(getNextId("agent-end"), data.reply, undefined, true);
         toast.success("Dispatch verified and transmitted via SMTP 465.");
         return;
       }
 
       // Normal assistant reply (stream in token by token)
-      streamMessage(`agent-${Date.now()}`, data.reply, data.suggestions || undefined, false);
+      streamMessage(getNextId("agent"), data.reply, data.suggestions || undefined, false);
     } catch (err) {
       console.warn("[Contact Chat] Server Action Error:", err);
       setIsThinking(false);
       streamMessage(
-        `agent-err-${Date.now()}`,
+        getNextId("agent-err"),
         "I encountered a momentary connection issue. Please share your input again."
       );
     }
@@ -337,20 +357,23 @@ export function ContactChatClient({
 
     try {
       const data = await submitChatTurn({ isGreeting: true });
-      if (data.telemetry) setClientQuota(data.telemetry);
-      streamMessage(`msg-reset-${Date.now()}`, data.reply, data.suggestions || undefined);
+      if (data.telemetry) {
+        setClientQuota(data.telemetry);
+        setResetCountdown(data.telemetry.resetSeconds || 60);
+      }
+      streamMessage(getNextId("msg-reset"), data.reply, data.suggestions || undefined);
     } catch {
       streamMessage(
-        `msg-reset-${Date.now()}`,
+        getNextId("msg-reset"),
         "Hello. I am Kaium's autonomous assistant. To get started, may I have your full name? (e.g. Alex Rivera)"
       );
     }
   };
 
   return (
-    <div className="h-[100dvh] w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden flex flex-col antialiased">
+    <div className="fixed inset-0 h-[100dvh] w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden flex flex-col antialiased overscroll-none">
       {/* Centered max-w-5xl canvas matching site architecture */}
-      <div className="mx-auto max-w-5xl w-full bg-white dark:bg-zinc-950 border-x border-zinc-200 dark:border-zinc-800 h-full flex flex-col overflow-hidden">
+      <div className="mx-auto max-w-5xl w-full bg-white dark:bg-zinc-950 border-x border-zinc-200 dark:border-zinc-800 h-full flex flex-col overflow-hidden overscroll-none">
         {/* 1. Website Header at the top */}
         <div className="shrink-0">
           <MonochromeHeader />
@@ -390,7 +413,7 @@ export function ContactChatClient({
         {/* 3. Chat Body (Scrolls independently; page does not scroll) */}
         <main
           ref={scrollContainerRef}
-          className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-8 py-6 space-y-6"
+          className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-8 py-6 space-y-6 overscroll-contain touch-pan-y"
         >
           <div className="max-w-3xl mx-auto w-full space-y-6">
             {messages.map((msg) => (
@@ -456,7 +479,7 @@ export function ContactChatClient({
                                 <span>DISPATCH CONFIRMED // 200 OK</span>
                               </div>
                               <span className="font-mono text-[10px] text-zinc-400">
-                                #DSP-{Date.now().toString().slice(-6)}
+                                #DSP-{dispatchReceiptId}
                               </span>
                             </div>
 
