@@ -98,6 +98,26 @@ export async function GET(req: NextRequest) {
             cal.totalContributions ??
             days.reduce((a: number, b: { count: number }) => a + b.count, 0);
 
+          // Pad remaining days of running year up to Dec 31 with empty cells (level 0) so the matrix does not shrink
+          if (isRunningYear && days.length > 0) {
+            const lastDateStr = days[days.length - 1].date;
+            const [ly, lm, ld] = lastDateStr.split("-").map(Number);
+            const curr = new Date(ly, lm - 1, ld);
+            curr.setDate(curr.getDate() + 1);
+            const endDate = new Date(year, 11, 31);
+            while (curr <= endDate) {
+              const yStr = curr.getFullYear();
+              const mStr = String(curr.getMonth() + 1).padStart(2, "0");
+              const dStr = String(curr.getDate()).padStart(2, "0");
+              days.push({
+                date: `${yStr}-${mStr}-${dStr}`,
+                count: 0,
+                level: 0,
+              });
+              curr.setDate(curr.getDate() + 1);
+            }
+          }
+
           return NextResponse.json({
             year,
             label: String(year),
