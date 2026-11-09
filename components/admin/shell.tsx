@@ -97,7 +97,6 @@ const HEADER_NAV = [
   { name: "Open Source", href: "/#contributions" },
   { name: "Activities", href: "/#activities" },
   { name: "Achievements", href: "/#achievements" },
-  { name: "Tools", href: "/tools" },
   { name: "Contact", href: "/#contact" },
 ];
 
