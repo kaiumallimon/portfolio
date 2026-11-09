@@ -115,14 +115,14 @@ export function MonochromeHero({
         {/* Cover Artwork: Full width at top on mobile (< md), Top-Right on desktop (md:) */}
         <div
           ref={coverRef}
-          className="col-span-2 row-start-1 md:col-span-1 md:col-start-2 md:row-start-1 relative cover-grid-bg overflow-hidden flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800 h-[175px] sm:h-[190px] md:h-full"
+          className="col-span-2 row-start-1 md:col-span-1 md:col-start-2 md:row-start-1 relative cover-grid-bg overflow-hidden flex items-center justify-center border-b border-zinc-200 dark:border-zinc-800 h-[210px] sm:h-[230px] md:h-full"
         >
           <CadIsometricCover onGameModeChange={setCoverGameMode} />
         </div>
 
         {/* Circular Avatar: Bottom-Left beneath cover on mobile (< md), Left column spanning 2 rows on desktop (md:) */}
-        <div className="col-start-1 row-start-2 md:col-start-1 md:row-start-1 md:row-span-2 flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-          <div className="flex-1 flex items-center justify-center p-3 sm:p-4 md:p-6">
+        <div className="col-start-1 row-start-2 md:col-start-1 md:row-start-1 md:row-span-2 flex items-center justify-center border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+          <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 w-full h-full">
             <div className="relative size-16 sm:size-20 md:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0">
               <Image
                 src="/bordered.png"
@@ -137,9 +137,9 @@ export function MonochromeHero({
         </div>
 
         {/* Name & Tagline: Bottom-Right beneath cover on mobile (< md), Bottom-Right beneath cover on desktop (md:) */}
-        <div className="col-start-2 row-start-2 md:col-start-2 md:row-start-2 flex flex-col justify-center md:justify-end bg-white dark:bg-zinc-950 min-w-0">
+        <div className="col-start-2 row-start-2 md:col-start-2 md:row-start-2 flex flex-col justify-end bg-white dark:bg-zinc-950 min-w-0">
           {/* Upper row: Name + sound chime + Tech Humor Game Hint (desktop md:) */}
-          <div className="px-3.5 pt-2.5 pb-1 sm:px-5 sm:pt-3 sm:pb-1 md:px-4 md:py-2.5 flex items-center justify-between gap-2 flex-wrap">
+          <div className="px-3.5 pt-2 pb-1 sm:px-5 sm:pt-2.5 sm:pb-1 md:px-4 md:py-2 flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 sm:gap-2">
               <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
                 {settings.name}
@@ -246,15 +246,15 @@ export function MonochromeHero({
           {/* Lower row: Rotating Tagline / Sentences */}
           {/* On mobile (< md): Sits snugly right underneath the name without split border or giant void */}
           {/* On desktop (md:): Padded in lower bar with top border */}
-          <div className="px-3.5 pb-2.5 pt-0.5 sm:px-5 sm:pb-3 sm:pt-0.5 md:px-4 md:py-2.5 md:border-t md:border-zinc-200 md:dark:border-zinc-800 flex items-center min-h-[52px] sm:min-h-[52px] md:min-h-[44px]">
+          <div className="px-3.5 pb-2.5 pt-0.5 sm:px-5 sm:pb-3 sm:pt-0.5 md:px-4 md:py-2 md:border-t md:border-zinc-200 md:dark:border-zinc-800 flex items-center h-[38px] sm:h-[40px] md:h-[42px] overflow-hidden">
             <RotatingText
               texts={[
-                "Building high-performance mobile & web experiences engineered to scale.",
-                "Turning ideas and complex problems into practical, well-engineered software.",
-                "Specializing in Flutter cross-platform apps, Next.js, and backend engineering.",
-                "Full-Stack Software Engineer crafting resilient, production-ready products.",
+                "Building high-performance mobile & web experiences.",
+                "Turning complex problems into practical software.",
+                "Crafting fluid apps with Flutter, Next.js, & Node.",
+                "Full-stack engineer building resilient systems.",
               ]}
-              mainClassName="font-mono text-xs sm:text-[13px] md:text-sm text-zinc-600 dark:text-zinc-400 leading-snug"
+              mainClassName="font-mono text-xs sm:text-[13px] md:text-sm text-zinc-600 dark:text-zinc-400 leading-snug line-clamp-2"
               staggerDuration={0.03}
               staggerFrom="first"
               splitBy="words"
