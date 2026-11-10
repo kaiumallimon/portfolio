@@ -1492,7 +1492,7 @@
   // ------------------------------------------------------------------ styles
 
   const STYLE = `
-:host{all:initial;pointer-events:none !important}
+:host{all:initial;pointer-events:auto !important;cursor:wait !important}
 *{box-sizing:border-box}
 .bg{position:absolute;inset:0;opacity:0;pointer-events:none !important;display:none !important}
 .bg.on{opacity:0;pointer-events:none !important;display:none !important}
@@ -1538,45 +1538,7 @@
 .intro.gone{opacity:0;transform:translate(-50%,-50%) scale(.9)}
 .intro img{display:block;width:60px;height:60px;object-fit:contain;filter:grayscale(1);opacity:.42;border-radius:14px}
 .intro .mono{width:60px;height:60px;border-radius:16px;background:#D7DADE;color:#fff;font:700 30px/60px Inter,system-ui,sans-serif;text-align:center}
-.hud{position:fixed;left:50%;bottom:20px;transform:translate(-50%,18px);opacity:0;display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(24,24,27,.95);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.09);font:500 12px/1 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;pointer-events:auto !important;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);white-space:nowrap;user-select:none;z-index:999999;max-width:calc(100vw - 24px);box-sizing:border-box}
-.hud *{pointer-events:auto !important}
-.hud.on{opacity:1;transform:translate(-50%,0)}
-.hud .dots{display:flex;padding-left:4px}
-.hud .dots i{display:block;width:18px;height:18px;margin-left:-5px;border-radius:50%;border:2px solid #1e1e1e;font:700 9px/14px Inter,system-ui,sans-serif;font-style:normal;text-align:center;color:#fff;transition:background .3s}
-.hud .txt,.hud .status{display:flex;align-items:center;gap:6px;color:#cfcfcf;font-variant-numeric:tabular-nums}
-.hud .txt b{color:#fff;font-weight:600}
-.hud .sep{width:1px;height:12px;background:#444}
-.hud .bar{width:56px;height:3px;border-radius:2px;background:#3a3a3a;overflow:hidden;flex-shrink:0}
-.hud .bar i{display:block;height:100%;width:0;background:#0D99FF;transition:width .35s ease}
-.hud button{all:unset;cursor:pointer;padding:6px 9px;border-radius:7px;background:#2c2c2c;color:#fff;font:500 12px/1 Inter,system-ui,-apple-system,sans-serif;transition:background .15s}
-.hud button:hover{background:#3a3a3a}
-.hud button.pri{background:#0D99FF}
-.hud button.pri:hover{background:#2aa6ff}
-.hud button.on{background:rgba(13,153,255,.22);color:#8fd0ff}
-.hud button[hidden]{display:none}
-.hud .x{padding:6px 8px;color:#aaa}
-.hud button.snd{display:flex;align-items:center;gap:6px;padding:6px 8px}
-.hud button.snd.off{color:#8a8a8a}
-.hud button.snd.tap{background:#0D99FF;animation:hudpulse 1.6s ease-in-out infinite}
-@keyframes hudpulse{50%{box-shadow:0 0 0 4px rgba(13,153,255,.28)}}
-@media(max-width:640px){
-  .hud{bottom:14px;gap:6px;padding:5px 8px;font-size:11px;max-width:calc(100vw - 16px);border-radius:10px}
-  .hud .dots{display:none}
-  .hud .bar{width:36px}
-  .hud button{padding:5px 8px;font-size:11px;border-radius:6px}
-  .hud .x{padding:5px 7px}
-}
-@media(max-width:480px){
-  .hud{bottom:8px;gap:4px;padding:4px 6px;font-size:10.5px;max-width:calc(100vw - 12px);border-radius:8px}
-  .hud .bar{display:none}
-  .hud .txt,.hud .status{font-size:10.5px;gap:3px}
-  .hud button{padding:4px 6px;font-size:10.5px}
-  .hud button[data-a="tour"],.hud button[data-a="speed"]{display:none}
-  .hud .x{padding:4px 5px}
-}
-@media(max-width:360px){
-  .hud button.snd{display:none}
-}
+.hud{display:none !important}
 `;
 
   // -------------------------------------------------------------------- env
@@ -1657,7 +1619,7 @@
       for (const old of document.querySelectorAll("swarm-rebuild")) old.remove();
       const host = document.createElement("swarm-rebuild");
       host.style.cssText =
-        "all:initial !important;position:fixed !important;inset:0 !important;z-index:2147483647 !important;display:block !important;pointer-events:none !important;contain:strict !important;opacity:1;transition:opacity .6s ease;";
+        "all:initial !important;position:fixed !important;inset:0 !important;z-index:2147483647 !important;display:block !important;pointer-events:auto !important;contain:strict !important;opacity:1;transition:opacity .6s ease;cursor:wait !important;user-select:none !important;";
       env.host = host;
       this.host = host;
       const root = host.attachShadow({ mode: "open" });
@@ -1671,18 +1633,7 @@
 <svg class="ov"></svg>
 <div class="badges"></div>
 <div class="cursors"></div>
-<div class="rulers"></div>
-<div class="hud">
-  <div class="dots"></div>
-  <div class="txt"><span class="status">Scanning page…</span></div>
-  <div class="bar"><i></i></div>
-  <button data-a="tour" title="Auto-scroll while the swarm builds">Tour</button>
-  <button data-a="speed" title="Build speed">2×</button>
-  <button data-a="sound" class="snd" title="Sound (M)"></button>
-  <button data-a="live" class="pri" hidden title="Fade back to the real page">Go live</button>
-  <button data-a="replay" hidden title="Wipe and rebuild again">Replay</button>
-  <button data-a="close" class="x" title="Exit (Esc)">✕</button>
-</div>`;
+<div class="rulers"></div>`;
       const $ = (s) => root.querySelector(s);
       this.bg = $(".bg");
       this.under = $(".under");
@@ -1694,10 +1645,10 @@
       this.badges = $(".badges");
       this.cursorsEl = $(".cursors");
       this.rulers = $(".rulers");
-      this.hud = $(".hud");
-      this.status = $(".status");
-      this.barFill = $(".bar i");
-      this.dots = $(".dots");
+      this.hud = $(".hud") || document.createElement("div");
+      this.status = $(".status") || document.createElement("span");
+      this.barFill = $(".bar i") || document.createElement("i");
+      this.dots = $(".dots") || document.createElement("div");
       this.cursorEls = new Map();
       this._ovS = "";
       this._ovB = "";
@@ -2151,7 +2102,7 @@
       this.frontier = 0;
       this.vel = 0;
       this.tempo = 1;
-      this.speed = 2;
+      this.speed = 3;
       this.time = 0;
       this.rulers = { want: 0, t: 0, lastNeed: -10 };
       this.lastScroll = null;
@@ -3584,6 +3535,7 @@
       const wait = 1500 - (performance.now() - this.t0);
       if (wait > 0) await sleep(wait);
       if (this.dead) return;
+      this.tour = true;
       this.engine.start();
     }
 
@@ -3616,20 +3568,19 @@
         if (!this.view.frozen) this.view.syncWorld();
       }, { passive: true });
       on(window, "resize", () => this.view.measure());
-      on(window, "wheel", () => {
-        if (this.engine.ready) this.engine.start();
-      }, { passive: true });
-      on(window, "pointermove", (e) => {
-        this.engine.mouse = { x: e.clientX, y: e.clientY };
-      }, { passive: true });
-      on(document.documentElement, "pointerleave", () => {
-        this.engine.mouse = null;
-      });
+
+      // Block user manual scrolling and key navigation during build tour
+      const blockScroll = (e) => {
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+      };
+      on(window, "wheel", blockScroll, { passive: false });
+      on(window, "touchmove", blockScroll, { passive: false });
       on(window, "keydown", (e) => {
-        if (e.key === "Escape") {
-          e.stopPropagation();
-          stop(false);
-        } else if ((e.key === "m" || e.key === "M") && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        if (["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(e.code) || ["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(e.key)) {
+          e.preventDefault();
+        }
+        if ((e.key === "m" || e.key === "M") && !e.metaKey && !e.ctrlKey && !e.altKey) {
           this.sfx.setOn(!this.sfx.on);
           this.renderSoundBtn();
         }
@@ -3637,34 +3588,6 @@
       }, true);
       // browsers only let audio start after a click/keypress on the page
       on(window, "pointerdown", () => this.unlockSound(), true);
-      if (!this.env.isRoot) {
-        on(this.view.host, "wheel", (e) => {
-          e.preventDefault();
-          this.env.scroller.scrollBy({ top: e.deltaY, left: e.deltaX, behavior: "instant" });
-        }, { passive: false });
-      }
-      on(this.view.hud, "click", (e) => {
-        const b = e.target.closest("button");
-        if (!b) return;
-        const a = b.dataset.a;
-        if (a === "close") stop(false);
-        else if (a === "live") stop(true);
-        else if (a === "replay") restart();
-        else if (a === "tour") {
-          this.tour = !this.tour;
-          b.classList.toggle("on", this.tour);
-          b.textContent = this.tour ? "Touring" : "Tour";
-          if (this.tour) this.engine.start();
-        } else if (a === "sound") {
-          if (this.sfx.on && this.sfx.blocked) this.sfx.resume();
-          else this.sfx.setOn(!this.sfx.on);
-          setTimeout(() => this.renderSoundBtn(), 60);
-        } else if (a === "speed") {
-          this.speedIx = (this.speedIx + 1) % this.speeds.length;
-          this.engine.speed = this.speeds[this.speedIx];
-          b.textContent = this.speeds[this.speedIx] + "×";
-        }
-      });
     }
 
     unlockSound() {
@@ -3712,14 +3635,23 @@
       if (!E.started) return;
       const g = this.env.geom();
       const maxY = this.env.scrollHeight() - g.vh;
-      if (g.sy >= maxY - 1) {
+      if (maxY <= 0 || g.sy >= maxY - 2) {
         this.tourV = 0;
+        if (E.backlog() === 0 && E.waitCount > 0) {
+          E.frontier = Number.MAX_SAFE_INTEGER;
+        }
+        if (!this._bottomTime) this._bottomTime = performance.now();
+        else if (performance.now() - this._bottomTime > 1200 && !this.complete) {
+          this.onComplete();
+        }
         return;
+      } else {
+        this._bottomTime = null;
       }
       const crew = Math.max(MIN_AGENTS, E.cursors.filter((c) => !c.leaving).length);
       const backlog = E.backlog();
-      const target = backlog <= Math.max(4, crew * 0.6) ? 230 : backlog <= crew * 1.5 ? 80 : 0;
-      this.tourV += (target - this.tourV) * Math.min(1, dt * 2.5);
+      const target = backlog <= Math.max(4, crew * 0.6) ? 750 : backlog <= crew * 1.5 ? 400 : 180;
+      this.tourV += (target - this.tourV) * Math.min(1, dt * 3.0);
       this.tourAcc += this.tourV * dt;
       if (this.tourAcc >= 1) {
         const d = Math.floor(this.tourAcc);
@@ -3729,46 +3661,30 @@
     }
 
     updateHud() {
-      const E = this.engine;
-      const v = this.view;
-      if (!E.ready) return;
-      const workers = E.cursors.filter((c) => c.worked).length + E.retired;
-      const total = E.tasks.length;
-      const done = E.doneCount;
-      if (this.complete) return;
-      if (!E.started) v.status.innerHTML = `<b>${E.cursors.length}</b> agents ready<span class="sep"></span>${total.toLocaleString()} layers`;
-      else {
-        const pend = E.tasks.length - done;
-        const below = E.tasks.some((t) => t.state === "wait" && t.layer === "world" && t.gate > E.frontier);
-        v.status.innerHTML =
-          `<b>${workers}</b> agents<span class="sep"></span><b>${done.toLocaleString()}</b> / ${total.toLocaleString()} layers` +
-          (below && pend && !this.tour && E.backlog() === 0 ? `<span class="sep"></span>scroll to keep building` : "");
-      }
-      v.barFill.style.width = total ? `${(done / total) * 100}%` : "0%";
-      const busy = E.cursors.filter((c) => c.task).slice(-5);
-      const key = busy.map((c) => c.id).join(",");
-      if (key !== this._dots) {
-        this._dots = key;
-        v.dots.innerHTML = busy.map((c) => `<i style="background:${c.color}" title="${c.name}">${c.name[0]}</i>`).join("");
-      }
+      // HUD is omitted per user requirement
     }
 
     onComplete() {
+      if (this.complete) return;
       this.complete = true;
       try { window.dispatchEvent(new CustomEvent("swarm:complete")); } catch (_) {}
       if (this.sfx) this.sfx.finale();
-      const E = this.engine;
-      const v = this.view;
-      const workers = E.cursors.filter((c) => c.worked).length + E.retired;
-      const secs = (E.endTime - E.startTime).toFixed(1);
-      v.status.innerHTML = `Rebuilt by <b>${workers}</b> agents in <b>${secs}s</b>`;
-      v.barFill.style.width = "100%";
-      v.dots.innerHTML = "";
-      v.root.querySelector('[data-a="live"]').hidden = false;
-      v.root.querySelector('[data-a="replay"]').hidden = false;
-      v.root.querySelector('[data-a="tour"]').hidden = true;
-      v.root.querySelector('[data-a="speed"]').hidden = true;
       this.tour = false;
+
+      // Mark session storage completed for this path
+      try {
+        if (typeof window !== "undefined" && window.location) {
+          sessionStorage.setItem("swarm_done:" + window.location.pathname, "true");
+        }
+      } catch (_) {}
+
+      // Automatically finish, scroll smoothly back to top, and reveal
+      setTimeout(() => {
+        try {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch (_) {}
+        this.destroy(true);
+      }, 600);
     }
 
     destroy(reveal) {
@@ -3791,11 +3707,10 @@
           c.gen = null;
           c.follow = false;
         }
-        this.view.hud.classList.remove("on");
         setTimeout(() => {
           this.view.host.style.setProperty("opacity", "0", "important");
-        }, 450);
-        setTimeout(finish, 1150);
+        }, 300);
+        setTimeout(finish, 900);
       } else {
         this.view.host.style.setProperty("transition", "opacity .25s ease", "important");
         this.view.host.style.setProperty("opacity", "0", "important");
@@ -3849,9 +3764,8 @@
       for (const u of a.unbinds || []) u();
       a.view.host.remove();
       if (a.sfx) a.sfx.close(0.1);
-      // rebuild from where the first run started so screenshot crops line up again
-      if (lastShot) a.env.scrollTo(lastShot.at.sy, lastShot.at.sx);
     }
+    lastShot = null;
     start();
   }
 

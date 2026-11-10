@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
+import { usePathname } from "next/navigation";
 
 declare global {
   interface Window {
@@ -124,27 +125,49 @@ export function useSwarmRebuild() {
  * Handles auto-start on page load, global shortcut (Alt+Shift+S), and cleanup.
  */
 export function SwarmRebuildProvider() {
+  const pathname = usePathname();
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Check prefers-reduced-motion: if reduced motion is requested, do not auto-run
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    // Detect if this page entry is a browser reload / refresh
+    let isReload = false;
+    try {
+      const navEntries = performance.getEntriesByType("navigation");
+      if (navEntries.length > 0) {
+        isReload = (navEntries[0] as PerformanceNavigationTiming).type === "reload";
+      } else if (window.performance && window.performance.navigation) {
+        isReload = window.performance.navigation.type === 1;
+      }
+    } catch (_) {}
 
-    // Auto-start on load if configured
-    if (SWARM_AUTO_START_ON_LOAD && !prefersReducedMotion) {
-      // Small timeout to let React finish initial hydration and paint the full DOM
-      const timer = setTimeout(() => {
-        loadSwarmScript(true);
-      }, 400);
+    const sessionKey = `swarm_done:${pathname}`;
 
-      return () => clearTimeout(timer);
-    } else {
-      // Preload script without auto-starting so it is instantly ready when triggered
-      loadSwarmScript(false);
+    // If reloaded, remove session completion flag so refresh always triggers rebuild
+    if (isReload) {
+      try {
+        sessionStorage.removeItem(sessionKey);
+      } catch (_) {}
     }
-  }, []);
+
+    // Check if this particular page already completed swarm rebuild in this session
+    let isDone = false;
+    try {
+      isDone = sessionStorage.getItem(sessionKey) === "true";
+    } catch (_) {}
+
+    if (isDone) {
+      // Already completed for this page in this session
+      return;
+    }
+
+    // Newly entered page or refreshed page: trigger swarm rebuild
+    const timer = setTimeout(() => {
+      triggerSwarmRebuild(true);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -156,7 +179,7 @@ export function SwarmRebuildProvider() {
         (e.metaKey && e.shiftKey && (e.key === "S" || e.key === "s"))
       ) {
         e.preventDefault();
-        triggerSwarmRebuild(false);
+        triggerSwarmRebuild(true);
       }
     };
 
