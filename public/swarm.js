@@ -148,6 +148,7 @@
   const SKIP = new Set([
     "script", "style", "noscript", "template", "head", "meta", "link", "title",
     "base", "datalist", "area", "map", "source", "track", "param", "swarm-rebuild",
+    "swarm-curtain",
   ]);
   const DROP_IN_CLONE = new Set(["script", "style", "noscript", "template", "iframe", "object", "embed", "link", "meta"]);
   const REPLACED = new Set(["img", "svg", "video", "canvas", "iframe", "embed", "object", "picture"]);
@@ -1033,7 +1034,7 @@
     function walk(el, ctx, parent) {
       if (items.length >= MAX_ITEMS) return;
       const tag = el.localName;
-      if (SKIP.has(tag) || el === env.host) return;
+      if (SKIP.has(tag) || el === env.host || el.id === "swarm-curtain" || (el.classList && el.classList.contains("swarm-curtain"))) return;
       const cs = css(el);
       const disp = cs.display;
       if (disp === "none") return;
@@ -1495,8 +1496,8 @@
 :host{all:initial;pointer-events:auto !important;cursor:wait !important;touch-action:none !important;user-select:none !important}
 :host, :host * {touch-action:none !important}
 *{box-sizing:border-box}
-.bg{position:absolute;inset:0;opacity:0;pointer-events:none !important;display:none !important}
-.bg.on{opacity:0;pointer-events:none !important;display:none !important}
+.bg{position:absolute;inset:0;opacity:1;pointer-events:none !important}
+.bg.on{opacity:1;pointer-events:none !important}
 .layer,.port{position:absolute;overflow:hidden;pointer-events:none !important}
 .layer{inset:0}
 .world{position:absolute;left:0;top:0;will-change:transform;pointer-events:none !important}
@@ -1668,6 +1669,9 @@
       }
       this.makeIntroLogo();
       document.documentElement.appendChild(host);
+      try {
+        document.documentElement.classList.remove("swarm-loading");
+      } catch (_) {}
       this.measure();
     }
 
@@ -3722,6 +3726,7 @@
         try {
           document.documentElement.style.removeProperty("touch-action");
           document.body.style.removeProperty("touch-action");
+          document.documentElement.classList.remove("swarm-loading");
         } catch (_) {}
         this.view.host.remove();
       };
@@ -3745,6 +3750,7 @@
         try {
           document.documentElement.style.removeProperty("touch-action");
           document.body.style.removeProperty("touch-action");
+          document.documentElement.classList.remove("swarm-loading");
         } catch (_) {}
         setTimeout(() => this.view.host.remove(), 260);
       }

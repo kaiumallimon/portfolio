@@ -87,6 +87,56 @@ export default async function RootLayout({
             `,
           }}
         />
+        {/* Anti-flash inline script to prevent website content from loading before Swarm Rebuild */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var isReload = false;
+                var nav = performance.getEntriesByType('navigation');
+                if (nav && nav.length > 0) {
+                  isReload = nav[0].type === 'reload';
+                } else if (window.performance && window.performance.navigation) {
+                  isReload = window.performance.navigation.type === 1;
+                }
+                var key = 'swarm_done:' + window.location.pathname;
+                if (isReload) {
+                  sessionStorage.removeItem(key);
+                }
+                var isDone = sessionStorage.getItem(key) === 'true';
+                if (!isDone) {
+                  document.documentElement.classList.add('swarm-loading');
+                  window.__swarmAutoStart = true;
+                } else {
+                  window.__swarmAutoStart = false;
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              #swarm-curtain {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 2147483646;
+                background-color: #09090b;
+                pointer-events: auto;
+              }
+              html.light #swarm-curtain {
+                background-color: #ffffff;
+              }
+              html.dark #swarm-curtain {
+                background-color: #09090b;
+              }
+              html.swarm-loading #swarm-curtain {
+                display: block !important;
+              }
+            `,
+          }}
+        />
         {/* No-JS & crawler fallback: ensures full visibility without scripts */}
         <noscript>
           <style>{`
@@ -102,6 +152,12 @@ export default async function RootLayout({
       <body
         className={`${geistSans.className} font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen`}
       >
+        {/* Swarm Curtain: Prevents content flash before Swarm Rebuild initializes */}
+        <div id="swarm-curtain" aria-hidden="true" />
+
+        {/* Load native Swarm Rebuild script before interactive hydration */}
+        <Script src="/swarm.js" strategy="beforeInteractive" />
+
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T8EL28VE67"

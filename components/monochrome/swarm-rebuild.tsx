@@ -158,15 +158,18 @@ export function SwarmRebuildProvider() {
 
     if (isDone) {
       // Already completed for this page in this session
+      try {
+        document.documentElement.classList.remove("swarm-loading");
+      } catch (_) {}
       return;
     }
 
-    // Newly entered page or refreshed page: trigger swarm rebuild
-    const timer = setTimeout(() => {
-      triggerSwarmRebuild(true);
-    }, 400);
+    // Newly entered page or refreshed page: ensure curtain is active and trigger swarm rebuild immediately
+    try {
+      document.documentElement.classList.add("swarm-loading");
+    } catch (_) {}
 
-    return () => clearTimeout(timer);
+    triggerSwarmRebuild(true);
   }, [pathname]);
 
   useEffect(() => {
