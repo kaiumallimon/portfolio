@@ -396,9 +396,9 @@ export function MonochromeHero({
 
       {/* 5. Social Links Row with "follow me" Annotation */}
       <div className="relative px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
-        {/* Handwritten note on the left */}
+        {/* Annotation note on the left */}
         <div
-          className="pointer-events-none hidden sm:flex items-center gap-1.5 font-serif italic text-xs text-zinc-500 dark:text-zinc-400 select-none mr-2"
+          className="pointer-events-none hidden sm:flex items-center gap-1.5 font-mono text-xs text-zinc-500 dark:text-zinc-400 select-none mr-2"
           aria-hidden="true"
         >
           <span>follow me</span>
