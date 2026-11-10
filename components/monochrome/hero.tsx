@@ -153,10 +153,10 @@ export function MonochromeHero({
                 src="/bordered.png"
                 alt={settings.name}
                 fill
+                priority
                 sizes="(max-width: 768px) 80px, 160px"
                 className="object-cover select-none rounded-full"
                 style={{ borderRadius: "9999px" }}
-                loading="lazy"
               />
             </motion.div>
           </div>
