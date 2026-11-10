@@ -9,6 +9,7 @@ import GAListener from "@/lib/ga-listener";
 import ClickSpark from "@/components/ClickSpark";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 import { SwarmRebuildProvider } from "@/components/monochrome/swarm-rebuild";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -16,6 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const description =
     settings?.headline ||
     "Crafting minimal interfaces, cross-platform apps, and resilient distributed services. Computer Science student at UIU.";
+
+  const ogImageUrl = `${SITE_URL}/og-image.png`;
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -28,17 +31,40 @@ export async function generateMetadata(): Promise<Metadata> {
       "Kaium Al Limon",
       "Full-Stack Developer",
       "Design Engineer",
+      "Software Engineer",
       "Flutter Developer",
       "Next.js Developer",
       "FastAPI",
       "TypeScript",
+      "React",
       "MongoDB",
+      "PostgreSQL",
+      "Docker",
+      "Distributed Systems",
+      "UI/UX Design",
+      "United International University",
       "UIU",
-      "Software Engineer",
+      "Dhaka Bangladesh",
       "Portfolio",
     ],
     authors: [{ name: "Kaium Al Limon", url: "https://github.com/kaiumallimon" }],
     creator: "Kaium Al Limon",
+    publisher: "Kaium Al Limon",
+    applicationName: "Kaium Al Limon Portfolio",
+    alternates: {
+      canonical: "/",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
     openGraph: {
       type: "website",
       locale: "en_US",
@@ -48,13 +74,28 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "Kaium Al Limon Portfolio",
       images: [
         {
-          url: "/bordered.png",
-          width: 800,
-          height: 800,
-          alt: "Kaium Al Limon",
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: "Kaium Al Limon — Full-Stack & Design Engineer",
+          type: "image/png",
         },
       ],
     },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      site: "@kaiumallimon",
+      creator: "@kaiumallimon",
+      images: [ogImageUrl],
+    },
+    icons: {
+      icon: "/favicon.ico",
+      shortcut: "/favicon.ico",
+      apple: "/favicon.ico",
+    },
+    category: "technology",
   };
 }
 
@@ -63,6 +104,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSiteSettings();
   return (
     <html
       lang="en"
@@ -153,6 +195,8 @@ export default async function RootLayout({
             }
           `}</style>
         </noscript>
+        {/* Structured Data (JSON-LD) for Search Engines */}
+        <JsonLd settings={settings} />
       </head>
 
       <body

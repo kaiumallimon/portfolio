@@ -24,13 +24,41 @@ const MonochromeFooter = dynamicImport(
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Thesis & Defense Project: COSMOS-ITS — Kaium Al Limon";
+  const description =
+    "Collaborative Orchestration System for Multi-Agent Optimization and Synthesis for Intelligent Tutoring Systems. B.Sc. Capstone Defense at United International University.";
+  const ogImageUrl = `${SITE_URL}/og-image.png`;
+
   return {
-    title:
-      "Thesis & Defense Project: COSMOS-ITS — Kaium Al Limon",
-    description:
-      "Collaborative Orchestration System for Multi-Agent Optimization and Synthesis for Intelligent Tutoring Systems. B.Sc. Capstone Defense at United International University.",
+    title,
+    description,
     alternates: {
       canonical: `${SITE_URL}/thesis`,
+    },
+    openGraph: {
+      type: "article",
+      locale: "en_US",
+      url: `${SITE_URL}/thesis`,
+      title,
+      description,
+      siteName: "Kaium Al Limon Portfolio",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+          type: "image/png",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      site: "@kaiumallimon",
+      creator: "@kaiumallimon",
+      images: [ogImageUrl],
     },
   };
 }

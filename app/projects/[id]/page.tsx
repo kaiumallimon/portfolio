@@ -56,6 +56,11 @@ export async function generateMetadata({
     `Explore ${project.title || project.name}, built by Kaium Al Limon.`;
 
   const canonicalSlug = project.slug || id;
+  const ogImageUrl = project.coverImage?.startsWith("http")
+    ? project.coverImage
+    : project.coverImage
+    ? `${SITE_URL}${project.coverImage.startsWith("/") ? "" : "/"}${project.coverImage}`
+    : `${SITE_URL}/og-image.png`;
 
   return {
     title,
@@ -69,6 +74,22 @@ export async function generateMetadata({
       description,
       url: `${SITE_URL}/projects/${canonicalSlug}`,
       siteName: "Kaium Al Limon Portfolio",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      site: "@kaiumallimon",
+      creator: "@kaiumallimon",
+      images: [ogImageUrl],
     },
   };
 }
