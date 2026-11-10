@@ -940,13 +940,29 @@
       const m = mediaFor(src, scs, r);
       if (!m) return;
       const b = conv(r, ctx.layer);
+
+      // Inherit border-radius from element or any clipping ancestor (e.g. rounded-full avatars)
+      let effectiveRadius = cs.borderRadius;
+      if (!effectiveRadius || effectiveRadius === "0px" || effectiveRadius === "0") {
+        let p = el.parentElement;
+        while (p && p !== document.body && p !== document.documentElement) {
+          const pcs = css(p);
+          if (pcs.borderRadius && pcs.borderRadius !== "0px" && pcs.borderRadius !== "0") {
+            effectiveRadius = pcs.borderRadius;
+            break;
+          }
+          if (pcs.overflow !== "visible") break;
+          p = p.parentElement;
+        }
+      }
+
       add({
         kind: "image",
         ...b,
         blend: cs.mixBlendMode !== "normal" ? cs.mixBlendMode : ctx.blend || "",
         media: m.el,
         frame: styleString(cs, ["border-top-width", "border-right-width", "border-bottom-width", "border-left-width", "border-top-style", "border-right-style", "border-bottom-style", "border-left-style", "border-top-color", "border-right-color", "border-bottom-color", "border-left-color"]),
-        radius: cs.borderRadius,
+        radius: effectiveRadius || "0px",
         shadow: cs.boxShadow !== "none" ? cs.boxShadow : "",
         bg: alphaOf(cs.backgroundColor) > 0.01 ? cs.backgroundColor : "",
         draw: null,
@@ -1856,6 +1872,10 @@
           const old = n.querySelector(".md");
           const m = src.media.cloneNode(true);
           m.classList.add("md");
+          if (src.radius && src.radius !== "0px") {
+            m.style.borderRadius = src.radius;
+            m.style.overflow = "hidden";
+          }
           if (old) {
             m.classList.add("swap");
             old.replaceWith(m);
@@ -1878,7 +1898,10 @@
           }
         }
         n.classList.toggle("st", !!it.styled);
-        n.style.borderRadius = it.styled ? src.radius : "0px";
+        n.style.borderRadius = it.styled ? src.radius : (src.radius || "0px");
+        if (src.radius && src.radius !== "0px") {
+          n.style.overflow = "hidden";
+        }
         n.style.boxShadow = it.styled ? src.shadow : "";
         n.style.backgroundColor = it.styled && src.bg ? src.bg : "";
       } else if (it.kind === "text") {

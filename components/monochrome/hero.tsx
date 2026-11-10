@@ -147,13 +147,15 @@ export function MonochromeHero({
                 damping: 20,
               }}
               className="relative size-16 sm:size-20 md:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0"
+              style={{ borderRadius: "9999px" }}
             >
               <Image
                 src="/bordered.png"
                 alt={settings.name}
                 fill
                 sizes="(max-width: 768px) 80px, 160px"
-                className="object-cover select-none"
+                className="object-cover select-none rounded-full"
+                style={{ borderRadius: "9999px" }}
                 loading="lazy"
               />
             </motion.div>
