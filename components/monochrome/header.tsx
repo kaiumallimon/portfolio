@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
-import { RiMenuLine, RiArrowRightUpLine } from "@remixicon/react";
+import { RiMenuLine, RiArrowRightUpLine, RiCursorLine } from "@remixicon/react";
+import { triggerSwarmRebuild } from "@/components/monochrome/swarm-rebuild";
 import {
   Sheet,
   SheetContent,
@@ -253,6 +254,27 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
             </motion.div>
 
             {/* Vertical Separator */}
+            <div
+              className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 shrink-0 hidden sm:block"
+              aria-hidden="true"
+            />
+
+            {/* Swarm Rebuild Trigger Button */}
+            <motion.button
+              type="button"
+              onClick={() => triggerSwarmRebuild(true)}
+              title="Rebuild page with Swarm Cursors (Alt+Shift+S)"
+              aria-label="Rebuild page with Swarm Cursors (Alt+Shift+S)"
+              initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.39, ease: EASE_OUT }}
+              className="hidden sm:inline-flex items-center gap-1.5 px-2 py-1 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-850 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 text-[11px] font-mono transition-colors cursor-pointer select-none"
+            >
+              <RiCursorLine className="w-3.5 h-3.5" />
+              <span>Swarm</span>
+            </motion.button>
+
+            {/* Vertical Separator */}
             {!isContactPage && (
               <div
                 className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 shrink-0"
@@ -367,6 +389,21 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
                 </a>
               ))}
             </nav>
+
+            {/* Swarm Rebuild Mobile Button */}
+            <div className="pt-4 px-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setTimeout(() => triggerSwarmRebuild(true), 150);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-mono text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                <RiCursorLine className="w-3.5 h-3.5" />
+                <span>Rebuild Page with Swarm</span>
+              </button>
+            </div>
           </div>
 
           {/* Footer Info */}

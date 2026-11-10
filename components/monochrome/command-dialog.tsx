@@ -11,9 +11,11 @@ import {
   RiMailLine,
   RiFileTextLine,
   RiTerminalBoxLine,
+  RiCursorLine,
 } from "@remixicon/react";
 import { toast } from "sonner";
 import { THEME_CHANGE_EVENT, THEME_STORAGE_KEY } from "@/components/application/theme/theme-toggle";
+import { triggerSwarmRebuild } from "@/components/monochrome/swarm-rebuild";
 
 interface CommandDialogProps {
   open: boolean;
@@ -147,6 +149,18 @@ export function MonochromeCommandDialog({ open, onOpenChange }: CommandDialogPro
             </Command.Group>
 
             <Command.Group heading="Preferences & Actions" className="text-[10px] uppercase text-zinc-400 px-2 py-1 font-semibold pt-2">
+              <Command.Item
+                onSelect={() => runAction(() => triggerSwarmRebuild(true))}
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 cursor-pointer"
+              >
+                <RiCursorLine className="w-3.5 h-3.5 text-zinc-400" />
+                <div className="flex items-center justify-between w-full">
+                  <span>Rebuild Page with Swarm Cursors</span>
+                  <kbd className="text-[10px] font-mono px-1 py-0.5 rounded-xs border border-zinc-200 dark:border-zinc-800 text-zinc-400">
+                    Alt+Shift+S
+                  </kbd>
+                </div>
+              </Command.Item>
               <Command.Item
                 onSelect={() => runAction(toggleTheme)}
                 className="flex items-center gap-2 px-2.5 py-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 cursor-pointer"

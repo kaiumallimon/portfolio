@@ -8,6 +8,7 @@ import { SITE_URL } from "@/lib/site";
 import GAListener from "@/lib/ga-listener";
 import ClickSpark from "@/components/ClickSpark";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
+import { SwarmRebuildProvider } from "@/components/monochrome/swarm-rebuild";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -120,6 +121,7 @@ export default async function RootLayout({
         </Suspense>
 
         <SmoothScrollProvider>
+          <SwarmRebuildProvider />
           <ClickSpark preset="comet">
             {children}
           </ClickSpark>

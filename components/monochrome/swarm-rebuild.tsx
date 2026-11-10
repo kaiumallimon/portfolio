@@ -1,0 +1,157 @@
+"use client";
+
+import { useEffect, useCallback, useState } from "react";
+
+declare global {
+  interface Window {
+    __swarmRebuild?: {
+      toggle: () => void;
+      start: () => void;
+      stop: (reveal?: boolean) => void;
+      restart: () => void;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      app: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      debug: any;
+    };
+    __swarmAutoStart?: boolean;
+  }
+}
+
+/**
+ * Global constant controlling whether the swarm rebuild animation
+ * automatically runs on initial page load / refresh.
+ */
+export const SWARM_AUTO_START_ON_LOAD = true;
+
+/**
+ * Loads the self-contained Swarm Rebuild engine (/swarm.js) and triggers start.
+ */
+export function loadSwarmScript(autoStart = true): void {
+  if (typeof window === "undefined") return;
+
+  window.__swarmAutoStart = autoStart;
+
+  const currentRebuild = window.__swarmRebuild;
+  if (currentRebuild) {
+    if (autoStart) {
+      currentRebuild.start();
+    }
+    return;
+  }
+
+  const existing = document.querySelector('script[data-swarm="true"]');
+  if (existing) {
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = "/swarm.js";
+  script.async = true;
+  script.dataset.swarm = "true";
+  document.body.appendChild(script);
+}
+
+/**
+ * Programmatically triggers the native Swarm Rebuild on demand.
+ */
+export function triggerSwarmRebuild(forceRestart = false): void {
+  if (typeof window === "undefined") return;
+
+  if (window.__swarmRebuild) {
+    if (forceRestart && typeof window.__swarmRebuild.restart === "function") {
+      window.__swarmRebuild.restart();
+    } else {
+      window.__swarmRebuild.start();
+    }
+  } else {
+    loadSwarmScript(true);
+  }
+}
+
+/**
+ * React hook to interact with the Swarm Rebuild engine.
+ */
+export function useSwarmRebuild() {
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const checkInterval = setInterval(() => {
+      const active = !!(
+        window.__swarmRebuild &&
+        window.__swarmRebuild.app &&
+        !window.__swarmRebuild.app.dead
+      );
+      setIsActive(active);
+    }, 250);
+
+    return () => clearInterval(checkInterval);
+  }, []);
+
+  const start = useCallback(() => triggerSwarmRebuild(false), []);
+  const restart = useCallback(() => triggerSwarmRebuild(true), []);
+  const stop = useCallback((reveal = true) => {
+    if (typeof window === "undefined") return;
+    window.__swarmRebuild?.stop(reveal);
+  }, []);
+  const toggle = useCallback(() => {
+    if (typeof window === "undefined") return;
+    if (window.__swarmRebuild) {
+      window.__swarmRebuild.toggle();
+    } else {
+      loadSwarmScript(true);
+    }
+  }, []);
+
+  return { isActive, start, restart, stop, toggle };
+}
+
+/**
+ * Client provider component mounted in RootLayout.
+ * Handles auto-start on page load, global shortcut (Alt+Shift+S), and cleanup.
+ */
+export function SwarmRebuildProvider() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Check prefers-reduced-motion: if reduced motion is requested, do not auto-run
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    // Auto-start on load if configured
+    if (SWARM_AUTO_START_ON_LOAD && !prefersReducedMotion) {
+      // Small timeout to let React finish initial hydration and paint the full DOM
+      const timer = setTimeout(() => {
+        loadSwarmScript(true);
+      }, 400);
+
+      return () => clearTimeout(timer);
+    } else {
+      // Preload script without auto-starting so it is instantly ready when triggered
+      loadSwarmScript(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Alt + Shift + S or Option + Shift + S
+      if (
+        (e.altKey && e.shiftKey && (e.key === "S" || e.key === "s")) ||
+        (e.metaKey && e.shiftKey && (e.key === "S" || e.key === "s"))
+      ) {
+        e.preventDefault();
+        triggerSwarmRebuild(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  return null;
+}
