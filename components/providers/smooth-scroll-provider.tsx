@@ -1,107 +1,110 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useRef } from "react";
-import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import React, { useEffect, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
+import { ReactLenis, useLenis } from "lenis/react";
+import { LENIS_CONFIG } from "@/lib/motion";
 
-// Register GSAP plugin safely on client
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+function subscribeReducedMotion(callback: () => void) {
+  if (typeof window === "undefined") return () => {};
+  const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mediaQuery.addEventListener("change", callback);
+  return () => mediaQuery.removeEventListener("change", callback);
 }
 
-const SmoothScrollContext = createContext<Lenis | null>(null);
-
-export function useSmoothScroll() {
-  return useContext(SmoothScrollContext);
+function getReducedMotionSnapshot() {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export default function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
-  const lenisRef = useRef<Lenis | null>(null);
+function getReducedMotionServerSnapshot() {
+  return false;
+}
+
+/**
+ * RouteChangeScroller
+ * Ensures client-side route transitions immediately scroll to top without lag,
+ * and pauses Lenis on pinned full-screen routes like /contact.
+ */
+function RouteChangeScroller() {
   const pathname = usePathname();
+  const lenis = useLenis();
 
   useEffect(() => {
-    // Disable Lenis smooth scroll on /admin routes so native mouse wheel scrolling works on sidebars, dialogs, and tables
-    if (pathname.startsWith("/admin")) {
-      if (lenisRef.current) {
-        lenisRef.current.destroy();
-        lenisRef.current = null;
-      }
+    if (!lenis) {
+      window.scrollTo(0, 0);
       return;
     }
 
-    // Check if user prefers reduced motion
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
+    const isPinnedRoute = pathname === "/contact" || pathname?.startsWith("/contact");
+    const isSwarmActive = typeof document !== "undefined" && Boolean(document.querySelector("swarm-rebuild"));
 
-    // Initialize Lenis with GSAP-grade exponential easing
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 1.0,
-      touchMultiplier: 1.5,
-      infinite: false,
-    });
+    if (isPinnedRoute || isSwarmActive) {
+      lenis.stop();
+    } else {
+      lenis.start();
+      lenis.scrollTo(0, { immediate: true });
+    }
+  }, [pathname, lenis]);
 
-    lenisRef.current = lenis;
+  useEffect(() => {
+    if (!lenis) return;
 
-    // Synchronize Lenis scroll events with GSAP ScrollTrigger
-    lenis.on("scroll", ScrollTrigger.update);
-
-    // Add Lenis requestAnimationFrame to GSAP's central ticker for perfect synchronization
-    const tickerUpdate = (time: number) => {
-      lenis.raf(time * 1000);
+    const handleSwarmStart = () => {
+      lenis.stop();
     };
 
-    gsap.ticker.add(tickerUpdate);
-    gsap.ticker.lagSmoothing(0);
-
-    // Global anchor click smooth navigation handler
-    const handleAnchorClick = (e: MouseEvent) => {
-      const target = (e.target as HTMLElement)?.closest("a");
-      if (!target) return;
-      const href = target.getAttribute("href");
-      if (href && href.startsWith("#") && href.length > 1) {
-        const targetElement = document.querySelector(href);
-        if (targetElement) {
-          e.preventDefault();
-          lenis.scrollTo(targetElement as HTMLElement, {
-            offset: -40,
-            duration: 1.4,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          });
-        }
+    const handleSwarmStop = () => {
+      const isPinnedRoute = pathname === "/contact" || pathname?.startsWith("/contact");
+      if (!isPinnedRoute) {
+        lenis.start();
       }
     };
 
-    document.addEventListener("click", handleAnchorClick);
+    window.addEventListener("swarm:start", handleSwarmStart);
+    window.addEventListener("swarm:stop", handleSwarmStop);
+    window.addEventListener("swarm:complete", handleSwarmStop);
 
     return () => {
-      document.removeEventListener("click", handleAnchorClick);
-      gsap.ticker.remove(tickerUpdate);
-      lenis.destroy();
-      lenisRef.current = null;
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      window.removeEventListener("swarm:start", handleSwarmStart);
+      window.removeEventListener("swarm:stop", handleSwarmStop);
+      window.removeEventListener("swarm:complete", handleSwarmStop);
     };
-  }, [pathname]);
+  }, [lenis, pathname]);
 
-  // On route change, scroll to top and refresh ScrollTrigger
-  useEffect(() => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true });
-      setTimeout(() => {
-        ScrollTrigger.refresh();
-      }, 100);
-    }
-  }, [pathname]);
+  return null;
+}
+
+/**
+ * SmoothScrollProvider
+ * Fluid smooth scrolling provider wrapping Lenis with gentle physics (lerp: 0.1, duration: 1.1).
+ * Completely bypassed when prefers-reduced-motion is set.
+ */
+export function SmoothScrollProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const reducedMotion = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot
+  );
+
+  // When prefers-reduced-motion is active, disable Lenis completely
+  if (reducedMotion) {
+    return <>{children}</>;
+  }
 
   return (
-    <SmoothScrollContext.Provider value={lenisRef.current}>
+    <ReactLenis
+      root
+      options={{
+        ...LENIS_CONFIG,
+      }}
+    >
+      <RouteChangeScroller />
       {children}
-    </SmoothScrollContext.Provider>
+    </ReactLenis>
   );
 }

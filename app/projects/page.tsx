@@ -1,72 +1,64 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import FloatingHeader from "@/components/shared/header";
-import HomeBackground from "@/components/shared/home-color-bend";
-import FlutterFooter from "@/components/custom-new/footer";
-import TargetCursor from "@/components/TargetCursor";
-import ProjectsIntro from "@/components/custom-new/projects-intro";
-import { ProjectsGrid, ProjectsGridSkeleton } from "@/components/custom-new/projects-grid";
-import { getProjects } from "@/lib/data";
+import { ProjectsArchiveView } from "@/components/monochrome/projects-archive-view";
+import { getProjects, getPaginatedProjects, getSiteSettings } from "@/lib/data-service";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const projects = await getProjects();
-  const title = `Projects & Case Studies (${projects.length}) | Kaium Al Limon`;
+  const title = `Projects Archive (${projects.length}) — Kaium Al Limon`;
   const description =
-    "Explore a curated archive of production mobile applications (Flutter), high-speed web platforms (Next.js), APIs, and open-source contributions by Kaium Al Limon.";
+    "Curated archive of production mobile applications, high-speed web platforms, APIs, and open-source contributions.";
+  const ogImageUrl = `${SITE_URL}/og-image.png`;
 
   return {
-    title: "Projects & Production Case Studies",
+    title,
     description,
-    keywords: [
-      "Flutter Projects",
-      "Next.js Projects",
-      "Mobile Applications",
-      "Web Platforms",
-      "Full-Stack Case Studies",
-      "Kaium Al Limon Projects",
-      "Open Source Software",
-    ],
     alternates: {
       canonical: `${SITE_URL}/projects`,
     },
     openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: `${SITE_URL}/projects`,
       title,
       description,
-      url: `${SITE_URL}/projects`,
-      type: "website",
       siteName: "Kaium Al Limon Portfolio",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+          type: "image/png",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      site: "@kaiumallimon",
+      creator: "@kaiumallimon",
+      images: [ogImageUrl],
     },
   };
 }
 
-async function ProjectsList() {
-  const projects = await getProjects();
-  return <ProjectsGrid projects={projects} />;
-}
+export default async function ProjectsPage() {
+  const [allProjects, initialPaginated, settings] = await Promise.all([
+    getProjects(),
+    getPaginatedProjects({ page: 1, limit: 10 }),
+    getSiteSettings(),
+  ]);
 
-export default function ProjectsPage() {
   return (
-    <div className="min-h-screen w-full bg-slate-950 text-slate-300 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
-      <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn hoverDuration={0.2} />
-
-      <HomeBackground />
-      <FloatingHeader />
-
-      <div className="relative">
-        <div className="max-w-6xl mx-auto py-42 px-6">
-          <ProjectsIntro />
-
-          <div className="mt-16">
-            <Suspense fallback={<ProjectsGridSkeleton />}>
-              <ProjectsList />
-            </Suspense>
-          </div>
-        </div>
-        <FlutterFooter />
-      </div>
-    </div>
+    <ProjectsArchiveView
+      allProjects={allProjects}
+      initialPaginated={initialPaginated}
+      settings={settings}
+    />
   );
 }
+

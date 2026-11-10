@@ -1,6 +1,6 @@
 const GH_API = "https://api.github.com";
 
-function parseRepo(url?: string | null): { owner: string; repo: string } | null {
+export function parseRepo(url?: string | null): { owner: string; repo: string } | null {
   if (!url) return null;
   const m = url.match(/github\.com\/([^/\s]+)\/([^/#?\s]+)/i);
   if (!m) return null;
@@ -9,89 +9,16 @@ function parseRepo(url?: string | null): { owner: string; repo: string } | null 
   return { owner, repo };
 }
 
-async function fetchText(
-  url: string,
-  token?: string,
-  accept = "text/plain",
-): Promise<string | null> {
-  const headers: Record<string, string> = {
-    "User-Agent": "portfolio-site",
-    Accept: accept,
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(url, { headers, cache: "no-store" });
-  if (!res.ok) return null;
-  return res.text();
-}
-
-// Fetches the README.md of a GitHub repo using the GITHUB_TOKEN when available.
-// Tries the REST API first (handles the default branch + private repos with a
-// token that has access), then falls back to the raw file on main/master.
-// Returns the raw markdown string, or null when it can't be resolved.
-export async function getRepoReadme(
-  githubUrl?: string | null,
-): Promise<string | null> {
-  const repo = parseRepo(githubUrl);
-  if (!repo) return null;
-
-  const token = process.env.GITHUB_FINE_GRAINED_TOKEN;
-
-  // 1) REST API — most reliable, supports private repos when the token has access.
-  try {
-    const headers: Record<string, string> = {
-      Accept: "application/vnd.github+json",
-      "User-Agent": "portfolio-site",
-    };
-    if (token) headers.Authorization = `Bearer ${token}`;
-
-    const res = await fetch(
-      `${GH_API}/repos/${repo.owner}/${repo.repo}/readme`,
-      { headers, cache: "no-store" },
-    );
-
-    if (res.ok) {
-      const data = (await res.json()) as {
-        content?: string;
-        encoding?: string;
-      };
-      if (data.content) {
-        return data.encoding === "base64"
-          ? Buffer.from(data.content, "base64").toString("utf-8")
-          : data.content;
-      }
-    } else if (res.status !== 404) {
-      console.warn(
-        `[github] README API returned ${res.status} for ${repo.owner}/${repo.repo}`,
-      );
-    }
-  } catch (err) {
-    console.warn(`[github] README API request failed:`, err);
-  }
-
-  // 2) Raw fallback for repos/branches the API missed.
-  for (const branch of ["main", "master"]) {
-    const raw = await fetchText(
-      `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${branch}/README.md`,
-      token,
-    );
-    if (raw && raw.length > 0) return raw;
-  }
-
-  return null;
-}
-
-// ---------------------------------------------------------------------------
-// Project-scoped statistics (require Contents: Read + Metadata: Read on a
-// fine-grained token). Stats endpoints may return 202 while GitHub computes
-// them, so we poll a few times before giving up.
-// ---------------------------------------------------------------------------
-
 function ghHeaders(token?: string): Record<string, string> {
   const h: Record<string, string> = {
     Accept: "application/vnd.github+json",
-    "User-Agent": "portfolio-site",
+    "User-Agent": "kaiumallimon-portfolio",
   };
-  if (token) h.Authorization = `Bearer ${token}`;
+  const activeToken =
+    token ||
+    process.env.GITHUB_FINE_GRAINED_TOKEN ||
+    process.env.GITHUB_TOKEN;
+  if (activeToken) h.Authorization = `Bearer ${activeToken}`;
   return h;
 }
 
@@ -129,14 +56,129 @@ export interface RepoMeta {
   htmlUrl: string | null;
 }
 
+function getHtmlAttr(tagAttrs: string, attrName: string): string {
+  const quoted = tagAttrs.match(new RegExp(`${attrName}=["']([^"']*)["']`, "i"));
+  if (quoted) return quoted[1].trim();
+  const unquoted = tagAttrs.match(new RegExp(`${attrName}=([^\\s>]+)`, "i"));
+  return unquoted ? unquoted[1].trim() : "";
+}
+
+export function sanitizeAndResolveReadme(
+  markdown: string,
+  rawBase?: string
+): string {
+  if (!markdown) return "";
+
+  let result = markdown;
+
+  // 1. Transform <a href="..."><img .../></a> into markdown [![alt](imgUrl)](linkUrl)
+  result = result.replace(
+    /<a\s+([^>]*?)>\s*<img\s+([^>]*?)\/?>\s*<\/a>/gi,
+    (match, aAttrs, imgAttrs) => {
+      const href = getHtmlAttr(aAttrs, "href");
+      let src = getHtmlAttr(imgAttrs, "src");
+      const alt = getHtmlAttr(imgAttrs, "alt");
+      if (!src) return match;
+      if (
+        rawBase &&
+        !src.startsWith("http://") &&
+        !src.startsWith("https://") &&
+        !src.startsWith("//")
+      ) {
+        const cleanSrc = src.replace(/^\.?\//, "");
+        src = `${rawBase}/${cleanSrc}`;
+      }
+      return `\n\n[![${alt}](${src})](${href})\n\n`;
+    }
+  );
+
+  // 2. Transform standalone <img ...> HTML tags to markdown ![alt](src)
+  result = result.replace(/<img\s+([^>]*?)\/?>/gi, (match, attrs) => {
+    let src = getHtmlAttr(attrs, "src");
+    const alt = getHtmlAttr(attrs, "alt");
+    if (!src) return match;
+
+    if (
+      rawBase &&
+      !src.startsWith("http://") &&
+      !src.startsWith("https://") &&
+      !src.startsWith("//")
+    ) {
+      const cleanSrc = src.replace(/^\.?\//, "");
+      src = `${rawBase}/${cleanSrc}`;
+    }
+
+    return `\n\n![${alt}](${src})\n\n`;
+  });
+
+  // 3. Transform relative markdown images ![alt](path)
+  if (rawBase) {
+    result = result.replace(
+      /!\[(.*?)\]\(((?!https?:\/\/|\/\/)[^)]+)\)/g,
+      (_match, alt, src) => {
+        const cleanSrc = src.trim().replace(/^\.?\//, "");
+        return `![${alt}](${rawBase}/${cleanSrc})`;
+      }
+    );
+  }
+
+  // 4. Strip leftover layout wrapper tags like <div ...>, </div>, <p ...>, </p>, <center>, </center>
+  result = result.replace(/<\/?(div|p|center)[^>]*>/gi, "\n\n");
+
+  // 5. Convert <br> or <br/> to markdown linebreaks
+  result = result.replace(/<br\s*\/?>/gi, "  \n");
+
+  // 6. Clean up excessive consecutive newlines
+  result = result.replace(/\n{3,}/g, "\n\n");
+
+  return result.trim();
+}
+
+export async function getRepoReadme(
+  githubUrl?: string | null,
+): Promise<string | null> {
+  const repo = parseRepo(githubUrl);
+  if (!repo) return null;
+
+  try {
+    const res = await fetch(
+      `${GH_API}/repos/${repo.owner}/${repo.repo}/readme`,
+      { headers: ghHeaders(), cache: "no-store" },
+    );
+
+    if (res.ok) {
+      const data = (await res.json()) as {
+        content?: string;
+        encoding?: string;
+        download_url?: string;
+      };
+      if (data.content) {
+        const text =
+          data.encoding === "base64"
+            ? Buffer.from(data.content, "base64").toString("utf-8")
+            : data.content;
+
+        const rawBase = data.download_url
+          ? data.download_url.substring(0, data.download_url.lastIndexOf("/"))
+          : `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/main`;
+
+        return sanitizeAndResolveReadme(text, rawBase);
+      }
+    }
+  } catch (err) {
+    console.warn(`[github] README API request failed:`, err);
+  }
+
+  return null;
+}
+
 export async function getRepoMeta(
   githubUrl?: string | null,
 ): Promise<RepoMeta | null> {
   const repo = parseRepo(githubUrl);
   if (!repo) return null;
   const j = (await ghJson(
-    `https://api.github.com/repos/${repo.owner}/${repo.repo}`,
-    process.env.GITHUB_FINE_GRAINED_TOKEN,
+    `${GH_API}/repos/${repo.owner}/${repo.repo}`,
   )) as Record<string, unknown> | null;
   if (!j) return null;
   return {
@@ -160,28 +202,13 @@ export async function getRepoLanguages(
   const repo = parseRepo(githubUrl);
   if (!repo) return null;
   const j = (await ghJson(
-    `https://api.github.com/repos/${repo.owner}/${repo.repo}/languages`,
-    process.env.GITHUB_FINE_GRAINED_TOKEN,
+    `${GH_API}/repos/${repo.owner}/${repo.repo}/languages`,
   )) as Record<string, number> | null;
   if (!j || typeof j !== "object") return null;
   const entries = Object.entries(j)
     .map(([name, bytes]) => ({ name, bytes }))
     .sort((a, b) => b.bytes - a.bytes);
   return entries.length > 0 ? entries : null;
-}
-
-export async function getRepoCommitActivity(
-  githubUrl?: string | null,
-): Promise<{ week: number; total: number }[] | null> {
-  const repo = parseRepo(githubUrl);
-  if (!repo) return null;
-  const j = (await ghJson(
-    `https://api.github.com/repos/${repo.owner}/${repo.repo}/stats/commit_activity`,
-    process.env.GITHUB_FINE_GRAINED_TOKEN,
-    true,
-  )) as { week: number; total: number }[] | null;
-  if (!Array.isArray(j) || j.length === 0) return null;
-  return j.map((w) => ({ week: w.week, total: w.total }));
 }
 
 export interface RepoContributor {
@@ -198,8 +225,8 @@ export async function getRepoContributors(
   const repo = parseRepo(githubUrl);
   if (!repo) return null;
   const j = (await ghJson(
-    `https://api.github.com/repos/${repo.owner}/${repo.repo}/stats/contributors?per_page=8`,
-    process.env.GITHUB_FINE_GRAINED_TOKEN,
+    `${GH_API}/repos/${repo.owner}/${repo.repo}/stats/contributors?per_page=8`,
+    undefined,
     true,
   )) as
     | { author?: { login?: string; avatar_url?: string }; total?: number; weeks?: { a?: number; d?: number }[] }[]
@@ -219,4 +246,90 @@ export async function getRepoContributors(
       };
     })
     .sort((a, b) => b.contributions - a.contributions);
+}
+
+export interface GitHubStats {
+  publicRepos: number;
+  totalStars: number;
+  totalForks: number;
+  followers: number;
+  avatarUrl: string;
+  bio: string | null;
+  login: string;
+  topLanguages: { name: string; count: number; percentage: number }[];
+}
+
+export async function fetchGitHubStats(username?: string): Promise<GitHubStats | null> {
+  const user = username || process.env.GITHUB_USERNAME || "kaiumallimon";
+  const token = process.env.GITHUB_TOKEN || process.env.GITHUB_FINE_GRAINED_TOKEN;
+
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github.v3+json",
+    "User-Agent": "kaiumallimon-portfolio",
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  try {
+    const res = await fetch(`${GH_API}/users/${user}`, {
+      headers,
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) {
+      return null;
+    }
+
+    const userData = await res.json();
+
+    const reposRes = await fetch(`${GH_API}/users/${user}/repos?per_page=100&sort=updated`, {
+      headers,
+      next: { revalidate: 3600 },
+    });
+
+    let totalStars = 0;
+    let totalForks = 0;
+    const languageCounts: Record<string, number> = {};
+
+    if (reposRes.ok) {
+      const repos = await reposRes.json();
+      if (Array.isArray(repos)) {
+        for (const repo of repos) {
+          if (!repo.fork) {
+            totalStars += repo.stargazers_count || 0;
+            totalForks += repo.forks_count || 0;
+            if (repo.language) {
+              languageCounts[repo.language] = (languageCounts[repo.language] || 0) + 1;
+            }
+          }
+        }
+      }
+    }
+
+    const totalLangInstances = Object.values(languageCounts).reduce((a, b) => a + b, 0) || 1;
+    const topLanguages = Object.entries(languageCounts)
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: Math.round((count / totalLangInstances) * 100),
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    return {
+      publicRepos: userData.public_repos || 0,
+      totalStars,
+      totalForks,
+      followers: userData.followers || 0,
+      avatarUrl: userData.avatar_url || "https://github.com/kaiumallimon.png",
+      bio: userData.bio,
+      login: userData.login,
+      topLanguages,
+    };
+  } catch (err) {
+    console.warn("[GitHub API] Error fetching stats:", err);
+    return null;
+  }
 }

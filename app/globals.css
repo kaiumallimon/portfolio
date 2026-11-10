@@ -24,6 +24,17 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 3.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   overflow-x: hidden;
   width: 100%;

@@ -1,0 +1,172 @@
+@import "tailwindcss";
+@import "./theme.css";
+@import "./typography.css";
+
+/* ---------------------------------------------------------------------------
+ * Dark mode strategy (class-based)
+ * --------------------------------------------------------------------------- */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant rtl (&:dir(rtl));
+@custom-variant ltr (&:dir(ltr));
+
+/* ---------------------------------------------------------------------------
+ * Explicit Typography bindings (Geist & Geist Mono)
+ * --------------------------------------------------------------------------- */
+@theme {
+  --font-sans: var(--font-geist-sans), var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), var(--font-ubuntu-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-tiny5: var(--font-tiny5), monospace;
+}
+
+html,
+body {
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-variant-ligatures: contextual;
+  font-kerning: normal;
+}
+
+.font-sans {
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.font-mono {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+.font-tiny5 {
+  font-family: var(--font-tiny5), monospace !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * Chanhdai Architectural Stripe Dividers & Hairlines
+ * --------------------------------------------------------------------------- */
+.stripe-divider {
+  background-image: repeating-linear-gradient(
+    315deg,
+    transparent,
+    transparent 4px,
+    rgba(0, 0, 0, 0.04) 4px,
+    rgba(0, 0, 0, 0.04) 5px
+  );
+}
+
+html.dark .stripe-divider {
+  background-image: repeating-linear-gradient(
+    315deg,
+    transparent,
+    transparent 4px,
+    rgba(255, 255, 255, 0.04) 4px,
+    rgba(255, 255, 255, 0.04) 5px
+  );
+}
+
+/* ---------------------------------------------------------------------------
+ * Cover Thin Fine Grid Pattern (14px x 14px)
+ * --------------------------------------------------------------------------- */
+.cover-grid-bg {
+  background-size: 14px 14px;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+}
+
+html.dark .cover-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+/* ---------------------------------------------------------------------------
+ * React Activity Calendar Tooltip (GitHub Telemetry)
+ * --------------------------------------------------------------------------- */
+.react-activity-calendar__tooltip {
+  width: max-content !important;
+  max-width: calc(100vw - 20px) !important;
+  padding: 5px 9px !important;
+  border-radius: 4px !important;
+  background-color: #09090b !important;
+  color: #f4f4f5 !important;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  letter-spacing: -0.01em !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 99999 !important;
+}
+
+html:not(.dark) .react-activity-calendar__tooltip,
+.react-activity-calendar__tooltip[data-color-scheme="light"] {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+.react-activity-calendar__tooltip-arrow {
+  fill: #09090b !important;
+}
+
+html:not(.dark) .react-activity-calendar__tooltip-arrow,
+.react-activity-calendar__tooltip[data-color-scheme="light"] .react-activity-calendar__tooltip-arrow {
+  fill: #ffffff !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * BoardUI Theme Transition
+ * --------------------------------------------------------------------------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+.theme-transitioning,
+.theme-transitioning * {
+  transition: none !important;
+}
+
+html {
+  color-scheme: light;
+  background-color: var(--color-background-full, #ffffff);
+}
+
+html.dark {
+  color-scheme: dark;
+  background-color: var(--color-background-full, #09090b);
+}
+
+/* ---------------------------------------------------------------------------
+ * Lenis Fluid Smooth Scrolling
+ * --------------------------------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+html.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
