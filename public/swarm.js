@@ -3489,8 +3489,7 @@
 
     async run() {
       try {
-        document.documentElement.style.setProperty("touch-action", "none", "important");
-        document.body.style.setProperty("touch-action", "none", "important");
+        document.documentElement.classList.add("swarm-locked");
       } catch (_) {}
       this.env = detectEnv();
       const shotP = this.loadShot();
@@ -3724,8 +3723,7 @@
         cancelAnimationFrame(this.raf);
         for (const u of this.unbinds || []) u();
         try {
-          document.documentElement.style.removeProperty("touch-action");
-          document.body.style.removeProperty("touch-action");
+          document.documentElement.classList.remove("swarm-locked");
           document.documentElement.classList.remove("swarm-loading");
         } catch (_) {}
         this.view.host.remove();
@@ -3748,8 +3746,7 @@
         cancelAnimationFrame(this.raf);
         for (const u of this.unbinds || []) u();
         try {
-          document.documentElement.style.removeProperty("touch-action");
-          document.body.style.removeProperty("touch-action");
+          document.documentElement.classList.remove("swarm-locked");
           document.documentElement.classList.remove("swarm-loading");
         } catch (_) {}
         setTimeout(() => this.view.host.remove(), 260);

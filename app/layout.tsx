@@ -134,6 +134,12 @@ export default async function RootLayout({
               html.swarm-loading #swarm-curtain {
                 display: block !important;
               }
+              html.swarm-loading,
+              html.swarm-loading body,
+              html.swarm-locked,
+              html.swarm-locked body {
+                touch-action: none !important;
+              }
             `,
           }}
         />
@@ -150,6 +156,7 @@ export default async function RootLayout({
       </head>
 
       <body
+        suppressHydrationWarning
         className={`${geistSans.className} font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen`}
       >
         {/* Swarm Curtain: Prevents content flash before Swarm Rebuild initializes */}
