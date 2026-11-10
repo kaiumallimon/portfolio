@@ -613,6 +613,42 @@ export async function getProjects(): Promise<Partial<IProject>[]> {
   return fallbackProjects;
 }
 
+export async function getProjectBySlugOrId(
+  identifier: string
+): Promise<Partial<IProject> | null> {
+  const norm = identifier.trim().toLowerCase();
+
+  try {
+    const db = await connectToDatabase();
+    if (db) {
+      const orQueries: Record<string, unknown>[] = [
+        { slug: identifier },
+        { slug: norm },
+      ];
+      if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+        orQueries.push({ _id: identifier });
+      }
+      const item = await Project.findOne({ $or: orQueries }).lean();
+      if (item) {
+        return JSON.parse(JSON.stringify(item)) as Partial<IProject>;
+      }
+    }
+  } catch (err) {
+    console.warn("[DataService] getProjectBySlugOrId MongoDB fetch failed:", err);
+  }
+
+  // Fallback search
+  const found = fallbackProjects.find(
+    (p) =>
+      p.slug?.toLowerCase() === norm ||
+      p.slug === identifier ||
+      (p._id && String(p._id) === identifier) ||
+      (p.title && p.title.toLowerCase().replace(/\s+/g, "-") === norm)
+  );
+
+  return found || null;
+}
+
 export async function getExperiences(): Promise<Partial<IExperience>[]> {
   try {
     const db = await connectToDatabase();

@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { RiGithubLine } from "@remixicon/react";
 import { IProject } from "@/lib/models";
 import { DeviceMockup } from "./device-mockup";
@@ -49,14 +50,17 @@ export function ProjectCard({
     >
       <div className="flex flex-col flex-1 min-w-0">
         {/* Visual Device Representation Header according to category */}
-        <div className="h-40 sm:h-44 w-full border-b border-zinc-100 dark:border-zinc-900 bg-zinc-50/70 dark:bg-zinc-900/50 flex items-center justify-center relative overflow-hidden shrink-0">
+        <Link
+          href={`/projects/${slug}`}
+          className="h-40 sm:h-44 w-full border-b border-zinc-100 dark:border-zinc-900 bg-zinc-50/70 dark:bg-zinc-900/50 flex items-center justify-center relative overflow-hidden shrink-0 group/mockup cursor-pointer"
+        >
           <DeviceMockup
             type={isMobile ? "mobile" : "web"}
             category={categoryLabel}
             title={title}
             slug={project.slug}
           />
-        </div>
+        </Link>
 
         {/* Project Card Content */}
         <div className="p-4 sm:p-5 space-y-2.5 flex-1 min-w-0 flex flex-col">
@@ -69,7 +73,12 @@ export function ProjectCard({
               className="text-sm sm:text-base font-semibold text-zinc-950 dark:text-zinc-50 font-sans tracking-tight truncate"
               title={title}
             >
-              {title}
+              <Link
+                href={`/projects/${slug}`}
+                className="hover:underline hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+              >
+                {title}
+              </Link>
             </h3>
           </div>
 
@@ -99,13 +108,21 @@ export function ProjectCard({
 
       {/* Footer Actions (Live Preview & Code) */}
       <div className="p-4 sm:px-5 sm:pb-4 sm:pt-3 border-t border-zinc-100 dark:border-zinc-900 flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3.5">
+          <Link
+            href={`/projects/${slug}`}
+            className="text-zinc-900 dark:text-zinc-100 hover:text-zinc-600 dark:hover:text-zinc-400 flex items-center gap-1 font-semibold transition-colors"
+          >
+            <span>Overview</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+
           {demoUrl && (
             <a
               href={demoUrl.startsWith("http") ? demoUrl : `https://${demoUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-zinc-800 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white flex items-center gap-1 font-medium transition-colors"
+              className="text-zinc-500 hover:text-zinc-950 dark:hover:text-white flex items-center gap-1 transition-colors"
             >
               <span>Live Preview</span>
               <ArrowUpRight className="w-3.5 h-3.5" />

@@ -1,6 +1,6 @@
 const GH_API = "https://api.github.com";
 
-function parseRepo(url?: string | null): { owner: string; repo: string } | null {
+export function parseRepo(url?: string | null): { owner: string; repo: string } | null {
   if (!url) return null;
   const m = url.match(/github\.com\/([^/\s]+)\/([^/#?\s]+)/i);
   if (!m) return null;
@@ -14,7 +14,10 @@ function ghHeaders(token?: string): Record<string, string> {
     Accept: "application/vnd.github+json",
     "User-Agent": "kaiumallimon-portfolio",
   };
-  const activeToken = token || process.env.GITHUB_TOKEN || process.env.GITHUB_FINE_GRAINED_TOKEN;
+  const activeToken =
+    token ||
+    process.env.GITHUB_FINE_GRAINED_TOKEN ||
+    process.env.GITHUB_TOKEN;
   if (activeToken) h.Authorization = `Bearer ${activeToken}`;
   return h;
 }
@@ -66,11 +69,21 @@ export async function getRepoReadme(
     );
 
     if (res.ok) {
-      const data = (await res.json()) as { content?: string; encoding?: string };
+      const data = (await res.json()) as { content?: string; encoding?: string; default_branch?: string };
       if (data.content) {
-        return data.encoding === "base64"
-          ? Buffer.from(data.content, "base64").toString("utf-8")
-          : data.content;
+        let text =
+          data.encoding === "base64"
+            ? Buffer.from(data.content, "base64").toString("utf-8")
+            : data.content;
+
+        // Rewrite relative image paths to raw.githubusercontent.com
+        const rawBase = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/main`;
+        text = text.replace(/!\[(.*?)\]\(((?!https?:\/\/|\/\/)[^)]+)\)/g, (_match, alt, src) => {
+          const cleanSrc = src.replace(/^\.?\//, "");
+          return `![${alt}](${rawBase}/${cleanSrc})`;
+        });
+
+        return text;
       }
     }
   } catch (err) {
