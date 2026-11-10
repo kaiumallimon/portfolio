@@ -49,9 +49,9 @@ export function CadIsometricCover({ onGameModeChange }: CadIsometricCoverProps =
       {/* Blueprint Grid Lines Accent (Wipes in from edges during load reveal) */}
       {isInitialReveal && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.45, ease: EASE_OUT }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.55, ease: EASE_OUT }}
           className="absolute inset-0 pointer-events-none z-0"
         >
           <svg
@@ -64,14 +64,14 @@ export function CadIsometricCover({ onGameModeChange }: CadIsometricCoverProps =
         </motion.div>
       )}
 
-      {/* Terminal Boot Line Indicator (Fades out quickly within 0.5s) */}
+      {/* Terminal Boot Line Indicator (Fades out after 1.2s) */}
       {SHOW_COVER_BOOT_MESSAGE && isInitialReveal && (
         <motion.div
-          initial={{ opacity: 0, x: -4 }}
+          initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: [0, 1, 1, 0], x: 0 }}
           transition={{
-            duration: 1.1,
-            times: [0, 0.2, 0.7, 1],
+            duration: 1.25,
+            times: [0, 0.2, 0.75, 1],
             ease: "easeInOut",
           }}
           className="absolute top-2.5 left-3 font-mono text-[10px] text-zinc-500 dark:text-zinc-400 select-none pointer-events-none z-30"
@@ -92,12 +92,14 @@ export function CadIsometricCover({ onGameModeChange }: CadIsometricCoverProps =
         {["K", "A", "L"].map((char, index) => (
           <motion.span
             key={char}
-            initial={isInitialReveal ? { scale: 0.4, opacity: 0 } : false}
+            initial={isInitialReveal ? { scale: 0.45, opacity: 0 } : false}
             animate={{ scale: 1, opacity: 1 }}
             transition={{
-              duration: 0.35,
-              delay: isInitialReveal ? 0.2 + index * 0.12 : 0,
-              ease: EASE_OUT,
+              duration: 0.45,
+              delay: isInitialReveal ? 0.15 + index * 0.12 : 0,
+              type: "spring",
+              stiffness: 340,
+              damping: 20,
             }}
             className="inline-block"
           >
@@ -106,14 +108,16 @@ export function CadIsometricCover({ onGameModeChange }: CadIsometricCoverProps =
         ))}
       </span>
 
-      {/* Interactive Pixel Runner Layer (Character drops in gently from above and settles) */}
+      {/* Interactive Pixel Runner Layer (Character drops in from above and settles) */}
       <motion.div
-        initial={isInitialReveal ? { opacity: 0, y: -20 } : false}
+        initial={isInitialReveal ? { opacity: 0, y: -36 } : false}
         animate={{ opacity: 1, y: 0 }}
         transition={{
-          duration: 0.45,
-          delay: isInitialReveal ? 0.48 : 0,
-          ease: EASE_OUT,
+          duration: 0.6,
+          delay: isInitialReveal ? 0.38 : 0,
+          type: "spring",
+          stiffness: 280,
+          damping: 18,
         }}
         className="w-full h-full absolute inset-0"
       >

@@ -8,17 +8,19 @@ import { sanitizeAndResolveReadme } from "@/lib/github";
 
 interface MonochromeReadmeRendererProps {
   content: string;
+  rawBase?: string;
   className?: string;
 }
 
 export function MonochromeReadmeRenderer({
   content,
+  rawBase,
   className = "",
 }: MonochromeReadmeRendererProps) {
   // Normalize raw HTML <img> tags, center divs, and relative links into clean markdown
   const sanitizedContent = useMemo(() => {
-    return sanitizeAndResolveReadme(content);
-  }, [content]);
+    return sanitizeAndResolveReadme(content, rawBase);
+  }, [content, rawBase]);
 
   return (
     <div

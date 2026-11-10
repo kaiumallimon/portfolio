@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useMemo, useSyncExternalStore } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import {
   motion,
   useInView,
@@ -46,63 +46,31 @@ export const LENIS_NAV_SCROLL_DURATION = 1.4;
 export const SHOW_COVER_BOOT_MESSAGE = true;
 
 /**
- * Session storage flag to guarantee the load reveal plays only once per session.
+ * Session storage key used for marking completed reveals if needed.
  */
 export const SESSION_REVEAL_KEY = "kal_load_reveal_played_v1";
 
-let hasPlayedCache: boolean | null = null;
-const listeners = new Set<() => void>();
-
 export function getSessionRevealSnapshot(): boolean {
-  if (typeof window === "undefined") return true;
-  if (hasPlayedCache === null) {
-    try {
-      hasPlayedCache = sessionStorage.getItem(SESSION_REVEAL_KEY) === "1";
-    } catch {
-      hasPlayedCache = true;
-    }
-  }
-  return hasPlayedCache;
+  return false;
 }
 
 export function hasPlayedLoadReveal(): boolean {
-  return getSessionRevealSnapshot();
+  return false;
 }
 
 export function markLoadRevealPlayed(): void {
-  hasPlayedCache = true;
-  if (typeof window !== "undefined") {
-    try {
-      sessionStorage.setItem(SESSION_REVEAL_KEY, "1");
-    } catch {
-      // SessionStorage may be disabled or restricted in private browsing
-    }
-  }
-  listeners.forEach((listener) => listener());
+  // Reveal finished
 }
 
-const subscribeSession = (callback: () => void) => {
-  listeners.add(callback);
-  return () => {
-    listeners.delete(callback);
-  };
-};
-
 /**
- * Reactive hook that returns whether the current render is the initial
- * load reveal of the session. Returns false on SSR (guaranteeing 100% visible
- * content with zero layout shift for crawlers and JS-disabled users) and
- * true only on initial client mount when sessionStorage flag is not yet set.
+ * Reactive hook that returns whether load animations should play.
+ * Returns true on initial page load and on page reloads, allowing
+ * the top section and hero entrance animations to trigger visibly,
+ * while respecting prefers-reduced-motion.
  */
 export function useIsInitialReveal(): boolean {
   const shouldReduceMotion = useReducedMotion();
-  const hasPlayed = useSyncExternalStore(
-    subscribeSession,
-    getSessionRevealSnapshot,
-    () => true
-  );
-
-  return !hasPlayed && !shouldReduceMotion;
+  return !shouldReduceMotion;
 }
 
 // ============================================================================

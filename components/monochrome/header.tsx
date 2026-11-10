@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
 import { RiMenuLine, RiArrowRightUpLine } from "@remixicon/react";
 import {
@@ -13,7 +14,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { LENIS_NAV_SCROLL_DURATION } from "@/lib/motion";
+import { LENIS_NAV_SCROLL_DURATION, EASE_OUT } from "@/lib/motion";
 
 interface HeaderProps {
   onOpenCommand?: () => void;
@@ -174,12 +175,24 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
+      <motion.header
+        initial={shouldReduceMotion ? false : { y: -32, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.55, ease: EASE_OUT }}
+        className="sticky top-0 z-40 w-full bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800"
+      >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
           {/* Left: KAL monogram — always visible, smooth scroll to top on homepage */}
-          <div className="flex items-center">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.45, delay: 0.1, ease: EASE_OUT }}
+            className="flex items-center"
+          >
             <Link
               href="/"
               onClick={handleLogoClick}
@@ -189,25 +202,37 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
             >
               KAL
             </Link>
-          </div>
+          </motion.div>
 
           {/* Mobile top-right controls (< md): ThemeToggle only */}
-          <div className="flex md:hidden items-center shrink-0">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.18, ease: EASE_OUT }}
+            className="flex md:hidden items-center shrink-0"
+          >
             <ThemeToggle appearance="segmented" size="small" />
-          </div>
+          </motion.div>
 
           {/* Desktop controls (md: and up): Nav links + Separator + ThemeToggle + Separator + CTA */}
           <div className="hidden md:flex items-center gap-2 sm:gap-2.5">
             <nav className="flex items-center gap-4 lg:gap-5 text-xs font-medium text-zinc-600 dark:text-zinc-400 mr-1 sm:mr-1.5">
-              {NAV_ITEMS.map((item) => (
-                <a
+              {NAV_ITEMS.map((item, idx) => (
+                <motion.a
                   key={item.id}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.35,
+                    delay: 0.14 + idx * 0.04,
+                    ease: EASE_OUT,
+                  }}
                   href={isHomePage ? item.href : `/${item.href}`}
                   onClick={(e) => handleSectionScroll(e, item.id)}
                   className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
                 >
                   {item.label}
-                </a>
+                </motion.a>
               ))}
             </nav>
 
@@ -218,9 +243,14 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
             />
 
             {/* Dark Theme Switcher */}
-            <div className="flex items-center shrink-0">
+            <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.36, ease: EASE_OUT }}
+              className="flex items-center shrink-0"
+            >
               <ThemeToggle appearance="segmented" size="small" />
-            </div>
+            </motion.div>
 
             {/* Vertical Separator */}
             {!isContactPage && (
@@ -232,18 +262,24 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
 
             {/* CTA Button: Let's talk pointing to /contact (omitted on /contact) */}
             {!isContactPage && (
-              <Link
-                href="/contact"
-                prefetch={false}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-mono text-xs font-medium transition-colors cursor-pointer select-none group border border-transparent shadow-2xs"
+              <motion.div
+                initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.42, ease: EASE_OUT }}
               >
-                <span>Let&apos;s talk</span>
-                <RiArrowRightUpLine className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover:text-white dark:group-hover:text-zinc-950 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
+                <Link
+                  href="/contact"
+                  prefetch={false}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-mono text-xs font-medium transition-colors cursor-pointer select-none group border border-transparent shadow-2xs"
+                >
+                  <span>Let&apos;s talk</span>
+                  <RiArrowRightUpLine className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover:text-white dark:group-hover:text-zinc-950 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </Link>
+              </motion.div>
             )}
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Floating Mobile Bottom Navigation Dock (< md; omitted on /contact to avoid colliding with chat input) */}
       {!isContactPage && (

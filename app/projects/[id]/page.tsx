@@ -17,7 +17,7 @@ import { MonochromeHeader } from "@/components/monochrome/header";
 import { DeviceMockup } from "@/components/monochrome/device-mockup";
 import { MonochromeReadmeRenderer } from "@/components/monochrome/monochrome-readme-renderer";
 import { getProjectBySlugOrId, getSiteSettings } from "@/lib/data-service";
-import { getRepoReadme, getRepoMeta } from "@/lib/github";
+import { getRepoReadme, getRepoMeta, parseRepo } from "@/lib/github";
 import { SITE_URL } from "@/lib/site";
 
 const MonochromeFooter = dynamicImport(
@@ -108,6 +108,12 @@ export default async function ProjectDetailPage({
     githubUrl ? getRepoReadme(githubUrl) : Promise.resolve(null),
     githubUrl ? getRepoMeta(githubUrl) : Promise.resolve(null),
   ]);
+
+  const parsedRepo = parseRepo(githubUrl);
+  const rawBase =
+    parsedRepo
+      ? `https://raw.githubusercontent.com/${parsedRepo.owner}/${parsedRepo.repo}/${meta?.defaultBranch || "main"}`
+      : undefined;
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-950 transition-colors duration-200">
@@ -303,7 +309,7 @@ export default async function ProjectDetailPage({
               {/* README Markdown Body */}
               <div className="p-4 sm:p-6 md:p-8">
                 {readme ? (
-                  <MonochromeReadmeRenderer content={readme} />
+                  <MonochromeReadmeRenderer content={readme} rawBase={rawBase} />
                 ) : (
                   <div className="py-8 text-center space-y-4">
                     <Code2 className="w-8 h-8 text-zinc-400 mx-auto" />

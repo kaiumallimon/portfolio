@@ -137,9 +137,15 @@ export function MonochromeHero({
         <div className="col-start-1 row-start-2 md:col-start-1 md:row-start-1 md:row-span-2 flex items-center justify-center border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 h-[105px] sm:h-[115px] md:h-full">
           <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 w-full h-full">
             <motion.div
-              initial={isInitialReveal ? { opacity: 0, scale: 0.92 } : false}
+              initial={isInitialReveal ? { opacity: 0, scale: 0.65 } : false}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: isInitialReveal ? 0.35 : 0, ease: EASE_OUT }}
+              transition={{
+                duration: 0.55,
+                delay: isInitialReveal ? 0.16 : 0,
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+              }}
               className="relative size-16 sm:size-20 md:size-40 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-900 bg-zinc-100 dark:bg-zinc-900 shrink-0"
             >
               <Image
@@ -159,9 +165,9 @@ export function MonochromeHero({
           {/* Upper row: Name + sound chime + Tech Humor Game Hint (desktop md:) */}
           <div className="px-3.5 pt-2 pb-0.5 sm:px-4 sm:pt-2 sm:pb-0.5 md:px-4 md:py-2 flex items-center justify-between gap-2 flex-wrap">
             <motion.div
-              initial={isInitialReveal ? { opacity: 0, y: 6 } : false}
+              initial={isInitialReveal ? { opacity: 0, y: 20 } : false}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: isInitialReveal ? 0.45 : 0, ease: EASE_OUT }}
+              transition={{ duration: 0.45, delay: isInitialReveal ? 0.24 : 0, ease: EASE_OUT }}
               className="flex items-center gap-1.5 sm:gap-2"
             >
               <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
@@ -270,9 +276,9 @@ export function MonochromeHero({
           {/* On mobile (< md): Sits snugly right underneath the name without split border or giant void */}
           {/* On desktop (md:): Padded in lower bar with top border */}
           <motion.div
-            initial={isInitialReveal ? { opacity: 0 } : false}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: isInitialReveal ? 0.55 : 0, ease: EASE_OUT }}
+            initial={isInitialReveal ? { opacity: 0, y: 14 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: isInitialReveal ? 0.34 : 0, ease: EASE_OUT }}
             className="px-3.5 pb-2.5 pt-0 sm:px-4 sm:pb-3 sm:pt-0 md:px-4 md:py-2 md:border-t md:border-zinc-200 md:dark:border-zinc-800 flex items-start h-[38px] sm:h-[40px] md:h-[42px] overflow-hidden"
           >
             <RotatingText
@@ -313,9 +319,9 @@ export function MonochromeHero({
         <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {/* 1. Education */}
           <motion.div
-            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            initial={isInitialReveal ? { opacity: 0, y: 18 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: isInitialReveal ? 0.65 : 0, ease: EASE_OUT }}
+            transition={{ duration: 0.42, delay: isInitialReveal ? 0.44 : 0, ease: EASE_OUT }}
             className="px-4 py-2.5 flex items-center gap-3"
           >
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
@@ -332,9 +338,9 @@ export function MonochromeHero({
 
           {/* 2. Location */}
           <motion.div
-            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            initial={isInitialReveal ? { opacity: 0, y: 18 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: isInitialReveal ? 0.70 : 0, ease: EASE_OUT }}
+            transition={{ duration: 0.42, delay: isInitialReveal ? 0.51 : 0, ease: EASE_OUT }}
             className="px-4 py-2.5 flex items-center gap-3"
           >
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
@@ -352,9 +358,9 @@ export function MonochromeHero({
 
           {/* 3. Live Clock */}
           <motion.div
-            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            initial={isInitialReveal ? { opacity: 0, y: 18 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: isInitialReveal ? 0.75 : 0, ease: EASE_OUT }}
+            transition={{ duration: 0.42, delay: isInitialReveal ? 0.58 : 0, ease: EASE_OUT }}
             className="px-4 py-2.5 flex items-center gap-3"
           >
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
@@ -368,9 +374,9 @@ export function MonochromeHero({
         <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {/* 4. Email */}
           <motion.div
-            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            initial={isInitialReveal ? { opacity: 0, y: 18 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: isInitialReveal ? 0.80 : 0, ease: EASE_OUT }}
+            transition={{ duration: 0.42, delay: isInitialReveal ? 0.65 : 0, ease: EASE_OUT }}
             className="px-4 py-2.5 flex items-center justify-between group"
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -399,9 +405,9 @@ export function MonochromeHero({
 
           {/* 5. Phone */}
           <motion.div
-            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            initial={isInitialReveal ? { opacity: 0, y: 18 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: isInitialReveal ? 0.85 : 0, ease: EASE_OUT }}
+            transition={{ duration: 0.42, delay: isInitialReveal ? 0.72 : 0, ease: EASE_OUT }}
             className="px-4 py-2.5 flex items-center justify-between group"
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -430,9 +436,9 @@ export function MonochromeHero({
 
           {/* 6. Availability Status */}
           <motion.div
-            initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+            initial={isInitialReveal ? { opacity: 0, y: 18 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: isInitialReveal ? 0.90 : 0, ease: EASE_OUT }}
+            transition={{ duration: 0.42, delay: isInitialReveal ? 0.79 : 0, ease: EASE_OUT }}
             className="px-4 py-2.5 flex items-center gap-3"
           >
             <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-zinc-200/80 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400">
@@ -450,9 +456,9 @@ export function MonochromeHero({
 
       {/* 5. Social Links Row with "follow me" Annotation */}
       <motion.div
-        initial={isInitialReveal ? { opacity: 0, y: 8 } : false}
+        initial={isInitialReveal ? { opacity: 0, y: 16 } : false}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: isInitialReveal ? 0.95 : 0, ease: EASE_OUT }}
+        transition={{ duration: 0.42, delay: isInitialReveal ? 0.88 : 0, ease: EASE_OUT }}
         className="relative px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3"
       >
         {/* Handwritten note on the left */}

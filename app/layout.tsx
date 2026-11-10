@@ -86,6 +86,16 @@ export default async function RootLayout({
             `,
           }}
         />
+        {/* No-JS & crawler fallback: ensures full visibility without scripts */}
+        <noscript>
+          <style>{`
+            [style*="opacity: 0"], [style*="opacity:0"], [style*="visibility: hidden"] {
+              opacity: 1 !important;
+              transform: none !important;
+              visibility: visible !important;
+            }
+          `}</style>
+        </noscript>
       </head>
 
       <body
