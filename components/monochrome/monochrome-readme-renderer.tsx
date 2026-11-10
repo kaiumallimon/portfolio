@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
+import { sanitizeAndResolveReadme } from "@/lib/github";
 
 interface MonochromeReadmeRendererProps {
   content: string;
@@ -14,6 +15,11 @@ export function MonochromeReadmeRenderer({
   content,
   className = "",
 }: MonochromeReadmeRendererProps) {
+  // Normalize raw HTML <img> tags, center divs, and relative links into clean markdown
+  const sanitizedContent = useMemo(() => {
+    return sanitizeAndResolveReadme(content);
+  }, [content]);
+
   return (
     <div
       className={cn(
@@ -61,7 +67,13 @@ export function MonochromeReadmeRenderer({
             />
           ),
           p: ({ className: c, ...props }) => (
-            <p className={cn("my-3 text-zinc-700 dark:text-zinc-300 font-sans leading-relaxed", c)} {...props} />
+            <p
+              className={cn(
+                "my-3 text-zinc-700 dark:text-zinc-300 font-sans leading-relaxed text-xs sm:text-sm",
+                c
+              )}
+              {...props}
+            />
           ),
           a: ({ className: c, ...props }) => (
             <a
@@ -104,7 +116,7 @@ export function MonochromeReadmeRenderer({
               alt={alt || ""}
               loading="lazy"
               className={cn(
-                "my-4 max-w-full rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 shadow-xs",
+                "my-3 max-w-full max-h-[520px] w-auto inline-block rounded-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 shadow-xs align-top m-1.5",
                 c
               )}
               {...props}
@@ -173,7 +185,7 @@ export function MonochromeReadmeRenderer({
           ),
         }}
       >
-        {content}
+        {sanitizedContent}
       </ReactMarkdown>
     </div>
   );

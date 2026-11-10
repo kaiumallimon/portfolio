@@ -56,6 +56,84 @@ export interface RepoMeta {
   htmlUrl: string | null;
 }
 
+function getHtmlAttr(tagAttrs: string, attrName: string): string {
+  const quoted = tagAttrs.match(new RegExp(`${attrName}=["']([^"']*)["']`, "i"));
+  if (quoted) return quoted[1].trim();
+  const unquoted = tagAttrs.match(new RegExp(`${attrName}=([^\\s>]+)`, "i"));
+  return unquoted ? unquoted[1].trim() : "";
+}
+
+export function sanitizeAndResolveReadme(
+  markdown: string,
+  rawBase?: string
+): string {
+  if (!markdown) return "";
+
+  let result = markdown;
+
+  // 1. Transform <a href="..."><img .../></a> into markdown [![alt](imgUrl)](linkUrl)
+  result = result.replace(
+    /<a\s+([^>]*?)>\s*<img\s+([^>]*?)\/?>\s*<\/a>/gi,
+    (match, aAttrs, imgAttrs) => {
+      const href = getHtmlAttr(aAttrs, "href");
+      let src = getHtmlAttr(imgAttrs, "src");
+      const alt = getHtmlAttr(imgAttrs, "alt");
+      if (!src) return match;
+      if (
+        rawBase &&
+        !src.startsWith("http://") &&
+        !src.startsWith("https://") &&
+        !src.startsWith("//")
+      ) {
+        const cleanSrc = src.replace(/^\.?\//, "");
+        src = `${rawBase}/${cleanSrc}`;
+      }
+      return `\n\n[![${alt}](${src})](${href})\n\n`;
+    }
+  );
+
+  // 2. Transform standalone <img ...> HTML tags to markdown ![alt](src)
+  result = result.replace(/<img\s+([^>]*?)\/?>/gi, (match, attrs) => {
+    let src = getHtmlAttr(attrs, "src");
+    const alt = getHtmlAttr(attrs, "alt");
+    if (!src) return match;
+
+    if (
+      rawBase &&
+      !src.startsWith("http://") &&
+      !src.startsWith("https://") &&
+      !src.startsWith("//")
+    ) {
+      const cleanSrc = src.replace(/^\.?\//, "");
+      src = `${rawBase}/${cleanSrc}`;
+    }
+
+    return `\n\n![${alt}](${src})\n\n`;
+  });
+
+  // 3. Transform relative markdown images ![alt](path)
+  if (rawBase) {
+    result = result.replace(
+      /!\[(.*?)\]\(((?!https?:\/\/|\/\/)[^)]+)\)/g,
+      (_match, alt, src) => {
+        const cleanSrc = src.trim().replace(/^\.?\//, "");
+        return `![${alt}](${rawBase}/${cleanSrc})`;
+      }
+    );
+  }
+
+  // 4. Strip leftover layout wrapper tags like <div ...>, </div>, <p ...>, </p>, <center>, </center>
+  result = result.replace(/<\/?(div|p|center)[^>]*>/gi, "\n\n");
+
+  // 5. Convert <br> or <br/> to markdown linebreaks
+  result = result.replace(/<br\s*\/?>/gi, "  \n");
+
+  // 6. Clean up excessive consecutive newlines
+  result = result.replace(/\n{3,}/g, "\n\n");
+
+  return result.trim();
+}
+
 export async function getRepoReadme(
   githubUrl?: string | null,
 ): Promise<string | null> {
@@ -69,21 +147,22 @@ export async function getRepoReadme(
     );
 
     if (res.ok) {
-      const data = (await res.json()) as { content?: string; encoding?: string; default_branch?: string };
+      const data = (await res.json()) as {
+        content?: string;
+        encoding?: string;
+        download_url?: string;
+      };
       if (data.content) {
-        let text =
+        const text =
           data.encoding === "base64"
             ? Buffer.from(data.content, "base64").toString("utf-8")
             : data.content;
 
-        // Rewrite relative image paths to raw.githubusercontent.com
-        const rawBase = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/main`;
-        text = text.replace(/!\[(.*?)\]\(((?!https?:\/\/|\/\/)[^)]+)\)/g, (_match, alt, src) => {
-          const cleanSrc = src.replace(/^\.?\//, "");
-          return `![${alt}](${rawBase}/${cleanSrc})`;
-        });
+        const rawBase = data.download_url
+          ? data.download_url.substring(0, data.download_url.lastIndexOf("/"))
+          : `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/main`;
 
-        return text;
+        return sanitizeAndResolveReadme(text, rawBase);
       }
     }
   } catch (err) {
