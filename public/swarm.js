@@ -3059,12 +3059,12 @@
   const PENTA = [0, 2, 4, 7, 9]; // E F# G# B C#
   const E2 = 40;
   const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
-  let soundPref = true;
+  let soundPref = false;
   const SPK_ICON = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h2.5l3.5 3V3L5 6z" fill="currentColor"/>';
 
   class Sound {
     constructor() {
-      this.on = soundPref;
+      this.on = false;
       this.ctx = null;
       this.bpm = 104;
       this.slots = new Map();
@@ -3076,94 +3076,37 @@
     }
 
     init(offline) {
-      if (this.ctx) return true;
-      try {
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        this.ctx = offline || new Ctx({ latencyHint: "interactive" });
-      } catch (_) {
-        return false;
-      }
-      const ctx = this.ctx;
-      const out = ctx.createGain();
-      out.gain.value = this.on ? 1 : 0;
-      const comp = ctx.createDynamicsCompressor();
-      comp.threshold.value = -18;
-      comp.knee.value = 14;
-      comp.ratio.value = 5;
-      comp.attack.value = 0.003;
-      comp.release.value = 0.3;
-      const master = ctx.createGain();
-      master.gain.value = 0.9;
-      master.connect(comp);
-      comp.connect(out);
-      out.connect(ctx.destination);
-      const verb = ctx.createConvolver();
-      verb.buffer = this.impulse(3.2, 2.4);
-      const wet = ctx.createGain();
-      wet.gain.value = 0.5;
-      verb.connect(wet);
-      wet.connect(master);
-      this.out = out;
-      this.master = master;
-      this.verb = verb;
-      this.noiseBuf = this.noise(1.5);
-      this.t0 = this.now();
-      return true;
+      this.on = false;
+      return false;
     }
 
     now() {
-      return this.fakeNow != null ? this.fakeNow : this.ctx.currentTime;
+      return 0;
     }
 
     // Generated room: decaying stereo noise, darkened as it rings out.
     impulse(secs, decay) {
-      const sr = this.ctx.sampleRate;
-      const n = Math.floor(sr * secs);
-      const b = this.ctx.createBuffer(2, n, sr);
-      for (let ch = 0; ch < 2; ch++) {
-        const d = b.getChannelData(ch);
-        let lp = 0;
-        for (let i = 0; i < n; i++) {
-          const k = i / n;
-          const a = 0.55 - 0.4 * k; // lowpass closes over time: warm tail
-          lp += a * (Math.random() * 2 - 1 - lp);
-          d[i] = lp * Math.pow(1 - k, decay) * (i < sr * 0.012 ? i / (sr * 0.012) : 1);
-        }
-      }
-      return b;
+      return null;
     }
 
     noise(secs) {
-      const sr = this.ctx.sampleRate;
-      const b = this.ctx.createBuffer(1, Math.floor(sr * secs), sr);
-      const d = b.getChannelData(0);
-      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-      return b;
+      return null;
     }
 
     setOn(on) {
-      this.on = soundPref = on;
-      if (!this.ctx) return;
-      const t = this.ctx.currentTime;
-      this.out.gain.cancelScheduledValues(t);
-      this.out.gain.setTargetAtTime(on ? 1 : 0, t, 0.05);
-      if (on) this.resume();
+      this.on = soundPref = false;
     }
 
-    resume() {
-      if (this.ctx && this.ctx.state === "suspended" && this.ctx.resume) this.ctx.resume().catch(() => {});
-    }
+    resume() {}
 
     get blocked() {
-      return !!this.ctx && this.ctx.state !== "running" && this.fakeNow == null;
+      return false;
     }
 
-    log(fn, args) {
-      if (Array.isArray(window.__swarmSfxLog)) window.__swarmSfxLog.push({ t: performance.now() / 1000, fn, args });
-    }
+    log(fn, args) {}
 
     ready() {
-      return this.ctx && this.on && (this.fakeNow != null || this.ctx.state === "running");
+      return false;
     }
 
     // next 16th-note on the grid (or 8th for slow, low events)

@@ -5,15 +5,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
-import { RiMenuLine, RiArrowRightUpLine } from "@remixicon/react";
+import { RiMenuLine, RiArrowRightUpLine, RiCloseLine } from "@remixicon/react";
 import { useSwarmRebuild } from "@/components/monochrome/swarm-rebuild";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
+import { motion, AnimatePresence } from "framer-motion";
 import { LENIS_NAV_SCROLL_DURATION } from "@/lib/motion";
 
 interface HeaderProps {
@@ -80,7 +74,7 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
     if (isHomePage) {
       e.preventDefault();
       setMobileMenuOpen(false);
-      // Timeout allows Radix Sheet overlay and scroll-lock to dismiss smoothly
+      // Timeout allows Framer Motion sheet to slide out smoothly before scrolling
       setTimeout(() => {
         const element = document.getElementById(targetId);
         if (element) {
@@ -101,11 +95,29 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
 
           window.history.pushState(null, "", `#${targetId}`);
         }
-      }, 150);
+      }, 240);
     } else {
       setMobileMenuOpen(false);
     }
   };
+
+  // Prevent background page scrolling and pause Lenis while mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      lenis?.stop();
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setMobileMenuOpen(false);
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+        lenis?.start();
+      };
+    }
+  }, [mobileMenuOpen, lenis]);
 
   // Smooth scroll back to top when clicking KAL logo on homepage
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -286,69 +298,104 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
         </div>
       )}
 
-      {/* Mobile Navigation Sheet Drawer */}
-      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent
-          data-lenis-prevent
-          side="right"
-          className="w-[280px] sm:w-[320px] bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 p-6 flex flex-col justify-between z-50"
-        >
-          <div>
-            <SheetHeader className="p-0 text-left border-b border-zinc-200 dark:border-zinc-800 pb-4 pr-8">
-              <Link
-                href="/"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  handleLogoClick(e);
-                }}
-                prefetch={false}
-                className="font-tiny5 text-2xl tracking-[0.2em] pl-[0.2em] text-zinc-950 dark:text-zinc-50 select-none hover:opacity-80 transition-opacity"
-              >
-                KAL
-              </Link>
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              <SheetDescription className="sr-only">
-                Sequential navigation links for portfolio sections
-              </SheetDescription>
-            </SheetHeader>
+      {/* Mobile Navigation Sheet Drawer (Framer Motion) */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-50 overflow-hidden md:hidden">
+            {/* Backdrop Overlay */}
+            <motion.div
+              key="mobile-nav-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.24, ease: "easeInOut" }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+              aria-hidden="true"
+            />
 
-            {/* Sequential section navigation links */}
-            <nav className="flex flex-col space-y-1.5 pt-6">
-              {NAV_ITEMS.map((item, index) => (
-                <a
-                  key={item.id}
-                  href={isHomePage ? item.href : `/${item.href}`}
-                  onClick={(e) => handleMobileNavClick(e, item.id)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-mono text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group cursor-pointer"
-                >
-                  <span className="flex items-center gap-3">
-                    <span className="text-[11px] text-zinc-400 dark:text-zinc-600 font-mono">
-                      0{index + 1}
-                    </span>
-                    <span className="font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-950 dark:group-hover:text-zinc-50">
-                      {item.label}
-                    </span>
-                  </span>
-                  <span className="text-xs text-zinc-400 dark:text-zinc-600 group-hover:text-zinc-950 dark:group-hover:text-zinc-100 group-hover:translate-x-0.5 transition-all">
-                    →
-                  </span>
-                </a>
-              ))}
-            </nav>
-          </div>
+            {/* Sidebar Sheet Drawer */}
+            <motion.aside
+              key="mobile-nav-sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation Menu"
+              data-lenis-prevent
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{
+                type: "spring",
+                damping: 30,
+                stiffness: 280,
+                mass: 0.8,
+              }}
+              className="fixed inset-y-0 right-0 w-[280px] sm:w-[320px] bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 p-6 flex flex-col justify-between z-50 shadow-2xl"
+            >
+              <div>
+                <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+                  <Link
+                    href="/"
+                    onClick={(e) => {
+                      setMobileMenuOpen(false);
+                      handleLogoClick(e);
+                    }}
+                    prefetch={false}
+                    className="font-tiny5 text-2xl tracking-[0.2em] pl-[0.2em] text-zinc-950 dark:text-zinc-50 select-none hover:opacity-80 transition-opacity"
+                  >
+                    KAL
+                  </Link>
 
-          {/* Footer Info */}
-          <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 space-y-2 font-mono text-xs text-zinc-500">
-            <div className="flex items-center gap-2">
-              <span className="size-1.5 rounded-full bg-emerald-500" />
-              <span className="text-zinc-700 dark:text-zinc-300 text-[11px]">Available for work</span>
-            </div>
-            <div className="text-[10px] text-zinc-400 dark:text-zinc-500">
-              Kaium Al Limon // Full-Stack
-            </div>
+                  {/* Close button */}
+                  <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-1 rounded-xs text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                    aria-label="Close navigation menu"
+                  >
+                    <RiCloseLine className="size-5" />
+                  </button>
+                </div>
+
+                {/* Sequential section navigation links */}
+                <nav className="flex flex-col space-y-1.5 pt-6">
+                  {NAV_ITEMS.map((item, index) => (
+                    <a
+                      key={item.id}
+                      href={isHomePage ? item.href : `/${item.href}`}
+                      onClick={(e) => handleMobileNavClick(e, item.id)}
+                      className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-mono text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group cursor-pointer"
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="text-[11px] text-zinc-400 dark:text-zinc-600 font-mono">
+                          0{index + 1}
+                        </span>
+                        <span className="font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-950 dark:group-hover:text-zinc-50">
+                          {item.label}
+                        </span>
+                      </span>
+                      <span className="text-xs text-zinc-400 dark:text-zinc-600 group-hover:text-zinc-950 dark:group-hover:text-zinc-100 group-hover:translate-x-0.5 transition-all">
+                        →
+                      </span>
+                    </a>
+                  ))}
+                </nav>
+              </div>
+
+              {/* Footer Info */}
+              <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 space-y-2 font-mono text-xs text-zinc-500">
+                <div className="flex items-center gap-2">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  <span className="text-zinc-700 dark:text-zinc-300 text-[11px]">Available for work</span>
+                </div>
+                <div className="text-[10px] text-zinc-400 dark:text-zinc-500">
+                  Kaium Al Limon // Full-Stack
+                </div>
+              </div>
+            </motion.aside>
           </div>
-        </SheetContent>
-      </Sheet>
+        )}
+      </AnimatePresence>
     </>
   );
 }
