@@ -3,18 +3,14 @@
 import React from "react";
 import { RiLink } from "@remixicon/react";
 import { toast } from "sonner";
-import { motion, useReducedMotion } from "framer-motion";
 import { STACK_CATEGORIES } from "@/data/stack";
 import { StackCard } from "./stack/stack-card";
-import { EASE_OUT } from "@/lib/motion";
 
 interface MonochromeSkillsProps {
   skills?: { category: string; skills: string[] }[];
 }
 
 export function MonochromeSkills({}: MonochromeSkillsProps = {}) {
-  const shouldReduceMotion = useReducedMotion();
-
   const copyLink = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(`${window.location.origin}#stack`);
@@ -45,17 +41,11 @@ export function MonochromeSkills({}: MonochromeSkillsProps = {}) {
 
       {/* Minimalist 2-column Grid of Tech Categories */}
       <div className="p-4 sm:p-6">
-        <motion.div
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-20px" }}
-          transition={{ duration: 0.45, ease: EASE_OUT }}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {STACK_CATEGORIES.map((category) => (
             <StackCard key={category.id} category={category} />
           ))}
-        </motion.div>
+        </div>
       </div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />

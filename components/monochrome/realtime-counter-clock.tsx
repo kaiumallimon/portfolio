@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export interface TimeParts {
@@ -61,41 +60,19 @@ function CounterDigit({
   return (
     <span
       className={cn(
-        "relative inline-flex h-[1.35em] w-[0.62em] overflow-hidden items-center justify-center tabular-nums font-mono leading-none",
+        "inline-flex h-[1.35em] w-[0.62em] items-center justify-center tabular-nums font-mono leading-none",
         className
       )}
     >
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span
-          key={digit}
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          exit={{ y: "-100%", opacity: 0 }}
-          transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="absolute inset-0 flex items-center justify-center tabular-nums font-mono leading-none"
-        >
-          {digit}
-        </motion.span>
-      </AnimatePresence>
+      {digit}
     </span>
   );
 }
 
 function CounterPeriod({ period }: { period: string }) {
   return (
-    <span className="relative inline-flex h-[1.35em] w-[1.7em] overflow-hidden items-center justify-center tabular-nums font-mono leading-none text-zinc-500 dark:text-zinc-400 text-xs sm:text-[13px] ml-1">
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span
-          key={period}
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          exit={{ y: "-100%", opacity: 0 }}
-          transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="absolute inset-0 flex items-center justify-center font-mono font-medium leading-none"
-        >
-          {period}
-        </motion.span>
-      </AnimatePresence>
+    <span className="inline-flex h-[1.35em] w-[1.7em] items-center justify-center tabular-nums font-mono leading-none text-zinc-500 dark:text-zinc-400 text-xs sm:text-[13px] ml-1 font-medium">
+      {period}
     </span>
   );
 }

@@ -1,8 +1,6 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { EASE_OUT } from "@/lib/motion";
 
 const subscribe = () => () => {};
 const getGreetingSnapshot = () => {
@@ -14,7 +12,6 @@ const getGreetingSnapshot = () => {
 const getGreetingServerSnapshot = () => "Hello";
 
 export function MonochromeAbout() {
-  const shouldReduceMotion = useReducedMotion();
   const greeting = useSyncExternalStore(
     subscribe,
     getGreetingSnapshot,
@@ -23,13 +20,7 @@ export function MonochromeAbout() {
 
   return (
     <section id="about" className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
-      <motion.div
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-20px" }}
-        transition={{ duration: 0.45, ease: EASE_OUT }}
-        className="p-4 sm:p-6 space-y-4"
-      >
+      <div className="p-4 sm:p-6 space-y-4">
         <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 font-sans">
           {greeting}
         </h2>
@@ -65,7 +56,7 @@ export function MonochromeAbout() {
             </span>
           </p>
         </div>
-      </motion.div>
+      </div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />
     </section>

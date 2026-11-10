@@ -4,18 +4,14 @@ import React from "react";
 import { IExperience } from "@/lib/models";
 import { RiLink, RiBuildingLine, RiMapPinLine } from "@remixicon/react";
 import { toast } from "sonner";
-import { motion, useReducedMotion } from "framer-motion";
 import { EXPERIENCE_DATA } from "@/data/experience";
 import { ExperienceItem } from "./experience/experience-item";
-import { EASE_OUT } from "@/lib/motion";
 
 interface MonochromeExperienceProps {
   experiences?: Partial<IExperience>[];
 }
 
 export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
-  const shouldReduceMotion = useReducedMotion();
-
   const copyLink = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(`${window.location.origin}#experience`);
@@ -69,11 +65,7 @@ export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
         </div>
 
         {/* Minimalist Timeline of Roles */}
-        <motion.ol
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-20px" }}
-          transition={{ duration: 0.45, ease: EASE_OUT }}
+        <ol
           aria-label="Roles at UIU App Forum"
           className="relative pt-1 pl-1"
         >
@@ -84,7 +76,7 @@ export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
               isLast={idx === EXPERIENCE_DATA.roles.length - 1}
             />
           ))}
-        </motion.ol>
+        </ol>
       </div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />

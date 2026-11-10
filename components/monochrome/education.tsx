@@ -4,8 +4,6 @@ import React from "react";
 import { EducationItem, EDUCATION_DATA } from "@/data/education";
 import { RiLink } from "@remixicon/react";
 import { toast } from "sonner";
-import { motion, useReducedMotion } from "framer-motion";
-import { EASE_OUT } from "@/lib/motion";
 
 interface MonochromeEducationProps {
   education?: EducationItem[];
@@ -14,7 +12,6 @@ interface MonochromeEducationProps {
 export function MonochromeEducation({
   education = EDUCATION_DATA,
 }: MonochromeEducationProps = {}) {
-  const shouldReduceMotion = useReducedMotion();
   const items = education && education.length > 0 ? education : EDUCATION_DATA;
 
   const copyLink = () => {
@@ -47,11 +44,7 @@ export function MonochromeEducation({
 
       {/* Minimalist Vertical Timeline matching Experience section */}
       <div className="p-4 sm:p-6">
-        <motion.ol
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-20px" }}
-          transition={{ duration: 0.45, ease: EASE_OUT }}
+        <ol
           aria-label="Education history"
           className="relative pt-1 pl-1"
         >
@@ -65,44 +58,22 @@ export function MonochromeEducation({
               >
                 {/* Vertical Timeline Track Line */}
                 {!isLast && (
-                  <motion.div
-                    initial={shouldReduceMotion ? false : { scaleY: 0 }}
-                    whileInView={{ scaleY: 1 }}
-                    viewport={{ once: true, margin: "-10px" }}
-                    transition={{ duration: 0.5, ease: EASE_OUT }}
-                    style={{ transformOrigin: "top center" }}
+                  <div
                     className="absolute left-[7px] sm:left-[11px] top-3.5 bottom-0 w-px bg-zinc-200 dark:bg-zinc-800"
                     aria-hidden="true"
                   />
                 )}
 
                 {/* Timeline Node Dot */}
-                <motion.div
-                  initial={shouldReduceMotion ? false : { scale: 0, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  viewport={{ once: true, margin: "-10px" }}
-                  transition={{
-                    duration: 0.3,
-                    delay: shouldReduceMotion ? 0 : 0.1,
-                    ease: EASE_OUT,
-                  }}
+                <div
                   className="absolute left-[2px] sm:left-[6px] top-1 size-3.5 rounded-full border border-zinc-400 dark:border-zinc-500 bg-white dark:bg-zinc-950 flex items-center justify-center group-hover:border-zinc-900 dark:group-hover:border-zinc-100 transition-colors"
                   aria-hidden="true"
                 >
                   <div className="size-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100" />
-                </motion.div>
+                </div>
 
                 {/* Entry Content */}
-                <motion.div
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-10px" }}
-                  transition={{
-                    duration: 0.35,
-                    delay: shouldReduceMotion ? 0 : 0.15,
-                    ease: EASE_OUT,
-                  }}
-                >
+                <div>
                   {/* Row: Degree, Institution, and Dates */}
                   <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -125,11 +96,11 @@ export function MonochromeEducation({
                       {item.period}
                     </span>
                   </div>
-                </motion.div>
+                </div>
               </li>
             );
           })}
-        </motion.ol>
+        </ol>
       </div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />

@@ -6,16 +6,13 @@ import { ArrowRight } from "lucide-react";
 import { RiLink } from "@remixicon/react";
 import { IProject } from "@/lib/models";
 import { toast } from "sonner";
-import { motion, useReducedMotion } from "framer-motion";
 import { ProjectCard } from "./project-card";
-import { EASE_OUT } from "@/lib/motion";
 
 interface MonochromeProjectsProps {
   projects: Partial<IProject>[];
 }
 
 export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
-  const shouldReduceMotion = useReducedMotion();
   // Show only top 4 featured projects on home page
   const displayProjects = projects.slice(0, 4);
 
@@ -58,25 +55,14 @@ export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
 
       {/* Grid of Top 4 Projects with Device Frames */}
       <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {displayProjects.map((p, index) => {
-          const rowIndex = Math.floor(index / 2);
-          return (
-            <motion.div
-              key={p.slug || (p._id ? String(p._id) : index)}
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{
-                duration: 0.45,
-                delay: shouldReduceMotion ? 0 : rowIndex * 0.12,
-                ease: EASE_OUT,
-              }}
-              className="h-full flex flex-col"
-            >
-              <ProjectCard project={p} />
-            </motion.div>
-          );
-        })}
+        {displayProjects.map((p, index) => (
+          <div
+            key={p.slug || (p._id ? String(p._id) : index)}
+            className="h-full flex flex-col"
+          >
+            <ProjectCard project={p} />
+          </div>
+        ))}
       </div>
 
       {/* "See More" CTA Banner linking to /projects */}
