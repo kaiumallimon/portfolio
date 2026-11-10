@@ -71,6 +71,7 @@ export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
                 delay: shouldReduceMotion ? 0 : rowIndex * 0.12,
                 ease: EASE_OUT,
               }}
+              className="h-full flex flex-col"
             >
               <ProjectCard project={p} />
             </motion.div>

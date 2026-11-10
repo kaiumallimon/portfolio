@@ -41,15 +41,15 @@ export function ProjectCard({
       onMouseLeave={() => onHover?.(null)}
       onFocusCapture={() => slug && onHover?.(slug)}
       onBlurCapture={() => onHover?.(null)}
-      className={`group scroll-mt-20 border bg-white dark:bg-zinc-950 transition-all duration-200 flex flex-col justify-between overflow-hidden ${
+      className={`group scroll-mt-20 border bg-white dark:bg-zinc-950 transition-all duration-200 flex flex-col justify-between overflow-hidden h-full ${
         isHighlighted
           ? "border-zinc-950 dark:border-zinc-100 ring-1 ring-zinc-950/20 dark:ring-zinc-100/20 shadow-xs"
           : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600"
       }`}
     >
-      <div>
+      <div className="flex flex-col flex-1 min-w-0">
         {/* Visual Device Representation Header according to category */}
-        <div className="h-40 sm:h-44 w-full border-b border-zinc-100 dark:border-zinc-900 bg-zinc-50/70 dark:bg-zinc-900/50 flex items-center justify-center relative overflow-hidden">
+        <div className="h-40 sm:h-44 w-full border-b border-zinc-100 dark:border-zinc-900 bg-zinc-50/70 dark:bg-zinc-900/50 flex items-center justify-center relative overflow-hidden shrink-0">
           <DeviceMockup
             type={isMobile ? "mobile" : "web"}
             category={categoryLabel}
@@ -59,25 +59,31 @@ export function ProjectCard({
         </div>
 
         {/* Project Card Content */}
-        <div className="p-4 sm:p-5 space-y-2.5">
+        <div className="p-4 sm:p-5 space-y-2.5 flex-1 min-w-0 flex flex-col">
           {/* Category & Title — star count removed */}
-          <div className="space-y-1">
-            <span className="text-[11px] font-mono font-medium text-zinc-400 dark:text-zinc-500">
+          <div className="space-y-1 min-w-0">
+            <span className="text-[11px] font-mono font-medium text-zinc-400 dark:text-zinc-500 block truncate">
               [{categoryLabel}]
             </span>
-            <h3 className="text-sm sm:text-base font-semibold text-zinc-950 dark:text-zinc-50 font-sans tracking-tight">
+            <h3
+              className="text-sm sm:text-base font-semibold text-zinc-950 dark:text-zinc-50 font-sans tracking-tight truncate"
+              title={title}
+            >
               {title}
             </h3>
           </div>
 
-          {/* Project Summary */}
-          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans line-clamp-3">
+          {/* Project Summary — strictly clamped to max 2 lines with ellipsis */}
+          <p
+            className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans line-clamp-2"
+            title={summary}
+          >
             {summary}
           </p>
 
           {/* Tech Tags */}
           {tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 pt-1">
+            <div className="flex flex-wrap gap-1.5 pt-1 mt-auto">
               {tags.slice(0, 4).map((tag) => (
                 <span
                   key={tag}
