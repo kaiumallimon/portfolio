@@ -157,6 +157,7 @@ export function PixelRunner({ onGameModeChange }: PixelRunnerProps) {
   return (
     <div
       ref={containerRef}
+      data-game="pixel-runner"
       role="region"
       aria-label="Pixel Avatar and Endless Runner Game"
       tabIndex={0}

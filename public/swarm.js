@@ -708,6 +708,7 @@
     function emitBox(el, cs, r, ctx, key, forceRect) {
       if (el === html) return null;
       const tag = el.localName;
+      if (el && el.nodeType === 1 && (tag === "canvas" || el.matches?.('[data-game="pixel-runner"]') || el.closest?.('[data-game="pixel-runner"], .cover-grid-bg, [data-game]'))) return null;
       const bgc = cs.backgroundColor;
       const bgi = cs.backgroundImage;
       const bgVisible = (alphaOf(bgc) > 0.01 && !sameColor(bgc, pageBg.color)) || bgi !== "none";
@@ -910,9 +911,7 @@
         d.setAttribute("style", "background:#111;");
         return { el: d, sig: "video" };
       }
-      if (tag === "canvas") {
-        const src = canvasPixels(el);
-        if (src) return imgOf(src);
+      if (tag === "canvas" || (el.closest && (el.closest('[data-game="pixel-runner"]') || el.closest('.cover-grid-bg') || el.closest('[data-game]')))) {
         return null;
       }
       // iframe / embed / object
@@ -1493,14 +1492,15 @@
   // ------------------------------------------------------------------ styles
 
   const STYLE = `
-:host{all:initial}
+:host{all:initial;pointer-events:none !important}
 *{box-sizing:border-box}
-.bg{position:absolute;inset:0;opacity:0;transition:opacity .5s ease}
-.bg.on{opacity:1}
-.layer,.port{position:absolute;overflow:hidden;pointer-events:none}
+.bg{position:absolute;inset:0;opacity:0;pointer-events:none !important;display:none !important}
+.bg.on{opacity:0;pointer-events:none !important;display:none !important}
+.layer,.port{position:absolute;overflow:hidden;pointer-events:none !important}
 .layer{inset:0}
-.world{position:absolute;left:0;top:0;will-change:transform}
-.it{position:absolute;left:0;top:0;transform-origin:0 0}
+.world{position:absolute;left:0;top:0;will-change:transform;pointer-events:none !important}
+.it{position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none !important}
+.it *{pointer-events:none !important}
 .it.settle{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .r{background-color:var(--ph,#D9D9D9);transition:background-color .22s ease,border-radius .22s ease}
 .r.st{background-color:transparent}
@@ -1514,50 +1514,69 @@
 .m.st>.md{opacity:1;clip-path:inset(0 0 0 0)}
 .m>.md.swap{animation:swap .45s ease}
 @keyframes swap{from{opacity:0;filter:blur(6px)}}
-.m>.fr{position:absolute;inset:0;pointer-events:none}
-.l svg{position:absolute;left:0;top:0;overflow:visible}
-.bd{position:absolute;opacity:0;-webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);box-shadow:0 1px 0 rgba(0,0,0,.06);pointer-events:none}
+.m>.fr{position:absolute;inset:0;pointer-events:none !important}
+.l svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none !important}
+.bd{position:absolute;opacity:0;-webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);box-shadow:0 1px 0 rgba(0,0,0,.06);pointer-events:none !important}
 .caret{display:inline-block;width:1.5px;height:1.1em;margin-left:1px;margin-right:-2.5px;vertical-align:text-bottom;background:currentColor;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .sa{background-color:rgba(13,153,255,.28)!important}
-.ov{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-.badges,.cursors{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.badge{position:absolute;transform:translate(-50%);padding:1px 4px;border-radius:2px;color:#fff;font:600 11px/16px Inter,system-ui,-apple-system,"Segoe UI",sans-serif;white-space:nowrap;font-variant-numeric:tabular-nums}
-.cursor{position:absolute;left:0;top:0;will-change:transform}
-.cursor svg{position:absolute;overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.28))}
-.rulers{position:absolute;inset:0;pointer-events:none}
-.ruler{position:absolute;background:#2c2c2c;pointer-events:none}
+.ov{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none !important}
+.badges,.cursors{position:absolute;inset:0;pointer-events:none !important;overflow:hidden}
+.badge{position:absolute;transform:translate(-50%);padding:1px 4px;border-radius:2px;color:#fff;font:600 11px/16px Inter,system-ui,-apple-system,"Segoe UI",sans-serif;white-space:nowrap;font-variant-numeric:tabular-nums;pointer-events:none !important}
+.cursor{position:absolute;left:0;top:0;will-change:transform;pointer-events:none !important}
+.cursor svg{position:absolute;overflow:visible;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.28));pointer-events:none !important}
+.rulers{position:absolute;inset:0;pointer-events:none !important}
+.ruler{position:absolute;background:#2c2c2c;pointer-events:none !important}
 .ruler svg{display:block}
 .ruler-top{top:0;left:0;right:0;height:20px;border-bottom:1px solid #3a3a3a}
 .ruler-left{top:0;left:0;bottom:0;width:20px;border-right:1px solid #3a3a3a}
 .ruler-corner{position:absolute;top:0;left:0;width:20px;height:20px;background:#2c2c2c}
 .rtext{font:500 9px Inter,system-ui,-apple-system,sans-serif;fill:#8c8c8c}
 .rsel{fill:#0d99ff}
-.intro{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.92);opacity:0;transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.intro{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.92);opacity:0;transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1);pointer-events:none !important}
 .intro.on{opacity:1;transform:translate(-50%,-50%)}
 .intro.gone{opacity:0;transform:translate(-50%,-50%) scale(.9)}
 .intro img{display:block;width:60px;height:60px;object-fit:contain;filter:grayscale(1);opacity:.42;border-radius:14px}
 .intro .mono{width:60px;height:60px;border-radius:16px;background:#D7DADE;color:#fff;font:700 30px/60px Inter,system-ui,sans-serif;text-align:center}
-.hud{position:absolute;left:50%;bottom:20px;transform:translate(-50%,18px);opacity:0;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 10px;background:rgba(30,30,30,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.07);font:500 12px/1 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;pointer-events:auto;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);white-space:nowrap;user-select:none;z-index:5}
+.hud{position:fixed;left:50%;bottom:20px;transform:translate(-50%,18px);opacity:0;display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(24,24,27,.95);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.09);font:500 12px/1 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;pointer-events:auto !important;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);white-space:nowrap;user-select:none;z-index:999999;max-width:calc(100vw - 24px);box-sizing:border-box}
+.hud *{pointer-events:auto !important}
 .hud.on{opacity:1;transform:translate(-50%,0)}
-.hud .dots{display:flex;padding-left:5px}
+.hud .dots{display:flex;padding-left:4px}
 .hud .dots i{display:block;width:18px;height:18px;margin-left:-5px;border-radius:50%;border:2px solid #1e1e1e;font:700 9px/14px Inter,system-ui,sans-serif;font-style:normal;text-align:center;color:#fff;transition:background .3s}
-.hud .txt,.hud .status{display:flex;align-items:center;gap:7px;color:#cfcfcf;font-variant-numeric:tabular-nums}
+.hud .txt,.hud .status{display:flex;align-items:center;gap:6px;color:#cfcfcf;font-variant-numeric:tabular-nums}
 .hud .txt b{color:#fff;font-weight:600}
 .hud .sep{width:1px;height:12px;background:#444}
-.hud .bar{width:64px;height:3px;border-radius:2px;background:#3a3a3a;overflow:hidden}
+.hud .bar{width:56px;height:3px;border-radius:2px;background:#3a3a3a;overflow:hidden;flex-shrink:0}
 .hud .bar i{display:block;height:100%;width:0;background:#0D99FF;transition:width .35s ease}
-.hud button{all:unset;cursor:pointer;padding:7px 10px;border-radius:8px;background:#2c2c2c;color:#fff;font:500 12px/1 Inter,system-ui,-apple-system,sans-serif;transition:background .15s}
+.hud button{all:unset;cursor:pointer;padding:6px 9px;border-radius:7px;background:#2c2c2c;color:#fff;font:500 12px/1 Inter,system-ui,-apple-system,sans-serif;transition:background .15s}
 .hud button:hover{background:#3a3a3a}
 .hud button.pri{background:#0D99FF}
 .hud button.pri:hover{background:#2aa6ff}
 .hud button.on{background:rgba(13,153,255,.22);color:#8fd0ff}
 .hud button[hidden]{display:none}
-.hud .x{padding:7px 9px;color:#aaa}
+.hud .x{padding:6px 8px;color:#aaa}
 .hud button.snd{display:flex;align-items:center;gap:6px;padding:6px 8px}
 .hud button.snd.off{color:#8a8a8a}
 .hud button.snd.tap{background:#0D99FF;animation:hudpulse 1.6s ease-in-out infinite}
 @keyframes hudpulse{50%{box-shadow:0 0 0 4px rgba(13,153,255,.28)}}
+@media(max-width:640px){
+  .hud{bottom:14px;gap:6px;padding:5px 8px;font-size:11px;max-width:calc(100vw - 16px);border-radius:10px}
+  .hud .dots{display:none}
+  .hud .bar{width:36px}
+  .hud button{padding:5px 8px;font-size:11px;border-radius:6px}
+  .hud .x{padding:5px 7px}
+}
+@media(max-width:480px){
+  .hud{bottom:8px;gap:4px;padding:4px 6px;font-size:10.5px;max-width:calc(100vw - 12px);border-radius:8px}
+  .hud .bar{display:none}
+  .hud .txt,.hud .status{font-size:10.5px;gap:3px}
+  .hud button{padding:4px 6px;font-size:10.5px}
+  .hud button[data-a="tour"],.hud button[data-a="speed"]{display:none}
+  .hud .x{padding:4px 5px}
+}
+@media(max-width:360px){
+  .hud button.snd{display:none}
+}
 `;
 
   // -------------------------------------------------------------------- env
@@ -1638,7 +1657,7 @@
       for (const old of document.querySelectorAll("swarm-rebuild")) old.remove();
       const host = document.createElement("swarm-rebuild");
       host.style.cssText =
-        "all:initial !important;position:fixed !important;inset:0 !important;z-index:2147483647 !important;display:block !important;pointer-events:auto !important;contain:strict !important;opacity:1;transition:opacity .6s ease;";
+        "all:initial !important;position:fixed !important;inset:0 !important;z-index:2147483647 !important;display:block !important;pointer-events:none !important;contain:strict !important;opacity:1;transition:opacity .6s ease;";
       env.host = host;
       this.host = host;
       const root = host.attachShadow({ mode: "open" });
@@ -1658,7 +1677,7 @@
   <div class="txt"><span class="status">Scanning page…</span></div>
   <div class="bar"><i></i></div>
   <button data-a="tour" title="Auto-scroll while the swarm builds">Tour</button>
-  <button data-a="speed" title="Build speed">1×</button>
+  <button data-a="speed" title="Build speed">2×</button>
   <button data-a="sound" class="snd" title="Sound (M)"></button>
   <button data-a="live" class="pri" hidden title="Fade back to the real page">Go live</button>
   <button data-a="replay" hidden title="Wipe and rebuild again">Replay</button>
@@ -2132,7 +2151,7 @@
       this.frontier = 0;
       this.vel = 0;
       this.tempo = 1;
-      this.speed = 1;
+      this.speed = 2;
       this.time = 0;
       this.rulers = { want: 0, t: 0, lastNeed: -10 };
       this.lastScroll = null;
@@ -3736,6 +3755,7 @@
 
     onComplete() {
       this.complete = true;
+      try { window.dispatchEvent(new CustomEvent("swarm:complete")); } catch (_) {}
       if (this.sfx) this.sfx.finale();
       const E = this.engine;
       const v = this.view;
@@ -3752,6 +3772,7 @@
     }
 
     destroy(reveal) {
+      try { window.dispatchEvent(new CustomEvent("swarm:stop")); } catch (_) {}
       unhidePage();
       if (this.sfx) {
         if (reveal) this.sfx.release();
@@ -3807,6 +3828,7 @@
 
   function start() {
     if (app) return;
+    try { window.dispatchEvent(new CustomEvent("swarm:start")); } catch (_) {}
     app = new App();
     app.run().catch((err) => console.error("[swarm-rebuild]", err));
   }

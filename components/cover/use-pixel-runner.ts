@@ -387,9 +387,14 @@ export function usePixelRunner(theme: ThemeMode) {
       }
 
       if (ev.key === ' ' || ev.key === 'ArrowUp' || ev.key === 'w' || ev.key === 'W') {
-        if (e.mode === 'running' || e.isFocused || e.isHovered) {
+        const isTyping = ['INPUT', 'TEXTAREA'].includes((ev.target as HTMLElement)?.tagName || '');
+        if (!isTyping && (e.mode === 'running' || e.isFocused || e.isHovered || (typeof window !== 'undefined' && window.scrollY < 400))) {
           ev.preventDefault();
-          triggerJump();
+          if (e.mode === 'idle') {
+            startRunnerGame();
+          } else {
+            triggerJump();
+          }
         }
       } else if (ev.key === 'ArrowDown' || ev.key === 's' || ev.key === 'S') {
         if (e.mode === 'running') {

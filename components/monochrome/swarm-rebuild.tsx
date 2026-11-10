@@ -78,16 +78,27 @@ export function useSwarmRebuild() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const checkInterval = setInterval(() => {
-      const active = !!(
-        window.__swarmRebuild &&
-        window.__swarmRebuild.app &&
-        !window.__swarmRebuild.app.dead
+    const checkActive = () => {
+      const active = Boolean(
+        document.querySelector("swarm-rebuild") ||
+        (window.__swarmRebuild?.app && !window.__swarmRebuild.app.dead)
       );
       setIsActive(active);
-    }, 250);
+    };
 
-    return () => clearInterval(checkInterval);
+    checkActive();
+    const checkInterval = setInterval(checkActive, 150);
+
+    window.addEventListener("swarm:start", checkActive);
+    window.addEventListener("swarm:stop", checkActive);
+    window.addEventListener("swarm:complete", checkActive);
+
+    return () => {
+      clearInterval(checkInterval);
+      window.removeEventListener("swarm:start", checkActive);
+      window.removeEventListener("swarm:stop", checkActive);
+      window.removeEventListener("swarm:complete", checkActive);
+    };
   }, []);
 
   const start = useCallback(() => triggerSwarmRebuild(false), []);
