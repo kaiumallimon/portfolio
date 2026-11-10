@@ -1492,7 +1492,8 @@
   // ------------------------------------------------------------------ styles
 
   const STYLE = `
-:host{all:initial;pointer-events:auto !important;cursor:wait !important}
+:host{all:initial;pointer-events:auto !important;cursor:wait !important;touch-action:none !important;user-select:none !important}
+:host, :host * {touch-action:none !important}
 *{box-sizing:border-box}
 .bg{position:absolute;inset:0;opacity:0;pointer-events:none !important;display:none !important}
 .bg.on{opacity:0;pointer-events:none !important;display:none !important}
@@ -1619,7 +1620,7 @@
       for (const old of document.querySelectorAll("swarm-rebuild")) old.remove();
       const host = document.createElement("swarm-rebuild");
       host.style.cssText =
-        "all:initial !important;position:fixed !important;inset:0 !important;z-index:2147483647 !important;display:block !important;pointer-events:auto !important;contain:strict !important;opacity:1;transition:opacity .6s ease;cursor:wait !important;user-select:none !important;";
+        "all:initial !important;position:fixed !important;inset:0 !important;z-index:2147483647 !important;display:block !important;pointer-events:auto !important;contain:strict !important;opacity:1;transition:opacity .6s ease;cursor:wait !important;user-select:none !important;touch-action:none !important;";
       env.host = host;
       this.host = host;
       const root = host.attachShadow({ mode: "open" });
@@ -3483,6 +3484,10 @@
     }
 
     async run() {
+      try {
+        document.documentElement.style.setProperty("touch-action", "none", "important");
+        document.body.style.setProperty("touch-action", "none", "important");
+      } catch (_) {}
       this.env = detectEnv();
       const shotP = this.loadShot();
       this.view = new View(this.env);
@@ -3573,19 +3578,35 @@
       const blockScroll = (e) => {
         if (e.cancelable) e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
       };
-      on(window, "wheel", blockScroll, { passive: false });
-      on(window, "touchmove", blockScroll, { passive: false });
-      on(window, "keydown", (e) => {
+      for (const ev of ["wheel", "touchmove", "touchstart", "touchend"]) {
+        window.addEventListener(ev, blockScroll, { passive: false, capture: true });
+        document.addEventListener(ev, blockScroll, { passive: false, capture: true });
+        (this.unbinds || (this.unbinds = [])).push(() => {
+          window.removeEventListener(ev, blockScroll, { capture: true });
+          document.removeEventListener(ev, blockScroll, { capture: true });
+        });
+      }
+      const blockKey = (e) => {
         if (["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(e.code) || ["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(e.key)) {
           e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
         }
         if ((e.key === "m" || e.key === "M") && !e.metaKey && !e.ctrlKey && !e.altKey) {
           this.sfx.setOn(!this.sfx.on);
           this.renderSoundBtn();
         }
         this.unlockSound();
-      }, true);
+      };
+      window.addEventListener("keydown", blockKey, { capture: true });
+      document.addEventListener("keydown", blockKey, { capture: true });
+      (this.unbinds || (this.unbinds = [])).push(() => {
+        window.removeEventListener("keydown", blockKey, { capture: true });
+        document.removeEventListener("keydown", blockKey, { capture: true });
+      });
       // browsers only let audio start after a click/keypress on the page
       on(window, "pointerdown", () => this.unlockSound(), true);
     }
@@ -3698,6 +3719,10 @@
         this.dead = true;
         cancelAnimationFrame(this.raf);
         for (const u of this.unbinds || []) u();
+        try {
+          document.documentElement.style.removeProperty("touch-action");
+          document.body.style.removeProperty("touch-action");
+        } catch (_) {}
         this.view.host.remove();
       };
       if (reveal) {
@@ -3717,6 +3742,10 @@
         this.dead = true;
         cancelAnimationFrame(this.raf);
         for (const u of this.unbinds || []) u();
+        try {
+          document.documentElement.style.removeProperty("touch-action");
+          document.body.style.removeProperty("touch-action");
+        } catch (_) {}
         setTimeout(() => this.view.host.remove(), 260);
       }
     }

@@ -37,13 +37,40 @@ function RouteChangeScroller() {
     }
 
     const isPinnedRoute = pathname === "/contact" || pathname?.startsWith("/contact");
-    if (isPinnedRoute) {
+    const isSwarmActive = typeof document !== "undefined" && Boolean(document.querySelector("swarm-rebuild"));
+
+    if (isPinnedRoute || isSwarmActive) {
       lenis.stop();
     } else {
       lenis.start();
       lenis.scrollTo(0, { immediate: true });
     }
   }, [pathname, lenis]);
+
+  useEffect(() => {
+    if (!lenis) return;
+
+    const handleSwarmStart = () => {
+      lenis.stop();
+    };
+
+    const handleSwarmStop = () => {
+      const isPinnedRoute = pathname === "/contact" || pathname?.startsWith("/contact");
+      if (!isPinnedRoute) {
+        lenis.start();
+      }
+    };
+
+    window.addEventListener("swarm:start", handleSwarmStart);
+    window.addEventListener("swarm:stop", handleSwarmStop);
+    window.addEventListener("swarm:complete", handleSwarmStop);
+
+    return () => {
+      window.removeEventListener("swarm:start", handleSwarmStart);
+      window.removeEventListener("swarm:stop", handleSwarmStop);
+      window.removeEventListener("swarm:complete", handleSwarmStop);
+    };
+  }, [lenis, pathname]);
 
   return null;
 }
