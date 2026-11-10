@@ -17,6 +17,29 @@ import {
 // ============================================================================
 
 /**
+ * Lenis Smooth Scrolling Physics Configuration.
+ * 
+ * - lerp: Linear interpolation intensity between 0 and 1.
+ *   Lower values (e.g. 0.045 - 0.06) introduce a noticeable, elegant trailing delay
+ *   and smooth deceleration glide.
+ *   Higher values (e.g. 0.1 - 0.15) catch up more immediately with less delay.
+ * - wheelMultiplier: Scales wheel delta intensity (0.85 - 1.0 provides graceful momentum).
+ * - smoothWheel: Enables smooth scrolling on desktop mousewheel.
+ * - syncTouch: false preserves native touch scrolling on mobile devices.
+ */
+export const LENIS_CONFIG = {
+  lerp: 0.055,
+  wheelMultiplier: 0.9,
+  smoothWheel: true,
+  syncTouch: false,
+} as const;
+
+/**
+ * Duration (in seconds) for anchor link jumps (e.g. clicking navbar sections).
+ */
+export const LENIS_NAV_SCROLL_DURATION = 1.4;
+
+/**
  * Toggle whether the retro terminal boot line (> booting kal.dev ... ok)
  * displays inside the cover artwork during the initial load reveal.
  */

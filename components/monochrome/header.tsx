@@ -13,6 +13,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { LENIS_NAV_SCROLL_DURATION } from "@/lib/motion";
 
 interface HeaderProps {
   onOpenCommand?: () => void;
@@ -53,7 +54,7 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
         if (lenis) {
           lenis.scrollTo(element, {
             offset: -headerOffset,
-            duration: 1.1,
+            duration: LENIS_NAV_SCROLL_DURATION,
           });
         } else {
           const elementPosition = element.getBoundingClientRect().top;
@@ -85,7 +86,7 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
           if (lenis) {
             lenis.scrollTo(element, {
               offset: -headerOffset,
-              duration: 1.1,
+              duration: LENIS_NAV_SCROLL_DURATION,
             });
           } else {
             const elementPosition = element.getBoundingClientRect().top;
@@ -109,7 +110,7 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
     if (isHomePage) {
       e.preventDefault();
       if (lenis) {
-        lenis.scrollTo(0, { duration: 1.1 });
+        lenis.scrollTo(0, { duration: LENIS_NAV_SCROLL_DURATION });
       } else {
         window.scrollTo({
           top: 0,

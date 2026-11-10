@@ -3,6 +3,7 @@
 import React, { useEffect, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { ReactLenis, useLenis } from "lenis/react";
+import { LENIS_CONFIG } from "@/lib/motion";
 
 function subscribeReducedMotion(callback: () => void) {
   if (typeof window === "undefined") return () => {};
@@ -72,10 +73,7 @@ export function SmoothScrollProvider({
     <ReactLenis
       root
       options={{
-        lerp: 0.1,
-        duration: 1.1,
-        smoothWheel: true,
-        syncTouch: false,
+        ...LENIS_CONFIG,
       }}
     >
       <RouteChangeScroller />
