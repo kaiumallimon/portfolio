@@ -204,12 +204,12 @@ function RecognitionCard({ item, onOpenPreview }: RecognitionCardProps) {
   const isFailed = currentImage ? Boolean(failedImages[currentImage]) : false;
 
   return (
-    <div className="group border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors flex flex-col justify-between overflow-hidden">
-      <div>
+    <div className="group border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors flex flex-col justify-between overflow-hidden h-full">
+      <div className="flex-1 flex flex-col">
         {/* Top Image Preview Area — clicking opens fullscreen preview modal */}
         <div
           onClick={() => onOpenPreview(item, images, currentIdx)}
-          className="relative w-full h-48 sm:h-56 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 overflow-hidden select-none cursor-pointer"
+          className="relative w-full h-48 sm:h-56 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 overflow-hidden select-none cursor-pointer shrink-0"
           title="Click to view fullscreen preview"
         >
           {currentImage ? (
@@ -290,7 +290,7 @@ function RecognitionCard({ item, onOpenPreview }: RecognitionCardProps) {
         </div>
 
         {/* Card Details */}
-        <div className="p-4 sm:p-5 space-y-2.5">
+        <div className="p-4 sm:p-5 space-y-2.5 flex-1 flex flex-col justify-between">
           <div className="space-y-1">
             <div className="flex items-center justify-between gap-2 text-xs font-mono text-zinc-400 tabular-nums">
               <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400 truncate">
@@ -298,7 +298,7 @@ function RecognitionCard({ item, onOpenPreview }: RecognitionCardProps) {
               </span>
               <span className="shrink-0">{item.date}</span>
             </div>
-            <h3 className="text-sm sm:text-base font-semibold text-zinc-950 dark:text-zinc-50 font-sans tracking-tight leading-snug">
+            <h3 className="text-sm sm:text-base font-semibold text-zinc-950 dark:text-zinc-50 font-sans tracking-tight leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
               {item.award}
             </h3>
           </div>
@@ -384,6 +384,7 @@ export function MonochromeRecognition({
                 delay: shouldReduceMotion ? 0 : rowIndex * 0.1,
                 ease: EASE_OUT,
               }}
+              className="h-full flex flex-col"
             >
               <RecognitionCard
                 item={item}
