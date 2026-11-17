@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { EducationItem, EDUCATION_DATA } from "@/data/education";
 import { RiLink } from "@remixicon/react";
 import { toast } from "sonner";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 
 interface MonochromeEducationProps {
   education?: EducationItem[];
@@ -13,6 +15,7 @@ export function MonochromeEducation({
   education = EDUCATION_DATA,
 }: MonochromeEducationProps = {}) {
   const items = education && education.length > 0 ? education : EDUCATION_DATA;
+  const shouldReduceMotion = useReducedMotion();
 
   const copyLink = () => {
     if (typeof window !== "undefined") {
@@ -52,8 +55,16 @@ export function MonochromeEducation({
             const isLast = idx === items.length - 1;
 
             return (
-              <li
+              <motion.li
                 key={item.id}
+                initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{
+                  duration: DURATION_NORMAL,
+                  delay: shouldReduceMotion ? 0 : idx * 0.08,
+                  ease: EASE_OUT,
+                }}
                 className="relative pl-6 sm:pl-8 pb-5 last:pb-1 group list-none"
               >
                 {/* Vertical Timeline Track Line */}
@@ -97,7 +108,7 @@ export function MonochromeEducation({
                     </span>
                   </div>
                 </div>
-              </li>
+              </motion.li>
             );
           })}
         </ol>

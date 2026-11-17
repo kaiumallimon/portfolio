@@ -2,17 +2,20 @@
 
 import React from "react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { RiLink } from "@remixicon/react";
 import { IProject } from "@/lib/models";
 import { toast } from "sonner";
 import { ProjectCard } from "./project-card";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 
 interface MonochromeProjectsProps {
   projects: Partial<IProject>[];
 }
 
 export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
+  const shouldReduceMotion = useReducedMotion();
   // Show only top 4 featured projects on home page
   const displayProjects = projects.slice(0, 4);
 
@@ -56,17 +59,31 @@ export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
       {/* Grid of Top 4 Projects with Device Frames */}
       <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
         {displayProjects.map((p, index) => (
-          <div
+          <motion.div
             key={p.slug || (p._id ? String(p._id) : index)}
+            initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{
+              duration: DURATION_NORMAL,
+              delay: shouldReduceMotion ? 0 : (index % 2) * 0.08 + Math.floor(index / 2) * 0.06,
+              ease: EASE_OUT,
+            }}
             className="h-full flex flex-col"
           >
             <ProjectCard project={p} />
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* "See More" CTA Banner linking to /projects */}
-      <div className="px-4 sm:px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: DURATION_NORMAL, ease: EASE_OUT }}
+        className="px-4 sm:px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+      >
         <div className="space-y-0.5">
           <p className="text-xs font-mono font-medium text-zinc-900 dark:text-zinc-100">
             Looking for more work?
@@ -84,7 +101,7 @@ export function MonochromeProjects({ projects }: MonochromeProjectsProps) {
           <span>See all projects</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Link>
-      </div>
+      </motion.div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />
     </section>

@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
 import { ThemeToggle } from "@/components/application/theme/theme-toggle";
 import { RiMenuLine, RiArrowRightUpLine, RiCloseLine } from "@remixicon/react";
-import { useSwarmRebuild } from "@/components/monochrome/swarm-rebuild";
 import { motion, AnimatePresence } from "framer-motion";
 import { LENIS_NAV_SCROLL_DURATION } from "@/lib/motion";
 
@@ -34,7 +33,6 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isFabVisible, setIsFabVisible] = useState(true);
-  const { isActive: isSwarmActive } = useSwarmRebuild();
   const lenis = useLenis();
 
   // Smooth scroll to target section with sticky header offset (using Lenis when active)
@@ -261,11 +259,11 @@ export function MonochromeHeader({ hideFab = false }: HeaderProps = {}) {
         </div>
       </header>
 
-      {/* Floating Mobile Bottom Navigation Dock (< md; omitted on /contact or during Swarm Rebuild to avoid colliding with HUD) */}
+      {/* Floating Mobile Bottom Navigation Dock (< md; omitted on /contact) */}
       {!isContactPage && (
         <div
           className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-40 md:hidden transition-all duration-300 ease-out ${
-            isFabVisible && !isSwarmActive
+            isFabVisible
               ? "translate-y-0 opacity-100 pointer-events-auto"
               : "translate-y-20 opacity-0 pointer-events-none"
           }`}

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useRef } from "react";
 import dynamic from "next/dynamic";
+import { motion, useReducedMotion } from "framer-motion";
 import { Volume2, Copy, CheckCheck } from "lucide-react";
 import {
   RiTwitterXLine,
@@ -19,6 +20,7 @@ import { CadIsometricCover } from "./cad-isometric-cover";
 import RotatingText from "@/components/RotatingText";
 import { ISiteSettings } from "@/lib/models";
 import { GameMode } from "@/components/cover/use-pixel-runner";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 
 // Client-only dynamic import to guarantee zero hydration mismatch on the realtime clock
 const RealtimeCounterClock = dynamic(
@@ -52,6 +54,7 @@ export function MonochromeHero({
   const [coverGameMode, setCoverGameMode] = useState<GameMode>("idle");
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
   const pronunciationAudioRef = useRef<HTMLAudioElement | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   // Play real human name pronunciation recorded in public/audio/
   const playNamePronunciation = () => {
@@ -111,7 +114,12 @@ export function MonochromeHero({
           Col 1: Avatar spans both rows (md:col-start-1 md:row-start-1 md:row-span-2)
           Col 2: Row 1 is Cover (md:col-start-2 md:row-start-1), Row 2 is Name & Tagline (md:col-start-2 md:row-start-2)
       */}
-      <div className="relative grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto] border-b border-zinc-200 dark:border-zinc-800 overflow-hidden">
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION_NORMAL, ease: EASE_OUT }}
+        className="relative grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr] md:grid-rows-[1fr_auto] border-b border-zinc-200 dark:border-zinc-800 overflow-hidden"
+      >
         {/* Cover Artwork: Full width at top on mobile (< md), Top-Right on desktop (md:) */}
         <div
           ref={coverRef}
@@ -270,7 +278,7 @@ export function MonochromeHero({
             />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stripe Divider matching Chanh Dai */}
       <div className="stripe-divider h-6 sm:h-8 border-b border-zinc-200 dark:border-zinc-800 w-full" />
@@ -284,7 +292,12 @@ export function MonochromeHero({
         5. Phone (with copy)
         6. Availability status
       */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono">
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION_NORMAL, delay: shouldReduceMotion ? 0 : 0.08, ease: EASE_OUT }}
+        className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 text-xs sm:text-sm font-mono"
+      >
         {/* Left Column (Desktop) / Items 1-3 (Mobile) */}
         <div className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800">
           {/* 1. Education */}
@@ -392,10 +405,15 @@ export function MonochromeHero({
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* 5. Social Links Row with "follow me" Annotation */}
-      <div className="relative px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION_NORMAL, delay: shouldReduceMotion ? 0 : 0.16, ease: EASE_OUT }}
+        className="relative px-4 sm:px-6 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3"
+      >
         {/* Annotation note on the left */}
         <div
           className="pointer-events-none hidden sm:flex items-center gap-1.5 font-mono text-xs text-zinc-500 dark:text-zinc-400 select-none mr-2"
@@ -451,7 +469,7 @@ export function MonochromeHero({
             <RiLinkedinLine className="w-4 h-4" />
           </a>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

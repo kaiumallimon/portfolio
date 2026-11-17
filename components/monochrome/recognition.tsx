@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, X, Maximize2 } from "lucide-react";
 import { RiLink, RiTrophyLine, RiMedalLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { IAchievementItem } from "@/lib/data-service";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 
 function getAchievementImages(item: IAchievementItem): string[] {
   if (item.images && item.images.length > 0) return item.images;
@@ -321,6 +323,7 @@ export function MonochromeRecognition({
 }: {
   achievements: IAchievementItem[];
 }) {
+  const shouldReduceMotion = useReducedMotion();
   const [modalState, setModalState] = useState<{
     item: IAchievementItem;
     images: string[];
@@ -368,16 +371,24 @@ export function MonochromeRecognition({
 
       {/* Responsive Grid replacing the old vertical list */}
       <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {achievements.map((item) => (
-          <div
+        {achievements.map((item, idx) => (
+          <motion.div
             key={item.id}
+            initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{
+              duration: DURATION_NORMAL,
+              delay: shouldReduceMotion ? 0 : (idx % 2) * 0.08 + Math.floor(idx / 2) * 0.06,
+              ease: EASE_OUT,
+            }}
             className="h-full flex flex-col"
           >
             <RecognitionCard
               item={item}
               onOpenPreview={handleOpenPreview}
             />
-          </div>
+          </motion.div>
         ))}
       </div>
 
