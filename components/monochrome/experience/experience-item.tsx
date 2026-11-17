@@ -1,18 +1,32 @@
 "use client";
 
 import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { ExperienceRole } from "@/data/experience";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 
 interface ExperienceItemProps {
   role: ExperienceRole;
   isLast: boolean;
+  index?: number;
 }
 
-export function ExperienceItem({ role, isLast }: ExperienceItemProps) {
+export function ExperienceItem({ role, isLast, index = 0 }: ExperienceItemProps) {
   const isLight = Boolean(role.isLightEngagement);
+  const shouldReduceMotion = useReducedMotion();
 
   return (
-    <li className="relative pl-6 sm:pl-8 pb-5 last:pb-1 group list-none">
+    <motion.li
+      initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{
+        duration: DURATION_NORMAL,
+        delay: shouldReduceMotion ? 0 : index * 0.08,
+        ease: EASE_OUT,
+      }}
+      className="relative pl-6 sm:pl-8 pb-5 last:pb-1 group list-none"
+    >
       {/* Vertical Timeline Track Line */}
       {!isLast && (
         <div
@@ -46,6 +60,6 @@ export function ExperienceItem({ role, isLast }: ExperienceItemProps) {
           {role.period}
         </span>
       </div>
-    </li>
+    </motion.li>
   );
 }

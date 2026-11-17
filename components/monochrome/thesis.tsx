@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 import {
   RiLink,
   RiFilePdf2Line,
@@ -146,6 +148,7 @@ export function ThesisViewerModal({ isOpen, onClose }: ThesisViewerModalProps) {
 export function MonochromeThesis() {
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [showFullAbstract, setShowFullAbstract] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   const copyLink = () => {
     if (typeof window !== "undefined") {
@@ -180,7 +183,13 @@ export function MonochromeThesis() {
 
       {/* Main Thesis Content Card */}
       <div className="p-4 sm:p-6">
-        <div className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 sm:p-7 space-y-5">
+        <motion.div
+          initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: DURATION_NORMAL, ease: EASE_OUT }}
+          className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 sm:p-7 space-y-5"
+        >
           {/* Top Metadata Row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-900 pb-4">
             <div className="flex items-center gap-2 flex-wrap text-xs font-mono">
@@ -271,7 +280,7 @@ export function MonochromeThesis() {
               </a>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Integrated PDF Reader Modal */}

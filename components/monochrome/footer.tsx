@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import {
   RiTwitterXLine,
@@ -7,6 +8,7 @@ import {
   RiLinkedinLine,
 } from "@remixicon/react";
 import { ISiteSettings } from "@/lib/models";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 
 function FooterBotanicalFlowers() {
   return (
@@ -106,13 +108,21 @@ function FooterBotanicalFlowers() {
 }
 
 export function MonochromeFooter({ settings }: { settings: Partial<ISiteSettings> }) {
+  const shouldReduceMotion = useReducedMotion();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <footer className="w-full bg-white dark:bg-zinc-950 pt-16 sm:pt-24 pb-0 overflow-hidden">
-      <div className="w-full">
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: DURATION_NORMAL, ease: EASE_OUT }}
+        className="w-full"
+      >
         {/* Sprouting Botanical Flowers Crest */}
         <div className="relative h-16 sm:h-20 flex justify-center">
           {/* Botanical Flowers blooming out from behind the card rim */}
@@ -195,7 +205,7 @@ export function MonochromeFooter({ settings }: { settings: Partial<ISiteSettings
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
     </footer>
   );
 }

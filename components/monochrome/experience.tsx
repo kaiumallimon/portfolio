@@ -1,17 +1,21 @@
 "use client";
 
 import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { IExperience } from "@/lib/models";
 import { RiLink, RiBuildingLine, RiMapPinLine } from "@remixicon/react";
 import { toast } from "sonner";
 import { EXPERIENCE_DATA } from "@/data/experience";
 import { ExperienceItem } from "./experience/experience-item";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 
 interface MonochromeExperienceProps {
   experiences?: Partial<IExperience>[];
 }
 
 export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
+  const shouldReduceMotion = useReducedMotion();
+
   const copyLink = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(`${window.location.origin}#experience`);
@@ -42,7 +46,13 @@ export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
 
       <div className="p-4 sm:p-6 space-y-5">
         {/* Organization Header */}
-        <div className="border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <motion.div
+          initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: DURATION_NORMAL, ease: EASE_OUT }}
+          className="border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+        >
           <div className="flex items-start gap-3">
             <div className="size-9 rounded-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex items-center justify-center text-zinc-700 dark:text-zinc-300 shrink-0">
               <RiBuildingLine className="w-4 h-4" />
@@ -62,7 +72,7 @@ export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
             <RiMapPinLine className="w-3.5 h-3.5" />
             <span>{EXPERIENCE_DATA.location}</span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Minimalist Timeline of Roles */}
         <ol
@@ -73,6 +83,7 @@ export function MonochromeExperience({}: MonochromeExperienceProps = {}) {
             <ExperienceItem
               key={role.id}
               role={role}
+              index={idx}
               isLast={idx === EXPERIENCE_DATA.roles.length - 1}
             />
           ))}

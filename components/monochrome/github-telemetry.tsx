@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { EASE_OUT, DURATION_NORMAL } from "@/lib/motion";
 import { GitHubStats } from "@/lib/github";
 import { Flame } from "lucide-react";
 import { RiGithubLine, RiGamepadLine } from "@remixicon/react";
@@ -147,10 +149,18 @@ export function MonochromeGitHubTelemetry({
     return { longestStreak };
   }, [activeData.data]);
 
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <section className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
       {/* Calendar Area */}
-      <div className="p-4 sm:p-6 overflow-hidden">
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: DURATION_NORMAL, ease: EASE_OUT }}
+        className="p-4 sm:p-6 overflow-hidden"
+      >
         {/* Calendar Summary & Year Select Line */}
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-500">
           <div className="flex flex-wrap items-center gap-2">
@@ -283,7 +293,7 @@ export function MonochromeGitHubTelemetry({
             <span>@{username}</span>
           </a>
         </div>
-      </div>
+      </motion.div>
 
       <div className="stripe-divider h-8 border-t border-zinc-200 dark:border-zinc-800 w-full" />
     </section>

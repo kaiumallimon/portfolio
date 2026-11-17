@@ -79,9 +79,9 @@ export function useIsInitialReveal(): boolean {
 export const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 export const EASE_SMOOTH = [0.25, 0.1, 0.25, 1] as const;
 
-export const DURATION_FAST = 0.35;
-export const DURATION_NORMAL = 0.5;
-export const DURATION_SLOW = 0.8;
+export const DURATION_FAST = 0.32;
+export const DURATION_NORMAL = 0.48;
+export const DURATION_SLOW = 0.7;
 
 // ============================================================================
 // Spring Physics Presets
@@ -98,7 +98,7 @@ export const springs = {
 // Shared Variants
 // ============================================================================
 export const fadeUpVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 16 },
   visible: (custom: { delay?: number; duration?: number } = {}) => ({
     opacity: 1,
     y: 0,
@@ -138,7 +138,7 @@ export const staggerContainerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.05,
+      staggerChildren: 0.06,
       delayChildren: 0.02,
     },
   },
@@ -146,7 +146,7 @@ export const staggerContainerVariants: Variants = {
 
 // ============================================================================
 // Reusable Component: Reveal
-// Wraps any content block to fade up 10px once when scrolled into view.
+// Wraps any content block to fade up 16px once when scrolled into view.
 // ============================================================================
 interface RevealProps {
   children: React.ReactNode;
@@ -162,8 +162,8 @@ export function Reveal({
   className = "",
   delay = 0,
   duration = DURATION_NORMAL,
-  y = 10,
-  margin = "-24px",
+  y = 16,
+  margin = "-40px",
 }: RevealProps) {
   const shouldReduceMotion = useReducedMotion();
 
@@ -205,7 +205,7 @@ export function RevealStagger({
   className = "",
   stagger = 0.06,
   delayChildren = 0.02,
-  margin = "-24px",
+  margin = "-40px",
 }: RevealStaggerProps) {
   const shouldReduceMotion = useReducedMotion();
 
@@ -293,8 +293,8 @@ interface CountUpProps {
 
 export function CountUp({
   value,
-  duration = 1.2,
-  delay = 0.1,
+  duration = 0.7,
+  delay = 0.05,
   className = "",
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement | null>(null);
